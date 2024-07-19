@@ -51,7 +51,7 @@ var FormValidation = function () {
                 var message = xhr.hasOwnProperty('responseJSON') && xhr.responseJSON.hasOwnProperty('message')
                     ? xhr.responseJSON.message
                     : xhr.statusText;
-                $.notify({ title: 'Error', message: message }, { type: 'danger' })
+              //  $.notify({ title: 'Error', message: message }, { type: 'danger' })
             }
         });
 

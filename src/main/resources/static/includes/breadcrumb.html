@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+    <li th:each="breadcrumb : ${breadcrumbs}" 
+        th:classappend="${breadcrumb.current} ? 'active' : ''" 
+        class="breadcrumb-item">
+      <a th:if="${breadcrumb.route}" 
+         th:href="${breadcrumb.params != null} ? @{${breadcrumb.route}(breadcrumb.params)} : @{${breadcrumb.route}}">
+         <span th:text="${breadcrumb.name}">Breadcrumb Name</span>
+      </a>
+      <span th:if="${breadcrumb.route == null}" 
+            th:text="${breadcrumb.name}">Breadcrumb Name</span>
+    </li>
+  </ol>
+</nav>
+</body>
+</html>

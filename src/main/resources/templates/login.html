@@ -67,18 +67,22 @@
                                                 <h3>Account Login</h3>
                                             </div>
                                         </div>
-                                        <form id="form-validation" name="form-validation" class="mb-4" th:action="@{/login}" th:object="${loginForm}" method="post">
-                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                                        <div th:if="${param.error}">
+                                            <p style="color:red">Invalid email or password.</p>
+                                        </div>
+    
+                                        <form id="form-validation" name="form-validation" class="mb-4"  th:action="@{/perform_login}" th:object="${loginForm}" method="post">
+                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                             <div class="mb-3 form-group">
                                                 <label class="form-label" for="validation-email">Email address</label>
-                                                <input type="email" id="validation-email" th:field="*{email}" class="form-control" placeholder="Email Address" autocomplete="off" />
+                                                <input type="email" id="validation-email" data-validation="NOTEMPTY"   th:field="*{email}" class="form-control" placeholder="Email Address" autocomplete="off" />
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                             </div>
                                             <div class="mb-3 form-group">
                                                 <div class="d-flex justify-content-between">
                                                     <label class="form-label" for="validation-password">Password</label>
                                                 </div>
-                                                <input type="password" id="validation-password" th:field="*{password}" class="form-control" placeholder="Enter Password" autocomplete="off" />
+                                                <input type="password" id="validation-password" data-validation="NOTEMPTY"  th:field="*{password}" class="form-control" placeholder="Enter Password" autocomplete="off" />
                                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                                             </div>
                                             <div class="row flex-between-center">
@@ -128,24 +132,7 @@
     <script>
         (function ($) {
             $(function () {
-                FormValidation.init(null, callbackSuccess, null, null, callbackOption);
-
-
-                function callbackSuccess() {
-                    console.log('xx');
-                   // window.location.href = $btnback.attr('href');
-                }
-
-                function callbackOption(node, data) {
-                    const formData = new FormData();
-
-                    $.each(data, function (k, v) {
-                        if (!['images', 'image_thumbnail'].includes(k)) formData.append(k, v);
-                    });
-                    console.log('bb');
-
-                    return {cache: false, contentType: false, processData: false, data: formData}
-                }
+                
             });
         })(jQuery);
     </script>

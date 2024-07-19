@@ -29,8 +29,11 @@ public class Admin {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    // Getters and setters
+    @OneToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -85,5 +88,13 @@ public class Admin {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

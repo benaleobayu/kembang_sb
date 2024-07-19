@@ -1,9 +1,11 @@
-package com.dev.byc.model;
-public class LoginForm {
+package com.dev.byc.dto;
+
+public class LoginRequest {
     private String email;
     private String password;
 
     // Getters and setters
+
     public String getEmail() {
         return email;
     }

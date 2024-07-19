@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Dashboard</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container-fluid">
+        <header th:replace="cms/fragments/header :: header"></header>
+        <div class="row">
+            <aside class="col-2" th:replace="cms/fragments/sidebar :: sidebar"></aside>
+            <main class="col-10" th:fragment="content">
+                <!-- Main content will be inserted here -->
+                <div th:insert="::content"></div>
+            </main>
+        </div>
+        <footer th:replace="cms/fragments/footer :: footer"></footer>
+    </div>
+    <!-- Include your JavaScript files here -->
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body layout:decorate="layout/app">
+    <div layout:fragment="content">
+        <h1>Welcome, <span th:text="${username}">User</span>!</h1>
+        <p>Your authorities are: <span th:text="${authorities}"></span></p>
+        <!-- Your custom content here -->
+    </div>
+</body>
+</html>
