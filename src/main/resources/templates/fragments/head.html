@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" th:content="${_csrf.token}">
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title th:text="${pageTitle}">APP - Esign | Dashboard</title>
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/falcon/assets/img/favicons/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/falcon/assets/img/favicons/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/falcon/assets/img/favicons/favicon-16x16.png}">
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/falcon/assets/img/favicons/favicon.ico}">
+    <link rel="manifest" th:href="@{/falcon/assets/img/favicons/manifest.json}">
+    <meta name="msapplication-TileImage" th:content="@{/falcon/assets/img/favicons/mstile-150x150.png}">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="robots" content="noindex">
+    <meta name="googlebot" content="noindex">
+    <meta name="googlebot-news" content="nosnippet">
+
+    <script th:src="@{/falcon/assets/js/config.js}"></script>
+    <script th:src="@{/falcon/vendors/overlayscrollbars/OverlayScrollbars.min.js}"></script>
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700|Poppins:300,400,500,600,700,800,900&display=swap|" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,500;0,600;0,700;0,800;0,900;0,1000&display=swap|" rel="stylesheet">
+
+    <link th:href="@{/falcon/vendors/overlayscrollbars/OverlayScrollbars.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/glightbox/glightbox.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/dropzone/dropzone.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/swiper/swiper-bundle.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/image-picker/image-picker.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/plyr/plyr.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/choices/choices.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/datatables.net-bs5/dataTables.bootstrap5.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/intl-tel-input/css/intlTelInput.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/select2/select2.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/select2-bootstrap-5-theme/select2-bootstrap-5-theme.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/flatpickr/flatpickr.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/sweetalert2/sweetalert2.min.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/dropify/css/dropify.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/jsoneditor/jsoneditor.css}" rel="stylesheet">
+    <link th:href="@{/falcon/vendors/jquery-ui/jquery-ui.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendors/daterangepicker/daterangepicker.css}" rel="stylesheet">
+
+    <link th:href="@{/falcon/assets/css/theme-rtl.css}" rel="stylesheet" id="style-rtl">
+    <link th:href="@{/falcon/assets/css/theme.css}" rel="stylesheet" id="style-default">
+    <link th:href="@{/falcon/assets/css/user-rtl.css}" rel="stylesheet" id="user-style-rtl">
+    <link th:href="@{/falcon/assets/css/user.css}" rel="stylesheet" id="user-style-default">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css|" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css|" rel="stylesheet">
+
+    <style>
+        /* Custom class to resize the icon */
+        .custom-icon-size .swal2-icon {
+            font-size: 4rem;
+        }
+        .swal2-title {
+            font-size: 16px;
+        }
+        .swal2-content {
+            font-size: 12px;
+        }
+    </style>
+
+    <script th:inline="javascript">
+        var isRTL = JSON.parse(localStorage.getItem('isRTL'));
+        if (isRTL) {
+            var linkDefault = document.getElementById('style-default');
+            var userLinkDefault = document.getElementById('user-style-default');
+            linkDefault.setAttribute('disabled', true);
+            userLinkDefault.setAttribute('disabled', true);
+            document.querySelector('html').setAttribute('dir', 'rtl');
+        } else {
+            var linkRTL = document.getElementById('style-rtl');
+            var userLinkRTL = document.getElementById('user-style-rtl');
+            linkRTL.setAttribute('disabled', true);
+            userLinkRTL.setAttribute('disabled', true);
+        }
+    </script>
+    <!-- PRELOADER STYLES-->
+    <style>
+        .initial__loading {
+            position: fixed;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBzdHlsZT0ibWFyZ2luOiBhdXRvOyBiYWNrZ3JvdW5kOiByZ2IoMjU1LCAyNTUsIDI1NSkgbm9uZSByZXBlYXQgc2Nyb2xsIDAlIDAlOyBkaXNwbGF5OiBibG9jazsgc2hhcGUtcmVuZGVyaW5nOiBhdXRvOyBhbmltYXRpb24tcGxheS1zdGF0ZTogcnVubmluZzsgYW5pbWF0aW9uLWRlbGF5OiAwczsiIHdpZHRoPSI0MXB4IiBoZWlnaHQ9IjQxcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+CjxwYXRoIGQ9Ik0xMCA1MEE0MCA0MCAwIDAgMCA5MCA1MEE0MCA0MiAwIDAgMSAxMCA1MCIgZmlsbD0iIzAwZDA4NiIgc3Ryb2tlPSJub25lIiBzdHlsZT0iYW5pbWF0aW9uLXBsYXktc3RhdGU6IHJ1bm5pbmc7IGFuaW1hdGlvbi1kZWxheTogMHM7Ij4KICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGtleVRpbWVzPSIwOzEiIHZhbHVlcz0iMCA1MCA1MTszNjAgNTAgNTEiIHN0eWxlPSJhbmltYXRpb24tcGxheS1zdGF0ZTogcnVubmluZzsgYW5pbWF0aW9uLWRlbGF5OiAwczsiPjwvYW5pbWF0ZVRyYW5zZm9ybT4KPC9wYXRoPgo8IS0tIFtsZGlvXSBnZW5lcmF0ZWQgYnkgaHR0cHM6Ly9sb2FkaW5nLmlvLyAtLT48L3N2Zz4=);
+            background-color: #fff;
+        }
+
+        .text-truncate {
+            -webkit-line-clamp: 3 !important;
+            display: -webkit-box !important;
+            -webkit-box-orient: vertical !important;
+            -webkit-line-clamp: 3 !important; /* start showing ellipsis when 3rd line is reached */
+            white-space: pre-wrap !important; /* let the text wrap preserving spaces */
+        }
+
+        [data-kit-theme='dark'] .initial__loading {
+            background-color: #0c0c1b;
+        }
+
+        .camelcase {
+            text-transform: capitalize;
+        }
+        .preview_out {
+            overflow: auto;
+            width: 100%;
+            height: 250px;
+            background: #f2f2f2;
+        }
+        .text-blue {
+            color: #1E90FF !important;
+        }
+        .text-red {
+            color: red !important;
+        }
+        [draggable] {
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -khtml-user-drag: element;
+            -webkit-user-drag: element;
+        }
+        .uploadArea {
+            border: dashed #676465;
+            text-align: center;
+            line-height: 30px;
+            font-size: 18px;
+            margin-bottom: 20px !important;
+            cursor: pointer;
+            max-width: 130px;
+        }
+        .uploadArea.selected {
+            border: dashed #fa623f !important;
+        }
+        .uploadArea .new {
+            padding-top: 15px !important;
+        }
+        .uploadArea input[type="file"] {
+            height: 30px;
+            color: transparent;
+        }
+        .uploadArea i {
+            font-size: 25px;
+            padding-top: 15px;
+        }
+        .image-preview img {
+            padding-top: 0px !important;
+            width: 130px;
+            height: 85px;
+        }
+        .image-preview .remove {
+            text-align: right;
+            color: white;
+            position: absolute;
+            width: 130px;
+            padding-right: 7px;
+            background-color: #373435;
+            opacity: 0.4;
+            height: 25px;
+        }
+        .image-preview .remove i {
+            font-size: 22px;
+            padding: 0;
+            margin: 0;
+            opacity: 1 !important;
+        }
+        .item-box,
+        .box-drag {
+            float: left;
+            display: block;
+        }
+        .no-margin {
+            margin: 0px !important;
+        }
+        .no-padding {
+            padding: 0px !important;
+        }
+        @import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic");
+
+        .has-danger{
+            border-color: #e63757;
+        padding-right: calc(1.5em + 0.625rem);
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23e63757'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23e63757' stroke='none'/%3e%3c/svg%3e);
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.15625rem) center;
+        background-size: calc(0.75em + 0.3125rem) calc(0.75em + 0.3125rem);
+        }
+        .form-control-error {
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 75%;
+            color: #e63757;
+        }
+
+        .form-control-error ul {
+            padding: 0;
+        }
+
+        .form-control-error li {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Body content goes here -->
+</body>
+</html>

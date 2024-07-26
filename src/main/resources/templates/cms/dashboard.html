@@ -1,16 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title th:text="${title}">Home Page</title>
-    </head>
-    <body>
-        <div th:replace="~{fragments/header}"></div>
-        <div th:replace="~{fragments/sidebar}"></div>
-        <div>
-          <!-- Content will be inserted here -->
-          <h1>Welcome, <span th:text="${username}">User</span>!</h1>
-          <p>Your authorities are: <span th:text="${authorities}"></span></p>
+<head  th:replace="~{fragments/head}">
+</head>
+<body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+    <main class="main" id="top">
+        <div class="initial__loading"></div>
+        <div class="container-fluid" data-layout="container">
+            <script>
+                var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+                if (isFluid) {
+                    var container = document.querySelector('[data-layout]');
+                    container.classList.remove('container');
+                    container.classList.add('container-fluid');
+                }
+            </script>
+
+     <div th:replace="~{fragments/sidebar}"></div>
+            <div class="content">
+
+                <div th:replace="~{fragments/header}"></div>
+
+                
+              
+              
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="card h-md-100">
+                            <div class="card-header pb-0">
+                             <h6 class="mb-0 mt-2">Welcome, <span th:text="${username}">User</span>!</h6>
+                            </div>
+                        <!-- Content will be inserted here -->
+                
+                    <div class="card-body d-flex flex-column justify-content-end">
+                        <div class="row justify-content-between">
+                            <p>Your authorities are: <span th:text="${authorities}"></span></p>
+                        
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+                </div>
+        
+
+                <div th:replace="~{fragments/footer}"></div>
+                
+
+            </div>
+
         </div>
-        <div th:replace="~{fragments/footer}"></div>
-    </body>
+    </main>
+    <div th:replace="~{fragments/script}"></div>    
+</body>
+
 </html>
+
