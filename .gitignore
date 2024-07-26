@@ -63,3 +63,5 @@ nbdist/
 # Windows
 Thumbs.db
 ehthumbs.db
+
+.fake
