@@ -9,11 +9,11 @@ import com.bca.byc.security.AdminPrincipal;
 import java.util.Optional;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomAdminDetailsService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
 
-    public CustomUserDetailsService(AdminRepository adminRepository) {
+    public CustomAdminDetailsService(AdminRepository adminRepository) {
         this.adminRepository = adminRepository;
     }
 
@@ -24,6 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
         Admin admin = adminOptional.get();
+        System.out.println("User roles: " + admin.getRole().getName()); // Debug output
         return new AdminPrincipal(admin);
     }
 }
