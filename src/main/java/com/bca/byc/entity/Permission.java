@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 import jakarta.persistence.*;
+
 import java.util.Date;
 
 @Entity
@@ -25,11 +26,10 @@ public class Permission {
 
     // Constructors, getters, and setters (omitted for brevity)
 
-    // Example of constructor
     public Permission() {
     }
 
-    // Example of getters and setters
+    // Getters and setters
     public Long getId() {
         return id;
     }

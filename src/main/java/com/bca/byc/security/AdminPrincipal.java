@@ -1,29 +1,27 @@
 package com.bca.byc.security;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import com.bca.byc.entity.Admin;
-import java.util.ArrayList;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
-import java.util.List;
 
 public class AdminPrincipal implements UserDetails {
-    private static final long serialVersionUID = 1L;
-    
-    private final Admin admin;
 
-    public AdminPrincipal(Admin admin) {
+    private final Admin admin;
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    public AdminPrincipal(Admin admin, Collection<? extends GrantedAuthority> authorities) {
         this.admin = admin;
+        this.authorities = authorities;
     }
+
     public Admin getAdmin() {
         return admin;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(admin.getRole().getName())); // Extract the role name
         return authorities;
     }
 

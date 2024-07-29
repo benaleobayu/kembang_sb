@@ -1,5 +1,6 @@
 package com.bca.byc.config;
 
+import com.bca.byc.service.CustomAdminDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,12 +11,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import com.bca.byc.service.CustomAdminDetailsService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity // Use the new annotation
 public class SecurityConfig {
+
     private final CustomAdminDetailsService userDetailsService;
 
     public SecurityConfig(CustomAdminDetailsService userDetailsService) {
@@ -27,15 +28,15 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**").permitAll()
-                .requestMatchers("/cms/dashboard").authenticated() // Requires login for /cms/dashboard
-                .anyRequest().authenticated() // Ensures all other requests require authentication
+                .requestMatchers("/cms/dashboard").authenticated()
+                .anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin
-                .loginPage("/login") // Specify the custom login page URL
-                .loginProcessingUrl("/perform_login") // URL to submit the email and password
-                .defaultSuccessUrl("/cms/dashboard", true) // Redirect to dashboard on successful login
-                .failureUrl("/login?error=true") // Redirect to login page with error parameter on failure
-                .usernameParameter("email") // Set the parameter name for the email
+                .loginPage("/login")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/cms/dashboard", true)
+                .failureUrl("/login?error=true")
+                .usernameParameter("email")
                 .permitAll()
             )
             .logout(logout -> logout

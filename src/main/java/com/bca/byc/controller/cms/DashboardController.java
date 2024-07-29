@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/cms/dashboard")
 public class DashboardController {
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PreAuthorize("hasPermission(#authentication, 'VIEW_DASHBOARD')") // Use your permission name
     @GetMapping
     public String viewDashboard(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

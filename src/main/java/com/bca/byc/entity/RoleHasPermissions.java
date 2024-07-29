@@ -17,8 +17,6 @@ public class RoleHasPermissions {
     @JoinColumn(name = "permission_id", insertable = false, updatable = false)
     private Permission permission;
 
-    // Constructors (omitted for brevity)
-
     public RoleHasPermissions() {
         this.id = new RolePermissionId();
     }
