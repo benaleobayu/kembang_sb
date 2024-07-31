@@ -27,10 +27,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**").permitAll()
+                .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**","/api/register", "/api/login").permitAll()
                 .requestMatchers("/cms/dashboard").authenticated()
                 .anyRequest().authenticated()
-            )
+            ) 
+            .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/api/**") // Disable CSRF protection for API endpoints
+             )
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")
                 .loginProcessingUrl("/perform_login")

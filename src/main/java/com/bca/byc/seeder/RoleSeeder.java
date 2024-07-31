@@ -28,9 +28,9 @@ public class RoleSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Map<String, List<String>> actionsByResource = new HashMap<>();
-        actionsByResource.put("admins", Arrays.asList("viewAny", "view", "create", "update", "delete"));
-        actionsByResource.put("users", Arrays.asList("viewAny", "view", "create", "update", "delete"));
-        actionsByResource.put("roles", Arrays.asList("viewAny", "create", "update", "delete"));
+        actionsByResource.put("admins", Arrays.asList("view", "create", "update", "delete"));
+        actionsByResource.put("users", Arrays.asList("view", "create", "update", "delete"));
+        actionsByResource.put("roles", Arrays.asList("view", "create", "update", "delete"));
         actionsByResource.put("activities", Arrays.asList("viewAny", "view"));
 
         List<Permission> allPermissions = new ArrayList<>();

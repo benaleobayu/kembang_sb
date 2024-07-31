@@ -32,7 +32,7 @@
                             </h5>
                             <div class="d-flex">
                            
-                                    <a th:href="@{|/admin/${resourceName}/create|}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Create">
+                                    <a th:href="@{|/cms/${resourceName}/create|}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Create">
                                         <i class="fas fa-plus"></i>
                                     </a>
                       
@@ -71,26 +71,34 @@
     <script th:src="@{/assets/scripts/table-ajax.js}"></script>
     <script>
         (function ($) {
-            $(function () {
-                var urlTables = '[[@{/admin/{resourceName}/datatables}(resourceName=${resourceName})]]';
-                TableAjax.initWithAction('#table_datatables', urlTables , {
+            $(document).ready(function () {
+                TableAjax.initWithAction('#table_datatables', "", {
                     columnDefs: [
                         { responsivePriority: 1, targets: 0 },
-                        { responsivePriority: 10001, targets: 2 },
-                        { responsivePriority: 10002, targets: 3 }
+                        { responsivePriority: 10001, targets: 1 },
+                        { responsivePriority: 10002, targets: 5 },
+                        { responsivePriority: 10003, targets: 3 },
+                        { responsivePriority: 10004, targets: 4 },
+                        { responsivePriority: 10005, targets: 2 },
+                        { responsivePriority: 10006, targets: 6 },
+                        { responsivePriority: 10007, targets: 7 }
                     ],
                     columns: [
-                        {data: 'id', name: 'id', searchable: false},
-                        {data: 'name', name: 'name'},
-                        {data: 'guard_name', name: 'guard_name', sClass: 'text-center'},
-                        {data: 'updated_at', name: 'updated_at', searchable: false, sClass: 'text-right'},
-                        {data: 'actions', searchable: false, orderable: false, sClass: 'text-center'}
+                        { data: 'id', name: 'id', searchable: false },
+                        { data: 'user', name: 'userable.email', orderable: false },
+                        { data: 'ip_address', name: 'ip_address' },
+                        { data: 'browser', name: 'browser' },
+                        { data: 'platform', name: 'platform', sClass: 'text-center' },
+                        { data: 'action', name: 'action', sClass: 'text-center' },
+                        { data: 'model', name: 'model', sClass: 'text-center', searchable: false, orderable: false },
+                        { data: 'created_at', name: 'created_at', searchable: false, sClass: 'text-right' },
+                        { data: 'actions', searchable: false, orderable: false, sClass: 'text-center' }
                     ],
-                    order: [[3, 'desc']]
-                }, 'Privilege');
-            })
-        })(jQuery)
+                }, 'Activity Detail');
+            });
+        })(jQuery);
     </script>
+    
 </body>
 
 </html>
