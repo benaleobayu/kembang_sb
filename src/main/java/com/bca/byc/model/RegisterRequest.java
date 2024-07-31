@@ -18,10 +18,6 @@ public class RegisterRequest {
     @UniqueEmail // Custom annotation for unique email validation
     private String email;
 
-    @NotBlank(message = "Username is mandatory")
-    @Size(max = 255, message = "Username must be less than 255 characters")
-    private String username;
-
     @NotBlank(message = "Phone is mandatory")
     @Size(max = 16, message = "Phone number must be less than 16 characters")
     private String phone;
@@ -36,7 +32,6 @@ public class RegisterRequest {
     public RegisterRequest(String name, String email, String username, String phone, String password) {
         this.name = name;
         this.email = email;
-        this.username = username;
         this.phone = phone;
         this.password = password;
     }
@@ -58,15 +53,6 @@ public class RegisterRequest {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPhone() {
         return phone;
     }

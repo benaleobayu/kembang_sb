@@ -34,7 +34,6 @@ public class UserService {
         User user = new User();
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
-        user.setUsername(registerRequest.getUsername());
         user.setPhone(registerRequest.getPhone());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setType(UserType.MEMBER); // Default value

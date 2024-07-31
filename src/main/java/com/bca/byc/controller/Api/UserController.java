@@ -1,12 +1,16 @@
 package com.bca.byc.controller.Api;
 
+import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.repository.UserRepository;
+import com.bca.byc.response.ApiResponse;
 import com.bca.byc.model.AuthenticationRequest;
 import com.bca.byc.model.AuthenticationResponse;
 import com.bca.byc.model.OtpRequest;
-import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.service.EmailService;
 import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,13 +18,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -30,25 +35,30 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private EmailService emailService;
-    private static final Logger logger = LogManager.getLogger(UserController.class);
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        logger.debug("Register request received: {}", registerRequest);
+     @PostMapping("/register")
+    public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        logger.debug("Register request received: {}", registerRequest.getEmail());
 
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            logger.error("User registration failed: Email {} already exists", registerRequest.getEmail());
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
+        }
         try {
             userService.saveUser(registerRequest);
             logger.info("User registered successfully: {}", registerRequest.getEmail());
-            return ResponseEntity.ok("User registered successfully. OTP sent to email.");
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. OTP sent to email."));
         } catch (Exception e) {
             logger.error("User registration failed for email {}: {}", registerRequest.getEmail(), e.getMessage());
-            return ResponseEntity.badRequest().body("User registration failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
         }
     }
 

@@ -18,9 +18,6 @@ public class User {
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "username", length = 255, nullable = false, unique = true)
-    private String username;
-
     @Column(name = "phone", length = 16)
     private String phone;
 
@@ -62,7 +59,6 @@ public class User {
     public User(String name, String email, String username, String phone, String password, String lastToken, UserType type, Boolean status, LocalDateTime verifiedAt) {
         this.name = name;
         this.email = email;
-        this.username = username;
         this.phone = phone;
         this.password = password;
         this.lastToken = lastToken;
@@ -97,13 +93,6 @@ public class User {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getPhone() {
         return phone;

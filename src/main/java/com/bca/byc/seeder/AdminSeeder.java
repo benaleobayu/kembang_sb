@@ -6,12 +6,14 @@ import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@Order(2)
 public class AdminSeeder implements CommandLineRunner {
 
     @Autowired
