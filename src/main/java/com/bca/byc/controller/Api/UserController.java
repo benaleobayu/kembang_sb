@@ -1,25 +1,23 @@
 package com.bca.byc.controller.Api;
 
+import com.bca.byc.model.AuthenticationRequest;
+import com.bca.byc.model.OtpRequest;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.model.AuthenticationRequest;
-import com.bca.byc.model.OtpRequest;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.EmailService;
 import com.bca.byc.service.UserService;
+import com.bca.byc.service.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
 
@@ -33,11 +31,10 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier("userDetailsServiceImpl")
-    private UserDetailsService userDetailsService;
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private UserRepository userRepository;
@@ -48,9 +45,6 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         logger.debug("Register request received: {}", registerRequest.getEmail());
@@ -60,7 +54,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
         }
         try {
-            registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword())); // Encode the password
             userService.saveUser(registerRequest);
             logger.info("User registered successfully: {}", registerRequest.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. OTP sent to email."));
@@ -99,7 +92,7 @@ public class UserController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect username or password", null, null, 0));
+            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null, null, 0));
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());

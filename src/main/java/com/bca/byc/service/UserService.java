@@ -30,6 +30,8 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+
+    
     public void saveUser(RegisterRequest registerRequest) throws Exception {
         User user = new User();
         user.setName(registerRequest.getName());

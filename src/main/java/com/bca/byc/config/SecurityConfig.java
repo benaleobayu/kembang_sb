@@ -1,11 +1,10 @@
 package com.bca.byc.config;
 
-import com.bca.byc.service.CustomAdminDetailsService;
-import com.bca.byc.service.UserDetailsServiceImpl;
+import com.bca.byc.security.CustomAuthenticationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,12 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final CustomAdminDetailsService adminDetailsService;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomAuthenticationManager customAuthenticationManager;
 
-    public SecurityConfig(CustomAdminDetailsService adminDetailsService, UserDetailsServiceImpl userDetailsService) {
-        this.adminDetailsService = adminDetailsService;
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(@Lazy CustomAuthenticationManager customAuthenticationManager) {
+        this.customAuthenticationManager = customAuthenticationManager;
     }
 
     @Bean
@@ -60,11 +57,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.userDetailsService(adminDetailsService).passwordEncoder(passwordEncoder());
-        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        return authBuilder.build();
+    public AuthenticationManager authenticationManager() {
+        return customAuthenticationManager;
     }
 
     @Bean
