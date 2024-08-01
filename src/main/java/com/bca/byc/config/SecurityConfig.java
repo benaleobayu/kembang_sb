@@ -1,6 +1,7 @@
 package com.bca.byc.config;
 
 import com.bca.byc.service.CustomAdminDetailsService;
+import com.bca.byc.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,12 +15,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Use the new annotation
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final CustomAdminDetailsService userDetailsService;
+    private final CustomAdminDetailsService adminDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public SecurityConfig(CustomAdminDetailsService userDetailsService) {
+    public SecurityConfig(CustomAdminDetailsService adminDetailsService, UserDetailsServiceImpl userDetailsService) {
+        this.adminDetailsService = adminDetailsService;
         this.userDetailsService = userDetailsService;
     }
 
@@ -27,13 +30,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**","/api/register", "/api/login").permitAll()
+                .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login").permitAll()
                 .requestMatchers("/cms/dashboard").authenticated()
                 .anyRequest().authenticated()
-            ) 
+            )
             .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/api/**") // Disable CSRF protection for API endpoints
-             )
+                .ignoringRequestMatchers("/api/**")
+            )
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")
                 .loginProcessingUrl("/perform_login")
@@ -48,7 +51,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            .sessionManagement(sessionManagement -> 
+            .sessionManagement(sessionManagement ->
                 sessionManagement
                     .sessionFixation().migrateSession()
             );
@@ -58,11 +61,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                   .userDetailsService(userDetailsService)
-                   .passwordEncoder(passwordEncoder())
-                   .and()
-                   .build();
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.userDetailsService(adminDetailsService).passwordEncoder(passwordEncoder());
+        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return authBuilder.build();
     }
 
     @Bean

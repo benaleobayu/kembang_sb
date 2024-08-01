@@ -47,7 +47,7 @@ public class UserService {
 
     private void generateAndSendOtp(User user) throws MessagingException {
         String otpCode = OtpUtil.generateOtp();
-        LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(10); // OTP valid for 10 minutes
+        LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(30); // OTP valid for 10 minutes
 
         Otp otp = new Otp(user, otpCode, expiryDate, true);
         otpRepository.save(otp);
@@ -73,5 +73,19 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public void resendOtp(String email) throws MessagingException {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // Invalidate previous OTPs
+            otpRepository.invalidateOtpsForUser(user);
+
+            // Generate and send new OTP
+            generateAndSendOtp(user);
+        } else {
+            throw new MessagingException("User not found with email: " + email);
+        }
     }
 }
