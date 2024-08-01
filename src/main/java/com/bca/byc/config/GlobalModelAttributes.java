@@ -24,6 +24,7 @@ public class GlobalModelAttributes {
             model.addAttribute("admin", adminPrincipal.getAdmin());
             model.addAttribute("dashboardUrl", baseUrl + routePrefix + "/dashboard");
             model.addAttribute("auditTrailurl", baseUrl + routePrefix + "/report/audit-trail");
+            model.addAttribute("swaggerUrl", baseUrl  + "swagger-ui/index.html");
             model.addAttribute("adminsUrl", baseUrl + routePrefix + "/admins");
             model.addAttribute("rolesUrl", baseUrl + routePrefix + "/roles");
         }

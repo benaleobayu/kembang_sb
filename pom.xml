@@ -13,6 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Staging</name>
 	<description>BCA BYC</description>
+    <packaging>jar</packaging>
 	<url/>
 	<licenses>
 		<license/>
@@ -69,12 +70,6 @@
         <artifactId>javax.annotation-api</artifactId>
         <version>1.3.2</version>
     </dependency>
-    <dependency>
-        <groupId>javax.annotation</groupId>
-        <artifactId>javax.annotation-api</artifactId>
-        <version>1.3.2</version>
-    </dependency>
-
     <dependency>
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-api</artifactId>
