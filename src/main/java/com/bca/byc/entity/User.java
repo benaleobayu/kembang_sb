@@ -1,8 +1,13 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.validation.PhoneNumberValidation;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -12,14 +17,42 @@ public class User {
     @Column(columnDefinition = "bigint")
     private Long id;
 
-    @Column(name = "name", length = 50)
+    @Column(name="user_parent", length = 50, nullable = false)
+    private String userParent;
+
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
 
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
 
+    @PhoneNumberValidation
     @Column(name = "phone", length = 16)
     private String phone;
+
+    @Column(name = "bank_account", length = 20)
+    private String bankAccount;
+
+    @Column(name = "education", length = 50)
+    private String education;
+
+    @Column(name = "business_name", length = 50)
+    private String businessName;
+
+    @Column(name = "cin", length = 20)
+    private String cin;
+
+    @Lob
+    @Column(name = "biodata", columnDefinition = "text")
+    private String biodata;
+
+//    private MyBusiness  business;
+
+//    private MyInterest interest;
+
+//    private Kanwil kanwil_id;
+
+    private String rank;
 
     @Column(name = "password", length = 100)
     private String password;
@@ -33,6 +66,12 @@ public class User {
 
     @Column(name = "status", nullable = false, columnDefinition = "boolean default false")
     private Boolean status = false;
+
+    @Column(name = "isSuspend", nullable = false, columnDefinition = "boolean default false")
+    private Boolean isSuspend = false;
+
+    @Column(name = "isDeleted", nullable = false, columnDefinition = "boolean default false")
+    private Boolean isDeleted = false;
 
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
@@ -53,100 +92,4 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
-    public User() {
-    }
-
-    public User(String name, String email, String username, String phone, String password, String lastToken, UserType type, Boolean status, LocalDateTime verifiedAt) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
-        this.lastToken = lastToken;
-        this.type = type;
-        this.status = status;
-        this.verifiedAt = verifiedAt;
-    }
-
-    // Getters and Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getLastToken() {
-        return lastToken;
-    }
-
-    public void setLastToken(String lastToken) {
-        this.lastToken = lastToken;
-    }
-
-    public UserType getType() {
-        return type;
-    }
-
-    public void setType(UserType type) {
-        this.type = type;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getVerifiedAt() {
-        return verifiedAt;
-    }
-
-    public void setVerifiedAt(LocalDateTime verifiedAt) {
-        this.verifiedAt = verifiedAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
 }
