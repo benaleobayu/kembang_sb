@@ -1,5 +1,6 @@
 package com.bca.byc.controller.Api;
 
+import com.bca.byc.entity.User;
 import com.bca.byc.model.AuthenticationRequest;
 import com.bca.byc.model.OtpRequest;
 import com.bca.byc.model.RegisterRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,7 +39,7 @@ public class UserController {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -49,7 +51,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         logger.debug("Register request received: {}", registerRequest.getEmail());
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+        if (repository.existsByEmail(registerRequest.getEmail())) {
             logger.error("User registration failed: Email {} already exists", registerRequest.getEmail());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
         }
@@ -101,4 +103,10 @@ public class UserController {
 
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
     }
+
+    @GetMapping("/users")
+    public List<User> getUsers(){
+        return repository.findAll();
+    }
+
 }
