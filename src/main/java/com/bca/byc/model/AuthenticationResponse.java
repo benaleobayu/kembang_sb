@@ -1,5 +1,11 @@
 package com.bca.byc.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Data
 public class AuthenticationResponse {
     private String jwt;
 
@@ -12,11 +18,4 @@ public class AuthenticationResponse {
 
     // Getter
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
 }

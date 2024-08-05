@@ -1,12 +1,22 @@
 package com.bca.byc.model;
 
 import com.bca.byc.validation.UniqueEmail;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Data
+@AllArgsConstructor
 public class RegisterRequest {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name must be less than 50 characters")
@@ -26,46 +36,8 @@ public class RegisterRequest {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    public RegisterRequest() {
-    }
 
-    public RegisterRequest(String name, String email, String username, String phone, String password) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
-    }
 
     // Getters and Setters
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

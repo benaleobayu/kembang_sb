@@ -8,6 +8,8 @@ import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.util.OtpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
 
     @Autowired
     private OtpRepository otpRepository;
@@ -30,8 +32,6 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
-
-    
     public void saveUser(RegisterRequest registerRequest) throws Exception {
         User user = new User();
         user.setName(registerRequest.getName());
@@ -41,7 +41,7 @@ public class UserService {
         user.setType(UserType.MEMBER); // Default value
         user.setStatus(false); // Default value
 
-        userRepository.save(user);
+        repository.save(user);
 
         // Generate and send OTP
         generateAndSendOtp(user);
@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public boolean validateOtp(String email, String otpCode) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional = repository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             Optional<Otp> otpOptional = otpRepository.findByUserAndOtpAndValidIsTrue(user, otpCode);
@@ -69,7 +69,7 @@ public class UserService {
                     otp.setValid(false); // Mark OTP as used
                     otpRepository.save(otp);
                     user.setStatus(true); // Enable the user
-                    userRepository.save(user);
+                    repository.save(user);
                     return true;
                 }
             }
@@ -78,7 +78,7 @@ public class UserService {
     }
 
     public void resendOtp(String email) throws MessagingException {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional = repository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             // Invalidate previous OTPs
@@ -90,4 +90,6 @@ public class UserService {
             throw new MessagingException("User not found with email: " + email);
         }
     }
+
+
 }
