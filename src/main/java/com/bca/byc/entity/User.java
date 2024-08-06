@@ -4,10 +4,13 @@ import com.bca.byc.validation.PhoneNumberValidation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -17,7 +20,7 @@ public class User {
     @Column(columnDefinition = "bigint")
     private Long id;
 
-    @Column(name="user_parent", length = 50, nullable = false)
+    @Column(name = "user_parent", length = 50)
     private String userParent;
 
     @Column(name = "name", length = 50, nullable = false)
@@ -42,7 +45,6 @@ public class User {
     @Column(name = "cin", length = 20)
     private String cin;
 
-    @Lob
     @Column(name = "biodata", columnDefinition = "text")
     private String biodata;
 
@@ -64,13 +66,14 @@ public class User {
     @Column(name = "type", nullable = false, columnDefinition = "varchar(255) default 'member'")
     private UserType type = UserType.MEMBER;
 
-    @Column(name = "status", nullable = false, columnDefinition = "boolean default false")
-    private Boolean status = false;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status", nullable = false, columnDefinition = "int default 0")
+    private StatusType status = StatusType.PENDING;
 
-    @Column(name = "isSuspend", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_suspend", nullable = false, columnDefinition = "boolean default false")
     private Boolean isSuspend = false;
 
-    @Column(name = "isDeleted", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
     @Column(name = "verified_at")
