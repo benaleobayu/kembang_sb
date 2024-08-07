@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  th:replace="~{fragments/head}">
+</head>
+<body>
+
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+<main class="main" id="top">
+    <div class="initial__loading"></div>
+    <div class="container-fluid" data-layout="container">
+        <script>
+            var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+            if (isFluid) {
+                var container = document.querySelector('[data-layout]');
+                container.classList.remove('container');
+                container.classList.add('container-fluid');
+            }
+        </script>
+
+        <div th:replace="~{fragments/sidebar}"></div>
+        <div class="content">
+
+            <div th:replace="~{fragments/header}"></div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5>
+                            <strong th:text="${title} + ' Table'"></strong>
+                        </h5>
+                        <div class="d-flex">
+
+                            <a th:href="@{|/cms/${resourceName}/create|}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Create">
+                                <i class="fas fa-plus"></i>
+                            </a>
+
+                            <button type="button" id="btn_refresh" class="btn btn-primary" style="margin-left: 10px;" data-toggle="tooltip" data-placement="bottom" title="Refresh">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 table-responsive">
+                            <table class="table table-hover nowrap" id="table_datatables">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fullname</th>
+                                    <th>Email</th>
+                                    <th>Created At</th>
+                                    <th>CIN</th>
+                                    <th>BCA Account Number</th>
+                                    <th>Phone Number</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="data : ${users}">
+                                    <td th:text="${data.id}"></td>
+                                    <td th:text="${data.name}"></td>
+                                    <td th:text="${data.email}"></td>
+                                    <td th:text="${data.createdAt}"></td>
+                                    <td th:text="${data.cin}"></td>
+                                    <td th:text="${data.bankAccount}"></td>
+                                    <td th:text="${data.phone}"></td>
+                                    <td th:text="${data.status}"></td>
+                                    <td>
+                                        <a th:href="@{|/cms/${resourceName}/update/${data.id}|}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a th:href="@{|/cms/${resourceName}/delete/${data.id}|}" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:replace="~{fragments/footer}"></div>
+
+
+        </div>
+
+    </div>
+</main>
+<div th:replace="~{fragments/script}"></div>
+<script th:src="@{/assets/scripts/table-ajax.js}"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            TableAjax.initWithAction('#table_datatables', "", {
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 10001, targets: 1 },
+                    { responsivePriority: 10002, targets: 5 },
+                    { responsivePriority: 10003, targets: 3 },
+                    { responsivePriority: 10004, targets: 4 },
+                    { responsivePriority: 10005, targets: 2 },
+                    { responsivePriority: 10006, targets: 6 },
+                    { responsivePriority: 10007, targets: 7 }
+                ],
+                columns: [
+                    { data: 'id', name: 'id', searchable: false },
+                    { data: 'user', name: 'userable.email', orderable: false },
+                    { data: 'ip_address', name: 'ip_address' },
+                    { data: 'browser', name: 'browser' },
+                    { data: 'platform', name: 'platform', sClass: 'text-center' },
+                    { data: 'action', name: 'action', sClass: 'text-center' },
+                    { data: 'model', name: 'model', sClass: 'text-center', searchable: false, orderable: false },
+                    { data: 'created_at', name: 'created_at', searchable: false, sClass: 'text-right' },
+                    { data: 'actions', searchable: false, orderable: false, sClass: 'text-center' }
+                ],
+            }, 'Activity Detail');
+        });
+    })(jQuery);
+</script>
+
+</body>
+
+</html>
+
