@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,8 +22,6 @@ public class User {
     @Column(columnDefinition = "bigint")
     private Long id;
 
-    @Column(name = "parent_name", length = 50)
-    private String parentName;
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
@@ -34,8 +33,19 @@ public class User {
     @Column(name = "phone", length = 16)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, columnDefinition = "varchar(255) default 'member'")
+    private UserType type = UserType.MEMBER;
+
     @Column(name = "bank_account", length = 20)
     private String bankAccount;
+
+    @Column(name = "cin", length = 20)
+    private String cin;
+
+    @Column(name = "birthdate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthdate;
 
     @Column(name = "education", length = 50)
     private String education;
@@ -43,11 +53,12 @@ public class User {
     @Column(name = "business_name", length = 50)
     private String businessName;
 
-    @Column(name = "cin", length = 20)
-    private String cin;
-
     @Column(name = "biodata", columnDefinition = "text")
     private String biodata;
+
+    @Column(name = "parent_name", length = 50)
+    private String parentName;
+
 
 //    private MyBusiness  business;
 
@@ -63,10 +74,6 @@ public class User {
     @Column(name = "last_token", columnDefinition = "text")
     private String lastToken;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, columnDefinition = "varchar(255) default 'member'")
-    private UserType type = UserType.MEMBER;
-
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status", nullable = false, columnDefinition = "int default 0")
     private StatusType status = StatusType.PENDING;
@@ -80,7 +87,6 @@ public class User {
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy HH:mm")
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
