@@ -1,6 +1,5 @@
 package com.bca.byc.controller.Api;
 
-import com.bca.byc.entity.User;
 import com.bca.byc.model.AuthenticationRequest;
 import com.bca.byc.model.OtpRequest;
 import com.bca.byc.model.RegisterRequest;
@@ -9,7 +8,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.EmailService;
 import com.bca.byc.service.UserService;
-import com.bca.byc.service.UserDetailsServiceImpl;
+import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")

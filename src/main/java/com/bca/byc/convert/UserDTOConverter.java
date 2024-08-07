@@ -1,8 +1,8 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.User;
-import com.bca.byc.model.user.UserDetailResponse;
-import com.bca.byc.model.user.UserUpdateRequest;
+import com.bca.byc.model.api.UserDetailResponse;
+import com.bca.byc.model.api.UserUpdateRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.convert.RegisterDTOConverter;
 import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.Otp;
 import com.bca.byc.entity.StatusType;
@@ -7,9 +8,9 @@ import com.bca.byc.entity.User;
 import com.bca.byc.entity.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RegisterRequest;
-import com.bca.byc.model.user.UserDetailResponse;
-import com.bca.byc.model.user.UserUpdatePasswordRequest;
-import com.bca.byc.model.user.UserUpdateRequest;
+import com.bca.byc.model.api.UserDetailResponse;
+import com.bca.byc.model.api.UserUpdatePasswordRequest;
+import com.bca.byc.model.api.UserUpdateRequest;
 import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.service.EmailService;
@@ -52,6 +53,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDTOConverter userDTOConverter;
 
+    @Autowired
+    private RegisterDTOConverter registerDTOConverter;
+
 
     @Override
     public boolean existsById(Long Id) {
@@ -73,19 +77,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(RegisterRequest registerRequest) throws Exception {
-        User user = new User();
-        user.setName(registerRequest.getName());
-        user.setEmail(registerRequest.getEmail());
-        user.setPhone(registerRequest.getPhone());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setType(UserType.MEMBER); // Default value
-        user.setStatus(StatusType.PENDING); // Default value
+    public void saveUser(RegisterRequest dto) throws Exception {
+        User user = registerDTOConverter.convertToUser(dto);
 
+        // save
         repository.save(user);
 
         // Generate and send OTP
-        generateAndSendOtp(user);
+//        generateAndSendOtp(user);
     }
 
     @Transactional
@@ -178,9 +177,7 @@ public class UserServiceImpl implements UserService {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new BadRequestException("User not found bro"));
         // update
-
         userDTOConverter.convertToUpdateUser(dto);
-
 
         // save
         repository.save(user);

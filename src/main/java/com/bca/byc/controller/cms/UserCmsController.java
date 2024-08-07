@@ -2,34 +2,32 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.User;
-import com.bca.byc.model.user.UserDetailResponse;
+import com.bca.byc.service.UserCmsService;
 import com.bca.byc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cms/users")
 public class UserCmsController {
 
-    private UserDTOConverter userDTOConverter;
-
     private static final String resourceName = "users";
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserCmsService userCmsService;
 
     @PreAuthorize("hasPermission(#authentication, 'users.view')") // Use your permission name
     @GetMapping
@@ -43,34 +41,36 @@ public class UserCmsController {
         return "cms/users/index"; // Ensure you have a Thymeleaf template named index.html under users directory
     }
 //
-//    @PreAuthorize("hasPermission(#authentication, 'users.view')")
-//    @GetMapping("/all")
-//    @ResponseBody
-//    public Map<String, Object> getAllUsers(@RequestParam int draw, @RequestParam int start, @RequestParam int length) {
-//        int page = start / length;
-//        Pageable pageable = PageRequest.of(page, length);
-//        Page<User> userPage = userService.getUserPagination(pageable);
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("draw", draw);
-//        response.put("recordsTotal", userPage.getTotalElements());
-//        response.put("recordsFiltered", userPage.getTotalElements());
-//        response.put("data", userPage.getContent());
-//        return response;
-//    }
-//
-//    @PreAuthorize("hasPermission(#authentication, 'users.create')") // Use your permission name
-//    @GetMapping("/create")
-//    public String showCreateForm(Model model) {
-//        model.addAttribute("user", new User());
-//        return "cms/users/create"; // Ensure you have a Thymeleaf template named create.html under users directory
-//    }
-//
-//    @PreAuthorize("hasPermission(#authentication, 'users.create')") // Use your permission name
-//    @PostMapping
-//    public String createUser(@ModelAttribute User user) {
-//        userService.createUser(user);
-//        return "redirect:/cms/users";
-//    }
+    @PreAuthorize("hasPermission(#authentication, 'users.view')")
+    @GetMapping("/all")
+    @ResponseBody
+    public Map<String, Object> getAllUsers(@RequestParam int draw, @RequestParam int start, @RequestParam int length) {
+        int page = start / length;
+        Pageable pageable = PageRequest.of(page, length);
+        Page<User> userPage = userCmsService.getRolePagination(pageable);
+        Map<String, Object> response = new HashMap<>();
+        response.put("draw", draw);
+        response.put("recordsTotal", userPage.getTotalElements());
+        response.put("recordsFiltered", userPage.getTotalElements());
+        response.put("data", userPage.getContent());
+        return response;
+    }
+
+    @PreAuthorize("hasPermission(#authentication, 'users.create')") // Use your permission name
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("title", "Create Users");
+
+        return "cms/users/create"; // Ensure you have a Thymeleaf template named create.html under users directory
+    }
+
+    @PreAuthorize("hasPermission(#authentication, 'users.create')") // Use your permission name
+    @PostMapping
+    public String createUser(@ModelAttribute User user) {
+        userCmsService.createUser(user);
+        return "redirect:/cms/users";
+    }
 //
 //    @PreAuthorize("hasPermission(#authentication, 'users.update')") // Use your permission name
 //    @GetMapping("/edit/{id}")

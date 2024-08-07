@@ -1,8 +1,8 @@
 package com.bca.byc.controller.Api;
 
 import com.bca.byc.entity.User;
-import com.bca.byc.model.user.UserUpdatePasswordRequest;
-import com.bca.byc.model.user.UserUpdateRequest;
+import com.bca.byc.model.api.UserUpdatePasswordRequest;
+import com.bca.byc.model.api.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @Tag(name = "User API", description = "User API")
-@RequestMapping("/api/test/user")
+@RequestMapping("/api/v1/user")
 public class UserExtraController {
 
     @Autowired

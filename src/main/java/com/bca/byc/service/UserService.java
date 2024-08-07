@@ -2,9 +2,9 @@ package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
 import com.bca.byc.model.RegisterRequest;
-import com.bca.byc.model.user.UserDetailResponse;
-import com.bca.byc.model.user.UserUpdatePasswordRequest;
-import com.bca.byc.model.user.UserUpdateRequest;
+import com.bca.byc.model.api.UserDetailResponse;
+import com.bca.byc.model.api.UserUpdatePasswordRequest;
+import com.bca.byc.model.api.UserUpdateRequest;
 import jakarta.mail.MessagingException;
 
 import java.util.List;

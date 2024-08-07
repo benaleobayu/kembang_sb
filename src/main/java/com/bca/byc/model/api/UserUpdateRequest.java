@@ -1,4 +1,4 @@
-package com.bca.byc.model.user;
+package com.bca.byc.model.api;
 
 
 import com.bca.byc.validation.PhoneNumberValidation;
