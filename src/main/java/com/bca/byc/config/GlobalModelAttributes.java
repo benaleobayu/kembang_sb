@@ -27,6 +27,8 @@ public class GlobalModelAttributes {
             model.addAttribute("swaggerUrl", baseUrl  + "swagger-ui/index.html");
             model.addAttribute("adminsUrl", baseUrl + routePrefix + "/admins");
             model.addAttribute("rolesUrl", baseUrl + routePrefix + "/roles");
+            model.addAttribute("usersUrl", baseUrl + routePrefix + "/users");
+            model.addAttribute("locationsUrl", baseUrl + routePrefix + "/admin/locations");
         }
     }
 

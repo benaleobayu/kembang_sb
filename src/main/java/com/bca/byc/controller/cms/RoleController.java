@@ -1,24 +1,16 @@
 package com.bca.byc.controller.cms;
 
 import com.bca.byc.entity.Role;
-import com.bca.byc.model.LocationCreate;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.LocationService;
 import com.bca.byc.service.RoleService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

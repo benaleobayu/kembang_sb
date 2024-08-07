@@ -1,6 +1,6 @@
 package com.bca.byc.security;
 
-import com.bca.byc.service.UserDetailsServiceImpl;
+import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
