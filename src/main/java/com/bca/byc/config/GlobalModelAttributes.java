@@ -4,7 +4,6 @@ import com.bca.byc.security.AdminPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,8 +26,6 @@ public class GlobalModelAttributes {
             model.addAttribute("swaggerUrl", baseUrl  + "swagger-ui/index.html");
             model.addAttribute("adminsUrl", baseUrl + routePrefix + "/admins");
             model.addAttribute("rolesUrl", baseUrl + routePrefix + "/roles");
-            model.addAttribute("usersUrl", baseUrl + routePrefix + "/users");
-            model.addAttribute("locationsUrl", baseUrl + routePrefix + "/admin/locations");
         }
     }
 

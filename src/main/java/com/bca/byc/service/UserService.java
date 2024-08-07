@@ -3,33 +3,36 @@ package com.bca.byc.service;
 import com.bca.byc.entity.User;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
+import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.api.UserUpdatePasswordRequest;
 import com.bca.byc.model.api.UserUpdateRequest;
 import jakarta.mail.MessagingException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface UserService {
 
+    boolean existsById(Long userId);
 
-    boolean existsById(Long id);
+    UserDetailResponse findUserById(Long userId);
 
-    boolean validateOtp(String email, String otpCode);
+    List<UserDetailResponse> findAllUsers();
 
-    void generateAndSendOtp(User user) throws MessagingException;
+    void setNewPassword(Long userId, UserSetPasswordRequest dto);
 
-    void resendOtp(String email) throws MessagingException;
+    void changePassword(Long userId, UserUpdatePasswordRequest dto);
 
+    // auth
 
-    List<User> findAllUsers(int pageable);
-
-    UserDetailResponse getUserDetail(Long userId);
-
-    void saveUser(RegisterRequest registerRequest) throws Exception;
+    void saveUser(RegisterRequest dto) throws Exception;
 
     void updateUser(Long userId, UserUpdateRequest dto);
 
-    void updateUserPassword(Long userId, UserUpdatePasswordRequest dto);
+    void generateAndSendOtp(User user) throws MessagingException;
 
+    boolean validateOtp(String email, String otpCode);
 
+    void resendOtp(String email) throws MessagingException;
 }

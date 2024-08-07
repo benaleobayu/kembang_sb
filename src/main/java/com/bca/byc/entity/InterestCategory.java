@@ -7,25 +7,25 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "interests")
-public class Interest {
+@Table(name = "interest_categories")
+public class InterestCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @Column(name = "orders", columnDefinition = "int default 1")
-    private Integer order;
+    private Integer orders;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status;
@@ -45,5 +45,4 @@ public class Interest {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }

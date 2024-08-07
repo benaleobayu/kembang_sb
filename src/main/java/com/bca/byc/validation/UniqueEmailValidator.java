@@ -1,9 +1,10 @@
 package com.bca.byc.validation;
 
+import com.bca.byc.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.bca.byc.repository.UserRepository;
 
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 

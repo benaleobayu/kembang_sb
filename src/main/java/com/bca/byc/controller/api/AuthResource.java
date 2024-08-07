@@ -1,64 +1,60 @@
-package com.bca.byc.controller.Api;
+package com.bca.byc.controller.api;
 
-import com.bca.byc.model.AuthenticationRequest;
-import com.bca.byc.model.OtpRequest;
 import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.model.auth.AuthenticationRequest;
+import com.bca.byc.model.auth.OtpRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.EmailService;
+import com.bca.byc.service.UserDetailsServiceImpl;
 import com.bca.byc.service.UserService;
-import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+@Tag(name = "Auth API")
+@AllArgsConstructor
+public class AuthResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
     private UserRepository repository;
 
-    @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired
     private EmailService emailService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        logger.debug("Register request received: {}", registerRequest.getEmail());
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody RegisterRequest dto) {
+        log.debug("Register request received: {}", dto.getEmail());
 
-        if (repository.existsByEmail(registerRequest.getEmail())) {
-            logger.error("User registration failed: Email {} already exists", registerRequest.getEmail());
+        if (repository.existsByEmail(dto.getEmail())) {
+            log.error("User registration failed: Email {} already exists", dto.getEmail());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
         }
         try {
-            userService.saveUser(registerRequest);
-            logger.info("User registered successfully: {}", registerRequest.getEmail());
+            userService.saveUser(dto);
+            log.info("User registered successfully: {}", dto.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. OTP sent to email."));
         } catch (Exception e) {
-            logger.error("User registration failed for email {}: {}", registerRequest.getEmail(), e.getMessage());
+            log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
         }
     }
@@ -77,10 +73,10 @@ public class UserController {
     public ResponseEntity<ApiResponse> resendOtp(@RequestBody OtpRequest otpRequest) {
         try {
             userService.resendOtp(otpRequest.getEmail());
-            logger.info("OTP resent successfully: {}", otpRequest.getEmail());
+            log.info("OTP resent successfully: {}", otpRequest.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "OTP resent successfully."));
         } catch (Exception e) {
-            logger.error("Failed to resend OTP for email {}: {}", otpRequest.getEmail(), e.getMessage());
+            log.error("Failed to resend OTP for email {}: {}", otpRequest.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to resend OTP: " + e.getMessage()));
         }
     }

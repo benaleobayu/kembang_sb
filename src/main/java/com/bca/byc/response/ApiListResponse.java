@@ -8,9 +8,8 @@ import lombok.Data;
 @Data
 public class ApiListResponse {
 
-    private String status;
-
+    private boolean success;
     private String message;
-
     private Object data;
+
 }

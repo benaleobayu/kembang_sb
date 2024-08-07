@@ -1,11 +1,14 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.User;
+import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserUpdateRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.validation.Valid;
 
 @Component
 public class UserDTOConverter {
@@ -13,19 +16,25 @@ public class UserDTOConverter {
     @Autowired
     private ModelMapper modelMapper;
 
-    public UserDetailResponse convertToDTO(User user){
+    // for get data
+    public UserDetailResponse convertToListResponse(User user){
+
         UserDetailResponse dto = modelMapper.map(user, UserDetailResponse.class);
 
         return dto;
     }
 
-    public User converToUser(UserDetailResponse dto) {
+    // for create data
+    public User convertToCreateRequest(@Valid RegisterRequest dto) {
+
         User user = modelMapper.map(dto, User.class);
 
         return user;
     }
 
-    public User convertToUpdateUser(UserUpdateRequest dto){
+    // for update data
+    public User convertToUpdateRequest(UserUpdateRequest dto){
+
         User user = modelMapper.map(dto, User.class);
 
         return user;

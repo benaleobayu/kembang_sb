@@ -1,7 +1,7 @@
 package com.bca.byc.security;
 
 import com.bca.byc.service.CustomAdminDetailsService;
-import com.bca.byc.service.impl.UserDetailsServiceImpl;
+import com.bca.byc.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,4 +1,4 @@
-package com.bca.byc.service.impl;
+package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
 import com.bca.byc.repository.UserRepository;

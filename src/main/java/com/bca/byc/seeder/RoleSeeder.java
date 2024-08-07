@@ -1,18 +1,12 @@
 package com.bca.byc.seeder;
 
-import com.bca.byc.entity.Permission;
-import com.bca.byc.entity.Role;
-import com.bca.byc.entity.RoleHasPermissions;
-import com.bca.byc.entity.RolePermissionId;
 import com.bca.byc.repository.PermissionRepository;
-import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.RoleHasPermissionsRepository;
+import com.bca.byc.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 @Component
 @Order(1)

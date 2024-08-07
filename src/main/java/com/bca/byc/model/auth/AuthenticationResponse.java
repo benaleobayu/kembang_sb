@@ -1,5 +1,9 @@
-package com.bca.byc.model;
+package com.bca.byc.model.auth;
 
+
+import lombok.Data;
+
+@Data
 public class AuthenticationResponse {
     private String jwt;
 
@@ -12,11 +16,4 @@ public class AuthenticationResponse {
 
     // Getter
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
 }

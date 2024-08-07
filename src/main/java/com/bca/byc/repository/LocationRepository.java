@@ -1,4 +1,4 @@
-package com.bca.byc.repository.cms;
+package com.bca.byc.repository;
 
 import com.bca.byc.entity.Location;
 import org.springframework.data.jpa.repository.JpaRepository;

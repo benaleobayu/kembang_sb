@@ -19,18 +19,16 @@ import java.util.Map;
 @RequestMapping("/cms/roles")
 public class RoleController {
 
-    private static final String resourceName = "roles";
-
     @Autowired
     private RoleService roleService;
-
+    private final String resourceName = "roles";
     @PreAuthorize("hasPermission(#authentication, 'roles.view')") // Use your permission name
     @GetMapping
     public String showAllRoles(Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
         model.addAttribute("resourceName", resourceName);
-        model.addAttribute("title", "Roles");
+        model.addAttribute("title","Roles");
         return "cms/roles/index"; // Ensure you have a Thymeleaf template named index.html under roles directory
     }
 
@@ -48,14 +46,13 @@ public class RoleController {
         response.put("data", rolePage.getContent());
         return response;
     }
-
+    
     @PreAuthorize("hasPermission(#authentication, 'roles.create')") // Use your permission name
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("role", new Role());
         return "cms/roles/create"; // Ensure you have a Thymeleaf template named create.html under roles directory
     }
-
     @PreAuthorize("hasPermission(#authentication, 'roles.create')") // Use your permission name
     @PostMapping
     public String createRole(@ModelAttribute Role role) {
@@ -70,19 +67,16 @@ public class RoleController {
         model.addAttribute("role", role);
         return "roles/edit"; // Ensure you have a Thymeleaf template named edit.html under roles directory
     }
-
     @PreAuthorize("hasPermission(#authentication, 'roles.update')") // Use your permission name
     @PostMapping("/update/{id}")
     public String updateRole(@PathVariable Long id, @ModelAttribute Role roleDetails) {
         roleService.updateRole(id, roleDetails);
         return "redirect:/cms/roles";
     }
-
     @PreAuthorize("hasPermission(#authentication, 'roles.delete')") // Use your permission name
     @GetMapping("/delete/{id}")
     public String deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);
         return "redirect:/cms/roles";
     }
-
 }

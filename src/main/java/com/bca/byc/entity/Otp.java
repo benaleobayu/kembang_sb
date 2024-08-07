@@ -1,15 +1,9 @@
 package com.bca.byc.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "otps")
 public class Otp {
@@ -31,4 +25,55 @@ public class Otp {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean valid = true;
 
+    public Otp() {
+    }
+
+    public Otp(User user, String otp, LocalDateTime expiryDate, Boolean valid) {
+        this.user = user;
+        this.otp = otp;
+        this.expiryDate = expiryDate;
+        this.valid = valid;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public Boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
 }

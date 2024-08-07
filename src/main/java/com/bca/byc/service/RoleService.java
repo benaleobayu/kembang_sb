@@ -3,9 +3,10 @@ package com.bca.byc.service;
 import com.bca.byc.entity.Role;
 import com.bca.byc.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 

@@ -3,7 +3,7 @@ package com.bca.byc.convert;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.entity.UserType;
-import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.model.auth.RegisterRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

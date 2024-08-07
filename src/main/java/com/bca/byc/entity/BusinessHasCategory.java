@@ -7,28 +7,24 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "interests")
-public class Interest {
+@Table(name = "business_has_category")
+public class BusinessHasCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "business_id")
+    private Business business;
 
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
-
-    @Column(name = "orders", columnDefinition = "int default 1")
-    private Integer order;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
+    @ManyToOne
+    @JoinColumn(name = "business_category_id")
+    private BusinessCategory businessCategory;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -45,5 +41,4 @@ public class Interest {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }
