@@ -1,4 +1,4 @@
-package com.bca.byc.repository;
+package com.bca.byc.repository.cms;
 
 import com.bca.byc.entity.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
-    @Override
+
     Optional<Location> findById(Long id);
 }

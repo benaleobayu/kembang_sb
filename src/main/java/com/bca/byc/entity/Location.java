@@ -17,12 +17,11 @@ public class Location {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @Column(name = "orders")
-    private Integer order;
+    private Integer orders;
 
     @Column(name = "status", columnDefinition = "boolean default false")
     private Boolean status;

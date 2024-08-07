@@ -1,4 +1,4 @@
-package com.bca.byc.model;
+package com.bca.byc.model.cms;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class LocationCreate {
+public class LocationCreateRequest {
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name must be less than 50 characters")
@@ -18,7 +18,7 @@ public class LocationCreate {
     private String description;
 
     @NotBlank(message = "Order is mandatory")
-    private Integer order;
+    private Integer orders;
 
     @NotBlank(message = "Status is mandatory")
     private Boolean status;
