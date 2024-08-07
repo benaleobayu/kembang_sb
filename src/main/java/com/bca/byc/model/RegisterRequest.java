@@ -1,6 +1,9 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.UserType;
 import com.bca.byc.validation.UniqueEmail;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,13 +13,13 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RegisterRequest {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name must be less than 50 characters")
@@ -32,12 +35,15 @@ public class RegisterRequest {
     @Size(max = 16, message = "Phone number must be less than 16 characters")
     private String phone;
 
-    @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password must be at least 6 characters")
-    private String password;
+    private UserType type;
 
+    @Size(max = 20, message = "Bank account number must be less than 20 characters")
+    private String bankAccount;
 
+    @Size(max = 20, message = "CIN must be less than 20 characters")
+    private String cin;
 
-    // Getters and Setters
+    private LocalDate birthdate;
+
 
 }
