@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login").permitAll()
-                .requestMatchers("/api/test/**", "/api/test/user/**").permitAll()
+                .requestMatchers("/api/v1/**", "/api/v1/user/**").permitAll()
                 .requestMatchers("/cms/**", "/cms/**/**").authenticated()
                 .anyRequest().authenticated()
             )
