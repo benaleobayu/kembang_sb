@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  th:replace="~{fragments/head}">
+    <!-- tailwind styles-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .tw-input-class {
+                @apply w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200;
+            }
+        }
+    </style>
+    <!-- end tailwind styles-->
+</head>
+<body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+    <main class="main" id="top">
+        <div class="initial__loading"></div>
+        <div class="container-fluid" data-layout="container">
+            <script>
+                var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+                if (isFluid) {
+                    var container = document.querySelector('[data-layout]');
+                    container.classList.remove('container');
+                    container.classList.add('container-fluid');
+                }
+            </script>
+
+     <div th:replace="~{fragments/sidebar}"></div>
+            <div class="content">
+
+                <div th:replace="~{fragments/header}"></div>
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5>
+                                <strong th:text="${title} + ' Form'"></strong>
+                            </h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <form action="/cms/users/create" method="post">
+                                    <div class="group">
+                                        <label for="name">Name</label>
+                                        <input type="text" name="name" id="name" class="tw-input-class" required>
+                                    </div>
+                                    <div class="group">
+                                        <label for="parent_name">Parent Name</label>
+                                        <input type="text" name="parent_name" id="parent_name" class="tw-input-class" required>
+                                    </div>
+                                    <div class="group">
+                                        <label for="email">Email</label>
+                                        <input type="text" name="email" id="email" class="tw-input-class" required>
+                                    </div>
+                                    <div class="group">
+                                        <label for="phone">Phone</label>
+                                        <input type="text" name="phone" id="phone" class="tw-input-class" required>
+                                    </div>
+                                    <div class="group">
+                                        <label for="bank_account">Bank Number Account</label>
+                                        <input type="text" name="bank_account" id="bank_account" class="tw-input-class" required>
+                                    </div>
+                                     <div class="group">
+                                        <label for="cin">CIN</label>
+                                        <input type="text" name="cin" id="cin" class="tw-input-class" required>
+                                    </div>
+                                     <div class="group">
+                                        <label for="password">Password</label>
+                                        <input type="text" name="password" id="password" class="tw-input-class" required>
+                                    </div>
+
+                                    <div class="group">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div th:replace="~{fragments/footer}"></div>
+                
+
+            </div>
+
+        </div>
+    </main>
+    <div th:replace="~{fragments/script}"></div>    
+</body>
+
+</html>
+
