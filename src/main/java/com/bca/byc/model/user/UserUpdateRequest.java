@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserUpdateRequest {
 
-    private String userParent;
+    private String parentName;
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name must be less than 50 characters")

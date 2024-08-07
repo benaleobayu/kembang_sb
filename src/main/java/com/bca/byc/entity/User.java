@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 import com.bca.byc.validation.PhoneNumberValidation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,8 @@ public class User {
     @Column(columnDefinition = "bigint")
     private Long id;
 
-    @Column(name = "user_parent", length = 50)
-    private String userParent;
+    @Column(name = "parent_name", length = 50)
+    private String parentName;
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
@@ -79,6 +80,7 @@ public class User {
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/mm/yyyy HH:mm")
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

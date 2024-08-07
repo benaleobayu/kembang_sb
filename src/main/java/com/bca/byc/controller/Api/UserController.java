@@ -104,9 +104,4 @@ public class UserController {
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
     }
 
-    @GetMapping("/users")
-    public List<User> getUsers(){
-        return repository.findAll();
-    }
-
 }
