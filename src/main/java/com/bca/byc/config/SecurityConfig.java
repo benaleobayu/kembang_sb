@@ -28,8 +28,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login").permitAll()
-                .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers("/cms/dashboard").authenticated()
+                .requestMatchers("/api/test/**", "/api/test/user/**").permitAll()
+                .requestMatchers("/cms/**", "/cms/**/**").authenticated()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
