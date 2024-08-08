@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -33,5 +34,8 @@ public class BusinessCreateRequest {
 
     @NotBlank(message = "Status is required")
     private Boolean status;
+
+    // many to many
+    private List<Long> categoryIds;
 
 }

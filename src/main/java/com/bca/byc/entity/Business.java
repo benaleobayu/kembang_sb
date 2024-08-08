@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -17,11 +19,6 @@ public class Business {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // relation user_id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User userId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -62,6 +59,22 @@ public class Business {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // relation user_id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User userId;
+
+    // relation business_has_category
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "business_has_category",
+            joinColumns = @JoinColumn(name = "business_id"),
+            inverseJoinColumns = @JoinColumn(name = "business_category_id")
+    )
+
+    // relation business_category
+    private Set<BusinessCategory> categories =  new HashSet<>();
 
 
 
