@@ -1,16 +1,19 @@
 package com.bca.byc.controller.api;
 
+import com.bca.byc.entity.User;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.auth.AuthenticationRequest;
 import com.bca.byc.model.auth.OtpRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
-import com.bca.byc.service.EmailService;
+import com.bca.byc.service.AuthService;
 import com.bca.byc.service.UserDetailsServiceImpl;
-import com.bca.byc.service.UserService;
+import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +34,7 @@ public class AuthResource {
 
     private AuthenticationManager authenticationManager;
 
-    private UserService userService;
+    private AuthService authService;
 
     private UserDetailsServiceImpl userDetailsService;
 
@@ -50,9 +53,9 @@ public class AuthResource {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
         }
         try {
-            userService.saveUser(dto);
+            authService.saveUser(dto);
             log.info("User registered successfully: {}", dto.getEmail());
-            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. OTP sent to email."));
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. You are in the waiting status for approval. please check the email."));
         } catch (Exception e) {
             log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
@@ -61,7 +64,7 @@ public class AuthResource {
 
     @PostMapping("/validate-otp")
     public ResponseEntity<ApiResponse> validateOtp(@RequestBody OtpRequest otpRequest) {
-        boolean isValid = userService.validateOtp(otpRequest.getEmail(), otpRequest.getOtp());
+        boolean isValid = authService.validateOtp(otpRequest.getEmail(), otpRequest.getOtp());
         if (isValid) {
             return ResponseEntity.ok(new ApiResponse(true, "OTP validated successfully."));
         } else {
@@ -72,7 +75,7 @@ public class AuthResource {
     @PostMapping("/resend-otp")
     public ResponseEntity<ApiResponse> resendOtp(@RequestBody OtpRequest otpRequest) {
         try {
-            userService.resendOtp(otpRequest.getEmail());
+            authService.resendOtp(otpRequest.getEmail());
             log.info("OTP resent successfully: {}", otpRequest.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "OTP resent successfully."));
         } catch (Exception e) {
