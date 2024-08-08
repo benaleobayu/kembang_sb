@@ -58,7 +58,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
                 .orElseThrow(() -> new BadRequestException("Business category not found"));
 
         // update
-        converter.convertToUpdateRequest(dto);
+        converter.convertToUpdateRequest(data, dto);
 
         // set updatedAt
         data.setUpdatedAt(LocalDateTime.now());

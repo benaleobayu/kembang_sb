@@ -26,7 +26,7 @@ public class BusinessHasCategory {
     @JoinColumn(name = "business_category_id")
     private BusinessCategory businessCategory;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
