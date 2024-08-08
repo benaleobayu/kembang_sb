@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Component
 public class UserDTOConverter {
@@ -32,16 +33,18 @@ public class UserDTOConverter {
         User user = modelMapper.map(dto, User.class);
 
         user.setType(UserType.MEMBER); // Default value
-        user.setStatus(StatusType.OTP); // Default value
+        user.setStatus(StatusType.PENDING); // Default value
 
         return user;
     }
 
     // for update data
-    public User convertToUpdateRequest(UserUpdateRequest dto){
+    public void convertToUpdateRequest(User user, @Valid UserUpdateRequest dto) {
 
-        User user = modelMapper.map(dto, User.class);
+        modelMapper.map(dto, user);
 
-        return user;
+        // set updatedAt
+        user.setUpdatedAt(LocalDateTime.now());
+
     }
 }
