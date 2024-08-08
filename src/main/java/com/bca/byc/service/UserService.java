@@ -9,6 +9,7 @@ import com.bca.byc.model.api.UserUpdateRequest;
 import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -22,7 +23,7 @@ public interface UserService {
 
     List<UserDetailResponse> findAllUsers(); // for get all
 
-    void updateUser(Long userId, UserUpdateRequest dto); // for update data user
+    void updateUser(Long userId, @Valid UserUpdateRequest dto); // for update data user
 
     void setNewPassword(Long userId, UserSetPasswordRequest dto); // for set new password after login
 

@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,11 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
 
-    private OtpRepository otpRepository;
-
     private PasswordEncoder passwordEncoder;
-
-    private EmailService emailService;
 
     private UserDTOConverter converter;
 
@@ -92,13 +89,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(Long userId, UserUpdateRequest dto) {
+    public void updateUser(Long userId,@Valid UserUpdateRequest dto) {
 
         User user = repository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("invalid.userId"));
+                .orElseThrow(() -> new BadRequestException("invalid user_id"));
 
         // update
-        converter.convertToUpdateRequest(dto);
+        converter.convertToUpdateRequest(user, dto);
 
         // save
         repository.save(user);
