@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -45,5 +47,19 @@ public class Interest {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // relation user_id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User userId;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "interest_has_category",
+            joinColumns = @JoinColumn(name = "interest_id"),
+            inverseJoinColumns = @JoinColumn(name = "interest_category_id")
+    )
+
+    private Set<InterestCategory> categories =  new HashSet<>();
 
 }
