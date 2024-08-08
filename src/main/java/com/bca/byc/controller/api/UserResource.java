@@ -28,9 +28,18 @@ public class UserResource {
 
     private final UserService userService;
 
-    @GetMapping("/users")
-    public List<User> getUsers(){
-        return repository.findAll();
+    @GetMapping("/")
+    public ResponseEntity<ApiListResponse> getUsers(){
+        log.info("GET /api/v1/users endpoint hit");
+
+        try{
+            // response true
+            return ResponseEntity.ok(new ApiListResponse(true, "Users found", userService.findAllUsers()));
+        }catch (Exception e){
+            // response error
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+
     }
 
     @GetMapping("/{userId}/details")

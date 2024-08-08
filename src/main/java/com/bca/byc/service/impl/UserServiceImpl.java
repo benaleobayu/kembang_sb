@@ -1,29 +1,22 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.UserDTOConverter;
-import com.bca.byc.entity.Otp;
-import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
-import com.bca.byc.entity.UserType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.api.UserUpdatePasswordRequest;
 import com.bca.byc.model.api.UserUpdateRequest;
 import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
-import com.bca.byc.service.EmailService;
+import com.bca.byc.service.email.EmailService;
 import com.bca.byc.service.UserService;
-import com.bca.byc.util.OtpUtil;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -54,7 +47,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDetailResponse> findAllUsers() {
-        return null;
+
+        List<User> dtos = repository.findAll();
+        return dtos.stream()
+                .map((user -> converter.convertToListResponse(user)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -92,68 +89,19 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
-    @Override
-    public void saveUser(RegisterRequest registerRequest) throws Exception {
-        User user = converter.convertToCreateRequest(registerRequest);
 
-        user.setType(UserType.MEMBER); // Default value
-        user.setStatus(StatusType.OTP); // Default value
-
-        repository.save(user);
-
-        // Generate and send OTP
-        generateAndSendOtp(user);
-    }
 
     @Override
     public void updateUser(Long userId, UserUpdateRequest dto) {
 
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("invalid.userId"));
+
+        // update
+        converter.convertToUpdateRequest(dto);
+
+        // save
+        repository.save(user);
     }
 
-    @Override
-    public void generateAndSendOtp(User user) throws MessagingException {
-        String otpCode = OtpUtil.generateOtp();
-        LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(30); // OTP valid for 10 minutes
-
-        Otp otp = new Otp(user, otpCode, expiryDate, true);
-        otpRepository.save(otp);
-
-        // Send OTP to user's email
-        emailService.sendOtpMessage(user.getEmail(), "Your OTP Code", user.getName(), otpCode);
-    }
-
-    @Override
-    public boolean validateOtp(String email, String otpCode) {
-        Optional<User> userOptional = repository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            Optional<Otp> otpOptional = otpRepository.findByUserAndOtpAndValidIsTrue(user, otpCode);
-            if (otpOptional.isPresent()) {
-                Otp otp = otpOptional.get();
-                if (otp.getExpiryDate().isAfter(LocalDateTime.now())) {
-                    otp.setValid(false); // Mark OTP as used
-                    otpRepository.save(otp);
-                    user.setStatus(StatusType.PENDING); // Enable the user
-                    repository.save(user);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void resendOtp(String email) throws MessagingException {
-        Optional<User> userOptional = repository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            // Invalidate previous OTPs
-            otpRepository.invalidateOtpsForUser(user);
-
-            // Generate and send new OTP
-            generateAndSendOtp(user);
-        } else {
-            throw new MessagingException("User not found with email: " + email);
-        }
-    }
 }

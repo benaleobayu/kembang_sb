@@ -1,6 +1,8 @@
 package com.bca.byc.convert;
 
+import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
+import com.bca.byc.entity.UserType;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserUpdateRequest;
@@ -28,6 +30,9 @@ public class UserDTOConverter {
     public User convertToCreateRequest(@Valid RegisterRequest dto) {
 
         User user = modelMapper.map(dto, User.class);
+
+        user.setType(UserType.MEMBER); // Default value
+        user.setStatus(StatusType.OTP); // Default value
 
         return user;
     }

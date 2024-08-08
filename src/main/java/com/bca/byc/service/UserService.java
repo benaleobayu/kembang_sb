@@ -14,25 +14,17 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    boolean existsById(Long userId);
+    boolean existsById(Long userId); // check by id
 
-    UserDetailResponse findUserById(Long userId);
+    // user execution api
 
-    List<UserDetailResponse> findAllUsers();
+    UserDetailResponse findUserById(Long userId); // for get 1 data
 
-    void setNewPassword(Long userId, UserSetPasswordRequest dto);
+    List<UserDetailResponse> findAllUsers(); // for get all
 
-    void changePassword(Long userId, UserUpdatePasswordRequest dto);
+    void updateUser(Long userId, UserUpdateRequest dto); // for update data user
 
-    // auth
+    void setNewPassword(Long userId, UserSetPasswordRequest dto); // for set new password after login
 
-    void saveUser(RegisterRequest dto) throws Exception;
-
-    void updateUser(Long userId, UserUpdateRequest dto);
-
-    void generateAndSendOtp(User user) throws MessagingException;
-
-    boolean validateOtp(String email, String otpCode);
-
-    void resendOtp(String email) throws MessagingException;
+    void changePassword(Long userId, UserUpdatePasswordRequest dto); // for change password
 }
