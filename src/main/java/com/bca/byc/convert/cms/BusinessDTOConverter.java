@@ -8,6 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+
 @Component
 public class BusinessDTOConverter {
 
@@ -29,9 +32,11 @@ public class BusinessDTOConverter {
     }
 
     // for update data
-    public Business convertToUpdateRequest(BusinessUpdateRequest dto){
+    public Business convertToUpdateRequest(@Valid BusinessUpdateRequest dto){
         Business data = modelMapper.map(dto, Business.class);
 
+        // set updatedAt
+        data.setUpdatedAt(LocalDateTime.now());
         return data;
     }
 }

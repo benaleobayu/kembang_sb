@@ -19,7 +19,7 @@ public class Business {
     private Long id;
 
     // relation user_id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User userId;
 

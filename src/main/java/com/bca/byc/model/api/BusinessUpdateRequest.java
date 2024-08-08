@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -21,14 +22,12 @@ public class BusinessUpdateRequest {
 
     private String address;
 
-    private String cin;
-
     private String website;
 
     private String description;
 
     @NotBlank(message = "Order is required")
-    private String orders;
+    private Integer orders;
 
     @NotBlank(message = "Status is required")
     private Boolean status;

@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class BusinessCreateRequest {
 
     @NotBlank(message = "User id is required")
-    private Integer userId;
+    private Long userId;
 
     @NotBlank(message = "Name is required")
     @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
@@ -29,7 +29,7 @@ public class BusinessCreateRequest {
     private String description;
 
     @NotBlank(message = "Order is required")
-    private String orders;
+    private Integer orders;
 
     @NotBlank(message = "Status is required")
     private Boolean status;

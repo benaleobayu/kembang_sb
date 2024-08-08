@@ -1,8 +1,11 @@
 package com.bca.byc.model.api;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 @Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BusinessDetailResponse {
 
     private Long id;
@@ -11,17 +14,15 @@ public class BusinessDetailResponse {
 
     private String province;
 
-    private String line_of_business;
+    private String lineOfBusiness;
 
     private String address;
-
-    private String cin;
 
     private String website;
 
     private String description;
 
-    private String orders;
+    private Integer orders;
 
     private Boolean status;
 
