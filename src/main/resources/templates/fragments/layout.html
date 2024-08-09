@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="parent(content,title,script)">
+<head th:replace="~{fragments/head}">
+</head>
+<body>
+
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+<main class="main" id="top">
+    <div class="initial__loading"></div>
+    <div class="container-fluid" data-layout="container">
+        <script>
+            var isFluid = JSON.parse(localStorage.getItem('isFluid'));
+            if (isFluid) {
+                var container = document.querySelector('[data-layout]');
+                container.classList.remove('container');
+                container.classList.add('container-fluid');
+            }
+        </script>
+
+        <div th:replace="~{fragments/sidebar_menu(currentUrl=${currentUrl})}"></div>
+        <div class="content">
+
+            <div th:replace="~{fragments/header}"></div>
+
+            <div th:replace="${content}"></div>
+
+            <div th:replace="~{fragments/footer}"></div>
+
+
+        </div>
+
+    </div>
+</main>
+<div th:replace="~{fragments/script}"></div>
+</body>
+
+</html>
+

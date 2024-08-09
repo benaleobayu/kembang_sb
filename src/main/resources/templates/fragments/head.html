@@ -11,7 +11,7 @@
     <!-- ===============================================-->
     <!--    Document Title-->
     <!-- ===============================================-->
-    <title th:text="${title}">Dashboard</title>
+    <title data-th-replace="${title}">Dashboard</title>
 
     <!-- ===============================================-->
     <!--    Favicons-->
@@ -75,7 +75,7 @@
             font-size: 12px;
         }
     </style>
-    
+
 
     <script th:inline="javascript">
         var isRTL = JSON.parse(localStorage.getItem('isRTL'));
@@ -94,6 +94,16 @@
     </script>
     <!-- PRELOADER STYLES-->
     <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            list-style: none;
+            text-decoration: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+        }
         .initial__loading {
             position: fixed;
             z-index: 99999;
@@ -220,6 +230,16 @@
 
         .form-control-error li {
             list-style-type: none;
+        }
+
+        .content{
+            margin-left: 270px !important;
+        }
+
+        @media (max-width: 1200px) {
+            .content{
+                margin-left: 0 !important;
+            }
         }
     </style>
 </head>

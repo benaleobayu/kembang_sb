@@ -1,78 +1,57 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  th:replace="~{fragments/head}">
+<html
+        lang="en"
+        th:replace="~{fragments/layout :: parent(~{::#content},~{::title},~{::script})}"
+>
+<head>
+    <title>Masterdata Location</title>
 </head>
 <body>
+<div id="content">
+    <!--content here-->
 
-    <!-- ===============================================-->
-    <!--    Main Content-->
-    <!-- ===============================================-->
-    <main class="main" id="top">
-        <div class="initial__loading"></div>
-        <div class="container-fluid" data-layout="container">
-            <script>
-                var isFluid = JSON.parse(localStorage.getItem('isFluid'));
-                if (isFluid) {
-                    var container = document.querySelector('[data-layout]');
-                    container.classList.remove('container');
-                    container.classList.add('container-fluid');
-                }
-            </script>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card h-md-100">
+                <div class="card-header pb-0">
+                    <h6 class="mb-0 mt-2">Welcome, <span th:text="${username}">User</span>!</h6>
+                </div>
+                <!-- Content will be inserted here -->
 
-     <div th:replace="~{fragments/sidebar}"></div>
-            <div class="content">
-
-                <div th:replace="~{fragments/header}"></div>
-
-                
-              
-              
-                <div class="row">
-
-                    <div class="col-md-12">
-                        <div class="card h-md-100">
-                            <div class="card-header pb-0">
-                             <h6 class="mb-0 mt-2">Welcome, <span th:text="${username}">User</span>!</h6>
-                            </div>
-                        <!-- Content will be inserted here -->
-                
-                        <div class="card-body d-flex flex-column justify-content-end">
-                            <div class="row justify-content-between">
-                                <p>Your authorities are:</p>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Resource</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="authorityGroup : ${authorityGroups}">
-                                            <td th:text="${authorityGroup.id}">1</td>
-                                            <td th:text="${authorityGroup.resource}">Resource</td>
-                                            <td th:text="${authorityGroup.actions}">Actions</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
+                <div class="card-body d-flex flex-column justify-content-end">
+                    <div class="row justify-content-between">
+                        <p>Your authorities are:</p>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Resource</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="authorityGroup : ${authorityGroups}">
+                                <td th:text="${authorityGroup.id}">1</td>
+                                <td th:text="${authorityGroup.resource}">Resource</td>
+                                <td th:text="${authorityGroup.actions}">Actions</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                
-                </div>
-        
-
-                <div th:replace="~{fragments/footer}"></div>
-                
 
             </div>
-
         </div>
-    </main>
-    <div th:replace="~{fragments/script}"></div>    
+
+    </div>
+
+
+    <!--end content-->
+</div>
+<!--script here-->
+<script>
+</script>
+<!--end script-->
+
 </body>
-
 </html>
-
