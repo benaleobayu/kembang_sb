@@ -1,0 +1,6 @@
+<nav aria-label="breadcrumb" th:fragment="breadcrumb">
+  <ol class="breadcrumb" th:each="breadcrumb : ${breadcrumbs}">
+    <li class="breadcrumb-item"><a href="/" >Home</a></li>
+    <li class="breadcrumb-item"><a th:href="${breadcrumb.route}" th:text="${breadcrumb.name}" th:aria-current="${breadcrumb.current ? 'page' : ''}" th:classappend="${breadcrumb.current ? 'active' : ''}">Home</a></li>
+  </ol>
+</nav>
