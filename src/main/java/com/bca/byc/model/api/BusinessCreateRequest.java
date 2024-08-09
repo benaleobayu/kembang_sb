@@ -12,7 +12,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BusinessCreateRequest {
 
-    @NotBlank(message = "User id is required")
+    @NotBlank(message = "user_id is required")
     private Long userId;
 
     @NotBlank(message = "Name is required")
