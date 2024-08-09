@@ -1,10 +1,13 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.UserDTOConverter;
+import com.bca.byc.entity.FeedbackCategory;
 import com.bca.byc.entity.Otp;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.repository.FeedbackCategoryRepository;
 import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.service.AuthService;
@@ -24,6 +27,8 @@ public class AuthServiceImpl implements AuthService {
 
     private UserRepository repository;
 
+    private FeedbackCategoryRepository feedbackCategoryRepository;
+
     private OtpRepository otpRepository;
 
     private PasswordEncoder passwordEncoder;
@@ -34,9 +39,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
+        FeedbackCategory feedbackCategory =feedbackCategoryRepository.findById(dto.getFeedbackCategoryId())
+                .orElseThrow(() -> new BadRequestException("Feedback category not found"));
+
         User user = converter.convertToCreateRequest(dto);
 
         repository.save(user);
+
+        user.setFeedbackCategoryId(feedbackCategory);
 
         // send waiting approval email
         sendWaitingApproval(user);

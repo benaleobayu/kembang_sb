@@ -72,14 +72,14 @@ public class AuthResource {
         }
     }
 
-    @PostMapping("/resend-otp")
+    @PostMapping("/send-otp")
     public ResponseEntity<ApiResponse> resendOtp(@RequestBody OtpRequest otpRequest) {
         try {
             authService.resendOtp(otpRequest.getEmail());
-            log.info("OTP resent successfully: {}", otpRequest.getEmail());
-            return ResponseEntity.ok(new ApiResponse(true, "OTP resent successfully."));
+            log.info("OTP sent successfully: {}", otpRequest.getEmail());
+            return ResponseEntity.ok(new ApiResponse(true, "OTP sent successfully."));
         } catch (Exception e) {
-            log.error("Failed to resend OTP for email {}: {}", otpRequest.getEmail(), e.getMessage());
+            log.error("Failed to send OTP for email {}: {}", otpRequest.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to resend OTP: " + e.getMessage()));
         }
     }
