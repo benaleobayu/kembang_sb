@@ -59,12 +59,13 @@ public class User {
     @Column(name = "parent_name", length = 50)
     private String parentName;
 
+    // relation feedback_category
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "feedback_category_id")
+    private FeedbackCategory feedbackCategoryId;
 
-//    private MyBusiness  business;
-
-//    private MyInterest interest;
-
-//    private Kanwil kanwil_id;
+    @Column(name = "feedback_quote", columnDefinition = "text")
+    private String feedbackQuote;
 
     private String rank;
 
