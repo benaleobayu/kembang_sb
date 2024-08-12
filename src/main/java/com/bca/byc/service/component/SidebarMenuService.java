@@ -17,7 +17,7 @@ public class SidebarMenuService {
                         new MenuParent("User", "user", null, "fas fa-user", Arrays.asList(
                                 new MenuList("Registration Inquiry", "/cms/users"),
                                 new MenuList("Active User", "/cms/users/active"),
-                                new MenuList("Suspended User", "/cms/users/suspended.html"),
+                                new MenuList("Suspended User", "/cms/users/suspended"),
                                 new MenuList("Deleted User", "/cms/users/deleted")
                         ))
                 )), new MenuGroup("Data Analytic", List.of(
@@ -38,7 +38,8 @@ public class SidebarMenuService {
                 new MenuGroup("Setting", Arrays.asList(
                         new MenuParent("Master Data", "admin", null, "fas fa-user", Arrays.asList(
                                 new MenuList("Location", "/cms/ms/location"),
-                                new MenuList("Business Category", "/cms/ms/business-category")
+                                new MenuList("Business Category", "/cms/ms/business-category"),
+                                new MenuList("Feedback Category", "/cms/ms/feedback-category")
                         )),
                         new MenuParent("Admin", null, "fas fa-book", "/cms/ms/admin"),
                         new MenuParent("Privilege", null, "fas fa-book", "/cms/ms/privilege"),
