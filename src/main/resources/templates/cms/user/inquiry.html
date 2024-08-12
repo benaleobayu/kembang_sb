@@ -27,32 +27,22 @@
     <div class="row">
         <div class="col">
 
-            <div class="h-100">
+            <div class="min-h-100">
                 <div class="row mb-3 pb-1">
                     <div class="col-12">
                         <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                             <div class="flex-grow-1">
-                            <!--TODO breadcrubms here-->
-                            </div>
-                            <div class="mt-3 mt-lg-0">
-                                <form action="javascript:void(0);">
-                                    <div class="row g-3 mb-0 align-items-center">
-                                        <div class="col-auto">
-                                            <a href="/cms/users/create" class="btn btn-soft-primary" type="button"><i
-                                                    class="ri-add-circle-line align-middle me-1"></i>
-                                                Tambah
-                                            </a>
-                                        </div>
-                                        <!--end col-->
-                                        <div class="col-auto">
-                                            <button class="btn btn-soft-secondary btn-icon waves-effect waves-light layout-rightside-btn"
-                                                    type="button">
-                                                <i class="ri-pulse-line"></i></button>
-                                        </div>
-                                        <!--end col-->
-                                    </div>
-                                    <!--end row-->
-                                </form>
+                                <!--TODO breadcrubms here-->
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"
+                                            th:aria-current="${breadcrumb.current == true ? 'page' : null}"
+                                            th:classappend="${breadcrumb.current == true} ? 'active'"
+                                            th:each="breadcrumb : ${breadcrumbs}">
+                                            <a th:href="${breadcrumb.route}" th:text="${breadcrumb.name}"></a>
+                                        </li>
+                                    </ol>
+                                </nav>
                             </div>
                         </div><!-- end card header -->
                     </div>
@@ -65,14 +55,25 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title mb-0" th:text="${tableName + ' Table'}"></h5>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-0" th:text="${tableName + ' Table'}"></h5>
+                                    <div class="col-auto">
+                                        <a class="btn btn-soft-primary" href="/cms/users/create" type="button">
+                                            <i class="align-middle me-1 icon-size" data-feather="plus"></i>
+                                            Tambah
+                                        </a>
+                                        <a class="btn btn-soft-primary" th:href="${currentUrl}" type="button">
+                                            <i class="align-middle icon-size" data-feather="refresh-ccw"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="table-container">
-                                    <table class="table table-bordered nowrap table-striped align-middle"
+                                    <table class="table nowrap table-striped align-middle"
                                            id="model-datatables"
                                            style="width:100%">
-                                        <thead>
+                                        <thead class="global-head">
                                         <tr>
                                             <th>ID</th>
                                             <th>Fullname</th>
@@ -96,24 +97,31 @@
                                             <td th:text="${data.cin}"></td>
                                             <td th:text="${data.bankAccount}"></td>
                                             <td th:text="${data.phone}"></td>
-                                            <td><span class="badge badge-soft-info" th:text="${data.status}"></span></td>
+                                            <td><span class="badge badge-soft-info" th:text="${data.status}"></span>
+                                            </td>
                                             <td class="action-col">
-                                                <div class="dropdown d-inline-block">
-                                                    <button aria-expanded="false" class="btn btn-soft-secondary btn-sm dropdown"
+                                                <div class="dropdown d-inline-block bg-white border border-1 border-secondary rounded-2 p-1">
+                                                    <button class="btn btn-ghost-info waves-effect waves-light"
+                                                            type="button">
+                                                        <a class="dropdown-item"
+                                                           th:href="${currentUrl + '/' + data.id}">
+                                                            <i class="text-info icon-size" data-feather="eye"></i>
+                                                        </a>
+                                                    </button>
+                                                    <button aria-expanded="false" class="btn btn-sm dropdown"
                                                             data-bs-toggle="dropdown" type="button">
-                                                        <i class="ri-more-fill align-middle"></i>
+                                                        <i class="text-secondary icon-size"
+                                                           data-feather="more-horizontal"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li><a class="dropdown-item" href="#!"><i
-                                                                class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                            View</a></li>
-                                                        <li><a class="dropdown-item edit-item-btn"><i
-                                                                class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                            Edit</a></li>
+
                                                         <li>
-                                                            <a class="dropdown-item remove-item-btn">
-                                                                <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                Delete
+                                                            <a class="dropdown-item text-success">
+                                                                Approve
+                                                            </a>
+                                                        <li>
+                                                            <a class="dropdown-item text-danger">
+                                                                Reject
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -139,7 +147,8 @@
 </div>
 
 <script crossorigin="anonymous"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!--datatable js-->
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -154,17 +163,7 @@
 
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var tableContainer = document.querySelector('.table-container');
-        function updateActionColPosition() {
-            var scrollLeft = tableContainer.scrollLeft;
-            var actionCol = document.querySelector('.action-col');
-            actionCol.style.transform = 'translateX(' + scrollLeft + 'px)';
-        }
-        tableContainer.addEventListener('scroll', updateActionColPosition);
-        window.addEventListener('resize', updateActionColPosition);
-        updateActionColPosition();
-    });
+
 </script>
 </body>
 
