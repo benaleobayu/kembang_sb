@@ -73,4 +73,14 @@ public class LocationServiceImpl implements LocationService {
             repository.deleteById(id);
         }
     }
+
+    @Override
+    public boolean deleteDataById(Long id) {
+        if (!repository.existsById(id)) {
+            return false;
+        } else {
+            repository.deleteById(id);
+            return true;
+        }
+    }
 }

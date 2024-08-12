@@ -27,7 +27,6 @@ public class LocationModelDTO {
     }
 
     @Data
-    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class CreateRequest {
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        th:replace="~{layout :: parent(~{::#content},~{::title},~{::script},~{::head})}"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title th:text="${modelName.toUpperCase() + 'Create'}"></title>
+
+</head>
+
+<body>
+<div id="content">
+    <div class="row">
+        <div class="col">
+
+            <div class="h-100">
+                <div class="row mb-3 pb-1">
+                    <div class="col-12">
+                        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
+                            <div class="flex-grow-1">
+                                <!--TODO breadcrubms here-->
+                            </div>
+                        </div><!-- end card header -->
+                    </div>
+                    <!--end col-->
+                </div>
+                <!--end row-->
+
+                <!-- content here -->
+                <div class="card rounded-4 p-4">
+                    <form class="row g-3 needs-validation" novalidate th:action="@{${currentUrl}}" th:object="${createData}" method="POST">
+                        <div class="col-md-6" th:each="field : ${fields}">
+                            <label th:for="${field.name + '-form'}" class="form-label" th:text="${#strings.capitalize(field.name)}">Name</label>
+                            <input th:field="*{${field.name}}" type="text"
+                                   th:placeholder="${'Enter your ' + #strings.capitalize(field.name)}"
+                                   th:classappend="${field.hidden ? 'd-none' : ''}"
+                                   class="form-control" th:id="${field.name + '-form'}"
+                                   th:required="${field.required}">
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors(field.name)}"
+                                 th:errors="*{field.name}"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn btn-primary" type="submit">Submit form</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- end content -->
+
+            </div> <!-- end .h-100-->
+
+        </div> <!-- end col -->
+
+    </div>
+</div>
+<!--datatable js-->
+
+<script>
+
+</script>
+</body>
+
+</html>

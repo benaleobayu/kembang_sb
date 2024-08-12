@@ -17,4 +17,9 @@ public interface LocationService {
     void updateData(Long id, @Valid LocationModelDTO.UpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
+
+
+    // extras cms
+
+    boolean deleteDataById(Long id);
 }
