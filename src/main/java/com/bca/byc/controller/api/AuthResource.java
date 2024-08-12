@@ -1,7 +1,5 @@
 package com.bca.byc.controller.api;
 
-import com.bca.byc.entity.User;
-import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.auth.AuthenticationRequest;
 import com.bca.byc.model.auth.OtpRequest;
@@ -13,7 +11,6 @@ import com.bca.byc.service.UserDetailsServiceImpl;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

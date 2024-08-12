@@ -1,17 +1,15 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.convert.cms.FeedbackCategoryDTOConverter;
+import com.bca.byc.convert.FeedbackCategoryDTOConverter;
 import com.bca.byc.entity.FeedbackCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.FeedbackCategoryCreateRequest;
-import com.bca.byc.model.cms.FeedbackCategoryDetailResponse;
-import com.bca.byc.model.cms.FeedbackCategoryUpdateRequest;
+import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 import com.bca.byc.repository.FeedbackCategoryRepository;
 import com.bca.byc.service.FeedbackCategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,46 +19,45 @@ import java.util.stream.Collectors;
 public class FeedbackCategoryServiceImpl implements FeedbackCategoryService {
 
     private FeedbackCategoryRepository repository;
-
     private FeedbackCategoryDTOConverter converter;
 
     @Override
-    public FeedbackCategoryDetailResponse findDataById(Long id) {
+    public FeedbackCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
         FeedbackCategory data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Feedback category not found"));
+                .orElseThrow(() -> new BadRequestException("FeedbackCategory not found"));
 
         return converter.convertToListResponse(data);
     }
 
     @Override
-    public List<FeedbackCategoryDetailResponse> findAllData() {
+    public List<FeedbackCategoryModelDTO.DetailResponse> findAllData() {
+        // Get the list
+        List<FeedbackCategory> datas = repository.findAll();
 
-        List<FeedbackCategory> dtos = repository.findAll();
-
-        return dtos.stream()
-                .map((businessCategory -> converter.convertToListResponse(businessCategory)))
+        // stream into the list
+        return datas.stream()
+                .map(converter::convertToListResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void saveData(@Valid FeedbackCategoryCreateRequest dto) throws Exception {
-
+    public void saveData(@Valid FeedbackCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+        // set entity to add with model mapper
         FeedbackCategory data = converter.convertToCreateRequest(dto);
-
+        // save data
         repository.save(data);
-
     }
 
     @Override
-    public void updateData(Long id, @Valid FeedbackCategoryUpdateRequest dto) {
-
+    public void updateData(Long id, FeedbackCategoryModelDTO.UpdateRequest dto) throws BadRequestException {
+        // check exist and get
         FeedbackCategory data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Feedback category not found"));
+                .orElseThrow(() -> new BadRequestException("INVALID FeedbackCategory ID"));
 
         // update
         converter.convertToUpdateRequest(data, dto);
 
-        // set updatedAt
+        // update the updated_at
         data.setUpdatedAt(LocalDateTime.now());
 
         // save
@@ -68,8 +65,12 @@ public class FeedbackCategoryServiceImpl implements FeedbackCategoryService {
     }
 
     @Override
-    public void deleteData(Long id) {
-
-        repository.deleteById(id);
+    public void deleteData(Long id) throws BadRequestException {
+        // delete data
+        if (!repository.existsById(id)) {
+            throw new BadRequestException("FeedbackCategory not found");
+        } else {
+            repository.deleteById(id);
+        }
     }
 }

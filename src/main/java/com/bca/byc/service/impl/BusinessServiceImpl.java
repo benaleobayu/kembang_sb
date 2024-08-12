@@ -1,27 +1,17 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.convert.cms.BusinessCategoryDTOConverter;
-import com.bca.byc.convert.cms.BusinessDTOConverter;
+import com.bca.byc.convert.BusinessDTOConverter;
 import com.bca.byc.entity.Business;
-import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.api.BusinessCreateRequest;
-import com.bca.byc.model.api.BusinessDetailResponse;
-import com.bca.byc.model.api.BusinessUpdateRequest;
-import com.bca.byc.model.cms.BusinessCategoryDetailResponse;
-import com.bca.byc.repository.BusinessCategoryRepository;
+import com.bca.byc.model.api.BusinessModelDTO;
 import com.bca.byc.repository.BusinessRepository;
-import com.bca.byc.repository.UserRepository;
 import com.bca.byc.service.BusinessService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,77 +19,59 @@ import java.util.stream.Collectors;
 public class BusinessServiceImpl implements BusinessService {
 
     private BusinessRepository repository;
-    private UserRepository userRepository;
-    private BusinessCategoryRepository categoryRepository;
-
     private BusinessDTOConverter converter;
-    private BusinessCategoryDTOConverter categoryConverter;
-
 
     @Override
-    public BusinessDetailResponse findDataById(Long id) {
-
+    public BusinessModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Business not found"));
 
         return converter.convertToListResponse(data);
-
     }
 
     @Override
-    public List<BusinessDetailResponse> getAllData() {
+    public List<BusinessModelDTO.DetailResponse> findAllData() {
+        // Get the list
         List<Business> datas = repository.findAll();
 
+        // stream into the list
         return datas.stream()
-                .map((data -> converter.convertToListResponse(data)))
+                .map(converter::convertToListResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void saveData(BusinessCreateRequest dto) throws Exception {
-        // check exist userId and get
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(()-> new BadRequestException("id user not found"));
-
-        // save
-        Business business = converter.convertToCreateRequest(dto);
-
-        // set category
-        Set<BusinessCategory> categories = new HashSet<>(categoryRepository.findAllById(dto.getCategoryIds()));
-
-        // insert all category
-        business.getCategories().addAll(categories);
-
-        // set user_id form user
-        business.setUserId(user);
-
-        // save all
-        repository.save(business);
-
+    public void saveData(@Valid BusinessModelDTO.CreateRequest dto) throws BadRequestException {
+        // set entity to add with model mapper
+        Business data = converter.convertToCreateRequest(dto);
+        // save data
+        repository.save(data);
     }
 
     @Override
-    public void updateData(Long id, @Valid BusinessUpdateRequest dto) {
-        Business business = repository.findById(id)
-                .orElseThrow(()-> new BadRequestException("invalid.businessId"));
+    public void updateData(Long id, BusinessModelDTO.UpdateRequest dto) throws BadRequestException {
+        // check exist and get
+        Business data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("INVALID Business ID"));
 
         // update
-        converter.convertToUpdateRequest(business, dto);
-        // set category
-        Set<BusinessCategory> categories = new HashSet<>(categoryRepository.findAllById(dto.getCategoryIds()));
+        converter.convertToUpdateRequest(data, dto);
 
-        // insert all category
-        business.getCategories().addAll(categories);
+        // update the updated_at
+        data.setUpdatedAt(LocalDateTime.now());
 
         // save
-        repository.save(business);
+        repository.save(data);
     }
 
     @Override
-    public void deleteData(Long id) {
-
-        repository.deleteById(id);
-
+    public void deleteData(Long id) throws BadRequestException {
+        // delete data
+        if (!repository.existsById(id)) {
+            throw new BadRequestException("Business not found");
+        } else {
+            repository.deleteById(id);
+        }
     }
-
 }
+

@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**", "/perform_logout")
             )
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")

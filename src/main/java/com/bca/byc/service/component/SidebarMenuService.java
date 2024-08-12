@@ -14,34 +14,35 @@ public class SidebarMenuService {
     public List<MenuGroup> getSidebarMenuList() {
         return Arrays.asList(
                 new MenuGroup("User Management", List.of(
-                        new MenuParent("User", "user", "", "fas fa-user", Arrays.asList(
+                        new MenuParent("User", "user", null, "fas fa-user", Arrays.asList(
                                 new MenuList("Registration Inquiry", "/cms/users"),
                                 new MenuList("Active User", "/cms/users/active"),
-                                new MenuList("Suspended User", "/cms/users/suspended"),
+                                new MenuList("Suspended User", "/cms/users/suspended.html"),
                                 new MenuList("Deleted User", "/cms/users/deleted")
                         ))
                 )), new MenuGroup("Data Analytic", List.of(
-                        new MenuParent("Data Analytic", "", "fas fa-chart-bar", "/cms/data-analytic")
+                        new MenuParent("Data Analytic", null, "fas fa-chart-bar", "/cms/data-analytic")
                 )), new MenuGroup("Content", Arrays.asList(
-                        new MenuParent("Chanel Management", "", "fas fa-book", ""),
-                        new MenuParent("Content Management", "", "fas fa-book", ""),
-                        new MenuParent("Blacklist Keyword", "", "fas fa-book", ""),
-                        new MenuParent("Reported Content", "user", "fas fa-book", "", Arrays.asList(
-                                new MenuList("Changel Management", ""),
-                                new MenuList("Active User", ""),
-                                new MenuList("Suspended User", ""),
-                                new MenuList("Deleted User", "")
+                        new MenuParent("Chanel Management", null, "fas fa-book", null),
+                        new MenuParent("Content Management", null, "fas fa-book", null),
+                        new MenuParent("Blacklist Keyword", null, "fas fa-book", null),
+                        new MenuParent("Reported Content", "reported_content", "fas fa-book", null, Arrays.asList(
+                                new MenuList("Changel Management", null),
+                                new MenuList("Active User", null),
+                                new MenuList("Suspended User", null),
+                                new MenuList("Deleted User", null)
                         )),
-                        new MenuParent("Broadcast Management", "", "fas fa-book", ""),
-                        new MenuParent("Time Promotion", "", "fas fa-book", "")
+                        new MenuParent("Broadcast Management", null, "fas fa-book", null),
+                        new MenuParent("Time Promotion", null, "fas fa-book", null)
                 )),
                 new MenuGroup("Setting", Arrays.asList(
-                        new MenuParent("Master Data", "admin", "", "fas fa-user", Arrays.asList(
+                        new MenuParent("Master Data", "admin", null, "fas fa-user", Arrays.asList(
                                 new MenuList("Location", "/cms/ms/location"),
                                 new MenuList("Business Category", "/cms/ms/business-category")
                         )),
-                        new MenuParent("Admin", "", "fas fa-book", "/cms/ms/admin"),
-                        new MenuParent("Privilege", "", "fas fa-book", "/cms/ms/privilege")
+                        new MenuParent("Admin", null, "fas fa-book", "/cms/ms/admin"),
+                        new MenuParent("Privilege", null, "fas fa-book", "/cms/ms/privilege"),
+                        new MenuParent("Api Docs", null, "fas fa-book", "/swagger-ui/index.html")
                 ))
 
         );

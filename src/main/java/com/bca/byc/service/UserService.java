@@ -1,23 +1,17 @@
 package com.bca.byc.service;
 
-import com.bca.byc.entity.User;
-import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.api.UserUpdatePasswordRequest;
 import com.bca.byc.model.api.UserUpdateRequest;
-import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Service
 public interface UserService {
 
     boolean existsById(Long userId); // check by id
-
-    // user execution api
 
     UserDetailResponse findUserById(Long userId); // for get 1 data
 

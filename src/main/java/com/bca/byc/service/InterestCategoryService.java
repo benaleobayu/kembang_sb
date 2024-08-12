@@ -1,23 +1,20 @@
 package com.bca.byc.service;
 
-import com.bca.byc.model.cms.InterestCategoryCreateRequest;
-import com.bca.byc.model.cms.InterestCategoryDetailResponse;
-import com.bca.byc.model.cms.InterestCategoryUpdateRequest;
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.cms.InterestCategoryModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface InterestCategoryService {
 
-//    boolean existsById(Long id);
+    InterestCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 
-    InterestCategoryDetailResponse findDataById(Long id);
+    List<InterestCategoryModelDTO.DetailResponse> findAllData();
 
-    List<InterestCategoryDetailResponse> findAllData();
+    void saveData(@Valid InterestCategoryModelDTO.CreateRequest dto) throws BadRequestException;
 
-    void saveData(@Valid InterestCategoryCreateRequest dto) throws Exception;
+    void updateData(Long id, @Valid InterestCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid InterestCategoryUpdateRequest dto);
-
-    void deleteData(Long id);
+    void deleteData(Long id) throws BadRequestException;
 }

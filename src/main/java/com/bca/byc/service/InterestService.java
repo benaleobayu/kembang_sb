@@ -1,23 +1,20 @@
 package com.bca.byc.service;
 
-import com.bca.byc.model.api.InterestCreateRequest;
-import com.bca.byc.model.api.InterestDetailResponse;
-import com.bca.byc.model.api.InterestUpdateRequest;
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.api.InterestModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface InterestService {
 
-//    boolean existsById(Long id);
+    InterestModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 
-    InterestDetailResponse findDataById(Long id);
+    List<InterestModelDTO.DetailResponse> findAllData();
 
-    List<InterestDetailResponse> getAllData();
+    void saveData(@Valid InterestModelDTO.CreateRequest dto) throws BadRequestException;
 
-    void saveData(InterestCreateRequest dto) throws Exception;
+    void updateData(Long id, @Valid InterestModelDTO.UpdateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid InterestUpdateRequest dto);
-
-    void deleteData(Long id);
+    void deleteData(Long id) throws BadRequestException;
 }

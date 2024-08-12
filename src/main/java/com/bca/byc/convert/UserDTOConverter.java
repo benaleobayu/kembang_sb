@@ -1,50 +1,43 @@
 package com.bca.byc.convert;
-
-import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
-import com.bca.byc.entity.UserType;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserUpdateRequest;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @Component
+@AllArgsConstructor
 public class UserDTOConverter {
 
-    @Autowired
     private ModelMapper modelMapper;
 
     // for get data
-    public UserDetailResponse convertToListResponse(User user){
-
-        UserDetailResponse dto = modelMapper.map(user, UserDetailResponse.class);
-
+    public UserDetailResponse convertToListResponse(User data) {
+        // mapping Entity with DTO Entity
+        UserDetailResponse dto = modelMapper.map(data, UserDetailResponse.class);
+        // return
         return dto;
     }
 
     // for create data
     public User convertToCreateRequest(@Valid RegisterRequest dto) {
-
-        User user = modelMapper.map(dto, User.class);
-
-        user.setType(UserType.MEMBER); // Default value
-        user.setStatus(StatusType.PENDING); // Default value
-
-        return user;
+        // mapping DTO Entity with Entity
+        User data = modelMapper.map(dto, User.class);
+        // return
+        return data;
     }
 
     // for update data
-    public void convertToUpdateRequest(User user, @Valid UserUpdateRequest dto) {
-
-        modelMapper.map(dto, user);
-
-        // set updatedAt
-        user.setUpdatedAt(LocalDateTime.now());
-
+    public void convertToUpdateRequest(User data, @Valid UserUpdateRequest dto) {
+        // mapping DTO Entity with Entity
+        modelMapper.map(dto, data);
+        // set updated_at
+        data.setUpdatedAt(LocalDateTime.now());
     }
 }
+

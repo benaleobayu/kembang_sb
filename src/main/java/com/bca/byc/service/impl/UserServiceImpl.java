@@ -7,9 +7,7 @@ import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.api.UserUpdatePasswordRequest;
 import com.bca.byc.model.api.UserUpdateRequest;
-import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
-import com.bca.byc.service.email.EmailService;
 import com.bca.byc.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,27 +34,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetailResponse findUserById(Long userId) {
-        User user = repository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("invalid.userId"));
-        return converter.convertToListResponse(user);
+    public UserDetailResponse findUserById(Long id) {
+        User data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("ENTITY_NAME not found"));
+
+        return converter.convertToListResponse(data);
     }
 
     @Override
     public List<UserDetailResponse> findAllUsers() {
+        List<User> datas = repository.findAll();
 
-        List<User> dtos = repository.findAll();
-        return dtos.stream()
-                .map((user -> converter.convertToListResponse(user)))
+        return datas.stream()
+                .map((data -> converter.convertToListResponse(data)))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void setNewPassword(Long userId, UserSetPasswordRequest dto) {
         User user = repository.findById(userId)
-                .orElseThrow(()-> new BadRequestException("invalid.userId"));
+                .orElseThrow(() -> new BadRequestException("invalid.userId"));
 
-        if(!dto.isSetPasswordMatch()){
+        if (!dto.isSetPasswordMatch()) {
             throw new BadRequestException("Password does not match");
         }
 
@@ -87,18 +86,17 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
-    public void updateUser(Long userId,@Valid UserUpdateRequest dto) {
-
-        User user = repository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("invalid user_id"));
+    public void updateUser(Long id, @Valid UserUpdateRequest dto) {
+        // check exist and get
+        User data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("INVALID User ID"));
 
         // update
-        converter.convertToUpdateRequest(user, dto);
+        converter.convertToUpdateRequest(data, dto);
 
         // save
-        repository.save(user);
+        repository.save(data);
     }
 
 }

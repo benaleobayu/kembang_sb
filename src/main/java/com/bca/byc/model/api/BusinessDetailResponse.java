@@ -1,6 +1,6 @@
 package com.bca.byc.model.api;
 
-import com.bca.byc.model.cms.BusinessCategoryDetailResponse;
+import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class BusinessDetailResponse {
 
     private String description;
 
-    private List<BusinessCategoryDetailResponse> categories;
+    private List<BusinessCategoryModelDTO.DetailResponse> categories;
 
     private Integer orders;
 

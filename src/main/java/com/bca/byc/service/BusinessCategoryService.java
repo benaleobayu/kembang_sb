@@ -1,23 +1,20 @@
 package com.bca.byc.service;
 
-import com.bca.byc.model.cms.BusinessCategoryCreateRequest;
-import com.bca.byc.model.cms.BusinessCategoryDetailResponse;
-import com.bca.byc.model.cms.BusinessCategoryUpdateRequest;
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface BusinessCategoryService {
 
-//    boolean existsById(Long id);
+    BusinessCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 
-    BusinessCategoryDetailResponse findDataById(Long id);
+    List<BusinessCategoryModelDTO.DetailResponse> findAllData();
 
-    List<BusinessCategoryDetailResponse> findAllData();
+    void saveData(@Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;
 
-    void saveData(@Valid BusinessCategoryCreateRequest dto) throws Exception;
+    void updateData(Long id, @Valid BusinessCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid BusinessCategoryUpdateRequest dto);
-
-    void deleteData(Long id);
+    void deleteData(Long id) throws BadRequestException;
 }

@@ -1,23 +1,20 @@
 package com.bca.byc.service;
 
-import com.bca.byc.model.cms.FeedbackCategoryCreateRequest;
-import com.bca.byc.model.cms.FeedbackCategoryDetailResponse;
-import com.bca.byc.model.cms.FeedbackCategoryUpdateRequest;
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface FeedbackCategoryService {
 
-//    boolean existsById(Long id);
+    FeedbackCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 
-    FeedbackCategoryDetailResponse findDataById(Long id);
+    List<FeedbackCategoryModelDTO.DetailResponse> findAllData();
 
-    List<FeedbackCategoryDetailResponse> findAllData();
+    void saveData(@Valid FeedbackCategoryModelDTO.CreateRequest dto) throws BadRequestException;
 
-    void saveData(@Valid FeedbackCategoryCreateRequest dto) throws Exception;
+    void updateData(Long id, @Valid FeedbackCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid FeedbackCategoryUpdateRequest dto);
-
-    void deleteData(Long id);
+    void deleteData(Long id) throws BadRequestException;
 }

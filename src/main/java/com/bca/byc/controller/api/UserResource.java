@@ -28,7 +28,7 @@ public class UserResource {
 
     private final UserService userService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ApiListResponse> getUsers() {
         log.info("GET /api/v1/users endpoint hit");
 

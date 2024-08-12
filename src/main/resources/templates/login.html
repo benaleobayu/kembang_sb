@@ -1,141 +1,167 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--page title-->
+    <div th:replace="~{partials/title-meta :: title-meta('Sign In')}"></div>
 
-    <!-- ================x==============================-->
-    <!--    Document Title-->
-    <!-- ===============================================-->
-    <title>BYC - CMS</title>
-
-    <!-- ===============================================-->
-    <!--    Favicons-->
-    <!-- ===============================================-->
-    <link rel="apple-touch-icon" sizes="180x180" href="/falcon/assets/img/favicons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/falcon/assets/img/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/falcon/assets/img/favicons/favicon-16x16.png">
-    <link rel="shortcut icon" type="image/x-icon" href="/falcon/assets/img/favicons/favicon.ico">
-    <link rel="manifest" href="/falcon/assets/img/favicons/manifest.json">
-    <meta name="msapplication-TileImage" content="/falcon/assets/img/favicons/mstile-150x150.png">
-    <meta name="theme-color" content="#ffffff">
-    <script src="/falcon/assets/js/config.js"></script>
-    <script src="/falcon/vendors/simplebar/simplebar.min.js"></script>
-
-    <!-- ===============================================-->
-    <!--    Stylesheets-->
-    <!-- ===============================================-->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
-    <link href="/falcon/vendors/simplebar/simplebar.min.css" rel="stylesheet">
-    <link href="/falcon/assets/css/theme-rtl.min.css" rel="stylesheet" id="style-rtl">
-    <link href="/falcon/assets/css/theme.min.css" rel="stylesheet" id="style-default">
-    <link href="/falcon/assets/css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl">
-    <link href="/falcon/assets/css/user.min.css" rel="stylesheet" id="user-style-default">
-    <link rel="stylesheet" type="text/css" href="/assets/vendors/ladda/ladda-themeless.min.css">
+    <!-- Page CSS -->
+    <div th:replace="~{partials/head-css :: head-css}"></div>
 </head>
 
 <body>
-    <!-- ===============================================-->
-    <!--    Main Content-->
-    <!-- ===============================================-->
-    <main class="main" id="top">
-        <div class="container-fluid">
-            <div class="row min-vh-100 flex-center g-0">
-                <div class="col-lg-8 col-xxl-5 py-3 position-relative">
-                    <img class="bg-auth-circle-shape" src="/falcon/assets/img/icons/spot-illustrations/bg-shape.png" alt="" width="250">
-                    <img class="bg-auth-circle-shape-2" src="/falcon/assets/img/icons/spot-illustrations/shape-1.png" alt="" width="150">
+<div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+    <div class="bg-overlay"></div>
+    <!-- auth-page content -->
+    <div class="auth-page-content overflow-hidden pt-lg-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card overflow-hidden border-0">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <div class="p-lg-5 p-4 auth-one-bg h-100">
+                                    <div class="bg-overlay"></div>
+                                    <div class="position-relative h-100 d-flex flex-column">
+                                        <div class="mb-4">
+                                            <a href="/" class="d-block">
+                                                <img src="/assets/images/cms/logo_byc.png" alt="" height="50">
+                                            </a>
+                                        </div>
+                                        <div class="mt-auto">
+                                            <div class="mb-3">
+                                                <i class="ri-double-quotes-l display-4 text-success"></i>
+                                            </div>
 
-                    <div class="card overflow-hidden z-index-1">
-                        <div class="card-body p-0">
-                            <div class="row g-0 h-100">
-                                <div class="col-md-5 text-center bg-card-gradient">
-                                    <div class="position-relative p-4 pt-md-5 pb-md-7 light">
-                                        <div class="bg-holder bg-auth-card-shape" style="background-image:url(/falcon/assets/img/icons/spot-illustrations/half-circle.png);"></div>
-                                        <div class="z-index-1 position-relative">
-                                            <a class="link-light mb-4 font-sans-serif fs-4 d-inline-block fw-bolder" href="#">BYC</a>
-                                            <p class="opacity-75 text-white">Komunditas pebisnis muda nasabah BCA Solitaire & Prioritas untuk mendapatkan berbagai insight bisnis, peluang networking serta mentoring bisnis</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-7 d-flex flex-center">
-                                    <div class="p-4 p-md-5 flex-grow-1">
-                                        <div class="row flex-between-center">
-                                            <div class="col-auto">
-                                                <h3>Account Login</h3>
-                                            </div>
-                                        </div>
-                                        <div th:if="${param.error}">
-                                            <p style="color:red">Invalid email or password.</p>
-                                        </div>
-    
-                                        <form id="form-validation" name="form-validation" class="mb-4"  th:action="@{/perform_login}" th:object="${loginForm}" method="post">
-                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                            <div class="mb-3 form-group">
-                                                <label class="form-label" for="validation-email">Email address</label>
-                                                <input type="email" id="validation-email" data-validation="NOTEMPTY"   th:field="*{email}" class="form-control" placeholder="Email Address" autocomplete="off" />
-                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                                            </div>
-                                            <div class="mb-3 form-group">
-                                                <div class="d-flex justify-content-between">
-                                                    <label class="form-label" for="validation-password">Password</label>
+                                            <div id="qoutescarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                                                <div class="carousel-indicators">
+                                                    <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                                    <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                                    <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
                                                 </div>
-                                                <input type="password" id="validation-password" data-validation="NOTEMPTY"  th:field="*{password}" class="form-control" placeholder="Enter Password" autocomplete="off" />
-                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-                                            </div>
-                                            <div class="row flex-between-center">
-                                                <div class="col-auto">
-                                                    <div class="form-check mb-0">
-                                                        <input class="form-check-input" type="checkbox" id="card-checkbox" checked="checked" />
-                                                        <label class="form-check-label mb-0" for="card-checkbox">Remember me</label>
+                                                <div class="carousel-inner text-center text-white pb-5">
+                                                    <div class="carousel-item active">
+                                                        <p class="fs-15 fst-italic">" Komunditas pebisnis muda nasabah BCA Solitaire & Prioritas untuk mendapatkan berbagai insight bisnis, peluang networking serta mentoring bisnis "</p>
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <p class="fs-15 fst-italic">" Komunditas pebisnis muda nasabah BCA Solitaire & Prioritas untuk mendapatkan berbagai insight bisnis, peluang networking serta mentoring bisnis"</p>
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <p class="fs-15 fst-italic">" Komunditas pebisnis muda nasabah BCA Solitaire & Prioritas untuk mendapatkan berbagai insight bisnis, peluang networking serta mentoring bisnis "</p>
                                                     </div>
                                                 </div>
-                                                <div class="col-auto">
-                                                    <a class="fs--1" href="/forgot-password">Forgot Your Password?</a>
-                                                </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <button class="ladda-button btn btn-primary d-block w-100 mt-3" type="submit">
-                                                    <span class="ladda-label">Login</span>
-                                                </button>
-                                            </div>
-                                        </form>
+                                            <!-- end carousel -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- end col -->
+
+                            <div class="col-lg-6">
+                                <div class="p-lg-5 p-4">
+                                    <div>
+                                        <h5 class="text-primary">Welcome Back !</h5>
+                                        <p class="text-muted">Sign in to continue to the CMS.</p>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <form th:action="@{/perform_login}" th:object="${loginForm}" method="post">
+                                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+                                            <div class="mb-3">
+                                                <label for="validation-email" class="form-label"  >Email</label>
+                                                <input class="form-control" data-validation="NOTEMPTY" id="validation-email"
+                                                       placeholder="Enter email" th:field="*{email}"
+                                                       type="text">
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="float-end">
+                                                    <a href="/auth-pass-reset-cover" class="text-muted">Forgot
+                                                        password?</a>
+                                                </div>
+                                                <label class="form-label" for="validation-password">Password</label>
+                                                <div class="position-relative auth-pass-inputgroup mb-3">
+                                                    <input autocomplete="off"
+                                                           class="form-control pe-5 password-input"
+                                                           data-validation="NOTEMPTY"
+                                                           id="validation-password"
+                                                           placeholder="Enter password"
+                                                           th:field="*{password}" type="password">
+                                                    <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                                </div>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
+                                                <label class="form-check-label" for="auth-remember-check">Remember
+                                                    me</label>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button class="btn btn-success w-100" type="submit">Sign In</button>
+                                            </div>
+
+<!--                                            <div class="mt-4 text-center">-->
+<!--                                                <div class="signin-other-title">-->
+<!--                                                    <h5 class="fs-13 mb-4 title">Sign In with</h5>-->
+<!--                                                </div>-->
+
+<!--                                                <div>-->
+<!--                                                    <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-16"></i></button>-->
+<!--                                                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-16"></i></button>-->
+<!--                                                    <button type="button" class="btn btn-dark btn-icon waves-effect waves-light"><i class="ri-github-fill fs-16"></i></button>-->
+<!--                                                    <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-16"></i></button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+                                        </form>
+                                    </div>
+
+                                    <div class="mt-5 text-center">
+                                        <p class="mb-0">Don't have an account ? <a href="/auth-signup-cover" class="fw-semibold text-primary text-decoration-underline">
+                                            Signup</a> </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
                         </div>
+                        <!-- end row -->
+                    </div>
+                    <!-- end card -->
+                </div>
+                <!-- end col -->
+
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- end auth page content -->
+
+    <!-- footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center">
+                        <p class="mb-0">&copy;
+                            <script>document.write(new Date().getFullYear())</script> Unictive.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-    <!-- ===============================================-->
-    <!--    JavaScripts-->
-    <!-- ===============================================-->
-    <script src="/falcon/vendors/popper/popper.min.js"></script>
-    <script src="/falcon/vendors/bootstrap/bootstrap.min.js"></script>
-    <script src="/falcon/vendors/anchorjs/anchor.min.js"></script>
-    <script src="/falcon/vendors/is/is.min.js"></script>
-    <script src="/falcon/vendors/fontawesome/all.min.js"></script>
-    <script src="/falcon/vendors/lodash/lodash.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
-    <script src="/falcon/vendors/list.js/list.min.js"></script>
-    <script src="/falcon/assets/js/theme.js"></script>
-    <script src="/assets/vendors/jquery/jquery.min.js"></script>
-    <script src="/assets/vendors/html5-form-validation/jquery.validation.min.js"></script>
-    <script src="/assets/vendors/bootstrap-show-password/bootstrap-show-password.min.js"></script>
-    <script src="/assets/vendors/ladda/ladda.min.js"></script>
-    <script src="/falcon/assets/script/form-validation.js"></script>
+    </footer>
+    <!-- end Footer -->
+</div>
 
-    <script>
-        (function ($) {
-            $(function () {
-                
-            });
-        })(jQuery);
-    </script>
+<div th:replace="~{partials/vendor-scripts :: scripts}"></div>
+<!-- password-addon init -->
+<script src="/assets/js/pages/password-addon.init.js"></script>
 </body>
 
 </html>
