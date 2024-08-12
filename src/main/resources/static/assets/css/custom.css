@@ -2,22 +2,34 @@
 Template Name: Style Custom
 File: Custom Css File
 */
-.table-container {
-    position: relative;
-    overflow-x: auto;
+
+/* attribute */
+.d-flex{
+    column-gap: 10px;
+    row-gap: 5px;
 }
-table {
+
+.icon-size {
+    width: 14px;
+    height: 16px;
+}
+
+.icon-size svg {
     width: 100%;
-    border-collapse: collapse;
+    height: 100%;
 }
-th, td {
-    padding: 8px;
-    border: 1px solid #ddd;
+/* end attribute */
+
+
+body{
+    background-color: #EAF1F6 !important;
+    font-size: 14px;
 }
-.action-col {
-    position: -webkit-sticky;
-    position: sticky;
-    right: 0;
-    background: #fff;
-    z-index: 1;
+
+.navbar-menu{
+    background: #EAF1F6 !important;
+}
+
+.global-head{
+    background: #F3F4F6 !important;
 }
