@@ -79,8 +79,8 @@ public class User {
     @Column(name = "status", nullable = false, columnDefinition = "int default 0")
     private StatusType status = StatusType.PENDING;
 
-    @Column(name = "is_suspend", nullable = false, columnDefinition = "boolean default false")
-    private Boolean isSuspend = false;
+    @Column(name = "is_suspended", nullable = false, columnDefinition = "boolean default false")
+    private Boolean isSuspended = false;
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
