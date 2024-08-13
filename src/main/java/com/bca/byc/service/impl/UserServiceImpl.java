@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailResponse findUserById(Long id) {
         User data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("ENTITY_NAME not found"));
+                .orElseThrow(() -> new BadRequestException("User not found"));
 
         return converter.convertToListResponse(data);
     }
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         List<User> datas = repository.findAll();
 
         return datas.stream()
-                .map((data -> converter.convertToListResponse(data)))
+                .map(converter::convertToListResponse)
                 .collect(Collectors.toList());
     }
 

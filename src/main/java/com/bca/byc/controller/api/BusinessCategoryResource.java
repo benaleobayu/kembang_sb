@@ -6,6 +6,7 @@ import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.BusinessCategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/business_category")
+@Tag(name = "Business Category")
 public class BusinessCategoryResource {
 
     private BusinessCategoryService service;
@@ -26,7 +28,7 @@ public class BusinessCategoryResource {
     public ResponseEntity<ApiListResponse> getAll() {
         log.info("GET /api/v1/business_category endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found business category", service.findAllData()));
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found business category", service.findByParentIdIsNull()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
         }
@@ -49,11 +51,26 @@ public class BusinessCategoryResource {
         try {
             service.saveData(item);
             return ResponseEntity.created(URI.create("/api/v1/business_category/"))
-                    .body(new ApiResponse(true, "Successfully created business category"));
+                    .body(new ApiResponse(true, "Successfully created parent business category"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+     @PostMapping("/{id}/child")
+    public ResponseEntity<ApiResponse> createChild(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.CreateRequest item) {
+        log.info("POST /api/v1/business_category" + id + "/child endpoint hit");
+        try {
+            item.setCheckParentId(id);
+            service.saveDataChild(id, item);
+            return ResponseEntity.created(URI.create("/api/v1/business_category/"))
+                    .body(new ApiResponse(true, "Successfully created child of business category"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+
 
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.UpdateRequest item) {

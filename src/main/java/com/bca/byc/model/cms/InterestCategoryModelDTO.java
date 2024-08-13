@@ -26,7 +26,6 @@ public class InterestCategoryModelDTO {
     }
 
     @Data
-    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class CreateRequest {
 

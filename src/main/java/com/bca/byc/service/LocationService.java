@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface LocationService {
 
-    LocationModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    LocationModelDTO.DetailResponse findDataById(Long id) ;
 
     List<LocationModelDTO.DetailResponse> findAllData();
 

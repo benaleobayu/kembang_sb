@@ -8,6 +8,7 @@ import com.bca.byc.repository.InterestCategoryRepository;
 import com.bca.byc.service.InterestCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,13 @@ public class InterestCategoryServiceImpl implements InterestCategoryService {
     public List<InterestCategoryModelDTO.DetailResponse> findAllData() {
         // Get the list
         List<InterestCategory> datas = repository.findAll();
+
+        for (InterestCategory item : datas) {
+            if (item.getDescription() != null) {
+                String cleanDescription = Jsoup.parse(item.getDescription()).text();
+                item.setDescription(cleanDescription);
+            }
+        }
 
         // stream into the list
         return datas.stream()

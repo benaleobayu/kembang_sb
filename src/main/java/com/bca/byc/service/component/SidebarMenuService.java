@@ -38,8 +38,9 @@ public class SidebarMenuService {
                 new MenuGroup("Setting", Arrays.asList(
                         new MenuParent("Master Data", "admin", null, "fas fa-user", Arrays.asList(
                                 new MenuList("Location", "/cms/ms/location"),
-                                new MenuList("Business Category", "/cms/ms/business-category"),
-                                new MenuList("Feedback Category", "/cms/ms/feedback-category")
+                                new MenuList("Interest Category", "/cms/ms/interest_category"),
+                                new MenuList("Business Category", "/cms/ms/business_category"),
+                                new MenuList("Feedback Category", "/cms/ms/feedback_category")
                         )),
                         new MenuParent("Admin", null, "fas fa-book", "/cms/ms/admin"),
                         new MenuParent("Privilege", null, "fas fa-book", "/cms/ms/privilege"),

@@ -6,20 +6,25 @@ File: Custom Css File
 /* attribute */
 .d-flex{
     column-gap: 10px;
-    row-gap: 5px;
+    row-gap: 5px
 }
 
 .icon-size {
     width: 14px;
-    height: 16px;
+    height: 14px;
 }
 
 .icon-size svg {
     width: 100%;
     height: 100%;
 }
-/* end attribute */
 
+.breadcrumb{
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+}
+
+/* end attribute */
 
 body{
     background-color: #EAF1F6 !important;
@@ -31,5 +36,6 @@ body{
 }
 
 .global-head{
-    background: #F3F4F6 !important;
+    backround: #F3F4F6 !important;
 }
+

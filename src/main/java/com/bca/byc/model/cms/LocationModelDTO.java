@@ -1,5 +1,6 @@
 package com.bca.byc.model.cms;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 public class LocationModelDTO {
@@ -21,9 +23,12 @@ public class LocationModelDTO {
         private String description;
         private Integer orders;
         private Boolean status;
-        private String createdAt;
-        private String updatedAt;
 
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        private LocalDateTime createdAt;
+
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        private LocalDateTime updatedAt;
     }
 
     @Data

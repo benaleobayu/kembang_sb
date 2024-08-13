@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -47,6 +49,13 @@ public class BusinessCategory {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "parent_id")
+    private BusinessCategory parentId;
+
+    @OneToMany(mappedBy = "parentId")
+    private List<BusinessCategory> children = new ArrayList<>();
 
     @ManyToMany(mappedBy = "categories")
     private Set<Business> businesses = new HashSet<>();

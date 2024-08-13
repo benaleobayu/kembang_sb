@@ -29,23 +29,7 @@
 
             <div class="h-100">
                 <div class="row mb-3 pb-1">
-                    <div class="col-12">
-                        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
-                            <div class="flex-grow-1">
-                                <!--TODO breadcrubms here-->
-                                <nav aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"
-                                            th:aria-current="${breadcrumb.current == true ? 'page' : null}"
-                                            th:classappend="${breadcrumb.current == true} ? 'active'"
-                                            th:each="breadcrumb : ${breadcrumbs}">
-                                            <a th:href="${breadcrumb.route}" th:text="${breadcrumb.name}"></a>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
-                        </div><!-- end card header -->
-                    </div>
+                    <div th:replace="~{partials/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></div>
                     <!--end col-->
                 </div>
                 <!--end row-->
@@ -160,19 +144,7 @@
 
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var tableContainer = document.querySelector('.table-container');
 
-        function updateActionColPosition() {
-            var scrollLeft = tableContainer.scrollLeft;
-            var actionCol = document.querySelector('.action-col');
-            actionCol.style.transform = 'translateX(' + scrollLeft + 'px)';
-        }
-
-        tableContainer.addEventListener('scroll', updateActionColPosition);
-        window.addEventListener('resize', updateActionColPosition);
-        updateActionColPosition();
-    });
 </script>
 </body>
 

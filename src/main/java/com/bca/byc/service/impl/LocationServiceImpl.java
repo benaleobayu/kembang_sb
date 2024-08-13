@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.LocationDTOConverter;
+import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.entity.Location;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.LocationModelDTO;
@@ -8,6 +9,7 @@ import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.service.LocationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,7 +24,7 @@ public class LocationServiceImpl implements LocationService {
     private LocationDTOConverter converter;
 
     @Override
-    public LocationModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public LocationModelDTO.DetailResponse findDataById(Long id) {
         Location data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Location not found"));
 
@@ -33,7 +35,12 @@ public class LocationServiceImpl implements LocationService {
     public List<LocationModelDTO.DetailResponse> findAllData() {
         // Get the list
         List<Location> datas = repository.findAll();
-
+        for (Location item : datas) {
+            if (item.getDescription() != null) {
+                String cleanDescription = Jsoup.parse(item.getDescription()).text();
+                item.setDescription(cleanDescription);
+            }
+        }
         // stream into the list
         return datas.stream()
                 .map(converter::convertToListResponse)
