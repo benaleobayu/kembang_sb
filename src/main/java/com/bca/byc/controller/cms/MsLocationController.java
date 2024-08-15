@@ -23,12 +23,9 @@ import java.util.List;
 public class MsLocationController {
 
     @Autowired
-    private LocationRepository repository;
-    @Autowired
     private LocationService service;
 
-    @Value("/cms/ms/location")
-    private String thisUrl;
+    private final String thisUrl = "/cms/ms/location";
 
     // get route index table
     @GetMapping

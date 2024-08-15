@@ -36,10 +36,10 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mb-0" th:text="${tableName + ' Table'}"></h5>
                                     <div class="col-auto">
-                                        <a class="btn btn-soft-primary" href="/cms/users/create" type="button">
+                                        <a class="btn btn-soft-primary border" th:href="${currentUrl} + '/create'" type="button">
                                             <i class="align-middle me-1 icon-size" data-feather="plus"></i>
                                             Tambah
                                         </a>
@@ -82,13 +82,11 @@
                                             </td>
                                             <td class="action-col">
                                                 <div class="dropdown d-inline-block bg-white border border-1 border-secondary rounded-2 p-1">
-                                                    <button class="btn btn-ghost-info waves-effect waves-light"
-                                                            type="button">
-                                                        <a class="dropdown-item"
-                                                           th:href="${currentUrl + '/' + data.id}">
-                                                            <i class="text-info icon-size" data-feather="eye"></i>
-                                                        </a>
-                                                    </button>
+                                                    <a th:href="${currentUrl + '/' + data.id + '/detail'}">
+                                                        <button type="button" class="btn btn-ghost-secondary waves-effect">
+                                                            <i class="text-secondary icon-size" data-feather="eye"></i>
+                                                        </button>
+                                                    </a>
                                                     <button aria-expanded="false" class="btn btn-sm dropdown"
                                                             data-bs-toggle="dropdown" type="button">
                                                         <i class="text-secondary icon-size"

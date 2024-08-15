@@ -1,160 +1,93 @@
-<!DOCTYPE html>
-<html
-        lang="en"
-        th:replace="~{layout :: parent(~{::#content},~{::title},~{::script},~{::head})}"
-        xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="sidebar">
+    <!-- ========== App Menu ========== -->
+    <div class="app-menu navbar-menu" style="">
+        <!-- LOGO -->
+        <div class="navbar-brand-box text-start">
+            <!-- Dark Logo-->
+            <a href="/" class="logo logo-dark">
+					<span class="logo-sm">
+						<img src="/assets/images/cms/logo_byc.png" alt="" height="60">
+					</span>
+                <span class="logo-lg">
+						<img src="/assets/images/cms/logo_byc.png" alt="" height="60">
+					</span>
+            </a>
+            <!-- Light Logo-->
+            <a href="/" class="logo logo-light">
+					<span class="logo-sm">
+						<img src="/assets/images/cms/logo_byc.png" alt="" height="60">
+					</span>
+                <span class="logo-lg">
+						<img src="/assets/images/cms/logo_byc.png" alt="" height="60">
+					</span>
+            </a>
+            <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+                    id="vertical-hover">
+                <i class="ri-record-circle-line"></i>
+            </button>
+        </div>
 
-<head>
-
-    <title>User Suspended</title>
-
-    <!-- jsvectormap css -->
-    <link href="/assets/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css"/>
-
-    <!--Swiper slider css2-->
-    <link href="/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css"/>
-
-    <!--datatable css-->
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
-    <!--datatable responsive css-->
-    <link href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" rel="stylesheet"/>
-
-    <link href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
-</head>
-
-<body>
-<div id="content">
-    <div class="row">
-        <div class="col">
-
-            <div class="h-100">
-                <div th:replace="~{partials/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></div>
-                <!--end row-->
-
-                <!-- content here -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title mb-0" th:text="${tableName + ' Table'}"></h5>
-                                    <div class="col-auto">
-                                        <a class="btn btn-soft-primary" href="/cms/users/create" type="button">
-                                            <i class="align-middle me-1 icon-size" data-feather="plus"></i>
-                                            Tambah
-                                        </a>
-                                        <a class="btn btn-soft-primary" th:href="${currentUrl}" type="button">
-                                            <i class="align-middle icon-size" data-feather="refresh-ccw"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-container">
-                                    <table class="table nowrap table-striped align-middle"
-                                           id="model-datatables"
-                                           style="width:100%">
-                                        <thead class="global-head">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Fullname</th>
-                                            <th>Email</th>
-                                            <th>Submit date</th>
-                                            <th>Location</th>
-                                            <th>CIN</th>
-                                            <th>BCA Customer Number</th>
-                                            <th>Phone Number</th>
-                                            <th class="action-col">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="data : ${datas}">
-                                            <td th:text="${data.id}"></td>
-                                            <td th:text="${data.name}"></td>
-                                            <td th:text="${data.email}"></td>
-                                            <td th:text="${data.createdAt}"></td>
-                                            <td th:text="${data.cin}"></td>
-                                            <td th:text="${data.cin}"></td>
-                                            <td th:text="${data.bankAccount}"></td>
-                                            <td th:text="${data.phone}"></td>
-                                            </td>
-                                            <td class="action-col">
-                                                <div class="dropdown d-inline-block bg-white border border-1 border-secondary rounded-2 p-1">
-                                                    <button class="btn btn-ghost-info waves-effect waves-light"
-                                                            type="button">
-                                                        <a class="dropdown-item"
-                                                           th:href="${routePrefix + '/' + data.id}">
-                                                            <i class="text-info btn-sm icon-size"
-                                                               data-feather="eye"></i>
-                                                        </a>
-                                                    </button>
-                                                    <button class="btn btn-ghost-danger waves-effect waves-light"
-                                                            type="button">
-                                                        <a class="dropdown-item"
-                                                           th:href="${routePrefix + '/' + data.id}">
-                                                            <i class="text-danger icon-size" data-feather="trash"></i>
-                                                        </a>
-                                                    </button>
-                                                    <button class="btn btn-ghost-danger waves-effect waves-light"
-                                                            type="button">
-                                                        <a class="dropdown-item"
-                                                           th:href="${routePrefix + '/' + data.id}">
-                                                            <i class="text-danger icon-size" data-feather="user-x"></i>
-                                                        </a>
-                                                    </button>
-
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
+        <div id="scrollbar">
+            <div class="container-fluid">
+                <div id="two-column-menu"></div>
+                <ul class="navbar-nav" id="navbar-nav" th:each="group : ${menuGroups}">
+                    <li class="menu-title"><span th:text="${group.name}">Menu</span></li>
+                    <li class="nav-item" th:each="parent : ${group.menuParents}">
+                        <a aria-controls="sidebarDashboards"
+                           aria-expanded="false"
+                           class="nav-link menu-link" role="button"
+                           th:attr="data-bs-toggle=${parent.parentId == null ? null : 'collapse'}"
+                           th:href="${parent.parentId == null ? parent.link : '#' + parent.parentId}">
+                            <i data-feather="home" class="icon-dual"></i> <span th:text="${parent.name}"></span>
+                        </a>
+                        <div class="collapse menu-dropdown" th:id="${parent.parentId}">
+                            <ul class="nav nav-sm flex-column" th:each="item : ${parent.menuList}">
+                                <li class="nav-item">
+                                    <a th:href="${item.link}"
+                                       class="nav-link"
+                                       th:classappend="${item.link == currentUrl} ? 'active' : ''"
+                                       th:text="${item.name}"></a>
+                                </li>
+                            </ul>
                         </div>
-                    </div>
-                </div>
+                    </li> <!-- end Dashboard Menu -->
+                    <!-- end Dashboard Menu -->
+                </ul>
+            </div>
+            <!-- Sidebar -->
+        </div>
 
-                <!-- end content -->
-
-            </div> <!-- end .h-100-->
-
-        </div> <!-- end col -->
-
+        <div class="sidebar-background"></div>
     </div>
+    <!-- Left Sidebar End -->
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get all the links with class 'nav-link' inside the menu
+            var navLinks = document.querySelectorAll('#navbar-nav .nav-link');
+
+            // Loop through each link to find the active one
+            navLinks.forEach(function(link) {
+                if (link.classList.contains('active')) {
+                    // Find the parent <a> tag with the 'menu-link' class
+                    var menuLink = link.closest('.nav-item').querySelector('.menu-link');
+
+                    // Set aria-expanded to true
+                    if (menuLink) {
+                        menuLink.setAttribute('aria-expanded', 'true');
+                    }
+
+                    // Find the corresponding dropdown and add the 'show' class
+                    var dropdown = document.querySelector(`#${link.closest('.collapse').id}`);
+                    if (dropdown) {
+                        dropdown.classList.add('show');
+                    }
+                }
+            });
+        });
+    </script>
 </div>
-
-<script crossorigin="anonymous"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-        src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!--datatable js-->
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-
-<script src="/assets/js/pages/datatables.init.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var tableContainer = document.querySelector('.table-container');
-
-        function updateActionColPosition() {
-            var scrollLeft = tableContainer.scrollLeft;
-            var actionCol = document.querySelector('.action-col');
-            actionCol.style.transform = 'translateX(' + scrollLeft + 'px)';
-        }
-
-        tableContainer.addEventListener('scroll', updateActionColPosition);
-        window.addEventListener('resize', updateActionColPosition);
-        updateActionColPosition();
-    });
-</script>
-</body>
-
-</html>

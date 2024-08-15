@@ -87,7 +87,7 @@ public class MsBusinessCategoryController {
         return "redirect:/cms/ms/" + suffixName;
     }
 
-        // get route edit data
+    // get route edit data
     @GetMapping("/{id}/edit")
     public String update(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // set breadcrumb
@@ -199,7 +199,7 @@ public class MsBusinessCategoryController {
 
 
     // get method edit data
-    @PostMapping("/{id}/edit")
+    @PostMapping("/{id}/child/{childId}/edit")
     public String update_child(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid BusinessCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
