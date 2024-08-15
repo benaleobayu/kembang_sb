@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -46,6 +48,11 @@ public class FeedbackCategory {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // relation
+
+//    @ManyToMany(mappedBy = "feedbackCategories")
+//    private Set<User> users = new HashSet<>();
 
 
 }

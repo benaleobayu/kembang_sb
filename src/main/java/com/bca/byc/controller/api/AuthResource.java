@@ -1,5 +1,6 @@
 package com.bca.byc.controller.api;
 
+import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.auth.AuthenticationRequest;
 import com.bca.byc.model.auth.OtpRequest;
@@ -58,6 +59,26 @@ public class AuthResource {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/auth-register")
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody AuthRegisterRequest dto) {
+        log.debug("Register request received: {}", dto.getEmail());
+
+        if (repository.existsByEmail(dto.getEmail())) {
+            log.error("User registration failed: Email {} already exists", dto.getEmail());
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
+        }
+        try {
+            authService.saveUserWithRelations(dto);
+            log.info("User registered successfully: {}", dto.getEmail());
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. You are in the waiting status for approval. please check the email."));
+        } catch (Exception e) {
+            log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
+        }
+    }
+
+
 
     @PostMapping("/validate-otp")
     public ResponseEntity<ApiResponse> validateOtp(@RequestBody OtpRequest otpRequest) {

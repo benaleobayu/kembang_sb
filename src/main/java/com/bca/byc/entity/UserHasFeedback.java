@@ -18,16 +18,16 @@ public class UserHasFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feedback_category_id")
-    private FeedbackCategory feedbackCategoryId;
+    private FeedbackCategory feedbackCategory;
 
-    @Column(name = "message", columnDefinition = "text")
-    private String message;
+    private String quote;
+
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

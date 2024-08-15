@@ -1,5 +1,6 @@
 package com.bca.byc.convert;
 import com.bca.byc.entity.User;
+import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserUpdateRequest;
@@ -31,6 +32,15 @@ public class UserDTOConverter {
         // return
         return data;
     }
+
+    // for create data
+    public User convertToCreateGroupRequest(@Valid AuthRegisterRequest dto) {
+        // mapping DTO Entity with Entity
+        User data = modelMapper.map(dto, User.class);
+        // return
+        return data;
+    }
+
 
     // for update data
     public void convertToUpdateRequest(User data, @Valid UserUpdateRequest dto) {

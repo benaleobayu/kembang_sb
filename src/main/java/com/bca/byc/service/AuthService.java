@@ -1,6 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
+import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.RegisterRequest;
 import jakarta.mail.MessagingException;
 
@@ -9,6 +10,7 @@ public interface AuthService {
     // auth
 
     void saveUser(RegisterRequest dto) throws Exception; // register
+    void saveUserWithRelations(AuthRegisterRequest dto); // register
 
     void generateAndSendOtp(User user) throws MessagingException;
 

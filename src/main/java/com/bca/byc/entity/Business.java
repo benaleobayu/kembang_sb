@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -49,7 +49,6 @@ public class Business {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -60,21 +59,14 @@ public class Business {
         updatedAt = LocalDateTime.now();
     }
 
-    // relation user_id
+    // relation
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
-    // relation business_has_category
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "business_has_category",
-            joinColumns = @JoinColumn(name = "business_id"),
-            inverseJoinColumns = @JoinColumn(name = "business_category_id")
-    )
-
-    // relation business_category
-    private Set<BusinessCategory> categories =  new HashSet<>();
+    @OneToMany(mappedBy = "business", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<BusinessHasCategory> businessCategories = new ArrayList<>();
 
 
 

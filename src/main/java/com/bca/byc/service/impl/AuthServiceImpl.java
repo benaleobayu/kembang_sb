@@ -1,15 +1,9 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.UserDTOConverter;
-import com.bca.byc.entity.FeedbackCategory;
-import com.bca.byc.entity.Otp;
-import com.bca.byc.entity.StatusType;
-import com.bca.byc.entity.User;
-import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.RegisterRequest;
-import com.bca.byc.repository.FeedbackCategoryRepository;
-import com.bca.byc.repository.OtpRepository;
-import com.bca.byc.repository.UserRepository;
+import com.bca.byc.entity.*;
+import com.bca.byc.model.*;
+import com.bca.byc.repository.*;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
@@ -17,17 +11,24 @@ import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private UserRepository repository;
-
+    private BusinessRepository businessRepository;
+    private BusinessCategoryRepository businessCategoryRepository;
+    private BusinessHasCategoryRepository businessHasCategoryRepository;
     private FeedbackCategoryRepository feedbackCategoryRepository;
+    private UserHasFeedbackRepository userHasFeedbackRepository;
 
     private OtpRepository otpRepository;
 
@@ -39,17 +40,61 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
-        FeedbackCategory feedbackCategory =feedbackCategoryRepository.findById(dto.getFeedbackCategoryId())
-                .orElseThrow(() -> new BadRequestException("Feedback category not found"));
 
         User user = converter.convertToCreateRequest(dto);
 
         repository.save(user);
 
-        user.setFeedbackCategoryId(feedbackCategory);
-
         // send waiting approval email
         sendWaitingApproval(user);
+    }
+
+    @Override
+    @Transactional
+    public void saveUserWithRelations(AuthRegisterRequest dto) {
+        // Create User
+        User user = converter.convertToCreateGroupRequest(dto);
+        user = repository.save(user);
+
+        // Create Businesses
+        for (RegisterBusinessRequest businessDto : dto.getBusinesses()) {
+            Business business = new Business();
+            business.setName(businessDto.getBusinessName());
+            business.setAddress(businessDto.getBusinessAddress());
+            business.setUser(user);
+            business = businessRepository.save(business);
+
+            // Create Business Categories
+            for (RegisterBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
+                BusinessCategory parentCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryId())
+                        .orElseThrow(() -> new RuntimeException("Business Category Parent not found"));
+
+                BusinessCategory childCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryChildId())
+                        .orElseThrow(() -> new RuntimeException("Business Category Child not found"));
+
+                BusinessHasCategory businessHasCategory = new BusinessHasCategory();
+                businessHasCategory.setBusiness(business);
+                businessHasCategory.setBusinessCategoryParent(parentCategory);
+                businessHasCategory.setBusinessCategoryChild(childCategory);
+                businessHasCategory.setCreatedAt(LocalDateTime.now());
+                businessHasCategory.setUpdatedAt(LocalDateTime.now());
+
+                // Save the BusinessHasCategory entity
+                businessHasCategoryRepository.save(businessHasCategory);
+            }
+        }
+
+        // Create Feedbacks
+        for (RegisterUserFeedbackRequest feedbackDto : dto.getFeedbackCategories()) {
+            FeedbackCategory feedbackCategory = feedbackCategoryRepository.findById(feedbackDto.getFeedbackCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Feedback Category not found"));
+
+            UserHasFeedback userHasFeedback = new UserHasFeedback();
+            userHasFeedback.setUser(user);
+            userHasFeedback.setFeedbackCategory(feedbackCategory);
+            userHasFeedback.setQuote(feedbackDto.getQuote());
+            userHasFeedbackRepository.save(userHasFeedback);
+        }
     }
 
     @Override

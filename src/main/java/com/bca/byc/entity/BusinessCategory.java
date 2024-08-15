@@ -50,14 +50,19 @@ public class BusinessCategory {
         updatedAt = LocalDateTime.now();
     }
 
+
+    // make parent in this entity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "parent_id")
     private BusinessCategory parentId;
 
+    // show data as child in this entity
     @OneToMany(mappedBy = "parentId")
     private List<BusinessCategory> children = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<Business> businesses = new HashSet<>();
+//     extra ralation
+//    @OneToMany(mappedBy = "category")
+//    private List<Business> businesses;
+
 
 }

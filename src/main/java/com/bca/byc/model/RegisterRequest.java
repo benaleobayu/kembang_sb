@@ -41,10 +41,4 @@ public class RegisterRequest {
 
     private LocalDate birthdate;
 
-    private String feedbackQuote;
-
-    // to set the relation of feedback category
-    private Long feedbackCategoryId;
-
-
 }

@@ -2,6 +2,7 @@ package com.bca.byc.entity;
 
 import com.bca.byc.validation.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -38,7 +43,7 @@ public class User {
     private UserType type = UserType.MEMBER;
 
     @Column(name = "bank_account", length = 20)
-    private String bankAccount;
+    private String solitaireBankAccount;
 
     @Column(name = "cin", length = 20)
     private String cin;
@@ -47,25 +52,20 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
 
-    @Column(name = "education", length = 50)
-    private String education;
-
-    @Column(name = "business_name", length = 50)
-    private String businessName;
-
-    @Column(name = "biodata", columnDefinition = "text")
-    private String biodata;
-
+    // parent data
     @Column(name = "parent_name", length = 50)
     private String parentName;
 
-    // relation feedback_category
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedback_category_id")
-    private FeedbackCategory feedbackCategoryId;
+    @Column(name = "parent_birthdate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate parentBirthdate;
+    // end parent data
 
-    @Column(name = "feedback_quote", columnDefinition = "text")
-    private String feedbackQuote;
+    @Column(name = "education", length = 50)
+    private String education;
+
+    @Column(name = "biodata", columnDefinition = "text")
+    private String biodata;
 
     private String rank;
 
@@ -85,9 +85,6 @@ public class User {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
-    @Column(name = "verified_at")
-    private LocalDateTime verifiedAt;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -103,5 +100,13 @@ public class User {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // relation
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Business> businesses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<UserHasFeedback> feedbacks = new ArrayList<>();
+
 
 }
