@@ -27,11 +27,10 @@ File: Custom Css File
 /* end attribute */
 
 body{
-    background-color: #EAF1F6 !important;
     font-size: 14px;
 }
 
-.navbar-menu{
+body, .navbar-menu{
     background: #EAF1F6 !important;
 }
 
