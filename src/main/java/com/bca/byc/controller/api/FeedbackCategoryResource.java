@@ -4,7 +4,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.FeedbackCategoryService;
+import com.bca.byc.service.MsFeedbackCategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.net.URI;
 @Tag(name = "FeedbackCategory API")
 public class FeedbackCategoryResource {
 
-    private FeedbackCategoryService service;
+    private MsFeedbackCategoryService service;
 
     @GetMapping
     public ResponseEntity<ApiListResponse> getAll() {

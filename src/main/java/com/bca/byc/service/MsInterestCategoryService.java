@@ -6,7 +6,7 @@ import com.bca.byc.model.cms.InterestCategoryModelDTO;
 import javax.validation.Valid;
 import java.util.List;
 
-public interface InterestCategoryService {
+public interface MsInterestCategoryService {
 
     InterestCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 

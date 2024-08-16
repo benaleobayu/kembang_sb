@@ -2,6 +2,7 @@ package com.bca.byc.convert;
 
 import com.bca.byc.entity.Location;
 import com.bca.byc.model.cms.LocationModelDTO;
+import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,11 @@ public class LocationDTOConverter {
     public LocationModelDTO.DetailResponse convertToListResponse(Location data) {
         // mapping Entity with DTO Entity
         LocationModelDTO.DetailResponse dto = modelMapper.map(data, LocationModelDTO.DetailResponse.class);
+        // Use DataFormatter here
+        dto.setDescription(Formatter.formatDescription(data.getDescription()));
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+
         // return
         return dto;
     }

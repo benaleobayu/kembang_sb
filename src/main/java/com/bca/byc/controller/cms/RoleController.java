@@ -1,7 +1,7 @@
 package com.bca.byc.controller.cms;
 
 import com.bca.byc.entity.Role;
-import com.bca.byc.service.RoleService;
+import com.bca.byc.service.SettingsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class RoleController {
 
     @Autowired
-    private RoleService roleService;
+    private SettingsRoleService roleService;
     private final String resourceName = "roles";
     @PreAuthorize("hasPermission(#authentication, 'roles.view')") // Use your permission name
     @GetMapping

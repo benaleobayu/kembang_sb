@@ -4,7 +4,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.LocationModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.LocationService;
+import com.bca.byc.service.MsLocationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.net.URI;
 @Tag(name = "Location API")
 public class LocationResource {
 
-    private LocationService service;
+    private MsLocationService service;
 
     @GetMapping
     public ResponseEntity<ApiListResponse> getAll() {

@@ -37,7 +37,7 @@ public class UserController {
         model.addAttribute("datas", repository.findAllActiveUsers());
 
         // some part
-        model.addAttribute("tableName", "Users");
+        model.addAttribute("titlePage", "Users");
         return "cms/user/inquiry";
     }
 
@@ -56,7 +56,7 @@ public class UserController {
         model.addAttribute("datas", repository.findByStatus(StatusType.APPROVE_SPV));
 
         // some part
-        model.addAttribute("tableName", "Users Active");
+        model.addAttribute("titlePage", "Users Active");
         return "cms/user/active";
     }
 
@@ -75,7 +75,7 @@ public class UserController {
         model.addAttribute("datas", repository.findByIsSuspended(true));
 
         // some part
-        model.addAttribute("tableName", "Users Suspended");
+        model.addAttribute("titlePage", "Users Suspended");
         return "cms/user/suspended";
     }
 
@@ -94,7 +94,7 @@ public class UserController {
         model.addAttribute("datas", repository.findByIsDeleted(true));
 
         // some part
-        model.addAttribute("tableName", "Users Deleted");
+        model.addAttribute("titlePage", "Users Deleted");
 
         // get location view
         return "cms/user/deleted";

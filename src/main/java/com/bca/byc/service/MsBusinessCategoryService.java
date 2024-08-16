@@ -6,7 +6,7 @@ import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import javax.validation.Valid;
 import java.util.List;
 
-public interface BusinessCategoryService {
+public interface MsBusinessCategoryService {
 
     BusinessCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 

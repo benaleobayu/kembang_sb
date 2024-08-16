@@ -23,14 +23,14 @@ public class UserDetailResponse implements Serializable {
     private String name;
     private String email;
     private String phone;
-    private String bankAccount;
+    private String solitaireBankAccount;
     private String education;
     private String businessName;
     private String cin;
     private String biodata;
     private String status;
     private String createdAt;
-    private String updateAt;
+    private String updatedAt;
 
 
 

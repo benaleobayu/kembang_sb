@@ -6,7 +6,7 @@ import com.bca.byc.model.cms.LocationModelDTO;
 import javax.validation.Valid;
 import java.util.List;
 
-public interface LocationService {
+public interface MsLocationService {
 
     LocationModelDTO.DetailResponse findDataById(Long id) ;
 

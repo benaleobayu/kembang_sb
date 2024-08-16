@@ -1,12 +1,11 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.LocationDTOConverter;
-import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.entity.Location;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.LocationModelDTO;
 import com.bca.byc.repository.LocationRepository;
-import com.bca.byc.service.LocationService;
+import com.bca.byc.service.MsLocationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class LocationServiceImpl implements LocationService {
+public class LocationServiceImpl implements MsLocationService {
 
     private LocationRepository repository;
     private LocationDTOConverter converter;
@@ -35,12 +34,8 @@ public class LocationServiceImpl implements LocationService {
     public List<LocationModelDTO.DetailResponse> findAllData() {
         // Get the list
         List<Location> datas = repository.findAll();
-        for (Location item : datas) {
-            if (item.getDescription() != null) {
-                String cleanDescription = Jsoup.parse(item.getDescription()).text();
-                item.setDescription(cleanDescription);
-            }
-        }
+
+
         // stream into the list
         return datas.stream()
                 .map(converter::convertToListResponse)

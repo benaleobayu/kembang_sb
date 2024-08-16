@@ -35,6 +35,27 @@ body, .navbar-menu{
 }
 
 .global-head{
-    backround: #F3F4F6 !important;
+    background: #F3F4F6 !important;
+}
+
+/* breadcrumbs */
+.breadcrumb-item+.breadcrumb-item::before{
+    float: left;
+    padding-right: var(--vz-breadcrumb-item-padding-x);
+    color: var(--vz-breadcrumb-divider-color);
+    content: var(--vz-breadcrumb-divider) !important;
+}
+
+/* data table */
+
+.card-header {
+    background: transparent !important;
+}
+
+.border-top-table {
+    border-radius: 20px 20px 0 0;
+}
+.border-full-table {
+    border-radius: 20px;
 }
 

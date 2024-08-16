@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RoleService {
+public class SettingsRoleService {
 
     @Autowired
     private RoleRepository roleRepository;

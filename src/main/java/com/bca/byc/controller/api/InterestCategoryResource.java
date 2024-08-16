@@ -4,7 +4,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.InterestCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.InterestCategoryService;
+import com.bca.byc.service.MsInterestCategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.net.URI;
 @Tag(name = "InterestCategory API")
 public class InterestCategoryResource {
 
-    private InterestCategoryService service;
+    private MsInterestCategoryService service;
 
     @GetMapping
     public ResponseEntity<ApiListResponse> getAll() {

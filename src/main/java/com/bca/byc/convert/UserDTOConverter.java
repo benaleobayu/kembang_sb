@@ -1,9 +1,11 @@
 package com.bca.byc.convert;
+
 import com.bca.byc.entity.User;
 import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.RegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserUpdateRequest;
+import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,9 @@ public class UserDTOConverter {
     public UserDetailResponse convertToListResponse(User data) {
         // mapping Entity with DTO Entity
         UserDetailResponse dto = modelMapper.map(data, UserDetailResponse.class);
+        // Use DataFormatter here
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
         // return
         return dto;
     }

@@ -26,7 +26,6 @@ public class FeedbackCategoryModelDTO {
     }
 
     @Data
-    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class CreateRequest {
 

@@ -4987,6 +4987,7 @@ textarea.form-control-lg {
   --vz-breadcrumb-divider-color: #878a99;
   --vz-breadcrumb-item-padding-x: 0.5rem;
   --vz-breadcrumb-item-active-color: #878a99;
+  --vz-breadcrumb-divider: "\f0142";
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

@@ -37,19 +37,17 @@
                 <!-- content here -->
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card border-full-table">
+                            <div class="card-header border-top-table">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mb-0" th:text="${tableName + ' Table'}"></h5>
+                                    <!-- button -->
                                     <div class="col-auto">
-                                        <a class="btn btn-soft-primary border" th:href="${currentUrl} + '/create'" type="button">
-                                            <i class="align-middle me-1 icon-size" data-feather="plus"></i>
-                                            Tambah
-                                        </a>
                                         <a class="btn btn-soft-primary" th:href="${currentUrl}" type="button">
                                             <i class="align-middle icon-size" data-feather="refresh-ccw"></i>
                                         </a>
                                     </div>
+                                    <!-- end button -->
                                 </div>
                             </div>
                             <div class="card-body">

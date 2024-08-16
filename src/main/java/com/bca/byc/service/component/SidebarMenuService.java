@@ -42,8 +42,8 @@ public class SidebarMenuService {
                                 new MenuList("Business Category", "/cms/ms/business_category"),
                                 new MenuList("Feedback Category", "/cms/ms/feedback_category")
                         )),
-                        new MenuParent("Admin", null, "fas fa-book", "/cms/ms/admin"),
-                        new MenuParent("Privilege", null, "fas fa-book", "/cms/ms/privilege"),
+                        new MenuParent("Admin", null, "fas fa-book", "/cms/settings/admin"),
+                        new MenuParent("Privilege", null, "fas fa-book", "/cms/settings/privilege"),
                         new MenuParent("Api Docs", null, "fas fa-book", "/swagger-ui/index.html")
                 ))
 

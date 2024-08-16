@@ -10,7 +10,7 @@ public interface AuthService {
     // auth
 
     void saveUser(RegisterRequest dto) throws Exception; // register
-    void saveUserWithRelations(AuthRegisterRequest dto); // register
+    void saveUserWithRelations(AuthRegisterRequest dto) throws Exception; // register
 
     void generateAndSendOtp(User user) throws MessagingException;
 

@@ -13,6 +13,7 @@ public class AuthRegisterRequest {
     private String phone;
     private String email;
     private String type;
+    private String solitaireBankAccount;
     private LocalDate birthdate;
     private LocalDate parentBirthdate;
     // business

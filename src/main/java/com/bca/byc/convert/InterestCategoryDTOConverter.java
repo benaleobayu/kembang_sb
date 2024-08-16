@@ -2,6 +2,7 @@ package com.bca.byc.convert;
 
 import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,10 @@ public class InterestCategoryDTOConverter {
     public InterestCategoryModelDTO.DetailResponse convertToListResponse(InterestCategory data) {
         // mapping Entity with DTO Entity
         InterestCategoryModelDTO.DetailResponse dto = modelMapper.map(data, InterestCategoryModelDTO.DetailResponse.class);
+        // Use DataFormatter here
+        dto.setDescription(Formatter.formatDescription(data.getDescription()));
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
         // return
         return dto;
     }

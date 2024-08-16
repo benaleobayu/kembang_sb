@@ -8,7 +8,7 @@ import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.AuthService;
-import com.bca.byc.service.UserDetailsServiceImpl;
+import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -5,7 +5,7 @@ import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.InterestCategoryModelDTO;
 import com.bca.byc.repository.InterestCategoryRepository;
-import com.bca.byc.service.InterestCategoryService;
+import com.bca.byc.service.MsInterestCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class InterestCategoryServiceImpl implements InterestCategoryService {
+public class InterestCategoryServiceImpl implements MsInterestCategoryService {
 
     private InterestCategoryRepository repository;
     private InterestCategoryDTOConverter converter;

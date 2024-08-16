@@ -2,7 +2,7 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.model.cms.InterestCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.InterestCategoryService;
+import com.bca.byc.service.MsInterestCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class MsInterestCategoryController {
     public static final String thisUrl = "/cms/ms/" + MsInterestCategoryController.suffixName;
     private final String titlePage = "Interest Category";
     @Autowired
-    private InterestCategoryService service;
+    private MsInterestCategoryService service;
 
     // get route index table
     @GetMapping

@@ -2,7 +2,7 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.BusinessCategoryService;
+import com.bca.byc.service.MsBusinessCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class MsBusinessCategoryController {
     public static final String thisUrl = "/cms/ms/" + MsBusinessCategoryController.suffixName;
     private final String titlePage = "Business Category";
     @Autowired
-    private BusinessCategoryService service;
+    private MsBusinessCategoryService service;
 
     // get route index table
     @GetMapping

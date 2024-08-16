@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void saveUserWithRelations(AuthRegisterRequest dto) {
+    public void saveUserWithRelations(AuthRegisterRequest dto) throws Exception {
         // Create User
         User user = converter.convertToCreateGroupRequest(dto);
         user = repository.save(user);
@@ -81,7 +81,9 @@ public class AuthServiceImpl implements AuthService {
 
                 // Save the BusinessHasCategory entity
                 businessHasCategoryRepository.save(businessHasCategory);
+
             }
+
         }
 
         // Create Feedbacks
@@ -95,6 +97,9 @@ public class AuthServiceImpl implements AuthService {
             userHasFeedback.setQuote(feedbackDto.getQuote());
             userHasFeedbackRepository.save(userHasFeedback);
         }
+
+        // send waiting approval email
+        sendWaitingApproval(user);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 import javax.validation.Valid;
 import java.util.List;
 
-public interface FeedbackCategoryService {
+public interface MsFeedbackCategoryService {
 
     FeedbackCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 

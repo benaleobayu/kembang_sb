@@ -68,19 +68,6 @@
                                     Please enter a valid description.
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label for="form-address" class="form-label">Address</label>
-                                <input th:field="*{address}"
-                                       th:value="${setData?.address}"
-                                       type="text"
-                                       class="form-control"
-                                       id="form-address"
-                                       th:readonly="${formMode == 'view'}">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('address')}"
-                                     th:errors="*{address}">
-                                    Please enter a valid address.
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <label for="form-status" class="form-label">Status</label>
                                 <select th:field="*{status}"
@@ -124,40 +111,14 @@
 <!-- ckeditor -->
 <script src="/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 
-<!-- Bootstrap JS (required by Summernote) -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-<!-- Summernote JS -->
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-
-
 <!-- init js -->
 <script src="/assets/js/pages/form-editor.init.js"></script>
-<script src="/assets/js/pages/datatables.init.js"></script>
 
-<script src="/assets/libs/prismjs/prism.js"></script>
+<!-- for editor description-->
+<script src="/assets/js/custom/ckeditor-form.js"></script>
 
 <script>
-    $(document).ready(function () {
-        var formMode = '[[${formMode}]]';
 
-        if (formMode !== 'view') {
-            var ckClassicEditor = document.querySelectorAll("#form-description");
-            if (ckClassicEditor) {
-                Array.from(ckClassicEditor).forEach(function () {
-                    ClassicEditor
-                        .create(document.querySelector('#form-description'))
-                        .then(function (editor) {
-                            editor.ui.view.editable.element.style.height = '200px';
-                        })
-                        .catch(function (error) {
-                            console.error(error);
-                        });
-                });
-            }
-        } else {
-            $('#form-description').attr('readonly', true); // Make textarea readonly if formMode is 'view'
-        }
-    });
 </script>
 </body>
 

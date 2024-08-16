@@ -5,6 +5,7 @@ import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.repository.OtpRepository;
 import com.bca.byc.repository.UserRepository;
+import com.bca.byc.service.impl.AuthServiceImpl;
 import com.bca.byc.service.impl.UserServiceImpl;
 import com.bca.byc.util.OtpUtil;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class UserServiceImplTest {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private AuthServiceImpl authService;
+
     @Test
     @Transactional
     public void testOtpUpdate() {
@@ -54,7 +58,7 @@ public class UserServiceImplTest {
         otpRepository.save(otp);
 
         // Validate OTP
-        boolean result = userService.validateOtp("test@example.com", otpCode);
+        boolean result = authService.validateOtp("test@example.com", otpCode);
         assertTrue(result, "OTP validation should succeed");
 
         // Verify OTP status

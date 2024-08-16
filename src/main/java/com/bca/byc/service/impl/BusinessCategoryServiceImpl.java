@@ -5,7 +5,7 @@ import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.bca.byc.repository.BusinessCategoryRepository;
-import com.bca.byc.service.BusinessCategoryService;
+import com.bca.byc.service.MsBusinessCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class BusinessCategoryServiceImpl implements BusinessCategoryService {
+public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
 
     private BusinessCategoryRepository repository;
     private BusinessCategoryDTOConverter converter;
@@ -34,12 +34,6 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
     public List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNull() {
         // Get the list
         List<BusinessCategory> datas = repository.findByParentIdIsNull();
-        for (BusinessCategory item : datas) {
-            if (item.getDescription() != null) {
-                String cleanDescription = Jsoup.parse(item.getDescription()).text();
-                item.setDescription(cleanDescription);
-            }
-        }
 
         // stream into the list
         return datas.stream()

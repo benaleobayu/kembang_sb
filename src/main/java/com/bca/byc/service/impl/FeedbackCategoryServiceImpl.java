@@ -5,7 +5,7 @@ import com.bca.byc.entity.FeedbackCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 import com.bca.byc.repository.FeedbackCategoryRepository;
-import com.bca.byc.service.FeedbackCategoryService;
+import com.bca.byc.service.MsFeedbackCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class FeedbackCategoryServiceImpl implements FeedbackCategoryService {
+public class FeedbackCategoryServiceImpl implements MsFeedbackCategoryService {
 
     private FeedbackCategoryRepository repository;
     private FeedbackCategoryDTOConverter converter;

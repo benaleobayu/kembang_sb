@@ -6,7 +6,7 @@
 
 <head>
 
-    <title th:text="${#strings.capitalize(titlePage)}"></title>
+    <title th:text="${#strings.capitalize(modelName)}"></title>
 
 </head>
 
@@ -66,6 +66,19 @@
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
                                      th:errors="*{description}">
                                     Please enter a valid description.
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="form-address" class="form-label">Address</label>
+                                <input th:field="*{address}"
+                                       th:value="${setData?.address}"
+                                       type="text"
+                                       class="form-control"
+                                       id="form-address"
+                                       th:readonly="${formMode == 'view'}">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('address')}"
+                                     th:errors="*{address}">
+                                    Please enter a valid address.
                                 </div>
                             </div>
                             <div class="col-md-6">
