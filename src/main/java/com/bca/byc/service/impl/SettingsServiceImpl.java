@@ -1,11 +1,11 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.convert.AdminDTOConverter;
-import com.bca.byc.entity.Admin;
+import com.bca.byc.convert.SettingsDTOConverter;
+import com.bca.byc.entity.Settings;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.AdminModelDTO;
-import com.bca.byc.repository.AdminRepository;
-import com.bca.byc.service.SettingsAdminService;
+import com.bca.byc.model.cms.SettingsModelDTO;
+import com.bca.byc.repository.SettingsRepository;
+import com.bca.byc.service.SettingsService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,23 +16,23 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class SettingsAdminServiceImpl implements SettingsAdminService {
+public class SettingsServiceImpl implements SettingsService {
 
-    private AdminRepository repository;
-    private AdminDTOConverter converter;
+    private SettingsRepository repository;
+    private SettingsDTOConverter converter;
 
     @Override
-    public AdminModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
-        Admin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Admin not found"));
+    public SettingsModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+        Settings data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Settings not found"));
 
         return converter.convertToListResponse(data);
     }
 
     @Override
-    public List<AdminModelDTO.DetailResponse> findAllData() {
+    public List<SettingsModelDTO.DetailResponse> findAllData() {
         // Get the list
-        List<Admin> datas = repository.findAll();
+        List<Settings> datas = repository.findAll();
 
         // stream into the list
         return datas.stream()
@@ -41,18 +41,18 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     }
 
     @Override
-    public void saveData(@Valid AdminModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid SettingsModelDTO.CreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
-        Admin data = converter.convertToCreateRequest(dto);
+        Settings data = converter.convertToCreateRequest(dto);
         // save data
         repository.save(data);
     }
 
     @Override
-    public void updateData(Long id, AdminModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, SettingsModelDTO.UpdateRequest dto) throws BadRequestException {
         // check exist and get
-        Admin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID Admin ID"));
+        Settings data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("INVALID Settings ID"));
 
         // update
         converter.convertToUpdateRequest(data, dto);
@@ -68,7 +68,7 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     public void deleteData(Long id) throws BadRequestException {
         // delete data
         if (!repository.existsById(id)) {
-            throw new BadRequestException("Admin not found");
+            throw new BadRequestException("Settings not found");
         } else {
             repository.deleteById(id);
         }

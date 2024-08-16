@@ -44,6 +44,7 @@ public class SidebarMenuService {
                         )),
                         new MenuParent("Admin", null, "fas fa-book", "/cms/settings/admin"),
                         new MenuParent("Privilege", null, "fas fa-book", "/cms/settings/privilege"),
+                        new MenuParent("Others", null, "fas fa-book", "/cms/settings/all"),
                         new MenuParent("Api Docs", null, "fas fa-book", "/swagger-ui/index.html")
                 ))
 

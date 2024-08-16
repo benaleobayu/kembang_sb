@@ -764,7 +764,7 @@ File: Main Js File
 				document.body.classList.remove("vertical-sidebar-enable");
 				document.documentElement.getAttribute("data-sidebar-size") == "sm" ?
 					document.documentElement.setAttribute("data-sidebar-size", "") :
-					document.documentElement.setAttribute("data-sidebar-size", "sm");				
+					document.documentElement.setAttribute("data-sidebar-size", "sm");
 			} else if (windowSize > 1025) {
 				document.body.classList.remove("vertical-sidebar-enable");
 				document.documentElement.getAttribute("data-sidebar-size") == "lg" ?
@@ -1101,27 +1101,27 @@ File: Main Js File
 		var counter = document.querySelectorAll(".counter-value");
 		var speed = 250; // The lower the slower
 		counter &&
-			Array.from(counter).forEach(function (counter_value) {
-				function updateCount() {
-					var target = +counter_value.getAttribute("data-target");
-					var count = +counter_value.innerText;
-					var inc = target / speed;
-					if (inc < 1) {
-						inc = 1;
-					}
-					// Check if target is reached
-					if (count < target) {
-						// Add inc to count and output in counter_value
-						counter_value.innerText = (count + inc).toFixed(0);
-						// Call function every ms
-						setTimeout(updateCount, 1);
-					} else {
-						counter_value.innerText = numberWithCommas(target);
-					}
-					numberWithCommas(counter_value.innerText);
+		Array.from(counter).forEach(function (counter_value) {
+			function updateCount() {
+				var target = +counter_value.getAttribute("data-target");
+				var count = +counter_value.innerText;
+				var inc = target / speed;
+				if (inc < 1) {
+					inc = 1;
 				}
-				updateCount();
-			});
+				// Check if target is reached
+				if (count < target) {
+					// Add inc to count and output in counter_value
+					counter_value.innerText = (count + inc).toFixed(0);
+					// Call function every ms
+					setTimeout(updateCount, 1);
+				} else {
+					counter_value.innerText = numberWithCommas(target);
+				}
+				numberWithCommas(counter_value.innerText);
+			}
+			updateCount();
+		});
 
 		function numberWithCommas(x) {
 			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -1855,34 +1855,34 @@ File: Main Js File
 	function initFullScreen() {
 		var fullscreenBtn = document.querySelector('[data-toggle="fullscreen"]');
 		fullscreenBtn &&
-			fullscreenBtn.addEventListener("click", function (e) {
-				e.preventDefault();
-				document.body.classList.toggle("fullscreen-enable");
-				if (!document.fullscreenElement &&
-					/* alternative standard method */
-					!document.mozFullScreenElement &&
-					!document.webkitFullscreenElement
-				) {
-					// current working methods
-					if (document.documentElement.requestFullscreen) {
-						document.documentElement.requestFullscreen();
-					} else if (document.documentElement.mozRequestFullScreen) {
-						document.documentElement.mozRequestFullScreen();
-					} else if (document.documentElement.webkitRequestFullscreen) {
-						document.documentElement.webkitRequestFullscreen(
-							Element.ALLOW_KEYBOARD_INPUT
-						);
-					}
-				} else {
-					if (document.cancelFullScreen) {
-						document.cancelFullScreen();
-					} else if (document.mozCancelFullScreen) {
-						document.mozCancelFullScreen();
-					} else if (document.webkitCancelFullScreen) {
-						document.webkitCancelFullScreen();
-					}
+		fullscreenBtn.addEventListener("click", function (e) {
+			e.preventDefault();
+			document.body.classList.toggle("fullscreen-enable");
+			if (!document.fullscreenElement &&
+				/* alternative standard method */
+				!document.mozFullScreenElement &&
+				!document.webkitFullscreenElement
+			) {
+				// current working methods
+				if (document.documentElement.requestFullscreen) {
+					document.documentElement.requestFullscreen();
+				} else if (document.documentElement.mozRequestFullScreen) {
+					document.documentElement.mozRequestFullScreen();
+				} else if (document.documentElement.webkitRequestFullscreen) {
+					document.documentElement.webkitRequestFullscreen(
+						Element.ALLOW_KEYBOARD_INPUT
+					);
 				}
-			});
+			} else {
+				if (document.cancelFullScreen) {
+					document.cancelFullScreen();
+				} else if (document.mozCancelFullScreen) {
+					document.mozCancelFullScreen();
+				} else if (document.webkitCancelFullScreen) {
+					document.webkitCancelFullScreen();
+				}
+			}
+		});
 
 		document.addEventListener("fullscreenchange", exitHandler);
 		document.addEventListener("webkitfullscreenchange", exitHandler);

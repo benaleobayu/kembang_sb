@@ -2,6 +2,7 @@ package com.bca.byc.util;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.jsoup.Jsoup;
+import org.springframework.stereotype.Component;
 
 public class Formatter {
 

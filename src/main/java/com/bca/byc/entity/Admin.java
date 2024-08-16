@@ -3,16 +3,13 @@ package com.bca.byc.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "admins")
-public class Admin {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Admin extends AbstractBaseEntity{
 
     @Column(nullable = false)
     private String name;
@@ -26,11 +23,7 @@ public class Admin {
     @Column(name = "remember_token")
     private String rememberToken;
 
-    @Column(name = "created_at")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    private Date updatedAt;
+    // relations
 
     @OneToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")

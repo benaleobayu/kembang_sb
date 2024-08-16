@@ -1,23 +1,32 @@
 package com.bca.byc.service;
 
+import com.bca.byc.convert.RoleDTOConverter;
 import com.bca.byc.entity.Role;
+import com.bca.byc.model.cms.RoleModelDTO;
 import com.bca.byc.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SettingsRoleService {
 
-    @Autowired
     private RoleRepository roleRepository;
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    private RoleDTOConverter converter;
+
+    public List<RoleModelDTO.DetailResponse> getAllRoles() {
+        List<Role> datas = roleRepository.findAll();
+
+        return datas.stream()
+                .map(converter::convertToListResponse)
+                .collect(Collectors.toList());
     }
 
     public Page<Role> getRolePagination(Pageable pageable) {
@@ -28,14 +37,14 @@ public class SettingsRoleService {
         return roleRepository.findById(id);
     }
 
-    public Role createRole(Role role) {
-        return roleRepository.save(role);
+    public void createRole(Role role) {
+        roleRepository.save(role);
     }
 
-    public Role updateRole(Long id, Role roleDetails) {
+    public void updateRole(Long id, Role roleDetails) {
         Role role = roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
         role.setName(roleDetails.getName());
-        return roleRepository.save(role);
+        roleRepository.save(role);
     }
 
     public void deleteRole(Long id) {
@@ -43,3 +52,5 @@ public class SettingsRoleService {
         roleRepository.delete(role);
     }
 }
+
+

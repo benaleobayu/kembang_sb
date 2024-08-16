@@ -1,5 +1,6 @@
 package com.bca.byc.model.cms;
 
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -10,29 +11,20 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 
-public class AdminModelDTO {
+public class RoleModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class DetailResponse implements Serializable {
 
         private Long id;
         private String name;
-        private String role;
-        private String email;
-        private boolean status;
+        private Boolean status;
         private String createdAt;
         private String updatedAt;
-
-        public String getRole() {
-            if (role != null && role.contains("name=")){
-                return role.substring(role.indexOf("name=") + 5, role.length() - 1);
-            }
-            return role;
-        }
-
     }
 
     @Data
+    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class CreateRequest {
 

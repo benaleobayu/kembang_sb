@@ -1,6 +1,7 @@
 package com.bca.byc.controller.cms;
 
 import com.bca.byc.entity.Role;
+import com.bca.byc.model.cms.RoleModelDTO;
 import com.bca.byc.service.SettingsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/cms/roles")
+@RequestMapping("/cms/settings/privilege")
 public class RoleController {
 
     @Autowired
@@ -25,11 +26,11 @@ public class RoleController {
     @PreAuthorize("hasPermission(#authentication, 'roles.view')") // Use your permission name
     @GetMapping
     public String showAllRoles(Model model) {
-        List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("roles", roles);
-        model.addAttribute("resourceName", resourceName);
-        model.addAttribute("title","Roles");
-        return "cms/roles/index"; // Ensure you have a Thymeleaf template named index.html under roles directory
+        List<RoleModelDTO.DetailResponse> roles = roleService.getAllRoles();
+        model.addAttribute("datas", roles);
+        model.addAttribute("modelName", resourceName);
+        model.addAttribute("titlePage","Roles");
+        return "cms/settings/role/index"; // Ensure you have a Thymeleaf template named index.html under roles directory
     }
 
     @PreAuthorize("hasPermission(#authentication, 'roles.view')")

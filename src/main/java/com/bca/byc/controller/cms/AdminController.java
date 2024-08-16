@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.model.cms.AdminModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.SettingsAdminService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,11 +30,11 @@ public class AdminController {
     public String index(Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb("Master " + titlePage, request.getRequestURI(), true));
+                new Breadcrumb(titlePage, request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<InterestCategoryModelDTO.DetailResponse> alldata = service.findAllData();
+        List<AdminModelDTO.DetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -48,11 +48,11 @@ public class AdminController {
     public String view(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb("Master " + titlePage, thisUrl, false),
+                new Breadcrumb(titlePage, thisUrl, false),
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        InterestCategoryModelDTO.DetailResponse data = service.findDataById(id);
+        AdminModelDTO.DetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -63,12 +63,12 @@ public class AdminController {
     public String create(Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb("Master " + titlePage, thisUrl, false),
+                new Breadcrumb(titlePage, thisUrl, false),
                 new Breadcrumb("Create", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.CreateRequest dto = new InterestCategoryModelDTO.CreateRequest();
+        AdminModelDTO.CreateRequest dto = new AdminModelDTO.CreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -77,14 +77,14 @@ public class AdminController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid InterestCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid AdminModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
         }
 
         service.saveData(dto);
-        return "redirect:/cms/ms/" + suffixName;
+        return "redirect:" + thisUrl;
     }
 
     // get route edit data
@@ -92,12 +92,12 @@ public class AdminController {
     public String edit(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb("Master " + titlePage, thisUrl, false),
+                new Breadcrumb(titlePage, thisUrl, false),
                 new Breadcrumb("Edit", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.DetailResponse dto = service.findDataById(id);
+        AdminModelDTO.DetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -106,13 +106,13 @@ public class AdminController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid InterestCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid AdminModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";
         }
         service.updateData(id, dto);
-        return "redirect:/cms/ms/" + suffixName;
+        return "redirect:" + thisUrl;
     }
 
 

@@ -42,7 +42,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> fubdByParentIdIsNotNull() {
+    public List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNotNull() {
         // Get the list
         List<BusinessCategory> datas = repository.findByParentIdIsNotNull();
         for (BusinessCategory item : datas) {
@@ -70,6 +70,15 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
         }
 
         // stream into the list
+        return datas.stream()
+                .map(converter::convertToListResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BusinessCategoryModelDTO.DetailResponse> findByParentId(Long parentId) {
+        List<BusinessCategory> datas = repository.findByParentId(parentId);
+
         return datas.stream()
                 .map(converter::convertToListResponse)
                 .collect(Collectors.toList());

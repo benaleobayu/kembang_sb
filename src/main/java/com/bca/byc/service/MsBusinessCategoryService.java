@@ -11,8 +11,10 @@ public interface MsBusinessCategoryService {
     BusinessCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
 
     List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNull();
-    List<BusinessCategoryModelDTO.DetailResponse> fubdByParentIdIsNotNull();
+    List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNotNull();
     List<BusinessCategoryModelDTO.DetailResponse> findAllData();
+
+    List<BusinessCategoryModelDTO.DetailResponse> findByParentId(Long parentId);
 
     void saveData(@Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;
     void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;

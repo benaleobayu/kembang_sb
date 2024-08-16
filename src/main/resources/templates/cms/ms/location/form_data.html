@@ -87,7 +87,6 @@
                                         class="form-control"
                                         id="form-status"
                                         th:disabled="${formMode == 'view'}">
-                                    <option value="">Status</option>
                                     <option value="false" th:selected="${setData?.status == false}">Deactivated</option>
                                     <option value="true" th:selected="${setData?.status == true}">Activated</option>
                                 </select>
@@ -117,19 +116,9 @@
     </div>
 </div>
 
-<script crossorigin="anonymous"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-        src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- ckeditor -->
-<script src="/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
-
-<!-- init js -->
-<script src="/assets/js/pages/form-editor.init.js"></script>
-<script src="/assets/js/pages/datatables.init.js"></script>
 
 <!-- for editor description-->
-<script src="/assets/js/custom/ckeditor-form.js"></script>
+<script src="/assets/js/custom/global-crud.js"></script>
 
 <script>
 

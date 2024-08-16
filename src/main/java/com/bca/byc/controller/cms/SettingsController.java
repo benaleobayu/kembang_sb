@@ -17,11 +17,11 @@ import java.util.List;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping(MsFeedbackCategoryController.thisUrl)
-public class MsFeedbackCategoryController {
+@RequestMapping(SettingsController.thisUrl)
+public class SettingsController {
 
     private static final String suffixName = "all";
-    public static final String thisUrl = "/cms/ms/" + MsFeedbackCategoryController.suffixName;
+    public static final String thisUrl = "/cms/settings/" + SettingsController.suffixName;
     private final String titlePage = "Settings";
     private SettingsService service;
 

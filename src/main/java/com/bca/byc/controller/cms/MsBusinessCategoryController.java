@@ -19,8 +19,9 @@ import java.util.List;
 @RequestMapping(MsBusinessCategoryController.thisUrl)
 public class MsBusinessCategoryController {
 
+    private static final String prefixName = "/cms/ms/";
     private static final String suffixName = "business_category";
-    public static final String thisUrl = "/cms/ms/" + MsBusinessCategoryController.suffixName;
+    public static final String thisUrl =  prefixName + suffixName;
     private final String titlePage = "Business Category";
     @Autowired
     private MsBusinessCategoryService service;
@@ -119,15 +120,15 @@ public class MsBusinessCategoryController {
     // ---------------------------------------- child ----------------------------------------
 
     // get route index table
-    @GetMapping("/child")
-    public String index_child(Model model, HttpServletRequest request) {
+    @GetMapping("/{parentId}/child")
+    public String index_child(@PathVariable("parentId") Long parentId, Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
                 new Breadcrumb("Master " + titlePage, request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParentIdIsNull();
+        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParentId(parentId);
         model.addAttribute("datas", alldata);
 
         // some part

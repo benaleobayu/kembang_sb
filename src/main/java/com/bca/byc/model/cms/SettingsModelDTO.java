@@ -1,5 +1,6 @@
 package com.bca.byc.model.cms;
 
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -10,26 +11,20 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 
-public class AdminModelDTO {
+public class SettingsModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class DetailResponse implements Serializable {
 
         private Long id;
         private String name;
-        private String role;
-        private String email;
-        private boolean status;
+        private String identity;
+        private String description_id;
+        private String description_en;
+        private Integer value;
+        private Boolean status;
         private String createdAt;
         private String updatedAt;
-
-        public String getRole() {
-            if (role != null && role.contains("name=")){
-                return role.substring(role.indexOf("name=") + 5, role.length() - 1);
-            }
-            return role;
-        }
-
     }
 
     @Data
@@ -40,10 +35,13 @@ public class AdminModelDTO {
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
-        private String description;
+        @NotBlank(message = "Identity is mandatory")
+        @Size(max = 50, message = "Identity must be less than 50 characters")
+        private String identity;
 
-        @NotBlank(message = "Order is mandatory")
-        private Integer orders;
+        private String description_id;
+        private String description_en;
+        private Integer value;
 
         @NotBlank(message = "Status is mandatory")
         private Boolean status;

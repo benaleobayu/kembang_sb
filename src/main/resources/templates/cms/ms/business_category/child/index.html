@@ -75,6 +75,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Description</th>
+                                            <th>Parent by</th>
                                             <th>Orders</th>
                                             <th>Status</th>
                                             <th>Created at</th>
@@ -87,17 +88,13 @@
                                             <td th:text="${data.id}"></td>
                                             <td th:text="${data.name}"></td>
                                             <td th:text="${data.description}"></td>
+                                            <td th:text="${data.parentId}"></td>
                                             <td th:text="${data.orders}"></td>
                                             <td th:text="${data.status == true ? 'Active' : 'Inactive'}"></td>
                                             <td th:text="${data.createdAt}"></td>
                                             <td th:text="${data.updatedAt}"></td>
                                             <td class="action-col">
                                                 <div class="dropdown d-inline-block bg-white border border-1 border-secondary rounded-2 p-1">
-                                                        <a th:href="${currentUrl + '/' + data.id + '/child'}">
-                                                            <button type="button" class="btn btn-ghost-secondary waves-effect">
-                                                            <i class="text-secondary icon-size" data-feather="copy"></i>
-                                                            </button>
-                                                        </a>
                                                       <a th:href="${currentUrl + '/' + data.id + '/detail'}">
                                                             <button type="button" class="btn btn-ghost-secondary waves-effect">
                                                             <i class="text-secondary icon-size" data-feather="eye"></i>
