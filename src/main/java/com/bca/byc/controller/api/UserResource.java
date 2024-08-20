@@ -11,6 +11,8 @@ import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.UserService;
+import com.bca.byc.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,8 @@ public class UserResource {
     private final UserRepository repository;
 
     private final UserService userService;
+
+    private final JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<ApiListResponse> getUsers() {
@@ -76,9 +80,20 @@ public class UserResource {
         }
     }
 
+    @Operation(hidden = true)
     @PatchMapping("/setpassword")
-    public ResponseEntity<ApiResponse> setPassword(@PathParam("token") String email, @RequestBody UserSetPasswordRequest dto) {
-        log.info("PATCH /api/v1/users/{}/setpassword endpoint hit", email);
+    public ResponseEntity<ApiResponse> setPassword(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody UserSetPasswordRequest dto) {
+        log.info("PATCH /api/v1/users/setpassword endpoint hit. Header: {}", authorizationHeader);
+
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        if (!jwtUtil.validateToken(token)){
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid token"));
+        }
+
+        String email = jwtUtil.extractEmailFromToken(token);
         User user = userService.findByEmail(email);
         try {
             // if user not found
@@ -96,7 +111,6 @@ public class UserResource {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
-
     }
 
     @PatchMapping("/{userId}/password")

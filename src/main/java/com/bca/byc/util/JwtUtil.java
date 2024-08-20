@@ -1,6 +1,7 @@
 package com.bca.byc.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,8 +41,28 @@ public class JwtUtil {
     public String generateTokenByEmail(String email){
         return Jwts.builder()
                 .setSubject(email)
-                .signWith(SignatureAlgorithm.HS256, key)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
+                .signWith(key)
                 .compact();
+    }
+
+    public String extractEmailFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

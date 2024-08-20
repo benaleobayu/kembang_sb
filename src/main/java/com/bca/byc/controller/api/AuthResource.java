@@ -2,8 +2,10 @@ package com.bca.byc.controller.api;
 
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.auth.AuthenticationRequest;
 import com.bca.byc.model.auth.OtpRequest;
 import com.bca.byc.repository.UserRepository;
@@ -15,7 +17,9 @@ import com.bca.byc.service.UserService;
 import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +27,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -121,6 +128,68 @@ public class AuthResource {
         final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
 
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @PatchMapping("/setpassword")
+    public ResponseEntity<ApiResponse> setPassword(
+            @RequestHeader( value = "Authorization", required = false) String authorizationHeader,
+            @RequestBody UserSetPasswordRequest dto) {
+        log.info("PATCH /api/v1/users/setpassword endpoint hit");
+
+        // Log all headers
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            log.info("{}: {}", headerName, request.getHeader(headerName));
+        }
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            log.error("Authorization header is missing or not in the correct format");
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Authorization header missing or invalid"));
+        }
+
+        // Extract the token from the Authorization header
+        String token = authorizationHeader.replace("Bearer ", "");
+        log.info("Extracted token: {}", token);
+
+        // Validate the token
+        if (!jwtUtil.validateToken(token)) {
+            log.error("Invalid token");
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid token"));
+        }
+
+        // Extract the email from the token
+        String email = jwtUtil.extractEmailFromToken(token);
+        log.info("Extracted email from token: {}", email);
+
+        // Find the user by email
+        User user = userService.findByEmail(email);
+        log.info("User found: {}", user != null);
+
+        try {
+            // If user not found
+            if (user == null) {
+                log.error("User not found");
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found"));
+            }
+
+            // If user status is not approved
+            if (!user.getStatus().equals(StatusType.VERIFIED)) {
+                log.error("User not approved");
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved"));
+            }
+
+            // Set the new password
+            userService.setNewPassword(email, dto);
+            log.info("Password set successfully for user: {}", email);
+            return ResponseEntity.ok(new ApiResponse(true, "Password set successfully"));
+
+        } catch (BadRequestException e) {
+            log.error("BadRequestException: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
 }
