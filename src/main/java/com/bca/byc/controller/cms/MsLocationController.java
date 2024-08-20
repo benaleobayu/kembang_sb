@@ -5,6 +5,7 @@ import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.MsLocationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +17,15 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 @RequestMapping(MsLocationController.thisUrl)
 public class MsLocationController {
 
+    private static final String prefixName = "cms/ms/";
     private static final String suffixName = "location";
-    public static final String thisUrl = "/cms/ms/" + MsLocationController.suffixName;
+    static final String thisUrl = prefixName + suffixName;
     private final String titlePage = "Location";
-    @Autowired
+
     private MsLocationService service;
 
     // get route index table

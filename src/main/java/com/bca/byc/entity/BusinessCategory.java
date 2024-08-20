@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -39,6 +37,13 @@ public class BusinessCategory {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    // make parent in this entity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private BusinessCategory parentId;
+    // show data as child in this entity
+    @OneToMany(mappedBy = "parentId")
+    private List<BusinessCategory> children = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -49,16 +54,6 @@ public class BusinessCategory {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-
-    // make parent in this entity
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "parent_id")
-    private BusinessCategory parentId;
-
-    // show data as child in this entity
-    @OneToMany(mappedBy = "parentId")
-    private List<BusinessCategory> children = new ArrayList<>();
 
 //     extra ralation
 //    @OneToMany(mappedBy = "category")

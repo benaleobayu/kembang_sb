@@ -2,33 +2,24 @@ package com.bca.byc.entity;
 
 import com.bca.byc.validation.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@Data
 @Table(name = "users")
-public class User {
+public class User extends AbstractBaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "bigint")
-    private Long id;
-
-
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(name = "name", length = 50)
     private String name;
 
     @Column(name = "email", length = 50, nullable = false, unique = true)
@@ -42,7 +33,7 @@ public class User {
     @Column(name = "type", nullable = false, columnDefinition = "varchar(255) default 'member'")
     private UserType type = UserType.MEMBER;
 
-    @Column(name = "bank_account", length = 20)
+    @Column(name = "solitaire_bank_account", length = 20)
     private String solitaireBankAccount;
 
     @Column(name = "cin", length = 20)
@@ -79,32 +70,18 @@ public class User {
     @Column(name = "status", nullable = false, columnDefinition = "int default 0")
     private StatusType status = StatusType.PENDING;
 
+    @Column(name = "count_reject", nullable = false, columnDefinition = "int default 0")
+    private Integer countReject = 0;
+
     @Column(name = "is_suspended", nullable = false, columnDefinition = "boolean default false")
     private Boolean isSuspended = false;
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
     // relation
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Business> businesses = new ArrayList<>();
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<UserHasFeedback> feedbacks = new ArrayList<>();
 

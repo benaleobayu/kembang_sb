@@ -20,10 +20,12 @@ import java.util.List;
 @RequestMapping(SettingsController.thisUrl)
 public class SettingsController {
 
+    private static final String prefixName = "cms/settings/";
     private static final String suffixName = "all";
-    public static final String thisUrl = "/cms/settings/" + SettingsController.suffixName;
-    private final String titlePage = "Settings";
-    private SettingsService service;
+    static final String thisUrl = prefixName + suffixName;
+    private final String titlePage = "All Settings";
+
+    private final SettingsService service;
 
     // get route index table
     @GetMapping
@@ -39,7 +41,7 @@ public class SettingsController {
 
         // some part
         model.addAttribute("titlePage", titlePage);
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         return thisUrl + "/index";
     }
 
@@ -70,7 +72,7 @@ public class SettingsController {
         // some part
         SettingsModelDTO.CreateRequest dto = new SettingsModelDTO.CreateRequest();
         model.addAttribute("formData", dto);
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         model.addAttribute("formMode", "create");
         return thisUrl + "/form_data";
     }
@@ -100,7 +102,7 @@ public class SettingsController {
         SettingsModelDTO.DetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         return thisUrl + "/form_data";
     }
 

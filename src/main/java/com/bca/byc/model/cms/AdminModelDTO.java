@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
 
 
@@ -14,6 +15,9 @@ public class AdminModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class DetailResponse implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 8039360681057479328L;
 
         private Long id;
         private String name;

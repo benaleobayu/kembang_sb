@@ -23,6 +23,7 @@ public class RoleController {
     @Autowired
     private SettingsRoleService roleService;
     private final String resourceName = "roles";
+
     @PreAuthorize("hasPermission(#authentication, 'roles.view')") // Use your permission name
     @GetMapping
     public String showAllRoles(Model model) {

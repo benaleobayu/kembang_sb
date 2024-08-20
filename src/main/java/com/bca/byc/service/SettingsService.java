@@ -1,10 +1,9 @@
 package com.bca.byc.service;
 
-import javax.validation.Valid;
-
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.SettingsModelDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface SettingsService {
@@ -18,4 +17,6 @@ public interface SettingsService {
     void updateData(Long id, @Valid SettingsModelDTO.UpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
+
+    SettingsModelDTO.DetailResponse showByIdentity(String identity);
 }

@@ -18,14 +18,18 @@ public class BusinessCategoryDTOConverter {
 
     // for get data
     public BusinessCategoryModelDTO.DetailResponse convertToListResponse(BusinessCategory data) {
-        // mapping Entity with DTO Entity
-        BusinessCategoryModelDTO.DetailResponse dto = modelMapper.map(data, BusinessCategoryModelDTO.DetailResponse.class);
-        // Use DataFormatter here
-        dto.setDescription(Formatter.formatDescription(data.getDescription()));
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-        // return
-        return dto;
+        if (data == null) {
+            return null;
+        } else {
+            // mapping Entity with DTO Entity
+            BusinessCategoryModelDTO.DetailResponse dto = modelMapper.map(data, BusinessCategoryModelDTO.DetailResponse.class);
+            // Use DataFormatter here
+            dto.setDescription(Formatter.formatDescription(data.getDescription()));
+            dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+            dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+            // return
+            return dto;
+        }
     }
 
     // for create data

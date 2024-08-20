@@ -2,5 +2,6 @@ package com.bca.byc.entity;
 
 public enum UserType {
     MEMBER,
-    PARTNER
+    NOT_MEMBER,
+    NOT_CUSTOMER
 }

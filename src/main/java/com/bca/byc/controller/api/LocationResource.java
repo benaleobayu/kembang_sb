@@ -18,7 +18,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/location")
-@Tag(name = "Location API")
+@Tag(name = "Masterdata - Location")
 public class LocationResource {
 
     private MsLocationService service;

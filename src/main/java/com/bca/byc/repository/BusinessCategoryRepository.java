@@ -17,5 +17,6 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
     @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId IS NOT NULL")
     List<BusinessCategory> findByParentIdIsNotNull();
 
-    List<BusinessCategory> findByParentId(Long parentId);
+    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId = :parentId")
+    List<BusinessCategory> findByParentId(BusinessCategory parentId);
 }

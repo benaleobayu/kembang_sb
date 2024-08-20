@@ -1,5 +1,7 @@
 package com.bca.byc.controller.api;
 
+import com.bca.byc.entity.StatusType;
+import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserSetPasswordRequest;
@@ -10,6 +12,7 @@ import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
-@Tag(name = "User API", description = "User API")
+@Tag(name = "User", description = "User API")
 public class UserResource {
 
     private final UserRepository repository;
@@ -52,7 +55,7 @@ public class UserResource {
                 return ResponseEntity.badRequest().body(new ApiListResponse(false, "User not found", null));
             } else {
                 // define
-                UserDetailResponse user = userService.findUserById(userId);
+                UserDetailResponse user = userService.findDataById(userId);
                 // response true
                 return ResponseEntity.ok(new ApiListResponse(true, "User found", user));
             }
@@ -66,26 +69,34 @@ public class UserResource {
     public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") Long userId, @Valid @RequestBody UserUpdateRequest dto) {
         log.info("PUT /api/v1/users/{}/update endpoint hit", userId);
         try {
-            userService.updateUser(userId, dto);
+            userService.updateData(userId, dto);
             return ResponseEntity.ok(new ApiResponse(true, "User updated successfully"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
-    @PatchMapping("/{userId}/setpassword")
-    public ResponseEntity<ApiResponse> setPassword(@PathVariable("userId") Long userId, @RequestBody UserSetPasswordRequest dto) {
-        log.info("PATCH /api/v1/users/{}/setpassword endpoint hit", userId);
+    @PatchMapping("/setpassword")
+    public ResponseEntity<ApiResponse> setPassword(@PathParam("token") String email, @RequestBody UserSetPasswordRequest dto) {
+        log.info("PATCH /api/v1/users/{}/setpassword endpoint hit", email);
+        User user = userService.findByEmail(email);
         try {
-            if (!userService.existsById(userId)) {
+            // if user not found
+            if (user == null) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found"));
-            } else {
-                userService.setNewPassword(userId, dto);
-                return ResponseEntity.ok(new ApiResponse(true, "Password set successfully"));
             }
+            // if user not in status approved
+            if (!user.getStatus().equals(StatusType.VERIFIED)){
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved"));
+            }
+            // if ready condition
+            userService.setNewPassword(email, dto);
+            return ResponseEntity.ok(new ApiResponse(true, "Password set successfully"));
+
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+
     }
 
     @PatchMapping("/{userId}/password")

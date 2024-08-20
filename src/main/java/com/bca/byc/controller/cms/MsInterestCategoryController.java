@@ -19,9 +19,11 @@ import java.util.List;
 @RequestMapping(MsInterestCategoryController.thisUrl)
 public class MsInterestCategoryController {
 
+    private static final String prefixName = "cms/ms/";
     private static final String suffixName = "interest_category";
-    public static final String thisUrl = "/cms/ms/" + MsInterestCategoryController.suffixName;
+    static final String thisUrl = prefixName + suffixName;
     private final String titlePage = "Interest Category";
+
     @Autowired
     private MsInterestCategoryService service;
 

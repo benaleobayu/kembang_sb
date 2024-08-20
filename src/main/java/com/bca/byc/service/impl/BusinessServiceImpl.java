@@ -25,11 +25,13 @@ public class BusinessServiceImpl implements BusinessService {
     private BusinessDTOConverter converter;
     private BusinessCategoryDTOConverter categoryConverter;
 
+
     @Override
     public BusinessModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Business not found"));
-        BusinessModelDTO.DetailResponse dto =converter.convertToListResponse(data);
+        BusinessModelDTO.DetailResponse dto = converter.convertToListResponse(data);
+
 
         Set<BusinessCategoryModelDTO.DetailResponse> categoryDTOs = dto.getCategories().stream()
                 .map(category -> new BusinessCategoryModelDTO.DetailResponse()

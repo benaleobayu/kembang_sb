@@ -15,10 +15,10 @@ public class SidebarMenuService {
         return Arrays.asList(
                 new MenuGroup("User Management", List.of(
                         new MenuParent("User", "user", null, "fas fa-user", Arrays.asList(
-                                new MenuList("Registration Inquiry", "/cms/users"),
-                                new MenuList("Active User", "/cms/users/active"),
-                                new MenuList("Suspended User", "/cms/users/suspended"),
-                                new MenuList("Deleted User", "/cms/users/deleted")
+                                new MenuList("Registration Inquiry", "/cms/user"),
+                                new MenuList("Active User", "/cms/user/active"),
+                                new MenuList("Suspended User", "/cms/user/suspended"),
+                                new MenuList("Deleted User", "/cms/user/deleted")
                         ))
                 )), new MenuGroup("Data Analytic", List.of(
                         new MenuParent("Data Analytic", null, "fas fa-chart-bar", "/cms/data-analytic")

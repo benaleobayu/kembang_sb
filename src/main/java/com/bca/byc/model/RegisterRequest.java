@@ -4,6 +4,7 @@ import com.bca.byc.entity.UserType;
 import com.bca.byc.validation.UniqueEmail;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -31,13 +32,11 @@ public class RegisterRequest {
     @Size(max = 16, message = "Phone number must be less than 16 characters")
     private String phone;
 
+    @Schema(description = "User type: (MEMBER, NOT_MEMBER, NOT_CUSTOMER)", example = "'MEMBER' | 'NOT_MEMBER' | 'NOT_CUSTOMER'")
     private UserType type;
 
     @Size(max = 20, message = "Bank account number must be less than 20 characters")
-    private String bankAccount;
-
-    @Size(max = 20, message = "CIN must be less than 20 characters")
-    private String cin;
+    private String solitaireBankAccount;
 
     private LocalDate birthdate;
 

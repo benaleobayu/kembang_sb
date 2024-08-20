@@ -37,7 +37,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login").permitAll()
-                .requestMatchers("/cms/**").authenticated()
+                .requestMatchers("/cms/**", "cms/ms/**").authenticated()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
@@ -46,7 +46,7 @@ public class SecurityConfig {
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")
                 .loginProcessingUrl("/perform_login")
-                .defaultSuccessUrl("/cms/dashboard", true)
+                .defaultSuccessUrl("/cms/data-analytic", true)
                 .failureUrl("/login?error=true")
                 .usernameParameter("email")
                 .permitAll()

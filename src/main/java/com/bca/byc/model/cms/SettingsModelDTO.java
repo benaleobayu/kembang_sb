@@ -1,6 +1,5 @@
 package com.bca.byc.model.cms;
 
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -8,13 +7,17 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
 
-
 public class SettingsModelDTO {
+
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class DetailResponse implements Serializable {
+
+        @Serial
+        private final static long serialVersionUID = -4110836650683334939L;
 
         private Long id;
         private String name;
@@ -25,6 +28,7 @@ public class SettingsModelDTO {
         private Boolean status;
         private String createdAt;
         private String updatedAt;
+
     }
 
     @Data
@@ -45,8 +49,6 @@ public class SettingsModelDTO {
 
         @NotBlank(message = "Status is mandatory")
         private Boolean status;
-
-
     }
 
     @Data
@@ -67,6 +69,4 @@ public class SettingsModelDTO {
         private Boolean status;
 
     }
-
-
 }

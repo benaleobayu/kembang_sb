@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.repository.*;
 import com.bca.byc.service.AuthService;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private BusinessHasCategoryRepository businessHasCategoryRepository;
     private FeedbackCategoryRepository feedbackCategoryRepository;
     private UserHasFeedbackRepository userHasFeedbackRepository;
+    private TestAutocheckRepository testAutocheckRepository;
 
     private OtpRepository otpRepository;
 
@@ -40,13 +39,47 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
+        // Logging email yang dicari
+        System.out.println("Searching for user with email: " + dto.getEmail());
 
-        User user = converter.convertToCreateRequest(dto);
+        Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
+        System.out.println("User found: " + existingUserOptional.isPresent());
 
-        repository.save(user);
+        User user;
+        if (existingUserOptional.isEmpty()) {
+            // Create if not exist
+            user = converter.convertToCreateRequest(dto);
+            user.setStatus(StatusType.PENDING);
+        } else {
+            // Update if email is already present
+            user = existingUserOptional.get();
+            user.setName(dto.getName());
+            user.setSolitaireBankAccount(dto.getSolitaireBankAccount());
+            user.setPhone(dto.getPhone());
+            user.setBirthdate(dto.getBirthdate());
+            user.setCountReject(user.getCountReject());
+        }
 
-        // send waiting approval email
-        sendWaitingApproval(user);
+        boolean exist = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
+        System.out.println("solitaire found: " + exist);
+        if (exist) {
+            user.setStatus(StatusType.APPROVED);
+            repository.save(user);
+            resendOtp(dto.getEmail());
+        } else {
+            user.setStatus(StatusType.REJECTED);
+            int newRejectCount = user.getCountReject() + 1;
+            user.setCountReject(newRejectCount);
+
+            if (newRejectCount >= 3) {
+                throw new BadRequestException("Your account can't be created anymore. Please contact admin.");
+            } else if (newRejectCount <= 3) {
+                throw new BadRequestException("Your account is rejected. Please contact admin.");
+            }
+
+            repository.save(user);
+
+        }
     }
 
     @Override
@@ -134,7 +167,7 @@ public class AuthServiceImpl implements AuthService {
                 if (otp.getExpiryDate().isAfter(LocalDateTime.now())) {
                     otp.setValid(false); // Mark OTP as used
                     otpRepository.save(otp);
-                    user.setStatus(StatusType.PENDING); // Enable the user
+                    user.setStatus(StatusType.VERIFIED); // Enable the user
                     repository.save(user);
                     return true;
                 }

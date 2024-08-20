@@ -9,6 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SettingsRepository extends JpaRepository<Settings, Long> {
 
-
-
+    Optional<Settings> findByIdentity(String identity);
 }

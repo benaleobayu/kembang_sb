@@ -1,8 +1,10 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.convert.UserDTOConverter;
+import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.AuthRegisterRequest;
 import com.bca.byc.model.api.UserDetailResponse;
 import com.bca.byc.model.api.UserSetPasswordRequest;
 import com.bca.byc.model.api.UserUpdatePasswordRequest;
@@ -34,7 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetailResponse findUserById(Long id) {
+    public User findByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+    }
+
+    @Override
+    public UserDetailResponse findDataById(Long id) {
         User data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
@@ -51,9 +58,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setNewPassword(Long userId, UserSetPasswordRequest dto) {
-        User user = repository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("invalid.userId"));
+    public List<UserDetailResponse> findUserPendingAndActive() {
+        List<User> datas = repository.findUserPendingAndActive(StatusType.APPROVED, StatusType.REJECTED);
+
+        return datas.stream()
+                .map(converter::convertToListResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDetailResponse> findUserActive() {
+        List<User> datas = repository.findByStatus(StatusType.APPROVED);
+
+        return datas.stream()
+                .map(converter::convertToListResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setNewPassword(String email, UserSetPasswordRequest dto) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("invalid.email"));
 
         if (!dto.isSetPasswordMatch()) {
             throw new BadRequestException("Password does not match");
@@ -85,9 +110,16 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
+    @Override
+    public void saveData(AuthRegisterRequest dto) {
+        User data = converter.convertToCreateGroupRequest(dto);
+
+        repository.save(data);
+    }
+
 
     @Override
-    public void updateUser(Long id, @Valid UserUpdateRequest dto) {
+    public void updateData(Long id, @Valid UserUpdateRequest dto) {
         // check exist and get
         User data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID User ID"));

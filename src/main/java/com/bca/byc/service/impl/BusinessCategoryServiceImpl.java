@@ -76,7 +76,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> findByParentId(Long parentId) {
+    public List<BusinessCategoryModelDTO.DetailResponse> findByParent(BusinessCategory parentId) {
         List<BusinessCategory> datas = repository.findByParentId(parentId);
 
         return datas.stream()

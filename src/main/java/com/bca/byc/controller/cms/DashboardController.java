@@ -19,7 +19,7 @@ import java.util.Map;
 
 
 @Controller
-@RequestMapping("/cms/dashboard")
+@RequestMapping("/cms/data-analytic")
 public class DashboardController {
 //    @PreAuthorize("hasPermission(#authentication, 'VIEW_DASHBOARD')") // Use your permission name
     @GetMapping

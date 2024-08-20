@@ -18,7 +18,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/feedback_category")
-@Tag(name = "FeedbackCategory API")
+@Tag(name = "Masterdata - Feedback Category")
 public class FeedbackCategoryResource {
 
     private MsFeedbackCategoryService service;

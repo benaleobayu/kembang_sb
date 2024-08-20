@@ -23,6 +23,9 @@ public class Admin extends AbstractBaseEntity{
     @Column(name = "remember_token")
     private String rememberToken;
 
+    @Column(name = "status", columnDefinition = "boolean default true")
+    private Boolean status;
+
     // relations
 
     @OneToOne

@@ -3,6 +3,7 @@ package com.bca.byc.controller.cms;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.repository.UserRepository;
+import com.bca.byc.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,9 +18,10 @@ import java.util.List;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/cms/users")
-public class UserController {
+@RequestMapping("/cms/user")
+public class UserInquiryController {
 
+    private final UserService service;
     private UserRepository repository;
 
     // for inquiry
@@ -34,7 +36,7 @@ public class UserController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        model.addAttribute("datas", repository.findAllActiveUsers());
+        model.addAttribute("datas", service.findUserPendingAndActive());
 
         // some part
         model.addAttribute("titlePage", "Users");
@@ -42,7 +44,7 @@ public class UserController {
     }
 
     // for active
-    @GetMapping("/active")
+    @GetMapping("/active_old")
 //    @PreAuthorize("hasPermission(#authentication, 'users_active.view')")
     public String active(Model model, HttpServletRequest request) {
         // set breadcrumb
@@ -53,7 +55,8 @@ public class UserController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        model.addAttribute("datas", repository.findByStatus(StatusType.APPROVE_SPV));
+//        model.addAttribute("datas", repository.findByStatus(StatusType.APPROVE_SPV));
+        model.addAttribute("datas", service.findUserActive());
 
         // some part
         model.addAttribute("titlePage", "Users Active");
@@ -61,7 +64,7 @@ public class UserController {
     }
 
     // for suspended
-    @GetMapping("/suspended")
+    @GetMapping("/suspended_old")
 //    @PreAuthorize("hasPermission(#authentication, 'users_active.view')")
     public String suspended(Model model, HttpServletRequest request) {
         // set breadcrumb
@@ -80,7 +83,7 @@ public class UserController {
     }
 
     // for deleted
-    @GetMapping("/deleted")
+    @GetMapping("/deleted_old")
 //    @PreAuthorize("hasPermission(#authentication, 'users_active.view')")
     public String deleted(Model model, HttpServletRequest request) {
         // set breadcrumb

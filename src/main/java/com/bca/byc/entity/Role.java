@@ -11,4 +11,6 @@ public class Role extends AbstractBaseEntity{
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(name = "status", columnDefinition = "boolean default true")
+    private Boolean status;
 }

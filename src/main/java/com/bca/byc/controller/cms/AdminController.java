@@ -19,9 +19,11 @@ import java.util.List;
 @RequestMapping(AdminController.thisUrl)
 public class AdminController {
 
+    private static final String prefixName = "cms/settings/";
     private static final String suffixName = "admin";
-    public static final String thisUrl = "/cms/settings/" + AdminController.suffixName;
+    static final String thisUrl = prefixName + suffixName;
     private final String titlePage = "Admin";
+
     @Autowired
     private SettingsAdminService service;
 

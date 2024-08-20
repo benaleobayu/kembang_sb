@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 
@@ -14,7 +15,7 @@ public interface MsBusinessCategoryService {
     List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNotNull();
     List<BusinessCategoryModelDTO.DetailResponse> findAllData();
 
-    List<BusinessCategoryModelDTO.DetailResponse> findByParentId(Long parentId);
+    List<BusinessCategoryModelDTO.DetailResponse> findByParent(BusinessCategory parentId);
 
     void saveData(@Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;
     void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;

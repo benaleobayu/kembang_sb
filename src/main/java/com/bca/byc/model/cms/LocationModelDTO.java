@@ -8,6 +8,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,9 @@ public class LocationModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class DetailResponse implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = -5579591063740283219L;
 
         private Long id;
         private String name;

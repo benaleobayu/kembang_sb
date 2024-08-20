@@ -18,7 +18,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/interest_category")
-@Tag(name = "InterestCategory API")
+@Tag(name = "Masterdata - Interest Category")
 public class InterestCategoryResource {
 
     private MsInterestCategoryService service;

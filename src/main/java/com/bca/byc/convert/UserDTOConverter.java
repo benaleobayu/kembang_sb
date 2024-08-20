@@ -31,14 +31,6 @@ public class UserDTOConverter {
     }
 
     // for create data
-    public User convertToCreateRequest(@Valid RegisterRequest dto) {
-        // mapping DTO Entity with Entity
-        User data = modelMapper.map(dto, User.class);
-        // return
-        return data;
-    }
-
-    // for create data
     public User convertToCreateGroupRequest(@Valid AuthRegisterRequest dto) {
         // mapping DTO Entity with Entity
         User data = modelMapper.map(dto, User.class);
@@ -53,6 +45,25 @@ public class UserDTOConverter {
         modelMapper.map(dto, data);
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
+    }
+
+
+    // ------------------------------------------
+    // for create data
+    public User convertToCreateRequest(@Valid RegisterRequest dto) {
+        // mapping DTO Entity with Entity
+        User data = modelMapper.map(dto, User.class);
+        // return
+        return data;
+    }
+
+    // for update data
+    public User convertToUpdateIfExistRequest(User data, @Valid RegisterRequest dto) {
+        // mapping DTO Entity with Entity
+        modelMapper.map(dto, data);
+        // set updated_at
+        data.setUpdatedAt(LocalDateTime.now());
+        return data;
     }
 }
 

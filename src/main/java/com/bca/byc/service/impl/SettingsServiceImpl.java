@@ -7,7 +7,7 @@ import com.bca.byc.model.cms.SettingsModelDTO;
 import com.bca.byc.repository.SettingsRepository;
 import com.bca.byc.service.SettingsService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,10 +15,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class SettingsServiceImpl implements SettingsService {
 
+    @Autowired
     private SettingsRepository repository;
+    @Autowired
     private SettingsDTOConverter converter;
 
     @Override
@@ -72,5 +73,13 @@ public class SettingsServiceImpl implements SettingsService {
         } else {
             repository.deleteById(id);
         }
+    }
+
+    @Override
+    public SettingsModelDTO.DetailResponse showByIdentity(String identity) {
+        Settings data = repository.findByIdentity(identity)
+                .orElseThrow(() -> new BadRequestException("identity not found"));
+
+        return converter.convertToListResponse(data);
     }
 }

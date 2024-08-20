@@ -1,8 +1,8 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.SettingsModelDTO;
+import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.SettingsService;
+import com.bca.byc.service.MsFeedbackCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,15 +15,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.bca.byc.controller.cms.MsFeedbackCategoryController.thisUrl;
+
 @Controller
 @AllArgsConstructor
-@RequestMapping(MsFeedbackCategoryController.thisUrl)
+@RequestMapping(thisUrl)
 public class MsFeedbackCategoryController {
 
-    private static final String suffixName = "all";
-    public static final String thisUrl = "/cms/ms/" + MsFeedbackCategoryController.suffixName;
-    private final String titlePage = "Settings";
-    private SettingsService service;
+    private static final String prefixName = "cms/ms/";
+    private static final String suffixName = "feedback_category";
+    static final String thisUrl = prefixName + suffixName;
+    private final String titlePage = "Feedback Category";
+
+    private final MsFeedbackCategoryService service;
 
     // get route index table
     @GetMapping
@@ -34,7 +38,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<SettingsModelDTO.DetailResponse> alldata = service.findAllData();
+        List<FeedbackCategoryModelDTO.DetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -52,7 +56,7 @@ public class MsFeedbackCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        SettingsModelDTO.DetailResponse data = service.findDataById(id);
+        FeedbackCategoryModelDTO.DetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -68,7 +72,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        SettingsModelDTO.CreateRequest dto = new SettingsModelDTO.CreateRequest();
+        FeedbackCategoryModelDTO.CreateRequest dto = new FeedbackCategoryModelDTO.CreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -77,7 +81,7 @@ public class MsFeedbackCategoryController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid SettingsModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -97,7 +101,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        SettingsModelDTO.DetailResponse dto = service.findDataById(id);
+        FeedbackCategoryModelDTO.DetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -106,7 +110,7 @@ public class MsFeedbackCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid SettingsModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

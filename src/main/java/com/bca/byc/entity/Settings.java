@@ -26,4 +26,7 @@ public class Settings extends AbstractBaseEntity{
     @Column(name = "value")
     private Integer value;
 
+    @Column(name = "status", columnDefinition = "boolean default true")
+    private Boolean status;
+
 }

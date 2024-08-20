@@ -6,7 +6,7 @@
 
 <head>
 
-    <title>User Active</title>
+    <title>User Inquiry</title>
 
     <!-- jsvectormap css -->
     <link href="/assets/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css"/>
@@ -27,11 +27,8 @@
     <div class="row">
         <div class="col">
 
-            <div class="h-100">
-                <div class="row mb-3 pb-1">
-                    <div th:replace="~{partials/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></div>
-                    <!--end col-->
-                </div>
+            <div class="min-h-100">
+                <div th:replace="~{partials/breadcrumbs :: breadcrumbs(${breadcrumbs})}"></div>
                 <!--end row-->
 
                 <!-- content here -->
@@ -52,7 +49,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-container">
-                                    <table class="table nowrap align-middle"
+                                    <table class="table nowrap table-hover align-middle"
                                            id="model-datatables"
                                            style="width:100%">
                                         <thead class="global-head">
@@ -76,9 +73,8 @@
                                             <td th:text="${data.createdAt}"></td>
                                             <td th:text="${data.cin}"></td>
                                             <td th:text="${data.cin}"></td>
-                                            <td th:text="${data.bankAccount}"></td>
+                                            <td th:text="${data.solitaireBankAccount}"></td>
                                             <td th:text="${data.phone}"></td>
-                                            </td>
                                             <td class="action-col">
                                                 <div class="dropdown d-inline-block bg-white border border-1 border-secondary rounded-2 p-1">
                                                     <button class="btn btn-ghost-info waves-effect waves-light"
@@ -103,7 +99,6 @@
                                                             <i class="text-danger icon-size" data-feather="user-x"></i>
                                                         </a>
                                                     </button>
-
                                                 </div>
                                             </td>
                                         </tr>

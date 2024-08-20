@@ -32,8 +32,6 @@ public class BusinessCategoryModelDTO {
     }
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class CreateRequest {
 

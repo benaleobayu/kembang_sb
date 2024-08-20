@@ -11,27 +11,18 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${app.dev.url}")
-    private String localUrl;
-
     @Value("${app.base.url}")
-    private String devUrl;
-
-
+    private String baseUrl;
 
     @Bean
     public OpenAPI myOpenAPI(){
-        Server localServer = new Server();
-        localServer.setUrl(localUrl);
-        localServer.description("Local Server");
 
-        Server devServer = new Server();
-        devServer.setUrl(devUrl);
-        devServer.description("Development Server");
-
+        Server appServer = new Server();
+        appServer.setUrl(baseUrl);
+        appServer.description("Development Server");
 
         return new OpenAPI()
-                .servers(List.of(localServer,devServer));
+                .servers(List.of(appServer));
 
     }
 }

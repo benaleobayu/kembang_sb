@@ -1,8 +1,9 @@
 package com.bca.byc.util;
+
+import org.jsoup.Jsoup;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.jsoup.Jsoup;
-import org.springframework.stereotype.Component;
 
 public class Formatter {
 

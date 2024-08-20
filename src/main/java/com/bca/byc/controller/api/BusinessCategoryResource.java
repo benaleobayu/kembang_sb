@@ -19,7 +19,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/business_category")
-@Tag(name = "Business Category")
+@Tag(name = "Masterdata - Business Category")
 public class BusinessCategoryResource {
 
     private MsBusinessCategoryService service;

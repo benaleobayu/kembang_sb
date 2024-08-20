@@ -1,10 +1,14 @@
 package com.bca.byc.controller.cms;
 
+import com.bca.byc.entity.BusinessCategory;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
+import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.service.MsBusinessCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,15 +20,17 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 @RequestMapping(MsBusinessCategoryController.thisUrl)
 public class MsBusinessCategoryController {
 
-    private static final String prefixName = "/cms/ms/";
+    private static final String prefixName = "cms/ms/";
     private static final String suffixName = "business_category";
-    public static final String thisUrl =  prefixName + suffixName;
+    static final String thisUrl =  prefixName + suffixName;
     private final String titlePage = "Business Category";
-    @Autowired
-    private MsBusinessCategoryService service;
+
+    private final MsBusinessCategoryService service;
+    private final BusinessCategoryRepository repository;
 
     // get route index table
     @GetMapping
@@ -124,20 +130,24 @@ public class MsBusinessCategoryController {
     public String index_child(@PathVariable("parentId") Long parentId, Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb("Master " + titlePage, request.getRequestURI(), true));
+                new Breadcrumb("Master " + titlePage, request.getRequestURI(), false),
+                new Breadcrumb("Child " + titlePage, request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
+        // if not valid parentId
+        BusinessCategory parentCategory = repository.findById(parentId)
+                .orElseThrow(() -> new BadRequestException("Invalid parentId"));
         //table
-        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParentId(parentId);
+        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParent(parentCategory);
         model.addAttribute("datas", alldata);
 
         // some part
-        model.addAttribute("titlePage", titlePage);
+        model.addAttribute("titlePage", "child of" + titlePage);
         model.addAttribute("modelName", suffixName);
-        return thisUrl + "/index";
+        return thisUrl + "/child/index";
     }
 
-    // get route detail data
+    // get route detail child data
     @GetMapping("/{id}/child/{childId}detail")
     public String view_child(@PathVariable("id") Long id, @PathVariable("childId") Long childId, Model model, HttpServletRequest request) {
         // set breadcrumb
@@ -145,11 +155,15 @@ public class MsBusinessCategoryController {
                 new Breadcrumb("Master " + titlePage, thisUrl, false),
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
-
+        // continue to the service
         BusinessCategoryModelDTO.DetailResponse data = service.findDataById(childId);
+        // check if child belongs the parent
+        if (data.getParentId() == null || !data.getParentId().equals(id)){
+            throw new IllegalArgumentException("Invalid data");
+        }
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
-        return thisUrl + "/form_data";
+        return thisUrl + "/child/form_data";
     }
 
     // get route create data

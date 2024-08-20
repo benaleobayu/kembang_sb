@@ -18,7 +18,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/business")
-@Tag(name = "Business API")
+@Tag(name = "Business")
 public class BusinessResource {
 
     private BusinessService service;
