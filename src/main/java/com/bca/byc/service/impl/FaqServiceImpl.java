@@ -22,7 +22,7 @@ public class FaqServiceImpl implements FaqService {
     private FaqDTOConverter converter;
 
     @Override
-    public FaqModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public FaqModelDTO.FaqDetailResponse findDataById(Long id) throws BadRequestException {
         Faq data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Faq not found"));
 
@@ -30,7 +30,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public List<FaqModelDTO.DetailResponse> findAllData() {
+    public List<FaqModelDTO.FaqDetailResponse> findAllData() {
         // Get the list
         List<Faq> datas = repository.findAll();
 

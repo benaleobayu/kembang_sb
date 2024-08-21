@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class FaqCategoryModelDTO {
     @Data
@@ -18,6 +19,8 @@ public class FaqCategoryModelDTO {
         private Boolean status;
         private String createdAt;
         private String updatedAt;
+
+        private List<FaqModelDTO.FaqDetailResponse> faqs; // <1>
     }
 
     @Data

@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface FaqService {
 
-    FaqModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    FaqModelDTO.FaqDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<FaqModelDTO.DetailResponse> findAllData();
+    List<FaqModelDTO.FaqDetailResponse> findAllData();
 
     void saveData(@Valid FaqModelDTO.FaqCreateRequest dto) throws BadRequestException;
 

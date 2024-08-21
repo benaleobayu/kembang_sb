@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class FaqModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse {
+    public static class FaqDetailResponse {
 
         private Long id;
         private String name;

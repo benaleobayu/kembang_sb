@@ -16,9 +16,9 @@ public class FaqDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public FaqModelDTO.DetailResponse convertToListResponse(Faq data) {
+    public FaqModelDTO.FaqDetailResponse convertToListResponse(Faq data) {
         // mapping Entity with DTO Entity
-        FaqModelDTO.DetailResponse dto = modelMapper.map(data, FaqModelDTO.DetailResponse.class);
+        FaqModelDTO.FaqDetailResponse dto = modelMapper.map(data, FaqModelDTO.FaqDetailResponse.class);
         // return
         return dto;
     }

@@ -38,7 +38,7 @@ public class FaqResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/faq/{id} endpoint hit");
         try {
-            FaqModelDTO.DetailResponse item = service.findDataById(id);
+            FaqModelDTO.FaqDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found faq", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
