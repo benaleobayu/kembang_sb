@@ -86,7 +86,7 @@ public class SettingsController {
         }
 
         service.saveData(dto);
-        return "redirect:" + thisUrl;
+        return "redirect:" + "/" + thisUrl;
     }
 
     // get route edit data
@@ -114,7 +114,7 @@ public class SettingsController {
             return thisUrl + "/" + id + "/edit";
         }
         service.updateData(id, dto);
-        return "redirect:" + thisUrl;
+        return "redirect:" + "/" + thisUrl;
     }
 
 

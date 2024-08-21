@@ -45,6 +45,11 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
         System.out.println("User found: " + existingUserOptional.isPresent());
 
+        // check user by email and status active
+        if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
+            throw new BadRequestException("Email already exists");
+        }
+
         User user;
         if (existingUserOptional.isEmpty()) {
             // Create if not exist
@@ -114,6 +119,7 @@ public class AuthServiceImpl implements AuthService {
 
                 // Save the BusinessHasCategory entity
                 businessHasCategoryRepository.save(businessHasCategory);
+//                businessCategoryRepository.save(businessHasCategory);
 
             }
 
@@ -141,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
         String otpCode = OtpUtil.generateOtp();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(30); // OTP valid for 10 minutes
 
-        Otp otp = new Otp(user, otpCode, expiryDate, true);
+        Otp otp = new Otp(null, user, otpCode, expiryDate, true);
         otpRepository.save(otp);
 
         // Send OTP to user's email

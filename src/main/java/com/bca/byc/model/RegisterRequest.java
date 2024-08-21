@@ -1,6 +1,7 @@
 package com.bca.byc.model;
 
 import com.bca.byc.entity.UserType;
+import com.bca.byc.validation.PhoneNumberValidation;
 import com.bca.byc.validation.UniqueEmail;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -30,6 +31,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Phone is mandatory")
     @Size(max = 16, message = "Phone number must be less than 16 characters")
+    @PhoneNumberValidation // Custom annotation for phone number validation
     private String phone;
 
     @Schema(description = "User type: (MEMBER, NOT_MEMBER, NOT_CUSTOMER)", example = "'MEMBER' | 'NOT_MEMBER' | 'NOT_CUSTOMER'")
@@ -37,6 +39,9 @@ public class RegisterRequest {
 
     @Size(max = 20, message = "Bank account number must be less than 20 characters")
     private String solitaireBankAccount;
+
+    @Size(max = 20, message = "Customer Identity number must be less than 20 characters")
+    private String cin;
 
     private LocalDate birthdate;
 
