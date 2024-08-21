@@ -3,7 +3,7 @@ package com.bca.byc.model;
 import lombok.Data;
 
 @Data
-public class RegisterBusinessCategoryRequest {
+public class OnboardingBusinessCategoryRequest {
     private Long businessCategoryId;
     private Long businessCategoryChildId;
 }

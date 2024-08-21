@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.api.BusinessModelDTO;
+import com.bca.byc.model.BusinessModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;

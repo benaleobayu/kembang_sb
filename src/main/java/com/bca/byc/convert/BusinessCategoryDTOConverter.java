@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.model.cms.BusinessCategoryModelDTO;
+import com.bca.byc.model.BusinessCategoryModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -3,7 +3,7 @@ package com.bca.byc.service;
 import javax.validation.Valid;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.AdminModelDTO;
+import com.bca.byc.model.AdminModelDTO;
 
 import java.util.List;
 

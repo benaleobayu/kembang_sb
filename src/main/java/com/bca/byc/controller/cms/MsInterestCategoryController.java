@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.model.InterestCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.MsInterestCategoryService;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,11 +1,11 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
-import com.bca.byc.model.AuthRegisterRequest;
-import com.bca.byc.model.api.UserDetailResponse;
-import com.bca.byc.model.api.UserSetPasswordRequest;
-import com.bca.byc.model.api.UserUpdatePasswordRequest;
-import com.bca.byc.model.api.UserUpdateRequest;
+import com.bca.byc.model.auth.AuthRegisterRequest;
+import com.bca.byc.model.UserDetailResponse;
+import com.bca.byc.model.UserSetPasswordRequest;
+import com.bca.byc.model.UserUpdatePasswordRequest;
+import com.bca.byc.model.UserUpdateRequest;
 
 import javax.validation.Valid;
 import java.util.List;

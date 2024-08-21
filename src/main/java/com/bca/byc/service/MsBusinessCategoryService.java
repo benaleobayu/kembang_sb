@@ -2,7 +2,7 @@ package com.bca.byc.service;
 
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.BusinessCategoryModelDTO;
+import com.bca.byc.model.BusinessCategoryModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;

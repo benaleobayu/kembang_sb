@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.FeedbackCategory;
-import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
+import com.bca.byc.model.FeedbackCategoryModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

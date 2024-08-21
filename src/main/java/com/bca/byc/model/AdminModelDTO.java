@@ -1,34 +1,42 @@
-package com.bca.byc.model.cms;
+package com.bca.byc.model;
 
-
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
-public class FaqCategoryModelDTO {
+
+public class AdminModelDTO {
     @Data
-    public static class FaqCategoryDetailResponse {
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class AdminDetailResponse {
 
         private Long id;
         private String name;
-        private String description;
-        private Integer orders;
-        private Boolean status;
+        private String role;
+        private String email;
+        private boolean status;
         private String createdAt;
         private String updatedAt;
 
-        private List<FaqModelDTO.FaqDetailResponse> faqs; // <1>
+        public String getRole() {
+            if (role != null && role.contains("name=")) {
+                return role.substring(role.indexOf("name=") + 5, role.length() - 1);
+            }
+            return role;
+        }
+
     }
 
     @Data
-    @AllArgsConstructor
-    public static class FaqCategoryCreateRequest {
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class AdminCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
-        @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
+        @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
         private String description;
@@ -39,11 +47,13 @@ public class FaqCategoryModelDTO {
         @NotBlank(message = "Status is mandatory")
         private Boolean status;
 
+
     }
 
     @Data
     @AllArgsConstructor
-    public static class FaqCategoryUpdateRequest {
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class AdminUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

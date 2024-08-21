@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.Location;
-import com.bca.byc.model.cms.LocationModelDTO;
+import com.bca.byc.model.LocationModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

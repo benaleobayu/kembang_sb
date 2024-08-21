@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.AdminDTOConverter;
 import com.bca.byc.entity.Admin;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.AdminModelDTO;
+import com.bca.byc.model.AdminModelDTO;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.service.SettingsAdminService;
 import jakarta.validation.Valid;

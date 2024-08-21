@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.Business;
-import com.bca.byc.model.api.BusinessModelDTO;
+import com.bca.byc.model.BusinessModelDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

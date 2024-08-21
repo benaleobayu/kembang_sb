@@ -1,4 +1,4 @@
-package com.bca.byc.model;
+package com.bca.byc.model.auth;
 
 import com.bca.byc.entity.UserType;
 import com.bca.byc.validation.PhoneNumberValidation;

@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.LocationModelDTO;
+import com.bca.byc.model.LocationModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;

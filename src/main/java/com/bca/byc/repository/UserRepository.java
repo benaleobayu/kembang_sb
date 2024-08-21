@@ -2,7 +2,6 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
-import com.bca.byc.model.api.UserDetailResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

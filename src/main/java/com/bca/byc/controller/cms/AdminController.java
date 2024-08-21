@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.AdminModelDTO;
+import com.bca.byc.model.AdminModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.SettingsAdminService;
 import jakarta.servlet.http.HttpServletRequest;

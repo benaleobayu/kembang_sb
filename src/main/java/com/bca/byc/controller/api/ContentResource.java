@@ -1,7 +1,7 @@
 package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.ContentModelDTO;
+import com.bca.byc.model.ContentModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ContentService;

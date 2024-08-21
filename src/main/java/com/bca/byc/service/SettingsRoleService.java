@@ -2,7 +2,7 @@ package com.bca.byc.service;
 
 import com.bca.byc.convert.RoleDTOConverter;
 import com.bca.byc.entity.Role;
-import com.bca.byc.model.cms.RoleModelDTO;
+import com.bca.byc.model.RoleModelDTO;
 import com.bca.byc.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.Settings;
-import com.bca.byc.model.cms.SettingsModelDTO;
+import com.bca.byc.model.SettingsModelDTO;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

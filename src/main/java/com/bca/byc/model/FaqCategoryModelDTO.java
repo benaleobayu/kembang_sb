@@ -1,34 +1,34 @@
-package com.bca.byc.model.cms;
+package com.bca.byc.model;
 
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
-
-public class RoleModelDTO {
+public class FaqCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class RoleDetailResponse {
+    public static class FaqCategoryDetailResponse {
 
         private Long id;
         private String name;
+        private String description;
+        private Integer orders;
         private Boolean status;
         private String createdAt;
         private String updatedAt;
+
+        private List<FaqModelDTO.FaqDetailResponse> faqs; // <1>
     }
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class RoleCreateRequest {
+    public static class FaqCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
-        @Size(max = 50, message = "Name must be less than 50 characters")
+        @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
         private String name;
 
         private String description;
@@ -39,13 +39,11 @@ public class RoleModelDTO {
         @NotBlank(message = "Status is mandatory")
         private Boolean status;
 
-
     }
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class RoleUpdateRequest {
+    public static class FaqCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

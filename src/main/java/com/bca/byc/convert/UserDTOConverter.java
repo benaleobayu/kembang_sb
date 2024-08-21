@@ -1,10 +1,10 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.User;
-import com.bca.byc.model.AuthRegisterRequest;
-import com.bca.byc.model.RegisterRequest;
-import com.bca.byc.model.api.UserDetailResponse;
-import com.bca.byc.model.api.UserUpdateRequest;
+import com.bca.byc.model.auth.AuthRegisterRequest;
+import com.bca.byc.model.auth.RegisterRequest;
+import com.bca.byc.model.UserDetailResponse;
+import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

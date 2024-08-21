@@ -1,4 +1,4 @@
-package com.bca.byc.model.cms;
+package com.bca.byc.model;
 
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

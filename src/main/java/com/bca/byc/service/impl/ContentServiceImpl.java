@@ -4,7 +4,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.ContentDTOConverter;
 import com.bca.byc.entity.Content;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.ContentModelDTO;
+import com.bca.byc.model.ContentModelDTO;
 import com.bca.byc.repository.ContentRepository;
 import com.bca.byc.service.ContentService;
 import jakarta.validation.Valid;

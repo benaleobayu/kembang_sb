@@ -4,6 +4,8 @@ import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
+import com.bca.byc.model.auth.AuthRegisterRequest;
+import com.bca.byc.model.auth.RegisterRequest;
 import com.bca.byc.repository.*;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.email.EmailService;
@@ -95,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
         user = repository.save(user);
 
         // Create Businesses
-        for (RegisterBusinessRequest businessDto : dto.getBusinesses()) {
+        for (OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
             Business business = new Business();
             business.setName(businessDto.getBusinessName());
             business.setAddress(businessDto.getBusinessAddress());
@@ -103,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
             business = businessRepository.save(business);
 
             // Create Business Categories
-            for (RegisterBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
+            for (OnboardingBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
                 BusinessCategory parentCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryId())
                         .orElseThrow(() -> new RuntimeException("Business Category Parent not found"));
 

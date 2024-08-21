@@ -1,6 +1,5 @@
-package com.bca.byc.model.api;
+package com.bca.byc.model;
 
-import com.bca.byc.model.cms.BusinessCategoryModelDTO;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -10,15 +9,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-public class BusinessModelDTO {
+public class InterestModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class BusinessDetailResponse {
+    public static class InterestDetailResponse {
 
         private Long id;
-
-        private Long userId;
 
         private String name;
 
@@ -32,7 +29,7 @@ public class BusinessModelDTO {
 
         private String description;
 
-        private List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> categories;
+        private List<InterestCategoryModelDTO.InterestCategoryDetailResponse> categories;
 
         private Integer orders;
 
@@ -47,9 +44,9 @@ public class BusinessModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class BusinessCreateRequest {
+    public static class InterestCreateRequest {
 
-        @NotBlank(message = "user_id is required")
+        @NotBlank(message = "User id is required")
         private Long userId;
 
         @NotBlank(message = "Name is required")
@@ -80,7 +77,10 @@ public class BusinessModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class BusinessUpdateRequest {
+    public static class InterestUpdateRequest {
+
+        @NotBlank(message = "User id is required")
+        private Long userId;
 
         @NotBlank(message = "Name is required")
         @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")

@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.FeedbackCategoryDTOConverter;
 import com.bca.byc.entity.FeedbackCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
+import com.bca.byc.model.FeedbackCategoryModelDTO;
 import com.bca.byc.repository.FeedbackCategoryRepository;
 import com.bca.byc.service.MsFeedbackCategoryService;
 import jakarta.validation.Valid;

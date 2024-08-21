@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.SettingsModelDTO;
+import com.bca.byc.model.SettingsModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.SettingsService;
 import jakarta.servlet.http.HttpServletRequest;

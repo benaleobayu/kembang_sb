@@ -1,8 +1,8 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
-import com.bca.byc.model.AuthRegisterRequest;
-import com.bca.byc.model.RegisterRequest;
+import com.bca.byc.model.auth.AuthRegisterRequest;
+import com.bca.byc.model.auth.RegisterRequest;
 import jakarta.mail.MessagingException;
 
 public interface AuthService {

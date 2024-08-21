@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.LocationModelDTO;
+import com.bca.byc.model.LocationModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.MsLocationService;
 import jakarta.servlet.http.HttpServletRequest;

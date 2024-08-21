@@ -2,7 +2,7 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.BusinessCategoryModelDTO;
+import com.bca.byc.model.BusinessCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.service.MsBusinessCategoryService;

@@ -5,7 +5,7 @@ import com.bca.byc.entity.Interest;
 import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.api.InterestModelDTO;
+import com.bca.byc.model.InterestModelDTO;
 import com.bca.byc.repository.InterestCategoryRepository;
 import com.bca.byc.repository.InterestRepository;
 import com.bca.byc.repository.UserRepository;

@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.Admin;
-import com.bca.byc.model.cms.AdminModelDTO;
+import com.bca.byc.model.AdminModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.FaqCategory;
-import com.bca.byc.model.cms.FaqCategoryModelDTO;
+import com.bca.byc.model.FaqCategoryModelDTO;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

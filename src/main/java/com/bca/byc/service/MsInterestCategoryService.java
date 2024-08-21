@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.model.InterestCategoryModelDTO;
 
 import javax.validation.Valid;
 import java.util.List;

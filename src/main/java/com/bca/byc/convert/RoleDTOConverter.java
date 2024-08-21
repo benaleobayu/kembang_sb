@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.Role;
-import com.bca.byc.model.cms.RoleModelDTO;
+import com.bca.byc.model.RoleModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

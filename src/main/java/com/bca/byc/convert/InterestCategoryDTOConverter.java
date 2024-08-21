@@ -1,7 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.InterestCategory;
-import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.model.InterestCategoryModelDTO;
 import com.bca.byc.util.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -1,4 +1,4 @@
-package com.bca.byc.model.cms;
+package com.bca.byc.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -8,11 +8,10 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-
-public class FeedbackCategoryModelDTO {
+public class InterestCategoryModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class FeedbackCategoryDetailResponse {
+    public static class InterestCategoryDetailResponse {
 
         private Long id;
         private String name;
@@ -26,7 +25,7 @@ public class FeedbackCategoryModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class FeedbackCategoryCreateRequest {
+    public static class InterestCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -46,7 +45,7 @@ public class FeedbackCategoryModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class FeedbackCategoryUpdateRequest {
+    public static class InterestCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

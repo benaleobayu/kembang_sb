@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.BusinessCategoryDTOConverter;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.BusinessCategoryModelDTO;
+import com.bca.byc.model.BusinessCategoryModelDTO;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.service.MsBusinessCategoryService;
 import jakarta.validation.Valid;

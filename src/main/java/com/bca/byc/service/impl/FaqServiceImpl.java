@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.FaqDTOConverter;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.FaqModelDTO;
+import com.bca.byc.model.FaqModelDTO;
 import com.bca.byc.repository.FaqRepository;
 import com.bca.byc.service.FaqService;
 import jakarta.validation.Valid;

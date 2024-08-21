@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.InterestCategoryDTOConverter;
 import com.bca.byc.entity.InterestCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.InterestCategoryModelDTO;
+import com.bca.byc.model.InterestCategoryModelDTO;
 import com.bca.byc.repository.InterestCategoryRepository;
 import com.bca.byc.service.MsInterestCategoryService;
 import jakarta.validation.Valid;

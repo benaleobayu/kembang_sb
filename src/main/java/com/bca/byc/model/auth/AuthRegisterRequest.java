@@ -1,5 +1,7 @@
-package com.bca.byc.model;
+package com.bca.byc.model.auth;
 
+import com.bca.byc.model.OnboardingBusinessRequest;
+import com.bca.byc.model.RegisterUserFeedbackRequest;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -17,7 +19,7 @@ public class AuthRegisterRequest {
     private LocalDate birthdate;
     private LocalDate parentBirthdate;
     // business
-    private List<RegisterBusinessRequest> businesses;
+    private List<OnboardingBusinessRequest> businesses;
     // feedback
     private List<RegisterUserFeedbackRequest> feedbackCategories;
 

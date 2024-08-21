@@ -5,8 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RegisterBusinessRequest {
+public class OnboardingBusinessRequest {
     private String businessName;
     private String businessAddress;
-    private List<RegisterBusinessCategoryRequest> businessCategories;
+    private List<OnboardingBusinessCategoryRequest> businessCategories;
 }

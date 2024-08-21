@@ -3,7 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.SettingsDTOConverter;
 import com.bca.byc.entity.Settings;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.cms.SettingsModelDTO;
+import com.bca.byc.model.SettingsModelDTO;
 import com.bca.byc.repository.SettingsRepository;
 import com.bca.byc.service.SettingsService;
 import jakarta.validation.Valid;

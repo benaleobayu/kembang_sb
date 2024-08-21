@@ -1,6 +1,6 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.cms.FeedbackCategoryModelDTO;
+import com.bca.byc.model.FeedbackCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.MsFeedbackCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
