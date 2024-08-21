@@ -3,19 +3,20 @@ package com.bca.byc.controller.api;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.auth.RegisterRequest;
 import com.bca.byc.model.UserSetPasswordRequest;
+import com.bca.byc.model.auth.AuthRegisterRequest;
 import com.bca.byc.model.auth.AuthenticationRequest;
 import com.bca.byc.model.auth.OtpRequest;
+import com.bca.byc.model.auth.RegisterRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.AuthService;
+import com.bca.byc.service.CustomAdminDetailsService;
 import com.bca.byc.service.UserService;
-import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.service.email.EmailService;
+import com.bca.byc.service.impl.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,6 +47,7 @@ public class AuthResource {
     private UserService userService;
 
     private UserDetailsServiceImpl userDetailsService;
+    private CustomAdminDetailsService adminDetailsService;
 
     private UserRepository repository;
 
@@ -86,7 +88,6 @@ public class AuthResource {
     }
 
 
-
     @PostMapping("/validate-otp")
     public ResponseEntity<ApiListResponse> validateOtp(@RequestBody OtpRequest otpRequest) {
         boolean isValid = authService.validateOtp(otpRequest.getEmail(), otpRequest.getOtp());
@@ -94,7 +95,7 @@ public class AuthResource {
         if (isValid) {
             String token = jwtUtil.generateTokenByEmail(otpRequest.getEmail());
             return ResponseEntity.ok(new ApiListResponse(true, "OTP validated successfully.", token));
-        } else if (!user.getStatus().equals(StatusType.APPROVED)){
+        } else if (!user.getStatus().equals(StatusType.APPROVED)) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, "User not approved.", null));
         } else {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, "Invalid OTP.", null));
@@ -133,7 +134,7 @@ public class AuthResource {
     @SecurityRequirement(name = "Authorization")
     @PatchMapping("/setpassword")
     public ResponseEntity<ApiResponse> setPassword(
-            @RequestHeader( value = "Authorization", required = false) String authorizationHeader,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @RequestBody UserSetPasswordRequest dto) {
         log.info("PATCH /api/v1/users/setpassword endpoint hit");
 
@@ -190,6 +191,26 @@ public class AuthResource {
             log.error("BadRequestException: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+
+    // admin
+
+    @PostMapping("/cms-login")
+    public ResponseEntity<UserApiResponse> authCMS(@RequestBody AuthenticationRequest authenticationRequest) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null, null, 0));
+        }
+
+        final UserDetails userDetails = adminDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+        final String jwt = jwtUtil.generateToken(userDetails);
+        final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
+
+        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
     }
 
 }
