@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface SettingsService {
 
-    SettingsModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    SettingsModelDTO.SettingsDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<SettingsModelDTO.DetailResponse> findAllData();
+    List<SettingsModelDTO.SettingsDetailResponse> findAllData();
 
-    void saveData(@Valid SettingsModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid SettingsModelDTO.SettingsCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid SettingsModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid SettingsModelDTO.SettingsUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 
-    SettingsModelDTO.DetailResponse showByIdentity(String identity);
+    SettingsModelDTO.SettingsDetailResponse showByIdentity(String identity);
 }

@@ -1,6 +1,5 @@
 package com.bca.byc.model.cms;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -8,18 +7,12 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 
 public class LocationModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
-
-        @Serial
-        private static final long serialVersionUID = -5579591063740283219L;
+    public static class LocationDetailResponse {
 
         private Long id;
         private String name;
@@ -33,7 +26,7 @@ public class LocationModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class LocationCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -55,7 +48,7 @@ public class LocationModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class LocationUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

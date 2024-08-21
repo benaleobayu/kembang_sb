@@ -23,7 +23,7 @@ public class SettingsServiceImpl implements SettingsService {
     private SettingsDTOConverter converter;
 
     @Override
-    public SettingsModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public SettingsModelDTO.SettingsDetailResponse findDataById(Long id) throws BadRequestException {
         Settings data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Settings not found"));
 
@@ -31,7 +31,7 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public List<SettingsModelDTO.DetailResponse> findAllData() {
+    public List<SettingsModelDTO.SettingsDetailResponse> findAllData() {
         // Get the list
         List<Settings> datas = repository.findAll();
 
@@ -42,7 +42,7 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void saveData(@Valid SettingsModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid SettingsModelDTO.SettingsCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Settings data = converter.convertToCreateRequest(dto);
         // save data
@@ -50,7 +50,7 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void updateData(Long id, SettingsModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, SettingsModelDTO.SettingsUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Settings data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Settings ID"));
@@ -76,7 +76,7 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public SettingsModelDTO.DetailResponse showByIdentity(String identity) {
+    public SettingsModelDTO.SettingsDetailResponse showByIdentity(String identity) {
         Settings data = repository.findByIdentity(identity)
                 .orElseThrow(() -> new BadRequestException("identity not found"));
 

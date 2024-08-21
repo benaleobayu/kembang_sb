@@ -8,7 +8,6 @@ import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.service.MsLocationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public class LocationServiceImpl implements MsLocationService {
     private LocationDTOConverter converter;
 
     @Override
-    public LocationModelDTO.DetailResponse findDataById(Long id) {
+    public LocationModelDTO.LocationDetailResponse findDataById(Long id) {
         Location data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Location not found"));
 
@@ -31,7 +30,7 @@ public class LocationServiceImpl implements MsLocationService {
     }
 
     @Override
-    public List<LocationModelDTO.DetailResponse> findAllData() {
+    public List<LocationModelDTO.LocationDetailResponse> findAllData() {
         // Get the list
         List<Location> datas = repository.findAll();
 
@@ -43,7 +42,7 @@ public class LocationServiceImpl implements MsLocationService {
     }
 
     @Override
-    public void saveData(@Valid LocationModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid LocationModelDTO.LocationCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Location data = converter.convertToCreateRequest(dto);
         // save data
@@ -51,7 +50,7 @@ public class LocationServiceImpl implements MsLocationService {
     }
 
     @Override
-    public void updateData(Long id, LocationModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, LocationModelDTO.LocationUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Location data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Location ID"));

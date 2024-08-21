@@ -37,7 +37,7 @@ public class FeedbackCategoryResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/feedback_category/{id} endpoint hit");
         try {
-            FeedbackCategoryModelDTO.DetailResponse item = service.findDataById(id);
+            FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found feedback category", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -45,7 +45,7 @@ public class FeedbackCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FeedbackCategoryModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest item) {
         log.info("POST /api/v1/feedback_category endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class FeedbackCategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FeedbackCategoryModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest item) {
         log.info("PUT /api/v1/feedback_category/{id} endpoint hit");
         try {
             service.updateData(id, item);

@@ -16,15 +16,15 @@ public class SettingsDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public SettingsModelDTO.DetailResponse convertToListResponse(Settings data) {
+    public SettingsModelDTO.SettingsDetailResponse convertToListResponse(Settings data) {
         // mapping Entity with DTO Entity
-        SettingsModelDTO.DetailResponse dto = modelMapper.map(data, SettingsModelDTO.DetailResponse.class);
+        SettingsModelDTO.SettingsDetailResponse dto = modelMapper.map(data, SettingsModelDTO.SettingsDetailResponse.class);
         // return
         return dto;
     }
 
     // for create data
-    public Settings convertToCreateRequest(@Valid SettingsModelDTO.CreateRequest dto) {
+    public Settings convertToCreateRequest(@Valid SettingsModelDTO.SettingsCreateRequest dto) {
         // mapping DTO Entity with Entity
         Settings data = modelMapper.map(dto, Settings.class);
         // return
@@ -32,7 +32,7 @@ public class SettingsDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Settings data, @Valid SettingsModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Settings data, @Valid SettingsModelDTO.SettingsUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

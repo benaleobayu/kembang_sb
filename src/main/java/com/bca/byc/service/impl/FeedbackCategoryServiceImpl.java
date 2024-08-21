@@ -22,7 +22,7 @@ public class FeedbackCategoryServiceImpl implements MsFeedbackCategoryService {
     private FeedbackCategoryDTOConverter converter;
 
     @Override
-    public FeedbackCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse findDataById(Long id) throws BadRequestException {
         FeedbackCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("FeedbackCategory not found"));
 
@@ -30,7 +30,7 @@ public class FeedbackCategoryServiceImpl implements MsFeedbackCategoryService {
     }
 
     @Override
-    public List<FeedbackCategoryModelDTO.DetailResponse> findAllData() {
+    public List<FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse> findAllData() {
         // Get the list
         List<FeedbackCategory> datas = repository.findAll();
 
@@ -41,7 +41,7 @@ public class FeedbackCategoryServiceImpl implements MsFeedbackCategoryService {
     }
 
     @Override
-    public void saveData(@Valid FeedbackCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         FeedbackCategory data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +49,7 @@ public class FeedbackCategoryServiceImpl implements MsFeedbackCategoryService {
     }
 
     @Override
-    public void updateData(Long id, FeedbackCategoryModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
         FeedbackCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID FeedbackCategory ID"));

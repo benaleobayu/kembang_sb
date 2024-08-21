@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface SettingsAdminService {
 
-    AdminModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    AdminModelDTO.AdminDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<AdminModelDTO.DetailResponse> findAllData();
+    List<AdminModelDTO.AdminDetailResponse> findAllData();
 
-    void saveData(@Valid AdminModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid AdminModelDTO.AdminCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid AdminModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid AdminModelDTO.AdminUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

@@ -37,7 +37,7 @@ public class LocationResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/location/{id} endpoint hit");
         try {
-            LocationModelDTO.DetailResponse item = service.findDataById(id);
+            LocationModelDTO.LocationDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found location", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -45,7 +45,7 @@ public class LocationResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody LocationModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody LocationModelDTO.LocationCreateRequest item) {
         log.info("POST /api/v1/location endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class LocationResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody LocationModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody LocationModelDTO.LocationUpdateRequest item) {
         log.info("PUT /api/v1/location/{id} endpoint hit");
         try {
             service.updateData(id, item);

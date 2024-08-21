@@ -17,9 +17,9 @@ public class InterestDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public InterestModelDTO.DetailResponse convertToListResponse(Interest data) {
+    public InterestModelDTO.InterestDetailResponse convertToListResponse(Interest data) {
         // mapping Entity with DTO Entity
-        InterestModelDTO.DetailResponse dto = modelMapper.map(data, InterestModelDTO.DetailResponse.class);
+        InterestModelDTO.InterestDetailResponse dto = modelMapper.map(data, InterestModelDTO.InterestDetailResponse.class);
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
@@ -29,7 +29,7 @@ public class InterestDTOConverter {
     }
 
     // for create data
-    public Interest convertToCreateRequest(@Valid InterestModelDTO.CreateRequest dto) {
+    public Interest convertToCreateRequest(@Valid InterestModelDTO.InterestCreateRequest dto) {
         // mapping DTO Entity with Entity
         Interest data = modelMapper.map(dto, Interest.class);
         // return
@@ -37,7 +37,7 @@ public class InterestDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Interest data, @Valid InterestModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Interest data, @Valid InterestModelDTO.InterestUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

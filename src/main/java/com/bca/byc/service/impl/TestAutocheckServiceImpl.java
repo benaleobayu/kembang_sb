@@ -22,7 +22,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     private TestAutocheckDTOConverter converter;
 
     @Override
-    public TestAutocheckModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public TestAutocheckModelDTO.TestAutocheckDetailResponse findDataById(Long id) throws BadRequestException {
         TestAutocheck data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("TestAutocheck not found"));
 
@@ -30,7 +30,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public List<TestAutocheckModelDTO.DetailResponse> findAllData() {
+    public List<TestAutocheckModelDTO.TestAutocheckDetailResponse> findAllData() {
         // Get the list
         List<TestAutocheck> datas = repository.findAll();
 
@@ -41,7 +41,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public void saveData(@Valid TestAutocheckModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid TestAutocheckModelDTO.TestAutocheckCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         TestAutocheck data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +49,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public void updateData(Long id, TestAutocheckModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, TestAutocheckModelDTO.TestAutocheckUpdateRequest dto) throws BadRequestException {
         // check exist and get
         TestAutocheck data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID TestAutocheck ID"));

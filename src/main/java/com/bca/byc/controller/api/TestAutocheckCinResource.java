@@ -38,7 +38,7 @@ public class TestAutocheckCinResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /v1/autocheck/{id} endpoint hit");
         try {
-            TestAutocheckModelDTO.DetailResponse item = service.findDataById(id);
+            TestAutocheckModelDTO.TestAutocheckDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found autocheck", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -46,7 +46,7 @@ public class TestAutocheckCinResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody TestAutocheckModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody TestAutocheckModelDTO.TestAutocheckCreateRequest item) {
         log.info("POST /v1/autocheck endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class TestAutocheckCinResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody TestAutocheckModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody TestAutocheckModelDTO.TestAutocheckUpdateRequest item) {
         log.info("PUT /v1/autocheck/{id} endpoint hit");
         try {
             service.updateData(id, item);

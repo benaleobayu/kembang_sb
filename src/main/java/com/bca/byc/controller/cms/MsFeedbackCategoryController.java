@@ -38,7 +38,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<FeedbackCategoryModelDTO.DetailResponse> alldata = service.findAllData();
+        List<FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -56,7 +56,7 @@ public class MsFeedbackCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        FeedbackCategoryModelDTO.DetailResponse data = service.findDataById(id);
+        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -72,7 +72,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        FeedbackCategoryModelDTO.CreateRequest dto = new FeedbackCategoryModelDTO.CreateRequest();
+        FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto = new FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -81,7 +81,7 @@ public class MsFeedbackCategoryController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -101,7 +101,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        FeedbackCategoryModelDTO.DetailResponse dto = service.findDataById(id);
+        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -110,7 +110,7 @@ public class MsFeedbackCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

@@ -23,7 +23,7 @@ public class InterestCategoryServiceImpl implements MsInterestCategoryService {
     private InterestCategoryDTOConverter converter;
 
     @Override
-    public InterestCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public InterestCategoryModelDTO.InterestCategoryDetailResponse findDataById(Long id) throws BadRequestException {
         InterestCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("InterestCategory not found"));
 
@@ -31,7 +31,7 @@ public class InterestCategoryServiceImpl implements MsInterestCategoryService {
     }
 
     @Override
-    public List<InterestCategoryModelDTO.DetailResponse> findAllData() {
+    public List<InterestCategoryModelDTO.InterestCategoryDetailResponse> findAllData() {
         // Get the list
         List<InterestCategory> datas = repository.findAll();
 
@@ -49,7 +49,7 @@ public class InterestCategoryServiceImpl implements MsInterestCategoryService {
     }
 
     @Override
-    public void saveData(@Valid InterestCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         InterestCategory data = converter.convertToCreateRequest(dto);
         // save data
@@ -57,7 +57,7 @@ public class InterestCategoryServiceImpl implements MsInterestCategoryService {
     }
 
     @Override
-    public void updateData(Long id, InterestCategoryModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, InterestCategoryModelDTO.InterestCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
         InterestCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID InterestCategory ID"));

@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface MsInterestCategoryService {
 
-    InterestCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    InterestCategoryModelDTO.InterestCategoryDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<InterestCategoryModelDTO.DetailResponse> findAllData();
+    List<InterestCategoryModelDTO.InterestCategoryDetailResponse> findAllData();
 
-    void saveData(@Valid InterestCategoryModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid InterestCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid InterestCategoryModelDTO.InterestCategoryUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

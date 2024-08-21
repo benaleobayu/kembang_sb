@@ -9,7 +9,6 @@ import com.bca.byc.service.MsBusinessCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,7 +40,7 @@ public class MsBusinessCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParentIdIsNull();
+        List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> alldata = service.findByParentIdIsNull();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -59,7 +58,7 @@ public class MsBusinessCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        BusinessCategoryModelDTO.DetailResponse data = service.findDataById(id);
+        BusinessCategoryModelDTO.BusinessCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -75,7 +74,7 @@ public class MsBusinessCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        BusinessCategoryModelDTO.CreateRequest data = new BusinessCategoryModelDTO.CreateRequest();
+        BusinessCategoryModelDTO.BusinessCategoryCreateRequest data = new BusinessCategoryModelDTO.BusinessCategoryCreateRequest();
         model.addAttribute("formData", data);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -84,7 +83,7 @@ public class MsBusinessCategoryController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid BusinessCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -104,7 +103,7 @@ public class MsBusinessCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        BusinessCategoryModelDTO.DetailResponse data = service.findDataById(id);
+        BusinessCategoryModelDTO.BusinessCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "edit");
         model.addAttribute("modelName", suffixName);
@@ -114,7 +113,7 @@ public class MsBusinessCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid BusinessCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid BusinessCategoryModelDTO.BusinessCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";
@@ -138,7 +137,7 @@ public class MsBusinessCategoryController {
         BusinessCategory parentCategory = repository.findById(parentId)
                 .orElseThrow(() -> new BadRequestException("Invalid parentId"));
         //table
-        List<BusinessCategoryModelDTO.DetailResponse> alldata = service.findByParent(parentCategory);
+        List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> alldata = service.findByParent(parentCategory);
         model.addAttribute("datas", alldata);
 
         // some part
@@ -156,7 +155,7 @@ public class MsBusinessCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
         // continue to the service
-        BusinessCategoryModelDTO.DetailResponse data = service.findDataById(childId);
+        BusinessCategoryModelDTO.BusinessCategoryDetailResponse data = service.findDataById(childId);
         // check if child belongs the parent
         if (data.getParentId() == null || !data.getParentId().equals(id)){
             throw new IllegalArgumentException("Invalid data");
@@ -176,7 +175,7 @@ public class MsBusinessCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        BusinessCategoryModelDTO.CreateRequest dto = new BusinessCategoryModelDTO.CreateRequest();
+        BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto = new BusinessCategoryModelDTO.BusinessCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -185,7 +184,7 @@ public class MsBusinessCategoryController {
 
     // get method create data
     @PostMapping("/{id}/child/create")
-    public String create_child(@ModelAttribute("formData") @Valid BusinessCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create_child(@ModelAttribute("formData") @Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -205,7 +204,7 @@ public class MsBusinessCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        BusinessCategoryModelDTO.CreateRequest dto = new BusinessCategoryModelDTO.CreateRequest();
+        BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto = new BusinessCategoryModelDTO.BusinessCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "create");
         model.addAttribute("modelName", suffixName);
@@ -215,7 +214,7 @@ public class MsBusinessCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/child/{childId}/edit")
-    public String update_child(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid BusinessCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update_child(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid BusinessCategoryModelDTO.BusinessCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

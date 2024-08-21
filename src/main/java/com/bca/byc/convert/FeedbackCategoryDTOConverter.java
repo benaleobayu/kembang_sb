@@ -17,9 +17,9 @@ public class FeedbackCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public FeedbackCategoryModelDTO.DetailResponse convertToListResponse(FeedbackCategory data) {
+    public FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse convertToListResponse(FeedbackCategory data) {
         // mapping Entity with DTO Entity
-        FeedbackCategoryModelDTO.DetailResponse dto = modelMapper.map(data, FeedbackCategoryModelDTO.DetailResponse.class);
+        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse dto = modelMapper.map(data, FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse.class);
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
@@ -29,7 +29,7 @@ public class FeedbackCategoryDTOConverter {
     }
 
     // for create data
-    public FeedbackCategory convertToCreateRequest(@Valid FeedbackCategoryModelDTO.CreateRequest dto) {
+    public FeedbackCategory convertToCreateRequest(@Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto) {
         // mapping DTO Entity with Entity
         FeedbackCategory data = modelMapper.map(dto, FeedbackCategory.class);
         // return
@@ -37,7 +37,7 @@ public class FeedbackCategoryDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(FeedbackCategory data, @Valid FeedbackCategoryModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(FeedbackCategory data, @Valid FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

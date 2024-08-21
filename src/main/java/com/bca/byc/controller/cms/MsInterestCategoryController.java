@@ -36,7 +36,7 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<InterestCategoryModelDTO.DetailResponse> alldata = service.findAllData();
+        List<InterestCategoryModelDTO.InterestCategoryDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -54,7 +54,7 @@ public class MsInterestCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        InterestCategoryModelDTO.DetailResponse data = service.findDataById(id);
+        InterestCategoryModelDTO.InterestCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -70,7 +70,7 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.CreateRequest dto = new InterestCategoryModelDTO.CreateRequest();
+        InterestCategoryModelDTO.InterestCategoryCreateRequest dto = new InterestCategoryModelDTO.InterestCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -79,7 +79,7 @@ public class MsInterestCategoryController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid InterestCategoryModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -99,7 +99,7 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.DetailResponse dto = service.findDataById(id);
+        InterestCategoryModelDTO.InterestCategoryDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -108,7 +108,7 @@ public class MsInterestCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid InterestCategoryModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

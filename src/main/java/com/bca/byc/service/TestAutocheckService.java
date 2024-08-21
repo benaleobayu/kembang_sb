@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface TestAutocheckService {
 
-    TestAutocheckModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    TestAutocheckModelDTO.TestAutocheckDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<TestAutocheckModelDTO.DetailResponse> findAllData();
+    List<TestAutocheckModelDTO.TestAutocheckDetailResponse> findAllData();
 
-    void saveData(@Valid TestAutocheckModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid TestAutocheckModelDTO.TestAutocheckCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid TestAutocheckModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid TestAutocheckModelDTO.TestAutocheckUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

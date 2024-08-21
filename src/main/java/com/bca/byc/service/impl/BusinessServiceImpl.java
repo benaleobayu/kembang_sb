@@ -27,21 +27,21 @@ public class BusinessServiceImpl implements BusinessService {
 
 
     @Override
-    public BusinessModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public BusinessModelDTO.BusinessDetailResponse findDataById(Long id) throws BadRequestException {
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Business not found"));
-        BusinessModelDTO.DetailResponse dto = converter.convertToListResponse(data);
+        BusinessModelDTO.BusinessDetailResponse dto = converter.convertToListResponse(data);
 
 
-        Set<BusinessCategoryModelDTO.DetailResponse> categoryDTOs = dto.getCategories().stream()
-                .map(category -> new BusinessCategoryModelDTO.DetailResponse()
+        Set<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> categoryDTOs = dto.getCategories().stream()
+                .map(category -> new BusinessCategoryModelDTO.BusinessCategoryDetailResponse()
                 ).collect(Collectors.toSet());
-        dto.setCategories((List<BusinessCategoryModelDTO.DetailResponse>) categoryDTOs);
+        dto.setCategories((List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse>) categoryDTOs);
         return dto;
     }
 
     @Override
-    public List<BusinessModelDTO.DetailResponse> findAllData() {
+    public List<BusinessModelDTO.BusinessDetailResponse> findAllData() {
         // Get the list
         List<Business> datas = repository.findAll();
 
@@ -52,7 +52,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public void saveData(@Valid BusinessModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid BusinessModelDTO.BusinessCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Business data = converter.convertToCreateRequest(dto);
         // save data
@@ -60,7 +60,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public void updateData(Long id, BusinessModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, BusinessModelDTO.BusinessUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Business ID"));

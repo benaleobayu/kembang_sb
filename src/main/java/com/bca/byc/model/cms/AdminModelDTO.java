@@ -7,17 +7,12 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
 
 
 public class AdminModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
-
-        @Serial
-        private static final long serialVersionUID = 8039360681057479328L;
+    public static class AdminDetailResponse {
 
         private Long id;
         private String name;
@@ -28,7 +23,7 @@ public class AdminModelDTO {
         private String updatedAt;
 
         public String getRole() {
-            if (role != null && role.contains("name=")){
+            if (role != null && role.contains("name=")) {
                 return role.substring(role.indexOf("name=") + 5, role.length() - 1);
             }
             return role;
@@ -38,7 +33,7 @@ public class AdminModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class AdminCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -58,7 +53,7 @@ public class AdminModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class AdminUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

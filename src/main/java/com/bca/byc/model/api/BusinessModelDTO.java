@@ -14,7 +14,7 @@ public class BusinessModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse {
+    public static class BusinessDetailResponse {
 
         private Long id;
 
@@ -32,7 +32,7 @@ public class BusinessModelDTO {
 
         private String description;
 
-        private List<BusinessCategoryModelDTO.DetailResponse> categories;
+        private List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> categories;
 
         private Integer orders;
 
@@ -47,7 +47,7 @@ public class BusinessModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class BusinessCreateRequest {
 
         @NotBlank(message = "user_id is required")
         private Long userId;
@@ -80,7 +80,7 @@ public class BusinessModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class BusinessUpdateRequest {
 
         @NotBlank(message = "Name is required")
         @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")

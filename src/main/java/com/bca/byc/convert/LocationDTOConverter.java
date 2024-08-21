@@ -17,9 +17,9 @@ public class LocationDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public LocationModelDTO.DetailResponse convertToListResponse(Location data) {
+    public LocationModelDTO.LocationDetailResponse convertToListResponse(Location data) {
         // mapping Entity with DTO Entity
-        LocationModelDTO.DetailResponse dto = modelMapper.map(data, LocationModelDTO.DetailResponse.class);
+        LocationModelDTO.LocationDetailResponse dto = modelMapper.map(data, LocationModelDTO.LocationDetailResponse.class);
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
@@ -30,7 +30,7 @@ public class LocationDTOConverter {
     }
 
     // for create data
-    public Location convertToCreateRequest(@Valid LocationModelDTO.CreateRequest dto) {
+    public Location convertToCreateRequest(@Valid LocationModelDTO.LocationCreateRequest dto) {
         // mapping DTO Entity with Entity
         Location data = modelMapper.map(dto, Location.class);
         // return
@@ -38,7 +38,7 @@ public class LocationDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Location data, @Valid LocationModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Location data, @Valid LocationModelDTO.LocationUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

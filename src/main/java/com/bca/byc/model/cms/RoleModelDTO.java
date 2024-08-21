@@ -8,13 +8,12 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 
 public class RoleModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
+    public static class RoleDetailResponse {
 
         private Long id;
         private String name;
@@ -26,7 +25,7 @@ public class RoleModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class RoleCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -46,7 +45,7 @@ public class RoleModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class RoleUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

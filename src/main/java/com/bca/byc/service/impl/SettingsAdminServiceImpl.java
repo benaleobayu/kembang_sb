@@ -22,7 +22,7 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     private AdminDTOConverter converter;
 
     @Override
-    public AdminModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public AdminModelDTO.AdminDetailResponse findDataById(Long id) throws BadRequestException {
         Admin data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
 
@@ -30,7 +30,7 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     }
 
     @Override
-    public List<AdminModelDTO.DetailResponse> findAllData() {
+    public List<AdminModelDTO.AdminDetailResponse> findAllData() {
         // Get the list
         List<Admin> datas = repository.findAll();
 
@@ -41,7 +41,7 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     }
 
     @Override
-    public void saveData(@Valid AdminModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid AdminModelDTO.AdminCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Admin data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +49,7 @@ public class SettingsAdminServiceImpl implements SettingsAdminService {
     }
 
     @Override
-    public void updateData(Long id, AdminModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, AdminModelDTO.AdminUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Admin data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Admin ID"));

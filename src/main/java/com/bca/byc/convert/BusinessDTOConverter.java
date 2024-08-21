@@ -16,15 +16,15 @@ public class BusinessDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public BusinessModelDTO.DetailResponse convertToListResponse(Business data) {
+    public BusinessModelDTO.BusinessDetailResponse convertToListResponse(Business data) {
         // mapping Entity with DTO Entity
-        BusinessModelDTO.DetailResponse dto = modelMapper.map(data, BusinessModelDTO.DetailResponse.class);
+        BusinessModelDTO.BusinessDetailResponse dto = modelMapper.map(data, BusinessModelDTO.BusinessDetailResponse.class);
         // return
         return dto;
     }
 
     // for create data
-    public Business convertToCreateRequest(@Valid BusinessModelDTO.CreateRequest dto) {
+    public Business convertToCreateRequest(@Valid BusinessModelDTO.BusinessCreateRequest dto) {
         // mapping DTO Entity with Entity
         Business data = modelMapper.map(dto, Business.class);
         // return
@@ -32,7 +32,7 @@ public class BusinessDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Business data, @Valid BusinessModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Business data, @Valid BusinessModelDTO.BusinessUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

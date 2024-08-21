@@ -36,7 +36,7 @@ public class SettingsController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<SettingsModelDTO.DetailResponse> alldata = service.findAllData();
+        List<SettingsModelDTO.SettingsDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -54,7 +54,7 @@ public class SettingsController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        SettingsModelDTO.DetailResponse data = service.findDataById(id);
+        SettingsModelDTO.SettingsDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -70,7 +70,7 @@ public class SettingsController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        SettingsModelDTO.CreateRequest dto = new SettingsModelDTO.CreateRequest();
+        SettingsModelDTO.SettingsCreateRequest dto = new SettingsModelDTO.SettingsCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", "all");
         model.addAttribute("formMode", "create");
@@ -79,7 +79,7 @@ public class SettingsController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid SettingsModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid SettingsModelDTO.SettingsCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -99,7 +99,7 @@ public class SettingsController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        SettingsModelDTO.DetailResponse dto = service.findDataById(id);
+        SettingsModelDTO.SettingsDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", "all");
@@ -108,7 +108,7 @@ public class SettingsController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid SettingsModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid SettingsModelDTO.SettingsUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

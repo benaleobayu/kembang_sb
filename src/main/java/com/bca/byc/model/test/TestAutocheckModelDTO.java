@@ -7,13 +7,12 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 
 public class TestAutocheckModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
+    public static class TestAutocheckDetailResponse {
 
         private Long id;
         private String name;
@@ -28,7 +27,7 @@ public class TestAutocheckModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class TestAutocheckCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -52,7 +51,7 @@ public class TestAutocheckModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class TestAutocheckUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

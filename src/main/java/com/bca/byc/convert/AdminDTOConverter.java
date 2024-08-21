@@ -17,9 +17,9 @@ public class AdminDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public AdminModelDTO.DetailResponse convertToListResponse(Admin data) {
+    public AdminModelDTO.AdminDetailResponse convertToListResponse(Admin data) {
         // mapping Entity with DTO Entity
-        AdminModelDTO.DetailResponse dto = modelMapper.map(data, AdminModelDTO.DetailResponse.class);
+        AdminModelDTO.AdminDetailResponse dto = modelMapper.map(data, AdminModelDTO.AdminDetailResponse.class);
         // Use DataFormatter here
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
@@ -28,7 +28,7 @@ public class AdminDTOConverter {
     }
 
     // for create data
-    public Admin convertToCreateRequest(@Valid AdminModelDTO.CreateRequest dto) {
+    public Admin convertToCreateRequest(@Valid AdminModelDTO.AdminCreateRequest dto) {
         // mapping DTO Entity with Entity
         Admin data = modelMapper.map(dto, Admin.class);
         // return
@@ -36,7 +36,7 @@ public class AdminDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Admin data, @Valid AdminModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Admin data, @Valid AdminModelDTO.AdminUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

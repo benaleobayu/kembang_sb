@@ -2,7 +2,6 @@ package com.bca.byc.service;
 
 import javax.validation.Valid;
 
-import com.bca.byc.entity.Faq;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.cms.FaqModelDTO;
 
@@ -14,9 +13,9 @@ public interface FaqService {
 
     List<FaqModelDTO.DetailResponse> findAllData();
 
-    void saveData(@Valid FaqModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid FaqModelDTO.FaqCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid FaqModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid FaqModelDTO.FaqUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

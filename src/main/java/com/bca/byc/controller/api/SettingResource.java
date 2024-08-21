@@ -9,7 +9,6 @@ import com.bca.byc.service.SettingsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +41,7 @@ public class SettingResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /v1/settings/{id} endpoint hit");
         try {
-            SettingsModelDTO.DetailResponse item = service.findDataById(id);
+            SettingsModelDTO.SettingsDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found settings", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -51,7 +50,7 @@ public class SettingResource {
 
     @Operation(hidden = true)
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody SettingsModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody SettingsModelDTO.SettingsCreateRequest item) {
         log.info("POST /v1/settings endpoint hit");
         try {
             service.saveData(item);
@@ -64,7 +63,7 @@ public class SettingResource {
 
     @Operation(hidden = true)
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody SettingsModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody SettingsModelDTO.SettingsUpdateRequest item) {
         log.info("PUT /v1/settings/{id} endpoint hit");
         try {
             service.updateData(id, item);

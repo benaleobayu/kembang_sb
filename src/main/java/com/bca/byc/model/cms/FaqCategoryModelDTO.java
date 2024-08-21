@@ -1,20 +1,15 @@
 package com.bca.byc.model.cms;
 
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-
 
 public class FaqCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
+    public static class FaqCategoryDetailResponse {
 
         private Long id;
         private String name;
@@ -27,11 +22,10 @@ public class FaqCategoryModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class FaqCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
-        @Size(max = 50, message = "Name must be less than 50 characters")
+        @Size(min = 5, max = 50, message = "Name must be between 5 and 50 characters")
         private String name;
 
         private String description;
@@ -42,13 +36,11 @@ public class FaqCategoryModelDTO {
         @NotBlank(message = "Status is mandatory")
         private Boolean status;
 
-
     }
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class FaqCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

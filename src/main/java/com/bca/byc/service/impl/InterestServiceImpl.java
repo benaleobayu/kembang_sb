@@ -30,7 +30,7 @@ public class InterestServiceImpl implements InterestService {
     private InterestDTOConverter converter;
 
     @Override
-    public InterestModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public InterestModelDTO.InterestDetailResponse findDataById(Long id) throws BadRequestException {
         Interest data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Interest not found"));
 
@@ -38,7 +38,7 @@ public class InterestServiceImpl implements InterestService {
     }
 
     @Override
-    public List<InterestModelDTO.DetailResponse> findAllData() {
+    public List<InterestModelDTO.InterestDetailResponse> findAllData() {
         // Get the list
         List<Interest> datas = repository.findAll();
 
@@ -49,7 +49,7 @@ public class InterestServiceImpl implements InterestService {
     }
 
     @Override
-    public void saveData(@Valid InterestModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid InterestModelDTO.InterestCreateRequest dto) throws BadRequestException {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(()-> new BadRequestException("id user not found"));
 
@@ -68,7 +68,7 @@ public class InterestServiceImpl implements InterestService {
     }
 
     @Override
-    public void updateData(Long id, InterestModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, InterestModelDTO.InterestUpdateRequest dto) throws BadRequestException {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(()-> new BadRequestException("id user not found"));
 

@@ -37,7 +37,7 @@ public class InterestResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/interest/{id} endpoint hit");
         try {
-            InterestModelDTO.DetailResponse item = service.findDataById(id);
+            InterestModelDTO.InterestDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found interest", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -45,7 +45,7 @@ public class InterestResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody InterestModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody InterestModelDTO.InterestCreateRequest item) {
         log.info("POST /api/v1/interest endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class InterestResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody InterestModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody InterestModelDTO.InterestUpdateRequest item) {
         log.info("PUT /api/v1/interest/{id} endpoint hit");
         try {
             service.updateData(id, item);

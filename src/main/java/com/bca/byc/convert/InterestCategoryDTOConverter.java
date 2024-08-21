@@ -17,9 +17,9 @@ public class InterestCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public InterestCategoryModelDTO.DetailResponse convertToListResponse(InterestCategory data) {
+    public InterestCategoryModelDTO.InterestCategoryDetailResponse convertToListResponse(InterestCategory data) {
         // mapping Entity with DTO Entity
-        InterestCategoryModelDTO.DetailResponse dto = modelMapper.map(data, InterestCategoryModelDTO.DetailResponse.class);
+        InterestCategoryModelDTO.InterestCategoryDetailResponse dto = modelMapper.map(data, InterestCategoryModelDTO.InterestCategoryDetailResponse.class);
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
@@ -29,7 +29,7 @@ public class InterestCategoryDTOConverter {
     }
 
     // for create data
-    public InterestCategory convertToCreateRequest(@Valid InterestCategoryModelDTO.CreateRequest dto) {
+    public InterestCategory convertToCreateRequest(@Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto) {
         // mapping DTO Entity with Entity
         InterestCategory data = modelMapper.map(dto, InterestCategory.class);
         // return
@@ -37,7 +37,7 @@ public class InterestCategoryDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(InterestCategory data, @Valid InterestCategoryModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(InterestCategory data, @Valid InterestCategoryModelDTO.InterestCategoryUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

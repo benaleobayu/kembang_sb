@@ -17,9 +17,9 @@ public class RoleDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public RoleModelDTO.DetailResponse convertToListResponse(Role data) {
+    public RoleModelDTO.RoleDetailResponse convertToListResponse(Role data) {
         // mapping Entity with DTO Entity
-        RoleModelDTO.DetailResponse dto = modelMapper.map(data, RoleModelDTO.DetailResponse.class);
+        RoleModelDTO.RoleDetailResponse dto = modelMapper.map(data, RoleModelDTO.RoleDetailResponse.class);
         // Use DataFormatter here
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
@@ -28,7 +28,7 @@ public class RoleDTOConverter {
     }
 
     // for create data
-    public Role convertToCreateRequest(@Valid RoleModelDTO.CreateRequest dto) {
+    public Role convertToCreateRequest(@Valid RoleModelDTO.RoleCreateRequest dto) {
         // mapping DTO Entity with Entity
         Role data = modelMapper.map(dto, Role.class);
         // return
@@ -36,7 +36,7 @@ public class RoleDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Role data, @Valid RoleModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Role data, @Valid RoleModelDTO.RoleUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

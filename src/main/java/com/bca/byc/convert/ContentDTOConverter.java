@@ -16,15 +16,15 @@ public class ContentDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public ContentModelDTO.DetailResponse convertToListResponse(Content data) {
+    public ContentModelDTO.ContentDetailResponse convertToListResponse(Content data) {
         // mapping Entity with DTO Entity
-        ContentModelDTO.DetailResponse dto = modelMapper.map(data, ContentModelDTO.DetailResponse.class);
+        ContentModelDTO.ContentDetailResponse dto = modelMapper.map(data, ContentModelDTO.ContentDetailResponse.class);
         // return
         return dto;
     }
 
     // for create data
-    public Content convertToCreateRequest(@Valid ContentModelDTO.CreateRequest dto) {
+    public Content convertToCreateRequest(@Valid ContentModelDTO.ContentCreateRequest dto) {
         // mapping DTO Entity with Entity
         Content data = modelMapper.map(dto, Content.class);
         // return
@@ -32,7 +32,7 @@ public class ContentDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Content data, @Valid ContentModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Content data, @Valid ContentModelDTO.ContentUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

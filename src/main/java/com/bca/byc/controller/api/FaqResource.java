@@ -19,7 +19,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/faq")
-@Tag(name = "FAQ API")
+@Tag(name = "FAQ")
 public class FaqResource {
 
     private FaqService service;
@@ -46,7 +46,7 @@ public class FaqResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FaqModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FaqModelDTO.FaqCreateRequest item) {
         log.info("POST /api/v1/faq endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class FaqResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FaqModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FaqModelDTO.FaqUpdateRequest item) {
         log.info("PUT /api/v1/faq/{id} endpoint hit");
         try {
             service.updateData(id, item);

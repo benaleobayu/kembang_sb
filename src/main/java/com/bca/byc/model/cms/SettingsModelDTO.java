@@ -7,17 +7,12 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
 
 public class SettingsModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
-
-        @Serial
-        private final static long serialVersionUID = -4110836650683334939L;
+    public static class SettingsDetailResponse {
 
         private Long id;
         private String name;
@@ -33,7 +28,7 @@ public class SettingsModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class SettingsCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -54,16 +49,19 @@ public class SettingsModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class SettingsUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
-        private String description;
+        @NotBlank(message = "Identity is mandatory")
+        @Size(max = 50, message = "Identity must be less than 50 characters")
+        private String identity;
 
-        @NotBlank(message = "Order is mandatory")
-        private Integer orders;
+        private String description_id;
+        private String description_en;
+        private Integer value;
 
         @NotBlank(message = "Status is mandatory")
         private Boolean status;

@@ -41,7 +41,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void saveData(@Valid FaqModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid FaqModelDTO.FaqCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Faq data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +49,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void updateData(Long id, FaqModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, FaqModelDTO.FaqUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Faq data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Faq ID"));

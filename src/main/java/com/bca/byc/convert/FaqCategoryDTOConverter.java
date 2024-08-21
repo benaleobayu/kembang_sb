@@ -16,15 +16,15 @@ public class FaqCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public FaqCategoryModelDTO.DetailResponse convertToListResponse(FaqCategory data) {
+    public FaqCategoryModelDTO.FaqCategoryDetailResponse convertToListResponse(FaqCategory data) {
         // mapping Entity with DTO Entity
-        FaqCategoryModelDTO.DetailResponse dto = modelMapper.map(data, FaqCategoryModelDTO.DetailResponse.class);
+        FaqCategoryModelDTO.FaqCategoryDetailResponse dto = modelMapper.map(data, FaqCategoryModelDTO.FaqCategoryDetailResponse.class);
         // return
         return dto;
     }
 
     // for create data
-    public FaqCategory convertToCreateRequest(@Valid FaqCategoryModelDTO.CreateRequest dto) {
+    public FaqCategory convertToCreateRequest(@Valid FaqCategoryModelDTO.FaqCategoryCreateRequest dto) {
         // mapping DTO Entity with Entity
         FaqCategory data = modelMapper.map(dto, FaqCategory.class);
         // return
@@ -32,7 +32,7 @@ public class FaqCategoryDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(FaqCategory data, @Valid FaqCategoryModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(FaqCategory data, @Valid FaqCategoryModelDTO.FaqCategoryUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

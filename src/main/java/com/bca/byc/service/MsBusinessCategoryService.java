@@ -9,18 +9,18 @@ import java.util.List;
 
 public interface MsBusinessCategoryService {
 
-    BusinessCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    BusinessCategoryModelDTO.BusinessCategoryDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNull();
-    List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNotNull();
-    List<BusinessCategoryModelDTO.DetailResponse> findAllData();
+    List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParentIdIsNull();
+    List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParentIdIsNotNull();
+    List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findAllData();
 
-    List<BusinessCategoryModelDTO.DetailResponse> findByParent(BusinessCategory parentId);
+    List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParent(BusinessCategory parentId);
 
-    void saveData(@Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;
-    void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto) throws BadRequestException;
+    void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid BusinessCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid BusinessCategoryModelDTO.BusinessCategoryUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

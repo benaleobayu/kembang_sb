@@ -22,7 +22,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     private FaqCategoryDTOConverter converter;
 
     @Override
-    public FaqCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public FaqCategoryModelDTO.FaqCategoryDetailResponse findDataById(Long id) throws BadRequestException {
         FaqCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("FaqCategory not found"));
 
@@ -30,7 +30,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     }
 
     @Override
-    public List<FaqCategoryModelDTO.DetailResponse> findAllData() {
+    public List<FaqCategoryModelDTO.FaqCategoryDetailResponse> findAllData() {
         // Get the list
         List<FaqCategory> datas = repository.findAll();
 
@@ -41,7 +41,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     }
 
     @Override
-    public void saveData(@Valid FaqCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid FaqCategoryModelDTO.FaqCategoryCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         FaqCategory data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +49,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     }
 
     @Override
-    public void updateData(Long id, FaqCategoryModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, FaqCategoryModelDTO.FaqCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
         FaqCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID FaqCategory ID"));

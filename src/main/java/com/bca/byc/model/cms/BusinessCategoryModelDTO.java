@@ -1,14 +1,12 @@
 package com.bca.byc.model.cms;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +14,7 @@ import java.util.Set;
 public class BusinessCategoryModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse implements Serializable {
+    public static class BusinessCategoryDetailResponse {
 
         private Long id;
         private String name;
@@ -27,13 +25,13 @@ public class BusinessCategoryModelDTO {
         private String updatedAt;
 
         private Long parentId;
-        private Set<DetailResponse> children = new HashSet<>();
+        private Set<BusinessCategoryDetailResponse> children = new HashSet<>();
 
     }
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class BusinessCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -56,7 +54,7 @@ public class BusinessCategoryModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class BusinessCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")

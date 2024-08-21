@@ -38,7 +38,7 @@ public class BusinessCategoryResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/business_category/{id} endpoint hit");
         try {
-            BusinessCategoryModelDTO.DetailResponse item = service.findDataById(id);
+            BusinessCategoryModelDTO.BusinessCategoryDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found business category", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -46,7 +46,7 @@ public class BusinessCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessCategoryModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
         log.info("POST /api/v1/business_category endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class BusinessCategoryResource {
     }
 
      @PostMapping("/{id}/child")
-    public ResponseEntity<ApiResponse> createChild(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> createChild(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
         log.info("POST /api/v1/business_category" + id + "/child endpoint hit");
         try {
             item.setCheckParentId(id);
@@ -73,7 +73,7 @@ public class BusinessCategoryResource {
 
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryUpdateRequest item) {
         log.info("PUT /api/v1/business_category/{id} endpoint hit");
         try {
             service.updateData(id, item);

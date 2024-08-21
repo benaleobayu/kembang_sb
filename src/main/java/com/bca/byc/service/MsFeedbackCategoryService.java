@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface MsFeedbackCategoryService {
 
-    FeedbackCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<FeedbackCategoryModelDTO.DetailResponse> findAllData();
+    List<FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse> findAllData();
 
-    void saveData(@Valid FeedbackCategoryModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid FeedbackCategoryModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

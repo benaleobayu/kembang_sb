@@ -14,7 +14,7 @@ public class InterestModelDTO {
 
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class DetailResponse {
+    public static class InterestDetailResponse {
 
         private Long id;
 
@@ -30,7 +30,7 @@ public class InterestModelDTO {
 
         private String description;
 
-        private List<InterestCategoryModelDTO.DetailResponse> categories;
+        private List<InterestCategoryModelDTO.InterestCategoryDetailResponse> categories;
 
         private Integer orders;
 
@@ -45,7 +45,7 @@ public class InterestModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class CreateRequest {
+    public static class InterestCreateRequest {
 
         @NotBlank(message = "User id is required")
         private Long userId;
@@ -78,7 +78,7 @@ public class InterestModelDTO {
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class UpdateRequest {
+    public static class InterestUpdateRequest {
 
         @NotBlank(message = "User id is required")
         private Long userId;

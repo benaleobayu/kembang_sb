@@ -17,12 +17,12 @@ public class BusinessCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public BusinessCategoryModelDTO.DetailResponse convertToListResponse(BusinessCategory data) {
+    public BusinessCategoryModelDTO.BusinessCategoryDetailResponse convertToListResponse(BusinessCategory data) {
         if (data == null) {
             return null;
         } else {
             // mapping Entity with DTO Entity
-            BusinessCategoryModelDTO.DetailResponse dto = modelMapper.map(data, BusinessCategoryModelDTO.DetailResponse.class);
+            BusinessCategoryModelDTO.BusinessCategoryDetailResponse dto = modelMapper.map(data, BusinessCategoryModelDTO.BusinessCategoryDetailResponse.class);
             // Use DataFormatter here
             dto.setDescription(Formatter.formatDescription(data.getDescription()));
             dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
@@ -33,7 +33,7 @@ public class BusinessCategoryDTOConverter {
     }
 
     // for create data
-    public BusinessCategory convertToCreateRequest(@Valid BusinessCategoryModelDTO.CreateRequest dto) {
+    public BusinessCategory convertToCreateRequest(@Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto) {
         // mapping DTO Entity with Entity
         BusinessCategory data = modelMapper.map(dto, BusinessCategory.class);
         // return
@@ -41,7 +41,7 @@ public class BusinessCategoryDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(BusinessCategory data, @Valid BusinessCategoryModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(BusinessCategory data, @Valid BusinessCategoryModelDTO.BusinessCategoryUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

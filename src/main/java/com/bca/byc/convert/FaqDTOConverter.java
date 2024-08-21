@@ -24,7 +24,7 @@ public class FaqDTOConverter {
     }
 
     // for create data
-    public Faq convertToCreateRequest(@Valid FaqModelDTO.CreateRequest dto) {
+    public Faq convertToCreateRequest(@Valid FaqModelDTO.FaqCreateRequest dto) {
         // mapping DTO Entity with Entity
         Faq data = modelMapper.map(dto, Faq.class);
         // return
@@ -32,7 +32,7 @@ public class FaqDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Faq data, @Valid FaqModelDTO.UpdateRequest dto) {
+    public void convertToUpdateRequest(Faq data, @Valid FaqModelDTO.FaqUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at

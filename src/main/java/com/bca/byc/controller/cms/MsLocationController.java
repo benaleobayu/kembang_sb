@@ -6,7 +6,6 @@ import com.bca.byc.service.MsLocationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,7 +36,7 @@ public class MsLocationController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<LocationModelDTO.DetailResponse> alldata = service.findAllData();
+        List<LocationModelDTO.LocationDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -55,7 +54,7 @@ public class MsLocationController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        LocationModelDTO.DetailResponse data = service.findDataById(id);
+        LocationModelDTO.LocationDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -71,7 +70,7 @@ public class MsLocationController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        LocationModelDTO.CreateRequest dto = new LocationModelDTO.CreateRequest();
+        LocationModelDTO.LocationCreateRequest dto = new LocationModelDTO.LocationCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -80,7 +79,7 @@ public class MsLocationController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid LocationModelDTO.CreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid LocationModelDTO.LocationCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -100,7 +99,7 @@ public class MsLocationController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        LocationModelDTO.DetailResponse dto = service.findDataById(id);
+        LocationModelDTO.LocationDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -109,7 +108,7 @@ public class MsLocationController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid LocationModelDTO.UpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid LocationModelDTO.LocationUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

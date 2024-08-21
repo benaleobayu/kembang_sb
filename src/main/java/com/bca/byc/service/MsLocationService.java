@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface MsLocationService {
 
-    LocationModelDTO.DetailResponse findDataById(Long id) ;
+    LocationModelDTO.LocationDetailResponse findDataById(Long id) ;
 
-    List<LocationModelDTO.DetailResponse> findAllData();
+    List<LocationModelDTO.LocationDetailResponse> findAllData();
 
-    void saveData(@Valid LocationModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid LocationModelDTO.LocationCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid LocationModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid LocationModelDTO.LocationUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 

@@ -23,7 +23,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     private BusinessCategoryDTOConverter converter;
 
     @Override
-    public BusinessCategoryModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public BusinessCategoryModelDTO.BusinessCategoryDetailResponse findDataById(Long id) throws BadRequestException {
         BusinessCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("BusinessCategory not found"));
 
@@ -31,7 +31,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNull() {
+    public List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParentIdIsNull() {
         // Get the list
         List<BusinessCategory> datas = repository.findByParentIdIsNull();
 
@@ -42,7 +42,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> findByParentIdIsNotNull() {
+    public List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParentIdIsNotNull() {
         // Get the list
         List<BusinessCategory> datas = repository.findByParentIdIsNotNull();
         for (BusinessCategory item : datas) {
@@ -59,7 +59,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> findAllData() {
+    public List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findAllData() {
         // Get the list
         List<BusinessCategory> datas = repository.findAll();
         for (BusinessCategory item : datas) {
@@ -76,7 +76,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public List<BusinessCategoryModelDTO.DetailResponse> findByParent(BusinessCategory parentId) {
+    public List<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> findByParent(BusinessCategory parentId) {
         List<BusinessCategory> datas = repository.findByParentId(parentId);
 
         return datas.stream()
@@ -85,7 +85,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public void saveData(@Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         BusinessCategory data = converter.convertToCreateRequest(dto);
         // ensure parent_id is null
@@ -97,7 +97,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveDataChild(Long id, @Valid BusinessCategoryModelDTO.BusinessCategoryCreateRequest dto) throws BadRequestException {
 
         // ensure parent_id is not null
         if (dto.getCheckParentId() == null) {
@@ -118,7 +118,7 @@ public class BusinessCategoryServiceImpl implements MsBusinessCategoryService {
     }
 
     @Override
-    public void updateData(Long id, BusinessCategoryModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, BusinessCategoryModelDTO.BusinessCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
         BusinessCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID BusinessCategory ID"));

@@ -23,7 +23,7 @@ public class ContentServiceImpl implements ContentService {
     private ContentDTOConverter converter;
 
     @Override
-    public ContentModelDTO.DetailResponse findDataById(Long id) throws BadRequestException {
+    public ContentModelDTO.ContentDetailResponse findDataById(Long id) throws BadRequestException {
         Content data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Content not found"));
 
@@ -31,7 +31,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public List<ContentModelDTO.DetailResponse> findAllData() {
+    public List<ContentModelDTO.ContentDetailResponse> findAllData() {
         // Get the list
         List<Content> datas = repository.findAll();
 
@@ -42,7 +42,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public void saveData(@Valid ContentModelDTO.CreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid ContentModelDTO.ContentCreateRequest dto) throws BadRequestException {
         if (repository.existsByName(dto.getName())) {
             throw new BadRequestException("Content name already exist");
         }
@@ -53,7 +53,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public void updateData(Long id, ContentModelDTO.UpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, ContentModelDTO.ContentUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Content data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Content ID"));

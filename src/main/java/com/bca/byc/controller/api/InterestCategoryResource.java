@@ -37,7 +37,7 @@ public class InterestCategoryResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/interest_category/{id} endpoint hit");
         try {
-            InterestCategoryModelDTO.DetailResponse item = service.findDataById(id);
+            InterestCategoryModelDTO.InterestCategoryDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found interest category", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -45,7 +45,7 @@ public class InterestCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody InterestCategoryModelDTO.CreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody InterestCategoryModelDTO.InterestCategoryCreateRequest item) {
         log.info("POST /api/v1/interest_category endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class InterestCategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody InterestCategoryModelDTO.UpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody InterestCategoryModelDTO.InterestCategoryUpdateRequest item) {
         log.info("PUT /api/v1/interest_category/{id} endpoint hit");
         try {
             service.updateData(id, item);

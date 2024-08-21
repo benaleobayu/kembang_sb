@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface BusinessService {
 
-    BusinessModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    BusinessModelDTO.BusinessDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<BusinessModelDTO.DetailResponse> findAllData();
+    List<BusinessModelDTO.BusinessDetailResponse> findAllData();
 
-    void saveData(@Valid BusinessModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid BusinessModelDTO.BusinessCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid BusinessModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid BusinessModelDTO.BusinessUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

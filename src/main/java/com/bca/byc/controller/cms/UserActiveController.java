@@ -73,7 +73,7 @@ public class UserActiveController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminModelDTO.CreateRequest dto = new AdminModelDTO.CreateRequest();
+        AdminModelDTO.AdminCreateRequest dto = new AdminModelDTO.AdminCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");

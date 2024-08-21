@@ -21,7 +21,7 @@ public class SettingsRoleService {
 
     private RoleDTOConverter converter;
 
-    public List<RoleModelDTO.DetailResponse> getAllRoles() {
+    public List<RoleModelDTO.RoleDetailResponse> getAllRoles() {
         List<Role> datas = roleRepository.findAll();
 
         return datas.stream()

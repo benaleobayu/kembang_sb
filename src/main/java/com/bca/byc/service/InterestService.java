@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface InterestService {
 
-    InterestModelDTO.DetailResponse findDataById(Long id) throws BadRequestException;
+    InterestModelDTO.InterestDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<InterestModelDTO.DetailResponse> findAllData();
+    List<InterestModelDTO.InterestDetailResponse> findAllData();
 
-    void saveData(@Valid InterestModelDTO.CreateRequest dto) throws BadRequestException;
+    void saveData(@Valid InterestModelDTO.InterestCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid InterestModelDTO.UpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid InterestModelDTO.InterestUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }
