@@ -27,8 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         // Assuming user roles or permissions are handled similarly
-        grantedAuthorities.add(new SimpleGrantedAuthority("USER_ROLE")); // Example
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN")); // Example
 
         return new UserPrincipal(user, grantedAuthorities);
     }
+
 }

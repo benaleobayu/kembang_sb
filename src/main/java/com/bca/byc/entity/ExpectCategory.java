@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -25,5 +28,12 @@ public class ExpectCategory extends AbstractBaseEntity {
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status;
+
+    // relations
+    @OneToMany(mappedBy = "expectCategory")
+    private List<ExpectItem> expectItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "expectCategory")
+    private List<UserHasExpect> userHasExpects = new ArrayList<>();
 
 }

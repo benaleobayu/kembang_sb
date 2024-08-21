@@ -84,6 +84,7 @@ public class User extends AbstractBaseEntity {
     private List<Business> businesses = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<UserHasFeedback> feedbacks = new ArrayList<>();
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<UserHasExpect> userHasExpects = new ArrayList<>();
 
 }
