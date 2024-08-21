@@ -17,8 +17,7 @@ public class SettingsModelDTO {
         private Long id;
         private String name;
         private String identity;
-        private String description_id;
-        private String description_en;
+        private String description;
         private Integer value;
         private Boolean status;
         private String createdAt;
@@ -38,8 +37,7 @@ public class SettingsModelDTO {
         @Size(max = 50, message = "Identity must be less than 50 characters")
         private String identity;
 
-        private String description_id;
-        private String description_en;
+        private String description;
         private Integer value;
 
         @NotBlank(message = "Status is mandatory")
@@ -55,12 +53,11 @@ public class SettingsModelDTO {
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
-        @NotBlank(message = "Identity is mandatory")
-        @Size(max = 50, message = "Identity must be less than 50 characters")
-        private String identity;
+//        @NotBlank(message = "Identity is mandatory")
+//        @Size(max = 50, message = "Identity must be less than 50 characters")
+//        private String identity;
 
-        private String description_id;
-        private String description_en;
+        private String description;
         private Integer value;
 
         @NotBlank(message = "Status is mandatory")

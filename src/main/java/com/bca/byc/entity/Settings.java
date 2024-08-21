@@ -17,11 +17,8 @@ public class Settings extends AbstractBaseEntity{
     @Column(name = "identity", nullable = false, unique = true)
     private String identity;
 
-    @Column(name = "description_id" , columnDefinition = "text")
-    private String description_id;
-
-    @Column(name = "description_en" , columnDefinition = "text")
-    private String description_en;
+    @Column(name = "description" , columnDefinition = "text")
+    private String description;
 
     @Column(name = "value")
     private Integer value;
