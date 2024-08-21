@@ -37,6 +37,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login").permitAll()
+                .requestMatchers("/api/v1/public/**").permitAll()
                 .requestMatchers("/cms/**", "cms/ms/**").authenticated()
                 .anyRequest().authenticated()
             )
