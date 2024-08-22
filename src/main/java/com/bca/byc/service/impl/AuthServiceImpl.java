@@ -52,6 +52,10 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Email already exists");
         }
 
+        if (dto.getType().equals(UserType.NOT_CUSTOMER)) {
+            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
+        }
+
         User user;
         if (existingUserOptional.isEmpty()) {
             // Create if not exist

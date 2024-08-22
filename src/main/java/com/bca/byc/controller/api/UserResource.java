@@ -91,7 +91,7 @@ public class UserResource {
 
         String token = authorizationHeader.replace("Bearer ", "");
 
-        if (!jwtUtil.validateToken(token)){
+        if (!jwtUtil.validateToken(token)) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid token"));
         }
 
@@ -103,7 +103,7 @@ public class UserResource {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found"));
             }
             // if user not in status approved
-            if (!user.getStatus().equals(StatusType.VERIFIED)){
+            if (!user.getStatus().equals(StatusType.VERIFIED)) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved"));
             }
             // if ready condition
@@ -132,13 +132,13 @@ public class UserResource {
 
     // view
     @GetMapping("/list")
-    public ResponseEntity<ResultPageResponse<UserDetailResponse>> findDataList (
+    public ResponseEntity<ResultPageResponse<UserDetailResponse>> findDataList(
             @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = true, defaultValue = "asc") String direction,
             @RequestParam(name = "userName", required = false) String userName
-    ){
+    ) {
         log.info("GET /api/v1/users/list endpoint hit");
 
         try {

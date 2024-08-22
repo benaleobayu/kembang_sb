@@ -10,9 +10,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,9 +22,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomAuthenticationManager customAuthenticationManager;
-
-    public SecurityConfig(@Lazy CustomAuthenticationManager customAuthenticationManager) {
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Lazy
+    public SecurityConfig(@Lazy CustomAuthenticationManager customAuthenticationManager, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.customAuthenticationManager = customAuthenticationManager;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -38,7 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/home", "/login", "/falcon/**", "/assets/**", "/images/**", "/api/auth/**", "/api/login", "/api/auth/cms-login").permitAll()
                 .requestMatchers("/api/v1/public/**").permitAll()
-                .requestMatchers("/cms/**", "cms/ms/**").authenticated()
+                .requestMatchers("/cms/**", "/api/v1/**").authenticated()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
@@ -61,7 +65,11 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement ->
                 sessionManagement
                     .sessionFixation().migrateSession()
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
+
+        // add JWT filter
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
