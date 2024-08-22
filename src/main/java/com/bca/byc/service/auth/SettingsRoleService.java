@@ -1,4 +1,4 @@
-package com.bca.byc.service;
+package com.bca.byc.service.auth;
 
 import com.bca.byc.convert.RoleDTOConverter;
 import com.bca.byc.entity.Role;

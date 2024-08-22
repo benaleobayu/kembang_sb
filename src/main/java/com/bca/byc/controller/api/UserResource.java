@@ -10,9 +10,11 @@ import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.ResultPageResponse;
 import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "User", description = "User API")
+@SecurityRequirement(name = "Authorization")
 public class UserResource {
 
     private final UserRepository repository;
@@ -124,6 +127,26 @@ public class UserResource {
             }
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    // view
+    @GetMapping("/list")
+    public ResponseEntity<ResultPageResponse<UserDetailResponse>> findDataList (
+            @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = true, defaultValue = "asc") String direction,
+            @RequestParam(name = "userName", required = false) String userName
+    ){
+        log.info("GET /api/v1/users/list endpoint hit");
+
+        try {
+            // response true
+            return ResponseEntity.ok().body(userService.findDataList(pages, limit, sortBy, direction, userName));
+        } catch (Exception e) {
+            // response error
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

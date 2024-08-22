@@ -2,7 +2,7 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.entity.Role;
 import com.bca.byc.model.RoleModelDTO;
-import com.bca.byc.service.SettingsRoleService;
+import com.bca.byc.service.auth.SettingsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

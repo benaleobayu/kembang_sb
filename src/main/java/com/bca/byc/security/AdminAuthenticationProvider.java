@@ -1,6 +1,6 @@
 package com.bca.byc.security;
 
-import com.bca.byc.service.CustomAdminDetailsService;
+import com.bca.byc.service.auth.CustomAdminDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

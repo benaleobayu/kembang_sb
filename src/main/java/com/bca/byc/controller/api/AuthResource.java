@@ -13,14 +13,13 @@ import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.AuthService;
-import com.bca.byc.service.CustomAdminDetailsService;
+import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.UserService;
 import com.bca.byc.service.email.EmailService;
-import com.bca.byc.service.impl.UserDetailsServiceImpl;
+import com.bca.byc.service.auth.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +27,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -138,14 +134,6 @@ public class AuthResource {
             @RequestBody UserSetPasswordRequest dto) {
         log.info("PATCH /api/v1/users/setpassword endpoint hit");
 
-        // Log all headers
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            log.info("{}: {}", headerName, request.getHeader(headerName));
-        }
-
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.error("Authorization header is missing or not in the correct format");
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Authorization header missing or invalid"));
@@ -195,7 +183,6 @@ public class AuthResource {
 
 
     // admin
-
     @PostMapping("/cms-login")
     public ResponseEntity<UserApiResponse> authCMS(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
