@@ -10,8 +10,15 @@ import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
+import com.bca.byc.response.ResultPageResponse;
 import com.bca.byc.service.UserService;
+import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,6 +123,16 @@ public class UserServiceImpl implements UserService {
         User data = converter.convertToCreateGroupRequest(dto);
 
         repository.save(data);
+    }
+
+    @Override
+    public ResultPageResponse<UserDetailResponse> findDataList(Integer pages, Integer limit, String sortBy, String direction, String userName) {
+        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<User> pageResult = repository.findByNameLikeIgnoreCase(userName,pageable);
+        List<UserDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
+        return PaginationUtil.createResultPageDTO(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
     }
 
 

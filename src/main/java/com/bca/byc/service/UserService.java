@@ -6,6 +6,7 @@ import com.bca.byc.model.UserDetailResponse;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
+import com.bca.byc.response.ResultPageResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,5 +31,14 @@ public interface UserService {
     void changePassword(Long userId, UserUpdatePasswordRequest dto); // for change password
 
     void saveData(AuthRegisterRequest dto); // for create user
+
+    // view
+    ResultPageResponse<UserDetailResponse> findDataList(
+            Integer pages,
+            Integer limit,
+            String sortBy,
+            String direction,
+            String userName
+    );
 
 }
