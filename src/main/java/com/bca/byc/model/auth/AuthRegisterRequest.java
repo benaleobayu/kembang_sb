@@ -1,6 +1,6 @@
 package com.bca.byc.model.auth;
 
-import com.bca.byc.model.OnboardingBusinessRequest;
+import com.bca.byc.model.OnboardingModelDTO;
 import com.bca.byc.model.RegisterUserFeedbackRequest;
 import lombok.Data;
 
@@ -19,7 +19,7 @@ public class AuthRegisterRequest {
     private LocalDate birthdate;
     private LocalDate parentBirthdate;
     // business
-    private List<OnboardingBusinessRequest> businesses;
+    private List<OnboardingModelDTO.OnboardingBusinessRequest> businesses;
     // feedback
     private List<RegisterUserFeedbackRequest> feedbackCategories;
 

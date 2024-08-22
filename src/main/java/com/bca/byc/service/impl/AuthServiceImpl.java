@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
         user = repository.save(user);
 
         // Create Businesses
-        for (OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
+        for (OnboardingModelDTO.OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
             Business business = new Business();
             business.setName(businessDto.getBusinessName());
             business.setAddress(businessDto.getBusinessAddress());
@@ -109,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
             business = businessRepository.save(business);
 
             // Create Business Categories
-            for (OnboardingBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
+            for (OnboardingModelDTO.OnboardingBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
                 BusinessCategory parentCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryId())
                         .orElseThrow(() -> new RuntimeException("Business Category Parent not found"));
 

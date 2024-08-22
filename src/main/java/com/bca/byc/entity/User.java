@@ -36,6 +36,9 @@ public class User extends AbstractBaseEntity {
     @Column(name = "solitaire_bank_account", length = 20)
     private String solitaireBankAccount;
 
+    @Column(name = "solitaire_bank_account", length = 20)
+    private String memberBankAccount;
+
     @Column(name = "cin", length = 20)
     private String cin;
 

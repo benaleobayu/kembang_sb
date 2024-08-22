@@ -5,6 +5,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.service.FaqService;
 import com.bca.byc.service.SettingsService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/public")
 @Tag(name = "Public API", description = "Public API for public usage")
 @AllArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class PublicResource {
 
     private final SettingsService settingsService;

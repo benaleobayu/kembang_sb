@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && request.getRequestURI().startsWith("/api/public/"))  {
             jwt = authorizationHeader.substring(7);
             email = jwtUtil.extractEmailFromToken(jwt);
         }
@@ -59,4 +59,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
 
     }
+
 }
