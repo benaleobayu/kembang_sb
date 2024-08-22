@@ -194,7 +194,7 @@ public class AuthResource {
         }
 
         final UserDetails userDetails = adminDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final String jwt = jwtUtil.generateTokenAdmin(userDetails);
         final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
 
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));

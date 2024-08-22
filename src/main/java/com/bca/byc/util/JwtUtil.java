@@ -6,16 +6,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -35,8 +35,37 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+
         return createToken(claims, userDetails.getUsername());
     }
+
+    public String generateTokenAdmin(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+
+        // Add roles
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        // get role name
+        claims.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+
+        // Add permissions
+//        List<String> permissions = authorities.stream().map(GrantedAuthority::getAuthority).toList();
+//        claims.put("permission", permissions);
+
+        // Debugging: Log the claims
+        System.out.println("Roles: " + claims.get("roles"));
+        System.out.println("Permissions: " + claims.get("permission"));
+
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    // List of permission
+    private List<String> getPermissionsFromAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> authority.startsWith(("PERMISSION_")))
+                .collect(Collectors.toList());
+    }
+
 
     public String generateTokenByEmail(String email){
         return Jwts.builder()

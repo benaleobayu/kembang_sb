@@ -18,7 +18,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/expect-category")
-@Tag(name = "ExpectCategory API")
+@Tag(name = "Expect Category")
 public class ExpectCategoryResource {
 
     private ExpectCategoryService service;

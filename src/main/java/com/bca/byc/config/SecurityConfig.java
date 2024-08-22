@@ -65,7 +65,8 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement ->
                 sessionManagement
                     .sessionFixation().migrateSession()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             );
 
         // add JWT filter

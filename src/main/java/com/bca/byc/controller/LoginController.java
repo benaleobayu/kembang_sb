@@ -34,7 +34,7 @@ public class LoginController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             // Redirect authenticated users to the dashboard
-            return "redirect:/cms/dashboard";
+            return "redirect:/cms/data-analytic";
         }
         logger.info("GET /login endpoint hit");
         model.addAttribute("loginForm", new LoginRequest());
