@@ -6,14 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
 
 
-public class ExpectItemModelDTO {
+public class OnboardingModelDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class ExpectItemDetailResponse implements Serializable {
+    public static class OnboardingDetailResponse implements Serializable {
 
         private Long id;
         private String name;
@@ -25,33 +28,28 @@ public class ExpectItemModelDTO {
     }
 
     @Data
-    @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class ExpectItemCreateRequest {
+    public static class OnboardingCreateRequest {
 
-        @NotBlank(message = "Name is mandatory")
-        @Size(max = 50, message = "Name must be less than 50 characters")
-        private String name;
+        // user
+//        private Long userId;
+        // business
+        private List<OnboardingModelDTO.OnboardingBusinessRequest> businesses;
+        // expect
+        private List<OnboardingModelDTO.OnboardingExpectCategoryResponse> expectCategories;
 
-        private String description;
-
-        @NotBlank(message = "Order is mandatory")
+        @NotNull(message = "Order is mandatory")
         private Integer orders;
 
-        @NotBlank(message = "Status is mandatory")
+        @NotNull(message = "Status is mandatory")
         private Boolean status;
-
-        // relation
-        @NotBlank(message = "Expect Category Id is mandatory")
-        private Long expectCategoryId;
-
 
     }
 
     @Data
     @AllArgsConstructor
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class ExpectItemUpdateRequest {
+    public static class OnboardingUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
         @Size(max = 50, message = "Name must be less than 50 characters")
@@ -67,5 +65,23 @@ public class ExpectItemModelDTO {
 
     }
 
+    @Data
+    public static class OnboardingBusinessRequest {
+        private String businessName;
+        private String businessAddress;
+        private List<OnboardingBusinessCategoryRequest> businessCategories;
+    }
+
+    @Data
+    public static class OnboardingBusinessCategoryRequest {
+        private Long businessCategoryId;
+        private Long businessCategoryChildId;
+    }
+
+    @Data
+    public static class OnboardingExpectCategoryResponse {
+        private Long expectCategoryId;
+        private Long expectCategoryItemId;
+    }
 
 }

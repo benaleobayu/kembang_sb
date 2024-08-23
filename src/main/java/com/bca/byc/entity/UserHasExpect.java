@@ -13,21 +13,21 @@ import lombok.NoArgsConstructor;
 public class UserHasExpect {
 
     @EmbeddedId
-    private UserHasExpectId id;
+    private UserHasExpectId id = new UserHasExpectId();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("expectCategoryId")
-    @JoinColumn(name = "expect_category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "expect_category_id")
     private ExpectCategory expectCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("expectItemId")
-    @JoinColumn(name = "expect_item_id", insertable = false, updatable = false)
+    @JoinColumn(name = "expect_item_id")
     private ExpectItem expectItem;
 
 }
