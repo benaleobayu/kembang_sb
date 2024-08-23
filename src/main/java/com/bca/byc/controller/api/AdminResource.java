@@ -46,7 +46,7 @@ public class AdminResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody AdminModelDTO.AdminCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute AdminModelDTO.AdminCreateRequest item) {
         log.info("POST /api/v1/admin endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class AdminResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody AdminModelDTO.AdminUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute AdminModelDTO.AdminUpdateRequest item) {
         log.info("PUT /api/v1/admin/{id} endpoint hit");
         try {
             service.updateData(id, item);

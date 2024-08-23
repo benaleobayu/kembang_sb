@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 
 public class TestAutocheckModelDTO {
@@ -14,10 +15,15 @@ public class TestAutocheckModelDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class TestAutocheckDetailResponse {
 
-        private Long id;
         private String name;
         private String description;
+        private String memberType;
         private String solitaireBankAccount;
+        private String solitaireCin;
+        private LocalDate solitaireBirthdate;
+        private String memberBankAccount;
+        private String memberCin;
+        private LocalDate memberBirthdate;
         private Integer orders;
         private Boolean status;
         private String createdAt;
@@ -33,9 +39,20 @@ public class TestAutocheckModelDTO {
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
+        @NotBlank(message = "Member is required")
+        private String memberType;
+
         @NotBlank(message = "Solitaire bank account is mandatory")
         @Size(max = 20, message = "Solitaire bank account must be less than 20 characters")
         private String solitaireBankAccount;
+
+        private LocalDate solitaireBirthdate;
+
+        @NotBlank(message = "Member bank account is mandatory")
+        @Size(max = 20, message = "Member bank account must be less than 20 characters")
+        private String memberBankAccount;
+
+        private LocalDate memberBirthdate;
 
         private String description;
 
@@ -57,9 +74,20 @@ public class TestAutocheckModelDTO {
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
+        @NotBlank(message = "Member is required")
+        private String memberType;
+
         @NotBlank(message = "Solitaire bank account is mandatory")
         @Size(max = 20, message = "Solitaire bank account must be less than 20 characters")
         private String solitaireBankAccount;
+
+        private LocalDate solitaireBirthdate;
+
+        @NotBlank(message = "Member bank account is mandatory")
+        @Size(max = 20, message = "Member bank account must be less than 20 characters")
+        private String memberBankAccount;
+
+        private LocalDate memberBirthdate;
 
         private String description;
 
@@ -68,7 +96,6 @@ public class TestAutocheckModelDTO {
 
         @NotBlank(message = "Status is mandatory")
         private Boolean status;
-
     }
 
 

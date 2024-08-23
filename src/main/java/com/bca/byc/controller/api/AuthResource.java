@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,13 +53,20 @@ public class AuthResource {
     private EmailService emailService;
 
     @PostMapping("/register")
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody RegisterRequest dto) {
+    public ResponseEntity<ApiResponse> registerUser(
+            @ModelAttribute RegisterRequest dto) {
+
+        if (dto == null) {
+            log.error("Request body is null or unsupported content type.");
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Request body is missing or malformed."));
+        }
+
         log.debug("Register request received: {}", dto.getEmail());
+
         try {
             authService.saveUser(dto);
             log.info("User registered successfully: {}", dto.getEmail());
-            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. please check email to activate your account."));
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. Please check your email to activate your account."));
         } catch (Exception e) {
             log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
@@ -66,7 +74,7 @@ public class AuthResource {
     }
 
     @PostMapping("/auth-register")
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody AuthRegisterRequest dto) {
+    public ResponseEntity<ApiResponse> registerUser(@ModelAttribute AuthRegisterRequest dto) {
         log.debug("Register request received: {}", dto.getEmail());
 
         if (repository.existsByEmail(dto.getEmail())) {
@@ -85,7 +93,7 @@ public class AuthResource {
 
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<ApiListResponse> validateOtp(@RequestBody OtpModelDTO.OtpRequest otpRequest) {
+    public ResponseEntity<ApiListResponse> validateOtp(@ModelAttribute OtpModelDTO.OtpRequest otpRequest) {
         boolean isValid = authService.validateOtp(otpRequest.getEmail(), otpRequest.getOtp());
         User user = userService.findByEmail(otpRequest.getEmail());
         if (isValid) {
@@ -99,7 +107,7 @@ public class AuthResource {
     }
 
     @PostMapping("/send-otp")
-    public ResponseEntity<ApiResponse> resendOtp(@RequestBody OtpModelDTO.OtpResend otpResend) {
+    public ResponseEntity<ApiResponse> resendOtp(@ModelAttribute OtpModelDTO.OtpResend otpResend) {
         try {
             authService.resendOtp(otpResend.getEmail());
             log.info("OTP sent successfully: {}", otpResend.getEmail());
@@ -111,7 +119,7 @@ public class AuthResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserApiResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<UserApiResponse> createAuthenticationToken(@ModelAttribute AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
@@ -131,7 +139,7 @@ public class AuthResource {
     @PatchMapping("/setpassword")
     public ResponseEntity<ApiResponse> setPassword(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-            @RequestBody UserSetPasswordRequest dto) {
+            @ModelAttribute UserSetPasswordRequest dto) {
         log.info("PATCH /api/v1/users/setpassword endpoint hit");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -184,7 +192,7 @@ public class AuthResource {
 
     // admin
     @PostMapping("/cms-login")
-    public ResponseEntity<UserApiResponse> authCMS(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<UserApiResponse> authCMS(@ModelAttribute AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())

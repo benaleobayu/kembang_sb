@@ -50,7 +50,7 @@ public class SettingResource {
 
     @Operation(hidden = true)
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody SettingsModelDTO.SettingsCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute SettingsModelDTO.SettingsCreateRequest item) {
         log.info("POST /v1/settings endpoint hit");
         try {
             service.saveData(item);
@@ -63,7 +63,7 @@ public class SettingResource {
 
     @Operation(hidden = true)
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody SettingsModelDTO.SettingsUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute SettingsModelDTO.SettingsUpdateRequest item) {
         log.info("PUT /v1/settings/{id} endpoint hit");
         try {
             service.updateData(id, item);

@@ -72,7 +72,7 @@ public class UserResource {
     }
 
     @PutMapping("/{userId}/update")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") Long userId, @Valid @RequestBody UserUpdateRequest dto) {
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") Long userId, @Valid @ModelAttribute UserUpdateRequest dto) {
         log.info("PUT /api/v1/users/{}/update endpoint hit", userId);
         try {
             userService.updateData(userId, dto);
@@ -86,7 +86,7 @@ public class UserResource {
     @PatchMapping("/setpassword")
     public ResponseEntity<ApiResponse> setPassword(
             @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody UserSetPasswordRequest dto) {
+            @ModelAttribute UserSetPasswordRequest dto) {
         log.info("PATCH /api/v1/users/setpassword endpoint hit. Header: {}", authorizationHeader);
 
         String token = authorizationHeader.replace("Bearer ", "");
@@ -116,7 +116,7 @@ public class UserResource {
     }
 
     @PatchMapping("/{userId}/password")
-    public ResponseEntity<ApiResponse> changePassword(@PathVariable("userId") Long userId, @RequestBody UserUpdatePasswordRequest dto) {
+    public ResponseEntity<ApiResponse> changePassword(@PathVariable("userId") Long userId, @ModelAttribute UserUpdatePasswordRequest dto) {
         log.info("PATCH /api/v1/users/{}/password endpoint hit", userId);
         try {
             if (!userService.existsById(userId)) {

@@ -46,7 +46,7 @@ public class BusinessCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
         log.info("POST /api/v1/business_category endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class BusinessCategoryResource {
     }
 
      @PostMapping("/{id}/child")
-    public ResponseEntity<ApiResponse> createChild(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
+    public ResponseEntity<ApiResponse> createChild(@PathVariable("id") Long id, @Valid @ModelAttribute BusinessCategoryModelDTO.BusinessCategoryCreateRequest item) {
         log.info("POST /api/v1/business_category" + id + "/child endpoint hit");
         try {
             item.setCheckParentId(id);
@@ -73,7 +73,7 @@ public class BusinessCategoryResource {
 
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessCategoryModelDTO.BusinessCategoryUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute BusinessCategoryModelDTO.BusinessCategoryUpdateRequest item) {
         log.info("PUT /api/v1/business_category/{id} endpoint hit");
         try {
             service.updateData(id, item);

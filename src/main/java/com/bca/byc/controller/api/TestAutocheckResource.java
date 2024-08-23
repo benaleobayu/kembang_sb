@@ -6,6 +6,7 @@ import com.bca.byc.model.test.TestAutocheckModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.TestAutocheckService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,9 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/autocheck")
-@Tag(name = "Text Autocheck API")
-public class TestAutocheckCinResource {
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "Masterdata - Simulasi Autocheck Approval")
+public class TestAutocheckResource {
 
     private TestAutocheckService service;
 
@@ -46,8 +48,12 @@ public class TestAutocheckCinResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody TestAutocheckModelDTO.TestAutocheckCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(
+            @Valid @ModelAttribute TestAutocheckModelDTO.TestAutocheckCreateRequest item) {
         log.info("POST /v1/autocheck endpoint hit");
+
+
+
         try {
             service.saveData(item);
             return ResponseEntity.created(URI.create("/v1/autocheck/"))
@@ -58,7 +64,7 @@ public class TestAutocheckCinResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody TestAutocheckModelDTO.TestAutocheckUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute TestAutocheckModelDTO.TestAutocheckUpdateRequest item) {
         log.info("PUT /v1/autocheck/{id} endpoint hit");
         try {
             service.updateData(id, item);

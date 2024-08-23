@@ -45,7 +45,7 @@ public class ExpectCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ExpectCategoryModelDTO.ExpectCategoryCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute ExpectCategoryModelDTO.ExpectCategoryCreateRequest item) {
         log.info("POST /api/v1/expect-category endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class ExpectCategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody ExpectCategoryModelDTO.ExpectCategoryUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute ExpectCategoryModelDTO.ExpectCategoryUpdateRequest item) {
         log.info("PUT /api/v1/expect-category/{id} endpoint hit");
         try {
             service.updateData(id, item);

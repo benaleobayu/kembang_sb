@@ -45,7 +45,7 @@ public class LocationResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody LocationModelDTO.LocationCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute LocationModelDTO.LocationCreateRequest item) {
         log.info("POST /api/v1/location endpoint hit");
         try {
             service.saveData(item);
@@ -57,7 +57,7 @@ public class LocationResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody LocationModelDTO.LocationUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute LocationModelDTO.LocationUpdateRequest item) {
         log.info("PUT /api/v1/location/{id} endpoint hit");
         try {
             service.updateData(id, item);

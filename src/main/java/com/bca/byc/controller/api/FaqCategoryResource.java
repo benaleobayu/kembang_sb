@@ -46,7 +46,7 @@ public class FaqCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FaqCategoryModelDTO.FaqCategoryCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute FaqCategoryModelDTO.FaqCategoryCreateRequest item) {
         log.info("POST /api/v1/faq-category endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +58,7 @@ public class FaqCategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FaqCategoryModelDTO.FaqCategoryUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute FaqCategoryModelDTO.FaqCategoryUpdateRequest item) {
         log.info("PUT /api/v1/faq-category/{id} endpoint hit");
         try {
             service.updateData(id, item);

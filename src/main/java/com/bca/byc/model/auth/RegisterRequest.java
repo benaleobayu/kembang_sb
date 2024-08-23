@@ -29,9 +29,7 @@ public class RegisterRequest {
     @UniqueEmail // Custom annotation for unique email validation
     private String email;
 
-    @NotBlank(message = "Phone is mandatory")
     @Size(max = 16, message = "Phone number must be less than 16 characters")
-    @PhoneNumberValidation // Custom annotation for phone number validation
     private String phone;
 
     @Schema(description = "User type: (MEMBER, NOT_MEMBER, NOT_CUSTOMER)", example = "'MEMBER' | 'NOT_MEMBER' | 'NOT_CUSTOMER'")

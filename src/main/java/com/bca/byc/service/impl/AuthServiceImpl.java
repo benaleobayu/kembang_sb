@@ -3,7 +3,8 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.*;
+import com.bca.byc.model.OnboardingModelDTO;
+import com.bca.byc.model.RegisterUserFeedbackRequest;
 import com.bca.byc.model.auth.AuthRegisterRequest;
 import com.bca.byc.model.auth.RegisterRequest;
 import com.bca.byc.repository.*;
@@ -41,17 +42,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
-        // Logging email yang dicari
-        System.out.println("Searching for user with email: " + dto.getEmail());
-
         Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
-        System.out.println("User found: " + existingUserOptional.isPresent());
 
         // check user by email and status active
         if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
             throw new BadRequestException("Email already exists");
         }
-
+        // if option 3 or not customer
         if (dto.getType().equals(UserType.NOT_CUSTOMER)) {
             throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
         }
@@ -71,10 +68,21 @@ public class AuthServiceImpl implements AuthService {
             user.setCountReject(user.getCountReject());
         }
 
-        boolean exist = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
-        System.out.println("solitaire found: " + exist);
-        if (exist) {
+//        TestAutocheck dataCheck = testAutocheckRepository.findBySolitaireBankAccount(dto.getSolitaireBankAccount());
+
+
+        // TODO validasi more
+        boolean soliPrio = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
+        boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getCin());
+        System.out.println("solitaire found: " + soliPrio);
+        if (soliPrio) {
             user.setStatus(StatusType.APPROVED);
+//            if (existingUserOptional.isPresent() && existingUserOptional.get().getType().equals(UserType.MEMBER)) {
+//                user.setCin(dataCheck.getSolitaireCin());
+//            }
+//            if (existingUserOptional.isPresent() && existingUserOptional.get().getType().equals(UserType.NOT_MEMBER)) {
+//                user.setCin(dataCheck.getMemberCin());
+//            }
             repository.save(user);
             resendOtp(dto.getEmail());
         } else {

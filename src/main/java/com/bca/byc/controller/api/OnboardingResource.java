@@ -30,7 +30,7 @@ public class OnboardingResource {
     @PostMapping
     public ResponseEntity<ApiResponse> createOnboarding(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-            @RequestBody OnboardingModelDTO.OnboardingCreateRequest dto, HttpServletRequest request) {
+            @ModelAttribute OnboardingModelDTO.OnboardingCreateRequest dto) {
 
         String token = authorizationHeader.replace("Bearer ", "");
 
