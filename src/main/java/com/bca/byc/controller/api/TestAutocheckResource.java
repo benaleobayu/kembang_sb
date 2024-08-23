@@ -20,8 +20,8 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/autocheck")
-@SecurityRequirement(name = "Authorization")
 @Tag(name = "Masterdata - Simulasi Autocheck Approval")
+@SecurityRequirement(name = "Authorization")
 public class TestAutocheckResource {
 
     private TestAutocheckService service;

@@ -17,12 +17,12 @@ public class TestAutocheckModelDTO {
 
         private String name;
         private String description;
-        private String memberType;
+        private String memberType; // get from response
         private String solitaireBankAccount;
-        private String solitaireCin;
+        private String solitaireCin; // get from response
         private LocalDate solitaireBirthdate;
         private String memberBankAccount;
-        private String memberCin;
+        private String memberCin; // get from response
         private LocalDate memberBirthdate;
         private Integer orders;
         private Boolean status;
@@ -39,22 +39,24 @@ public class TestAutocheckModelDTO {
         @Size(max = 50, message = "Name must be less than 50 characters")
         private String name;
 
-        @NotBlank(message = "Member is required")
         private String memberType;
+
+        private String description;
 
         @NotBlank(message = "Solitaire bank account is mandatory")
         @Size(max = 20, message = "Solitaire bank account must be less than 20 characters")
         private String solitaireBankAccount;
 
+        private String solitaireCin;
+
         private LocalDate solitaireBirthdate;
 
-        @NotBlank(message = "Member bank account is mandatory")
         @Size(max = 20, message = "Member bank account must be less than 20 characters")
         private String memberBankAccount;
 
-        private LocalDate memberBirthdate;
+        private String memberCin;
 
-        private String description;
+        private LocalDate memberBirthdate;
 
         @NotBlank(message = "Order is mandatory")
         private Integer orders;

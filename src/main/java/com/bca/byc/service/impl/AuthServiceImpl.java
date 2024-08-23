@@ -44,60 +44,55 @@ public class AuthServiceImpl implements AuthService {
     public void saveUser(RegisterRequest dto) throws Exception {
         Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
 
-        // check user by email and status active
+        // Check if the user with the given email already exists and has an active status
         if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
             throw new BadRequestException("Email already exists");
         }
-        // if option 3 or not customer
+
+        // Check if the user type is not customer
         if (dto.getType().equals(UserType.NOT_CUSTOMER)) {
             throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
         }
 
         User user;
         if (existingUserOptional.isEmpty()) {
-            // Create if not exist
+            // Create a new user if not existing
             user = converter.convertToCreateRequest(dto);
             user.setStatus(StatusType.PENDING);
         } else {
-            // Update if email is already present
+            // Update the existing user
             user = existingUserOptional.get();
             user.setName(dto.getName());
             user.setSolitaireBankAccount(dto.getSolitaireBankAccount());
             user.setPhone(dto.getPhone());
             user.setBirthdate(dto.getBirthdate());
-            user.setCountReject(user.getCountReject());
         }
 
-//        TestAutocheck dataCheck = testAutocheckRepository.findBySolitaireBankAccount(dto.getSolitaireBankAccount());
-
-
-        // TODO validasi more
+        // Check the TestAutocheck data
+        TestAutocheck dataCheck = testAutocheckRepository.findBySolitaireBankAccount(dto.getSolitaireBankAccount());
         boolean soliPrio = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
-        boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getCin());
-        System.out.println("solitaire found: " + soliPrio);
+        boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
+
         if (soliPrio) {
             user.setStatus(StatusType.APPROVED);
-//            if (existingUserOptional.isPresent() && existingUserOptional.get().getType().equals(UserType.MEMBER)) {
-//                user.setCin(dataCheck.getSolitaireCin());
-//            }
-//            if (existingUserOptional.isPresent() && existingUserOptional.get().getType().equals(UserType.NOT_MEMBER)) {
-//                user.setCin(dataCheck.getMemberCin());
-//            }
+            if (dto.getType().equals(UserType.MEMBER)) {
+                user.setCin(dataCheck.getSolitaireCin());
+            } else if (member && dto.getType().equals(UserType.NOT_MEMBER)) {
+                user.setCin(dataCheck.getMemberCin());
+            }
             repository.save(user);
             resendOtp(dto.getEmail());
         } else {
             user.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1;
             user.setCountReject(newRejectCount);
+            repository.save(user);
 
             if (newRejectCount >= 3) {
                 throw new BadRequestException("Your account can't be created anymore. Please contact admin.");
-            } else if (newRejectCount <= 3) {
+            } else {
                 throw new BadRequestException("Your account is rejected. Please contact admin.");
             }
-
-            repository.save(user);
-
         }
     }
 

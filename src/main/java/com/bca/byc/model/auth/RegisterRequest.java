@@ -38,8 +38,8 @@ public class RegisterRequest {
     @Size(max = 20, message = "Bank account number must be less than 20 characters")
     private String solitaireBankAccount;
 
-    @Size(max = 20, message = "Customer Identity number must be less than 20 characters")
-    private String cin;
+    @Size(max = 20, message = "Bank account number must be less than 20 characters")
+    private String memberBankAccount;
 
     private LocalDate birthdate;
 

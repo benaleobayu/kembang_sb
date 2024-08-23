@@ -13,23 +13,20 @@ import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.service.AuthService;
-import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.UserService;
-import com.bca.byc.service.email.EmailService;
+import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.auth.UserDetailsServiceImpl;
+import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController

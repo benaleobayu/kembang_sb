@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/onboarding")
 @Tag(name = "Onboarding")
 @AllArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class OnboardingResource {
 
     private OnboardingService service;

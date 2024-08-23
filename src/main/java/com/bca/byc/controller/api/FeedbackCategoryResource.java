@@ -5,6 +5,7 @@ import com.bca.byc.model.FeedbackCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.MsFeedbackCategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/feedback_category")
 @Tag(name = "Masterdata - Feedback Category")
+@SecurityRequirement(name = "Authorization")
 public class FeedbackCategoryResource {
 
     private MsFeedbackCategoryService service;

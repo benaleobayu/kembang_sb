@@ -5,6 +5,7 @@ import com.bca.byc.model.InterestCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.MsInterestCategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/interest_category")
 @Tag(name = "Masterdata - Interest Category")
+@SecurityRequirement(name = "Authorization")
 public class InterestCategoryResource {
 
     private MsInterestCategoryService service;
