@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "business")
-public class Business extends AbstractBaseEntity{
+public class Business extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -51,6 +52,12 @@ public class Business extends AbstractBaseEntity{
     @OneToMany(mappedBy = "business", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<BusinessHasCategory> businessCategories = new ArrayList<>();
 
+    // make manytomany with location
+    @ManyToMany
+    @JoinTable(name = "business_has_location",
+            joinColumns = @JoinColumn(name = "business_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id"))
+    private Set<Location> locations = new HashSet<>();
 
 
 }

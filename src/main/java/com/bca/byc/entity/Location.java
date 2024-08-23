@@ -1,18 +1,20 @@
 package com.bca.byc.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "locations")
-public class Location {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+public class Location extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -23,27 +25,14 @@ public class Location {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-
     @Column(name = "orders")
     private Integer orders;
 
     @Column(name = "status", columnDefinition = "boolean default false")
     private Boolean status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    // relations
+    @ManyToMany(mappedBy = "locations")
+    private Set<Business> businesses = new HashSet<>();
 
 }

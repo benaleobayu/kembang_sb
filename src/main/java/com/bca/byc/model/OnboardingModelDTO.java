@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -18,7 +17,6 @@ public class OnboardingModelDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingDetailResponse implements Serializable {
 
-        private Long id;
         private String name;
         private String description;
         private Integer orders;
@@ -31,12 +29,10 @@ public class OnboardingModelDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingCreateRequest {
 
-        // user
-//        private Long userId;
         // business
-        private List<OnboardingModelDTO.OnboardingBusinessRequest> businesses;
+        private List<OnboardingBusinessRequest> businesses;
         // expect
-        private List<OnboardingModelDTO.OnboardingExpectCategoryResponse> expectCategories;
+        private List<OnboardingExpectCategoryResponse> expectCategories;
 
         @NotNull(message = "Order is mandatory")
         private Integer orders;
@@ -70,6 +66,7 @@ public class OnboardingModelDTO {
         private String businessName;
         private String businessAddress;
         private List<OnboardingBusinessCategoryRequest> businessCategories;
+        private List<OnboardingLocationRequest> locations;
     }
 
     @Data
@@ -77,6 +74,12 @@ public class OnboardingModelDTO {
         private Long businessCategoryId;
         private Long businessCategoryChildId;
     }
+
+    @Data
+    public static class OnboardingLocationRequest {
+        private Long locationId;
+    }
+
 
     @Data
     public static class OnboardingExpectCategoryResponse {

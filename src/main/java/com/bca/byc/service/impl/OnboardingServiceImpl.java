@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.controller.api.LocationResource;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.OnboardingModelDTO;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +28,7 @@ public class OnboardingServiceImpl implements OnboardingService {
     private ExpectCategoryRepository expectCategoryRepository;
     private ExpectItemRepository expectItemRepository;
     private UserHasExpectRepository userHasExpectRepository;
+    private LocationRepository locationRepository;
 
 
     @Override
@@ -61,6 +65,15 @@ public class OnboardingServiceImpl implements OnboardingService {
                 // Save the BusinessHasCategory entity
                 businessHasCategoryRepository.save(businessHasCategory);
             }
+
+            // Handle Business Locations
+            Set<Location> locations = new HashSet<>();
+            for (OnboardingModelDTO.OnboardingLocationRequest locationDto : businessDto.getLocations()) {
+                Location location = locationRepository.findById(locationDto.getLocationId())
+                        .orElseThrow(() -> new BadRequestException("Location not found"));
+                locations.add(location);
+            }
+            business.setLocations(locations);
         }
         // Create Expect
         for (OnboardingModelDTO.OnboardingExpectCategoryResponse expectDto : dto.getExpectCategories()) {
