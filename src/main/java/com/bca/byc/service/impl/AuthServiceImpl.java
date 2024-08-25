@@ -3,7 +3,8 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.*;
+import com.bca.byc.model.OnboardingModelDTO;
+import com.bca.byc.model.RegisterUserFeedbackRequest;
 import com.bca.byc.model.auth.AuthRegisterRequest;
 import com.bca.byc.model.auth.RegisterRequest;
 import com.bca.byc.repository.*;
@@ -41,55 +42,57 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
-        // Logging email yang dicari
-        System.out.println("Searching for user with email: " + dto.getEmail());
-
         Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
-        System.out.println("User found: " + existingUserOptional.isPresent());
 
-        // check user by email and status active
+        // Check if the user with the given email already exists and has an active status
         if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
             throw new BadRequestException("Email already exists");
         }
 
+        // Check if the user type is not customer
         if (dto.getType().equals(UserType.NOT_CUSTOMER)) {
             throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
         }
 
         User user;
         if (existingUserOptional.isEmpty()) {
-            // Create if not exist
+            // Create a new user if not existing
             user = converter.convertToCreateRequest(dto);
             user.setStatus(StatusType.PENDING);
         } else {
-            // Update if email is already present
+            // Update the existing user
             user = existingUserOptional.get();
             user.setName(dto.getName());
             user.setSolitaireBankAccount(dto.getSolitaireBankAccount());
             user.setPhone(dto.getPhone());
             user.setBirthdate(dto.getBirthdate());
-            user.setCountReject(user.getCountReject());
         }
 
-        boolean exist = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
-        System.out.println("solitaire found: " + exist);
-        if (exist) {
+        // Check the TestAutocheck data
+        TestAutocheck dataCheck = testAutocheckRepository.findBySolitaireBankAccount(dto.getSolitaireBankAccount());
+        boolean soliPrio = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
+        boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
+
+        if (soliPrio) {
             user.setStatus(StatusType.APPROVED);
+            if (dto.getType().equals(UserType.MEMBER)) {
+                user.setCin(dataCheck.getSolitaireCin());
+            } else if (member && dto.getType().equals(UserType.NOT_MEMBER)) {
+                user.setCin(dataCheck.getMemberCin());
+            }
             repository.save(user);
             resendOtp(dto.getEmail());
         } else {
             user.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1;
             user.setCountReject(newRejectCount);
+            repository.save(user);
 
             if (newRejectCount >= 3) {
                 throw new BadRequestException("Your account can't be created anymore. Please contact admin.");
-            } else if (newRejectCount <= 3) {
+            } else {
                 throw new BadRequestException("Your account is rejected. Please contact admin.");
             }
-
-            repository.save(user);
-
         }
     }
 

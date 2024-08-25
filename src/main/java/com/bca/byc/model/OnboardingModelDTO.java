@@ -14,7 +14,7 @@ import java.util.List;
 
 public class OnboardingModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingDetailResponse implements Serializable {
 
         private String name;
@@ -26,7 +26,7 @@ public class OnboardingModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingCreateRequest {
 
         // business
@@ -44,7 +44,7 @@ public class OnboardingModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
