@@ -48,7 +48,7 @@ public class FaqResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FaqModelDTO.FaqCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute FaqModelDTO.FaqCreateRequest item) {
         log.info("POST /api/v1/faq endpoint hit");
         try {
             service.saveData(item);
@@ -60,7 +60,7 @@ public class FaqResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FaqModelDTO.FaqUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute FaqModelDTO.FaqUpdateRequest item) {
         log.info("PUT /api/v1/faq/{id} endpoint hit");
         try {
             service.updateData(id, item);

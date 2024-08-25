@@ -47,7 +47,7 @@ public class BusinessResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessModelDTO.BusinessCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute BusinessModelDTO.BusinessCreateRequest item) {
         log.info("POST /api/v1/business endpoint hit");
         try {
             service.saveData(item);
@@ -59,7 +59,7 @@ public class BusinessResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessModelDTO.BusinessUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute BusinessModelDTO.BusinessUpdateRequest item) {
         log.info("PUT /api/v1/business/{id} endpoint hit");
         try {
             service.updateData(id, item);
