@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/onboarding")
 @Tag(name = "Onboarding")
 @AllArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class OnboardingResource {
 
     private OnboardingService service;
@@ -30,7 +31,7 @@ public class OnboardingResource {
     @PostMapping
     public ResponseEntity<ApiResponse> createOnboarding(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-            @RequestBody OnboardingModelDTO.OnboardingCreateRequest dto, HttpServletRequest request) {
+            @RequestBody OnboardingModelDTO.OnboardingCreateRequest dto) {
 
         String token = authorizationHeader.replace("Bearer ", "");
 

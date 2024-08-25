@@ -12,11 +12,12 @@ import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
+import com.bca.byc.response.dataAccess;
 import com.bca.byc.service.AuthService;
-import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.UserService;
-import com.bca.byc.service.email.EmailService;
+import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.auth.UserDetailsServiceImpl;
+import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,8 +28,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -52,13 +51,20 @@ public class AuthResource {
     private EmailService emailService;
 
     @PostMapping("/register")
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody RegisterRequest dto) {
+    public ResponseEntity<ApiResponse> registerUser(
+            @RequestBody RegisterRequest dto) {
+
+        if (dto == null) {
+            log.error("Request body is null or unsupported content type.");
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Request body is missing or malformed."));
+        }
+
         log.debug("Register request received: {}", dto.getEmail());
+
         try {
             authService.saveUser(dto);
             log.info("User registered successfully: {}", dto.getEmail());
-            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. please check email to activate your account."));
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. Please check your email to activate your account."));
         } catch (Exception e) {
             log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
@@ -117,14 +123,16 @@ public class AuthResource {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null, null, 0));
+            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null));
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
 
-        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
+        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime);
+
+        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", data));
     }
 
     @SecurityRequirement(name = "Authorization")
@@ -190,14 +198,16 @@ public class AuthResource {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null, null, 0));
+            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null));
         }
 
         final UserDetails userDetails = adminDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateTokenAdmin(userDetails);
         final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
 
-        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", jwt, "Bearer", expirationTime));
+        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime);
+
+        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", data));
     }
 
 }

@@ -3,6 +3,7 @@ package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.response.ApiListResponse;
+import com.bca.byc.service.FaqCategoryService;
 import com.bca.byc.service.FaqService;
 import com.bca.byc.service.SettingsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicResource {
 
     private final SettingsService settingsService;
-    private final FaqService faqService;
+    private final FaqCategoryService faqCategoryService;
 
     // show by identity
     @GetMapping("/setting")
@@ -37,12 +38,13 @@ public class PublicResource {
         }
     }
 
-    // show faq
+
+    // how all faq
     @GetMapping("/faq")
-    public ResponseEntity<ApiListResponse> getAll() {
+    public ResponseEntity<ApiListResponse> getAllFaqWithCategory() {
         log.info("GET /api/v1/faq endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found faq", faqService.findAllData()));
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found Faq Category", faqCategoryService.findAllData()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
         }

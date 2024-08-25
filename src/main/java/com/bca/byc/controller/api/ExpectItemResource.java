@@ -5,6 +5,7 @@ import com.bca.byc.model.ExpectItemModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ExpectItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/expect-item")
 @Tag(name = "Expect Item")
+@SecurityRequirement(name = "Authorization")
 public class ExpectItemResource {
 
     private ExpectItemService service;

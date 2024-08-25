@@ -6,6 +6,7 @@ import com.bca.byc.model.FaqModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.FaqService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/faq")
 @Tag(name = "FAQ")
+@SecurityRequirement(name = "Authorization")
 public class FaqResource {
 
     private FaqService service;

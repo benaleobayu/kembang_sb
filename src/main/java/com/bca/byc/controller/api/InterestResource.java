@@ -5,6 +5,7 @@ import com.bca.byc.model.InterestModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.InterestService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/interest")
 @Tag(name = "Interest")
+@SecurityRequirement(name = "Authorization")
 public class InterestResource {
 
     private InterestService service;

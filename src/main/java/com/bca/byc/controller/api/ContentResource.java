@@ -5,6 +5,7 @@ import com.bca.byc.model.ContentModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ContentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/content")
 @Tag(name = "Content")
+@SecurityRequirement(name = "Authorization")
 public class ContentResource {
 
     private ContentService service;

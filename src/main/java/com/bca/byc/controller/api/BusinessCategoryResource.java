@@ -6,6 +6,7 @@ import com.bca.byc.model.BusinessCategoryModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.MsBusinessCategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping("/api/v1/business_category")
 @Tag(name = "Masterdata - Business Category")
+@SecurityRequirement(name = "Authorization")
 public class BusinessCategoryResource {
 
     private MsBusinessCategoryService service;
