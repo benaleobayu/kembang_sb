@@ -52,21 +52,8 @@ public class JwtUtil {
 //        List<String> permissions = authorities.stream().map(GrantedAuthority::getAuthority).toList();
 //        claims.put("permission", permissions);
 
-        // Debugging: Log the claims
-        System.out.println("Roles: " + claims.get("roles"));
-        System.out.println("Permissions: " + claims.get("permission"));
-
         return createToken(claims, userDetails.getUsername());
     }
-
-    // List of permission
-    private List<String> getPermissionsFromAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith(("PERMISSION_")))
-                .collect(Collectors.toList());
-    }
-
 
     public String generateTokenByEmail(String email){
         return Jwts.builder()
