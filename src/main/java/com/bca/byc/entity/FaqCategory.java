@@ -31,6 +31,6 @@ public class FaqCategory extends AbstractBaseEntity {
     private Boolean status;
 
     @OneToMany(mappedBy = "faqCategory")
-    private List<Faq> faqs = new ArrayList<>();
+    private List<Faq> faqs;
 
 }

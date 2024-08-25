@@ -32,6 +32,6 @@ public class Faq extends AbstractBaseEntity {
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "faq_category_id")
+    @JoinColumn(name = "faq_category_id", nullable = false)
     private FaqCategory faqCategory;
 }

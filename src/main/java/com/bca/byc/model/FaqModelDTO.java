@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 
 public class FaqModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class FaqDetailResponse {
 
         private Long id;
@@ -25,7 +25,7 @@ public class FaqModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class FaqCreateRequest {
 
         @NotBlank(message = "Question is mandatory")
@@ -51,7 +51,7 @@ public class FaqModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class FaqUpdateRequest {
 
         @NotBlank(message = "Question is mandatory")
