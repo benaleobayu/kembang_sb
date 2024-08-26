@@ -4,11 +4,8 @@ import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.*;
 import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.UserDetailResponse;
-import com.bca.byc.model.UserSetPasswordRequest;
-import com.bca.byc.model.UserUpdatePasswordRequest;
-import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ResultPageResponse;
 import com.bca.byc.service.UserService;
@@ -45,6 +42,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+    }
+
+    @Override
+    public SimpleUserDetailResponse findInfoByEmail(String email) {
+        return repository.findInfoByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
     }
 
     @Override
@@ -92,7 +95,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setStatus(StatusType.ACTIVATED);
+        user.setStatus(StatusType.PRE_ACTIVATED);
 
         // save
         repository.save(user);

@@ -7,5 +7,6 @@ public enum StatusType {
     APPROVED, // 2 // if cis is correct
     REJECTED, // 3 // if cis is wrong
     VERIFIED, // 4 // if user is verified otp
-    ACTIVATED, // 5 // if user ready set the password
+    PRE_ACTIVATED, // 5 // if user ready set the password
+    ACTIVATED; // 6 // if user has been fill onboarding
 }

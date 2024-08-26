@@ -4,30 +4,33 @@ import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserSetPasswordRequest;
-import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.auth.AuthenticationRequest;
-import com.bca.byc.model.auth.OtpModelDTO;
-import com.bca.byc.model.auth.RegisterRequest;
+import com.bca.byc.model.auth.*;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.UserApiResponse;
 import com.bca.byc.response.dataAccess;
+import com.bca.byc.security.UserPrincipal;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.UserService;
 import com.bca.byc.service.auth.CustomAdminDetailsService;
 import com.bca.byc.service.auth.UserDetailsServiceImpl;
-import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -47,8 +50,6 @@ public class AuthResource {
     private UserRepository repository;
 
     private JwtUtil jwtUtil;
-
-    private EmailService emailService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(
@@ -105,9 +106,9 @@ public class AuthResource {
     }
 
     @PostMapping("/send-otp")
-    public ResponseEntity<ApiResponse> resendOtp(@RequestBody OtpModelDTO.OtpResend otpResend) {
+    public ResponseEntity<ApiResponse> resendOtp(@RequestParam(value = "identity") String identity, @RequestBody OtpModelDTO.OtpResend otpResend) {
         try {
-            authService.resendOtp(otpResend.getEmail());
+            authService.resendOtp(identity, otpResend.getEmail());
             log.info("OTP sent successfully: {}", otpResend.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "OTP sent successfully."));
         } catch (Exception e) {
@@ -117,18 +118,20 @@ public class AuthResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserApiResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<UserApiResponse> createAuthenticationToken(
+            @RequestBody LoginRequest loginRequest) {
+
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null));
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
-        final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
+        final long expirationTime = jwtUtil.getExpirationTime();
 
         dataAccess data = new dataAccess(jwt, "Bearer", expirationTime);
 
@@ -151,12 +154,6 @@ public class AuthResource {
         String token = authorizationHeader.replace("Bearer ", "");
         log.info("Extracted token: {}", token);
 
-        // Validate the token
-        if (!jwtUtil.validateToken(token)) {
-            log.error("Invalid token");
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid token"));
-        }
-
         // Extract the email from the token
         String email = jwtUtil.extractEmailFromToken(token);
         log.info("Extracted email from token: {}", email);
@@ -165,6 +162,9 @@ public class AuthResource {
         User user = userService.findByEmail(email);
         log.info("User found: {}", user != null);
 
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("password", dto.getPassword());
+
         try {
             // If user not found
             if (user == null) {
@@ -172,15 +172,10 @@ public class AuthResource {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found"));
             }
 
-            // If user status is not approved
-            if (!user.getStatus().equals(StatusType.VERIFIED)) {
-                log.error("User not approved");
-                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved"));
-            }
-
             // Set the new password
             userService.setNewPassword(email, dto);
             log.info("Password set successfully for user: {}", email);
+
             return ResponseEntity.ok(new ApiResponse(true, "Password set successfully"));
 
         } catch (BadRequestException e) {
@@ -188,6 +183,41 @@ public class AuthResource {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+//    @SecurityRequirement(name = "Authorization")
+//    @PatchMapping("/setpassword")
+//    public ResponseEntity<ApiListResponse> setPassword(
+//            @RequestBody UserSetPasswordRequest dto) {
+//        log.info("PATCH /api/v1/users/setpassword endpoint hit");
+//
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String email;
+//
+//        if (principal instanceof UserPrincipal) {
+//            email = ((UserPrincipal) principal).getUsername();
+//        } else if (principal instanceof String) {
+//            email = (String) principal;
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body(new ApiListResponse(false, "Unauthorized: Principal is not of expected type.", null));
+//        }
+
+//        try {
+//            // Set the new password
+//            userService.setNewPassword(email, dto);
+//            log.info("Password set successfully for user: {}", email);
+//
+//            Map<String, String> data = new HashMap<>();
+//            // get status of user
+//            data.put("status", (String) userService.findInfoByEmail(email).getStatus());
+//
+//            return ResponseEntity.ok(new ApiListResponse(true, "Password set successfully", data));
+//
+//        } catch (BadRequestException e) {
+//            log.error("BadRequestException: {}", e.getMessage());
+//            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+//        }
+//    }
 
 
     // admin

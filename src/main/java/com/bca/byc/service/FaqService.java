@@ -1,21 +1,22 @@
 package com.bca.byc.service;
 
-import javax.validation.Valid;
-
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.FaqModelDTO;
+import com.bca.byc.model.FaqCreateRequest;
+import com.bca.byc.model.FaqDetailResponse;
+import com.bca.byc.model.FaqUpdateRequest;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface FaqService {
 
-    FaqModelDTO.FaqDetailResponse findDataById(Long id) throws BadRequestException;
+    FaqDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<FaqModelDTO.FaqDetailResponse> findAllData();
+    List<FaqDetailResponse> findAllData();
 
-    void saveData(@Valid FaqModelDTO.FaqCreateRequest dto) throws BadRequestException;
+    void saveData(@Valid FaqCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid FaqModelDTO.FaqUpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid FaqUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

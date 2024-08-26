@@ -1,7 +1,7 @@
 package com.bca.byc.util;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +16,6 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -36,26 +35,18 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-
         return createToken(claims, userDetails.getUsername());
     }
 
     public String generateTokenAdmin(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-
         // Add roles
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        // get role name
-        claims.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
-
-        // Add permissions
-//        List<String> permissions = authorities.stream().map(GrantedAuthority::getAuthority).toList();
-//        claims.put("permission", permissions);
-
+        claims.put("roles", authorities.stream().map(GrantedAuthority::getAuthority).toList());
         return createToken(claims, userDetails.getUsername());
     }
 
-    public String generateTokenByEmail(String email){
+    public String generateTokenByEmail(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -65,19 +56,40 @@ public class JwtUtil {
     }
 
     public String extractEmailFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            // Log the exception for debugging purposes
+            System.err.println("Error extracting email from token: " + e.getMessage());
+            return null;
+        }
     }
 
-    public boolean validateToken(String token) {
-        try{
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        }catch (Exception e){
+    public boolean validateUserToken(String token, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (JwtException | IllegalArgumentException e) {
+            // Log the exception for debugging purposes
+            System.err.println("Invalid user JWT token: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean validateAdminToken(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            // Example: Check for admin-specific claims or roles
+            List<String> roles = claims.get("roles", List.class);
+            return roles != null && roles.contains("ROLE_ADMIN") && !isTokenExpired(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            // Log the exception for debugging purposes
+            System.err.println("Invalid admin JWT token: " + e.getMessage());
             return false;
         }
     }
@@ -92,11 +104,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -107,10 +114,16 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        } catch (JwtException | IllegalArgumentException e) {
+            // Log the exception for debugging purposes
+            System.err.println("Error extracting claims from token: " + e.getMessage());
+            throw e;
+        }
     }
 
-    private Boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 

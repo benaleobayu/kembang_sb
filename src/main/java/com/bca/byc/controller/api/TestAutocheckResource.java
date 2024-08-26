@@ -2,7 +2,9 @@ package com.bca.byc.controller.api;
 
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.test.TestAutocheckModelDTO;
+import com.bca.byc.model.test.AutocheckCreateRequest;
+import com.bca.byc.model.test.AutocheckDetailResponse;
+import com.bca.byc.model.test.AutocheckUpdateRequest;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.TestAutocheckService;
@@ -40,7 +42,7 @@ public class TestAutocheckResource {
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /v1/autocheck/{id} endpoint hit");
         try {
-            TestAutocheckModelDTO.TestAutocheckDetailResponse item = service.findDataById(id);
+            AutocheckDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found autocheck", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -49,7 +51,7 @@ public class TestAutocheckResource {
 
     @PostMapping
     public ResponseEntity<ApiResponse> create(
-            @Valid @RequestBody TestAutocheckModelDTO.TestAutocheckCreateRequest item) {
+            @Valid @RequestBody AutocheckCreateRequest item) {
         log.info("POST /v1/autocheck endpoint hit");
 
 
@@ -64,7 +66,7 @@ public class TestAutocheckResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody TestAutocheckModelDTO.TestAutocheckUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody AutocheckUpdateRequest item) {
         log.info("PUT /v1/autocheck/{id} endpoint hit");
         try {
             service.updateData(id, item);

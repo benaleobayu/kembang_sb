@@ -101,5 +101,8 @@ public class OnboardingServiceImpl implements OnboardingService {
             userHasExpectRepository.save(userHasExpect);
         }
 
+        user.setStatus(StatusType.ACTIVATED);
+        userRepository.save(user);
+
     }
 }

@@ -3,7 +3,9 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.TestAutocheckDTOConverter;
 import com.bca.byc.entity.TestAutocheck;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.test.TestAutocheckModelDTO;
+import com.bca.byc.model.test.AutocheckCreateRequest;
+import com.bca.byc.model.test.AutocheckDetailResponse;
+import com.bca.byc.model.test.AutocheckUpdateRequest;
 import com.bca.byc.repository.TestAutocheckRepository;
 import com.bca.byc.service.TestAutocheckService;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     private TestAutocheckDTOConverter converter;
 
     @Override
-    public TestAutocheckModelDTO.TestAutocheckDetailResponse findDataById(Long id) throws BadRequestException {
+    public AutocheckDetailResponse findDataById(Long id) throws BadRequestException {
         TestAutocheck data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("TestAutocheck not found"));
 
@@ -30,7 +32,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public List<TestAutocheckModelDTO.TestAutocheckDetailResponse> findAllData() {
+    public List<AutocheckDetailResponse> findAllData() {
         // Get the list
         List<TestAutocheck> datas = repository.findAll();
 
@@ -41,7 +43,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public void saveData(@Valid TestAutocheckModelDTO.TestAutocheckCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid AutocheckCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         TestAutocheck data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +51,7 @@ public class TestAutocheckServiceImpl implements TestAutocheckService {
     }
 
     @Override
-    public void updateData(Long id, TestAutocheckModelDTO.TestAutocheckUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, AutocheckUpdateRequest dto) throws BadRequestException {
         // check exist and get
         TestAutocheck data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID TestAutocheck ID"));

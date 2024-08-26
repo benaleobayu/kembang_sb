@@ -20,7 +20,7 @@ public class FaqCategoryModelDTO {
         private String createdAt;
         private String updatedAt;
 
-        private List<FaqModelDTO.FaqDetailResponse> faqs; // <1>
+        private List<FaqDetailResponse> faqs; // <1>
     }
 
     @Data

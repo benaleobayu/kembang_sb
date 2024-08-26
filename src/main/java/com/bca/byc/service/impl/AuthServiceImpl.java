@@ -63,28 +63,35 @@ public class AuthServiceImpl implements AuthService {
             // Update the existing user
             user = existingUserOptional.get();
             user.setName(dto.getName());
-            user.setSolitaireBankAccount(dto.getSolitaireBankAccount());
+            user.setType(dto.getType());
+            user.setMemberBankAccount(dto.getMemberBankAccount());
+            user.setChildBankAccount(dto.getChildBankAccount());
             user.setPhone(dto.getPhone());
-            user.setBirthdate(dto.getBirthdate());
         }
 
         // Check the TestAutocheck data
-        TestAutocheck dataCheck = testAutocheckRepository.findBySolitaireBankAccount(dto.getSolitaireBankAccount());
-        boolean soliPrio = testAutocheckRepository.existsBySolitaireBankAccount(dto.getSolitaireBankAccount());
+        TestAutocheck dataCheck = testAutocheckRepository.findByMemberBankAccount(dto.getMemberBankAccount());
         boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
+        boolean child = dataCheck.getChildBankAccount().equals(dto.getChildBankAccount());
 
-        if (soliPrio) {
+        if (dto.getType().equals(UserType.MEMBER) && member) {
             user.setStatus(StatusType.APPROVED);
-            if (dto.getType().equals(UserType.MEMBER)) {
-                user.setCin(dataCheck.getSolitaireCin());
-            } else if (member && dto.getType().equals(UserType.NOT_MEMBER)) {
-                user.setCin(dataCheck.getMemberCin());
-            }
+            user.setMemberCin(dataCheck.getMemberCin()); // set cin member
+            user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
             repository.save(user);
-            resendOtp(dto.getEmail());
+            String identity = "get"; // identity send registration otp
+            resendOtp(identity, dto.getEmail());
+        } else if (dto.getType().equals(UserType.NOT_MEMBER) && child) {
+            user.setStatus(StatusType.APPROVED);
+            user.setChildCin(dataCheck.getChildCin()); // set child cin
+            user.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
+            user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
+            repository.save(user);
+            String identity = "get"; // identity send registration otp
+            resendOtp(identity, dto.getEmail());
         } else {
             user.setStatus(StatusType.REJECTED);
-            int newRejectCount = user.getCountReject() + 1;
+            int newRejectCount = user.getCountReject() + 1; // increment reject count
             user.setCountReject(newRejectCount);
             repository.save(user);
 
@@ -151,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void generateAndSendOtp(User user) throws MessagingException {
+    public void generateAndSendOtp(String identity, User user) throws MessagingException {
 
         String otpCode = OtpUtil.generateOtp();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(30); // OTP valid for 10 minutes
@@ -160,7 +167,7 @@ public class AuthServiceImpl implements AuthService {
         otpRepository.save(otp);
 
         // Send OTP to user's email
-        emailService.sendOtpMessage(user.getEmail(), "Your OTP Code", user.getName(), otpCode);
+        emailService.sendOtpMessage(identity, user.getEmail(), user.getName(), otpCode);
 
     }
 
@@ -192,7 +199,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void resendOtp(String email) throws MessagingException {
+    public void resendOtp(String identity, String email) throws MessagingException {
         Optional<User> userOptional = repository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -200,7 +207,7 @@ public class AuthServiceImpl implements AuthService {
             otpRepository.invalidateOtpsForUser(user);
 
             // Generate and send new OTP
-            generateAndSendOtp(user);
+            generateAndSendOtp(identity, user);
         } else {
             throw new MessagingException("User not found with email: " + email);
         }

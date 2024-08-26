@@ -1,11 +1,8 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.User;
+import com.bca.byc.model.*;
 import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.UserDetailResponse;
-import com.bca.byc.model.UserSetPasswordRequest;
-import com.bca.byc.model.UserUpdatePasswordRequest;
-import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.response.ResultPageResponse;
 
 import javax.validation.Valid;
@@ -15,6 +12,8 @@ public interface UserService {
 
     boolean existsById(Long userId); // check by id
     User findByEmail(String email); // check by email
+
+    SimpleUserDetailResponse findInfoByEmail(String email);
 
     UserDetailResponse findDataById(Long userId); // for get 1 data
 

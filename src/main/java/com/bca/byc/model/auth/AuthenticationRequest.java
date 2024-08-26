@@ -1,10 +1,9 @@
 package com.bca.byc.model.auth;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
 public class AuthenticationRequest {
     // Getters and Setters
     private String email;

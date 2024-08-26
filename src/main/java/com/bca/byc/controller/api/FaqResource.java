@@ -2,7 +2,9 @@ package com.bca.byc.controller.api;
 
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.FaqModelDTO;
+import com.bca.byc.model.FaqCreateRequest;
+import com.bca.byc.model.FaqDetailResponse;
+import com.bca.byc.model.FaqUpdateRequest;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.FaqService;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -27,6 +30,7 @@ public class FaqResource {
     private FaqService service;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiListResponse> getAll() {
         log.info("GET /api/v1/faq endpoint hit");
         try {
@@ -37,10 +41,11 @@ public class FaqResource {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/faq/{id} endpoint hit");
         try {
-            FaqModelDTO.FaqDetailResponse item = service.findDataById(id);
+            FaqDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiListResponse(true, "Successfully found faq", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
@@ -48,7 +53,8 @@ public class FaqResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute FaqModelDTO.FaqCreateRequest item) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody FaqCreateRequest item) {
         log.info("POST /api/v1/faq endpoint hit");
         try {
             service.saveData(item);
@@ -60,7 +66,8 @@ public class FaqResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute FaqModelDTO.FaqUpdateRequest item) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody FaqUpdateRequest item) {
         log.info("PUT /api/v1/faq/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -71,6 +78,7 @@ public class FaqResource {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
         log.info("DELETE /api/v1/faq/{id} endpoint hit");
         try {

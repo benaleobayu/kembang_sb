@@ -33,27 +33,32 @@ public class User extends AbstractBaseEntity {
     @Column(name = "type", nullable = false, columnDefinition = "varchar(255) default 'member'")
     private UserType type = UserType.MEMBER;
 
-    @Column(name = "solitaire_bank_account", length = 20)
-    private String solitaireBankAccount;
+    @Column(name = "member_type", length = 50)
+    private String memberType;
 
+    // member data
     @Column(name = "member_bank_account", length = 20)
     private String memberBankAccount;
 
-    @Column(name = "cin", length = 20)
-    private String cin;
+    @Column(name = "member_cin", length = 20)
+    private String memberCin;
 
-    @Column(name = "birthdate")
+    @Column(name = "member_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate birthdate;
+    private LocalDate memberBirthdate;
+    // ---
 
-    // parent data
-    @Column(name = "parent_name", length = 50)
-    private String parentName;
+    // child data
+    @Column(name = "child_bank_account", length = 20)
+    private String childBankAccount;
 
-    @Column(name = "parent_birthdate")
+    @Column(name = "child_cin", length = 20)
+    private String childCin;
+
+    @Column(name = "child_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate parentBirthdate;
-    // end parent data
+    private LocalDate childBirthdate;
+    // ---
 
     @Column(name = "education", length = 50)
     private String education;

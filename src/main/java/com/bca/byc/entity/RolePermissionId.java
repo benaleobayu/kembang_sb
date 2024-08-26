@@ -2,11 +2,17 @@ package com.bca.byc.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RolePermissionId implements Serializable {
 
     @Column(name = "role_id")
@@ -15,33 +21,11 @@ public class RolePermissionId implements Serializable {
     @Column(name = "permission_id")
     private Long permissionId;
 
-    public RolePermissionId() {}
 
-    public RolePermissionId(Long roleId, Long permissionId) {
-        this.roleId = roleId;
-        this.permissionId = permissionId;
-    }
-
-    // Getters and Setters
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public Long getPermissionId() {
-        return permissionId;
-    }
-
-    public void setPermissionId(Long permissionId) {
-        this.permissionId = permissionId;
-    }
+    // Constructor, Getters and Setters for all fields
+    // -- using lombok
 
     // hashCode and equals
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

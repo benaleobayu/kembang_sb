@@ -3,7 +3,9 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.FaqDTOConverter;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.FaqModelDTO;
+import com.bca.byc.model.FaqCreateRequest;
+import com.bca.byc.model.FaqDetailResponse;
+import com.bca.byc.model.FaqUpdateRequest;
 import com.bca.byc.repository.FaqRepository;
 import com.bca.byc.service.FaqService;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class FaqServiceImpl implements FaqService {
     private FaqDTOConverter converter;
 
     @Override
-    public FaqModelDTO.FaqDetailResponse findDataById(Long id) throws BadRequestException {
+    public FaqDetailResponse findDataById(Long id) throws BadRequestException {
         Faq data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Faq not found"));
 
@@ -30,7 +32,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public List<FaqModelDTO.FaqDetailResponse> findAllData() {
+    public List<FaqDetailResponse> findAllData() {
         // Get the list
         List<Faq> datas = repository.findAll();
 
@@ -41,7 +43,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void saveData(@Valid FaqModelDTO.FaqCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid FaqCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Faq data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +51,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void updateData(Long id, FaqModelDTO.FaqUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, FaqUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Faq data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Faq ID"));

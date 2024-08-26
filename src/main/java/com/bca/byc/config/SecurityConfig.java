@@ -71,9 +71,9 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
-        // Add JWT request filter before UsernamePasswordAuthenticationFilter
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        // Add JWT filters in the correct order
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

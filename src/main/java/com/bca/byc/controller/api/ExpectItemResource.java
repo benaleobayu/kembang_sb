@@ -47,7 +47,7 @@ public class ExpectItemResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute ExpectItemModelDTO.ExpectItemCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ExpectItemModelDTO.ExpectItemCreateRequest item) {
         log.info("POST /api/v1/expect-item endpoint hit");
         try {
             service.saveData(item);
@@ -59,7 +59,7 @@ public class ExpectItemResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute ExpectItemModelDTO.ExpectItemUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody ExpectItemModelDTO.ExpectItemUpdateRequest item) {
         log.info("PUT /api/v1/expect-item/{id} endpoint hit");
         try {
             service.updateData(id, item);

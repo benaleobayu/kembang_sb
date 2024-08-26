@@ -11,6 +11,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Service
 public class EmailService {
@@ -24,7 +25,7 @@ public class EmailService {
     @Value("${mail.from}")
     private String fromEmail;
 
-    public void sendOtpMessage(String to, String subject, String name, String otp) throws MessagingException {
+    public void sendOtpMessage(String identity, String to, String name, String otp) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                 StandardCharsets.UTF_8.name());
@@ -32,7 +33,18 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("name", name);
         context.setVariable("otp", otp);
-        String html = templateEngine.process("emails/otp", context);
+
+        String template = "emails/otp";
+        String subject = "Registration OTP";
+
+        if (Objects.equals(identity, "resend")) {
+            subject = "Resend OTP";
+            template = "emails/otp-resend";
+        } else if (Objects.equals(identity, "reset")) {
+            subject = "Forgot Password OTP";
+            template = "emails/otp-reset";
+        }
+        String html = templateEngine.process(template, context);
 
         helper.setTo(to);
         helper.setText(html, true);
@@ -58,7 +70,6 @@ public class EmailService {
 
         javaMailSender.send(message);
     }
-
 
 
     public void sendWaitingApproval(String to, String subject, String name) throws MessagingException {

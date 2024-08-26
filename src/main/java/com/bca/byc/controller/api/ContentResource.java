@@ -47,7 +47,7 @@ public class ContentResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute ContentModelDTO.ContentCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ContentModelDTO.ContentCreateRequest item) {
         log.info("POST /api/v1/content endpoint hit");
         try {
             service.saveData(item);
@@ -59,7 +59,7 @@ public class ContentResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute ContentModelDTO.ContentUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody ContentModelDTO.ContentUpdateRequest item) {
         log.info("PUT /api/v1/content/{id} endpoint hit");
         try {
             service.updateData(id, item);

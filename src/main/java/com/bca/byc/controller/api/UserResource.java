@@ -1,25 +1,27 @@
 package com.bca.byc.controller.api;
 
-import com.bca.byc.entity.StatusType;
-import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.SimpleUserDetailResponse;
 import com.bca.byc.model.UserDetailResponse;
-import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.ResultPageResponse;
+import com.bca.byc.security.UserPrincipal;
 import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -72,7 +74,7 @@ public class UserResource {
     }
 
     @PutMapping("/{userId}/update")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") Long userId, @Valid @ModelAttribute UserUpdateRequest dto) {
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") Long userId, @Valid @RequestBody UserUpdateRequest dto) {
         log.info("PUT /api/v1/users/{}/update endpoint hit", userId);
         try {
             userService.updateData(userId, dto);
@@ -82,41 +84,8 @@ public class UserResource {
         }
     }
 
-    @Operation(hidden = true)
-    @PatchMapping("/setpassword")
-    public ResponseEntity<ApiResponse> setPassword(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @ModelAttribute UserSetPasswordRequest dto) {
-        log.info("PATCH /api/v1/users/setpassword endpoint hit. Header: {}", authorizationHeader);
-
-        String token = authorizationHeader.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid token"));
-        }
-
-        String email = jwtUtil.extractEmailFromToken(token);
-        User user = userService.findByEmail(email);
-        try {
-            // if user not found
-            if (user == null) {
-                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found"));
-            }
-            // if user not in status approved
-            if (!user.getStatus().equals(StatusType.VERIFIED)) {
-                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved"));
-            }
-            // if ready condition
-            userService.setNewPassword(email, dto);
-            return ResponseEntity.ok(new ApiResponse(true, "Password set successfully"));
-
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        }
-    }
-
     @PatchMapping("/{userId}/password")
-    public ResponseEntity<ApiResponse> changePassword(@PathVariable("userId") Long userId, @ModelAttribute UserUpdatePasswordRequest dto) {
+    public ResponseEntity<ApiResponse> changePassword(@PathVariable("userId") Long userId, @RequestBody UserUpdatePasswordRequest dto) {
         log.info("PATCH /api/v1/users/{}/password endpoint hit", userId);
         try {
             if (!userService.existsById(userId)) {
@@ -149,4 +118,26 @@ public class UserResource {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<ApiListResponse> getUserInfo() {
+        log.info("GET /api/v1/users/info endpoint hit");
+        log.info("GET /api/v1/users/info endpoint hit");
+
+        // Retrieve the current authentication object
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Extract the email (sub) from the authentication principal
+        String email = (String) authentication.getPrincipal(); // Assuming the principal is the email
+
+        try {
+            // response true
+            return ResponseEntity.ok(new ApiListResponse(true, "User found", userService.findInfoByEmail(email)));
+        } catch (Exception e) {
+            // response error
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+    }
+
+
 }

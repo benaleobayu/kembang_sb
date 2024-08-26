@@ -26,25 +26,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private CustomAdminDetailsService adminDetailsService;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain
-    ) throws ServletException, IOException{
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
         String email = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && request.getRequestURI().startsWith("/api/public/"))  {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && request.getRequestURI().startsWith("/api/admin/")) {
             jwt = authorizationHeader.substring(7);
             email = jwtUtil.extractEmailFromToken(jwt);
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.adminDetailsService.loadUserByUsername(email);
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtUtil.validateAdminToken(jwt)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -57,7 +54,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
-
     }
-
 }

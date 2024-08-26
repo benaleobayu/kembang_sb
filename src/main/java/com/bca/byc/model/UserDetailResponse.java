@@ -3,9 +3,9 @@ package com.bca.byc.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.io.Serial;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -24,6 +24,5 @@ public class UserDetailResponse {
     private String status;
     private String createdAt;
     private String updatedAt;
-
 
 }

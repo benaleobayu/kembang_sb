@@ -30,7 +30,7 @@ public class FaqCategory extends AbstractBaseEntity {
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status;
 
-    @OneToMany(mappedBy = "faqCategory")
+    @OneToMany(mappedBy = "faqCategoryId")
     private List<Faq> faqs;
 
 }

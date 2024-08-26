@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Faq extends AbstractBaseEntity {
 
-    @Column(name = "question", nullable = false, length = 50)
+    @Column(name = "question", nullable = false)
     private String question;
 
     @Column(name = "answer", nullable = false, columnDefinition = "text")
@@ -33,5 +33,5 @@ public class Faq extends AbstractBaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "faq_category_id", nullable = false)
-    private FaqCategory faqCategory;
+    private FaqCategory faqCategoryId;
 }

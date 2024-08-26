@@ -1,7 +1,6 @@
 package com.bca.byc.model.auth;
 
 import com.bca.byc.entity.UserType;
-import com.bca.byc.validation.PhoneNumberValidation;
 import com.bca.byc.validation.UniqueEmail;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -36,11 +35,13 @@ public class RegisterRequest {
     private UserType type;
 
     @Size(max = 20, message = "Bank account number must be less than 20 characters")
-    private String solitaireBankAccount;
-
-    @Size(max = 20, message = "Bank account number must be less than 20 characters")
     private String memberBankAccount;
 
-    private LocalDate birthdate;
+    private LocalDate memberBirthdate;
+
+    @Size(max = 20, message = "Bank account number must be less than 20 characters")
+    private String childBankAccount;
+
+    private LocalDate childBirthdate;
 
 }

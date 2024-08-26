@@ -3,9 +3,7 @@ package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.response.ApiListResponse;
-import com.bca.byc.service.FaqCategoryService;
-import com.bca.byc.service.FaqService;
-import com.bca.byc.service.SettingsService;
+import com.bca.byc.service.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -26,6 +24,10 @@ public class PublicResource {
 
     private final SettingsService settingsService;
     private final FaqCategoryService faqCategoryService;
+    private final MsBusinessCategoryService businessCategoryService;
+    private final MsLocationService locationService;
+    private final ExpectItemService expectItemService;
+    private final ExpectCategoryService expectCategoryService;
 
     // show by identity
     @GetMapping("/setting")
@@ -42,9 +44,53 @@ public class PublicResource {
     // how all faq
     @GetMapping("/faq")
     public ResponseEntity<ApiListResponse> getAllFaqWithCategory() {
-        log.info("GET /api/v1/faq endpoint hit");
+        log.info("GET /api/v1/public/faq endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found Faq Category", faqCategoryService.findAllData()));
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found Faq ", faqCategoryService.findAllData()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+    }
+
+    // business cateogory
+    @GetMapping("/business-category")
+    public ResponseEntity<ApiListResponse> getAllBusinessCategory() {
+        log.info("GET /api/v1/public/business_category endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found business category", businessCategoryService.findByParentIdIsNull()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+    }
+
+    // location
+    @GetMapping("/location")
+    public ResponseEntity<ApiListResponse> getAllLocation() {
+        log.info("GET /api/v1/public/location endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found location", locationService.findAllData()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+    }
+
+    // expect category
+    @GetMapping("/expect-category")
+    public ResponseEntity<ApiListResponse> getAllExpectCategory() {
+        log.info("GET /api/v1/public/expect-category endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found expect category", expectCategoryService.findAllData()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+        }
+    }
+
+    // expect item
+    @GetMapping("/expect-item")
+    public ResponseEntity<ApiListResponse> getAllExpectItem() {
+        log.info("GET /api/v1/public/expect-item endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found expect item", expectItemService.findAllData()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
         }

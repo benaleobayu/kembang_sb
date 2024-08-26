@@ -1,13 +1,19 @@
 package com.bca.byc.model.auth;
 
-public record LoginRequest(String email, String password) {
+import lombok.Getter;
+import lombok.Setter;
 
-    @Override
-    public String toString() {
-        return "LoginRequest{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+@Setter
+@Getter
+public class LoginRequest {
+    private String email;
+    private String password;
+
+    public LoginRequest() {}
+
+    public LoginRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
 }

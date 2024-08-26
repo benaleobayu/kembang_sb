@@ -47,7 +47,7 @@ public class InterestResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @ModelAttribute InterestModelDTO.InterestCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody InterestModelDTO.InterestCreateRequest item) {
         log.info("POST /api/v1/interest endpoint hit");
         try {
             service.saveData(item);
@@ -59,7 +59,7 @@ public class InterestResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @ModelAttribute InterestModelDTO.InterestUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody InterestModelDTO.InterestUpdateRequest item) {
         log.info("PUT /api/v1/interest/{id} endpoint hit");
         try {
             service.updateData(id, item);
