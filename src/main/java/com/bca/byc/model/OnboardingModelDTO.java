@@ -1,20 +1,17 @@
 package com.bca.byc.model;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
 
 public class OnboardingModelDTO {
     @Data
-//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingDetailResponse implements Serializable {
 
         private String name;
@@ -26,25 +23,6 @@ public class OnboardingModelDTO {
     }
 
     @Data
-//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public static class OnboardingCreateRequest {
-
-        // business
-        private List<OnboardingBusinessRequest> businesses;
-        // expect
-        private List<OnboardingExpectCategoryResponse> expectCategories;
-
-        @NotNull(message = "Order is mandatory")
-        private Integer orders;
-
-        @NotNull(message = "Status is mandatory")
-        private Boolean status;
-
-    }
-
-    @Data
-    @AllArgsConstructor
-//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OnboardingUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -62,29 +40,63 @@ public class OnboardingModelDTO {
     }
 
     @Data
+    public static class OnboardingCreateRequest {
+
+        // business
+        private List<OnboardingBusinessRequest> businesses;
+        // expect
+        private List<OnboardingExpectCategoryResponse> expectCategories;
+
+    }
+
+    @Data
     public static class OnboardingBusinessRequest {
+        @NotBlank(message = "Business Name is required")
         private String businessName;
+        @NotBlank(message = "Business Address is required")
         private String businessAddress;
-        private List<OnboardingBusinessCategoryRequest> businessCategories;
-        private List<OnboardingLocationRequest> locations;
+//        @Valid
+//        @NotBlank(message = "Business Category is required")
+//        private List<OnboardingBusinessCategoryRequest> businessCategories;
+//        @Valid
+//        @NotBlank(message = "Business Location is required")
+//        private List<OnboardingLocationRequest> locations;
+        // additional
+        private List<Long> categoryItemIds;
+        private List<Long> locationIds;
     }
 
     @Data
     public static class OnboardingBusinessCategoryRequest {
+        @NotBlank(message = "Business Category is required")
         private Long businessCategoryId;
+        @NotBlank(message = "Business Category Child is required")
         private Long businessCategoryChildId;
     }
 
     @Data
     public static class OnboardingLocationRequest {
+        @NotBlank(message = "Location is required")
         private Long locationId;
     }
 
-
     @Data
     public static class OnboardingExpectCategoryResponse {
+        @NotBlank(message = "Expect Category is required")
         private Long expectCategoryId;
-        private Long expectCategoryItemId;
+//        @NotBlank(message = "Expect Category Item is required")
+//        private Long expectCategoryItemId;
+
+        private String otherExpect;
+//        private String otherExpectItem;
+
+        private Items items;
+
+        @Data
+        public static class Items {
+            private List<Long> ids;
+            private String otherExpectItem;
+        }
     }
 
 }

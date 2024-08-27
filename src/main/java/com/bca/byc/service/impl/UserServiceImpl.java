@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SimpleUserDetailResponse findInfoByEmail(String email) {
+    public User findInfoByEmail(String email) {
         return repository.findInfoByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
     }

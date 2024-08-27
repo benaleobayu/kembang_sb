@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +25,7 @@ public class BusinessCategoryModelDTO {
         private String updatedAt;
 
         private Long parentId;
+
         private Set<BusinessCategoryDetailResponse> children = new HashSet<>();
 
     }

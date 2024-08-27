@@ -4,7 +4,7 @@ import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BusinessCategoryModelDTO;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface MsBusinessCategoryService {

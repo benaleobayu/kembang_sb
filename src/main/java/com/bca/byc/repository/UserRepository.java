@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE u.email = :email")
-    Optional<SimpleUserDetailResponse> findInfoByEmail(@Param("email") String email);
+    Optional<User> findInfoByEmail(@Param("email") String email);
 
     // Custom query to find all users where isSuspended is false and isDeleted is false
     @Query("SELECT u FROM User u WHERE u.isSuspended = false AND u.isDeleted = false AND u.status not in (:status1, :status2)")

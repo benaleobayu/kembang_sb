@@ -1,6 +1,7 @@
 package com.bca.byc.model;
 
 
+import com.bca.byc.entity.StatusType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@AllArgsConstructor
 public class UserDetailResponse {
 
     private Long id;
@@ -25,4 +26,6 @@ public class UserDetailResponse {
     private String createdAt;
     private String updatedAt;
 
+    public UserDetailResponse(String name, String email, StatusType status) {
+    }
 }

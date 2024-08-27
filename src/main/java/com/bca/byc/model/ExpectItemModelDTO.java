@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 
 public class ExpectItemModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectItemDetailResponse implements Serializable {
 
         private Long id;
@@ -26,7 +25,6 @@ public class ExpectItemModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectItemCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -50,7 +48,6 @@ public class ExpectItemModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectItemUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

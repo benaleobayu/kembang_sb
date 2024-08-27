@@ -6,11 +6,13 @@ import com.bca.byc.model.SettingsModelDTO;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.SettingsService;
+import com.bca.byc.service.validator.AgeRangeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,8 @@ import java.net.URI;
 @SecurityRequirement(name = "Authorization")
 public class SettingResource {
 
-    private SettingsService service;
+    private final SettingsService service;
+    private final AgeRangeService ageRangeService;
 
     @Operation(hidden = true)
     @GetMapping
@@ -96,5 +99,36 @@ public class SettingResource {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
         }
+    }
+
+    // other config
+    @PutMapping("/age-range")
+    public ResponseEntity<ApiResponse> updateAgeRange(
+            @RequestParam("min") Integer min,
+            @RequestParam("max") Integer max
+    ){
+        log.info("PUT /v1/settings/age-range endpoint hit");
+        if (min < 0 || max < min) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid age range"));
+        }
+
+        ageRangeService.setMinAge(min);
+        ageRangeService.setMaxAge(max);
+
+        return ResponseEntity.ok(new ApiResponse(true, "Successfully updated age range"));
+    }
+
+    @GetMapping("/age-range")
+    public ResponseEntity<ApiListResponse> getAgeRange() {
+        log.info("GET /v1/settings/age-range endpoint hit");
+        AgeRangeResponse response = new AgeRangeResponse(ageRangeService.getMinAge(), ageRangeService.getMaxAge());
+        return ResponseEntity.ok(new ApiListResponse(true, "Successfully found age range", response));
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class AgeRangeResponse {
+        private Integer min;
+        private Integer max;
     }
 }

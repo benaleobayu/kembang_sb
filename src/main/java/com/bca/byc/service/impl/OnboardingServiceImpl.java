@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,18 +42,18 @@ public class OnboardingServiceImpl implements OnboardingService {
             Business business = new Business();
             business.setName(businessDto.getBusinessName());
             business.setAddress(businessDto.getBusinessAddress());
-            business.setStatus(true);
-            business.setOrders(0);
             business.setUser(user);
             business = businessRepository.save(business);
 
-            // Create Business Categories
-            for (OnboardingModelDTO.OnboardingBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
-                BusinessCategory parentCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Business Category Parent not found"));
+            // Handle Business Categories via categoryItemIds
+            for (Long childCategoryId : businessDto.getCategoryItemIds()) {
+                BusinessCategory childCategory = businessCategoryRepository.findById(childCategoryId)
+                        .orElseThrow(() -> new BadRequestException("Business Category Child not found"));
 
-                BusinessCategory childCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryChildId())
-                        .orElseThrow(() -> new RuntimeException("Business Category Child not found"));
+                BusinessCategory parentCategory = childCategory.getParentId();
+                if (parentCategory == null) {
+                    throw new BadRequestException("Parent Category not found for Child ID: " + childCategoryId);
+                }
 
                 BusinessHasCategory businessHasCategory = new BusinessHasCategory();
                 businessHasCategory.setBusiness(business);
@@ -66,39 +66,47 @@ public class OnboardingServiceImpl implements OnboardingService {
                 businessHasCategoryRepository.save(businessHasCategory);
             }
 
-            // Handle Business Locations
+            // Handle Business Locations via locationIds
             Set<Location> locations = new HashSet<>();
-            for (OnboardingModelDTO.OnboardingLocationRequest locationDto : businessDto.getLocations()) {
-                Location location = locationRepository.findById(locationDto.getLocationId())
+            for (Long locationId : businessDto.getLocationIds()) {
+                Location location = locationRepository.findById(locationId)
                         .orElseThrow(() -> new BadRequestException("Location not found"));
                 locations.add(location);
             }
             business.setLocations(locations);
         }
-        // Create Expect
+        // Create Expect Categories
         for (OnboardingModelDTO.OnboardingExpectCategoryResponse expectDto : dto.getExpectCategories()) {
             ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
                     .orElseThrow(() -> new BadRequestException("Expect Category not found"));
 
-            // Fetch the associated ExpectItem, if required
-            ExpectItem expectItem = expectItemRepository.findById(expectDto.getExpectCategoryItemId())
-                    .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+            if (expectDto.getItems() != null && !expectDto.getItems().getIds().isEmpty()) {
+                for (Long expectItemId : expectDto.getItems().getIds()) {
+                    ExpectItem expectItem = expectItemRepository.findById(expectItemId)
+                            .orElseThrow(() -> new BadRequestException("Expect Item not found"));
 
-            // Create and set the UserHasExpectId
-            UserHasExpectId userHasExpectId = new UserHasExpectId();
-            userHasExpectId.setUserId(user.getId());
-            userHasExpectId.setExpectCategoryId(expectCategory.getId());
-            userHasExpectId.setExpectItemId(expectItem.getId());
+                    UserHasExpectId userHasExpectId = new UserHasExpectId();
+                    userHasExpectId.setUserId(user.getId());
+                    userHasExpectId.setExpectCategoryId(expectCategory.getId());
+                    userHasExpectId.setExpectItemId(expectItem.getId());
 
-            // Create UserHasExpect and associate it with User, ExpectCategory, and ExpectItem
-            UserHasExpect userHasExpect = new UserHasExpect();
-            userHasExpect.setId(userHasExpectId);
-            userHasExpect.setUser(user);
-            userHasExpect.setExpectCategory(expectCategory);
-            userHasExpect.setExpectItem(expectItem);
+                    UserHasExpect userHasExpect = new UserHasExpect();
+                    userHasExpect.setId(userHasExpectId);
+                    userHasExpect.setUser(user);
+                    userHasExpect.setExpectCategory(expectCategory);
+                    userHasExpect.setExpectItem(expectItem);
+                    userHasExpect.setOtherExpect(expectDto.getOtherExpect());
+                    userHasExpect.setOtherExpectItem(expectDto.getItems().getOtherExpectItem());
 
-            // Save UserHasExpect
-            userHasExpectRepository.save(userHasExpect);
+                    userHasExpectRepository.save(userHasExpect);
+                }
+            } else if (expectDto.getExpectCategoryId() == 99) {
+                UserHasExpect userHasExpect = new UserHasExpect();
+                userHasExpect.setUser(user);
+                userHasExpect.setExpectCategory(expectCategory);
+                userHasExpect.setOtherExpect(expectDto.getOtherExpect());
+                userHasExpectRepository.save(userHasExpect);
+            }
         }
 
         user.setStatus(StatusType.ACTIVATED);

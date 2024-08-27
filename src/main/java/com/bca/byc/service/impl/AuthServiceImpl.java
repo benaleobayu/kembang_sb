@@ -11,6 +11,7 @@ import com.bca.byc.repository.*;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,7 +66,9 @@ public class AuthServiceImpl implements AuthService {
             user.setName(dto.getName());
             user.setType(dto.getType());
             user.setMemberBankAccount(dto.getMemberBankAccount());
+            user.setMemberBirthdate(dto.getMemberBirthdate());
             user.setChildBankAccount(dto.getChildBankAccount());
+            user.setChildBirthdate(dto.getChildBirthdate());
             user.setPhone(dto.getPhone());
         }
 
@@ -101,60 +104,6 @@ public class AuthServiceImpl implements AuthService {
                 throw new BadRequestException("Your account is rejected. Please contact admin.");
             }
         }
-    }
-
-    @Override
-    @Transactional
-    public void saveUserWithRelations(AuthRegisterRequest dto) throws Exception {
-        // Create User
-        User user = converter.convertToCreateGroupRequest(dto);
-        user = repository.save(user);
-
-        // Create Businesses
-        for (OnboardingModelDTO.OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
-            Business business = new Business();
-            business.setName(businessDto.getBusinessName());
-            business.setAddress(businessDto.getBusinessAddress());
-            business.setUser(user);
-            business = businessRepository.save(business);
-
-            // Create Business Categories
-            for (OnboardingModelDTO.OnboardingBusinessCategoryRequest categoryDto : businessDto.getBusinessCategories()) {
-                BusinessCategory parentCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Business Category Parent not found"));
-
-                BusinessCategory childCategory = businessCategoryRepository.findById(categoryDto.getBusinessCategoryChildId())
-                        .orElseThrow(() -> new RuntimeException("Business Category Child not found"));
-
-                BusinessHasCategory businessHasCategory = new BusinessHasCategory();
-                businessHasCategory.setBusiness(business);
-                businessHasCategory.setBusinessCategoryParent(parentCategory);
-                businessHasCategory.setBusinessCategoryChild(childCategory);
-                businessHasCategory.setCreatedAt(LocalDateTime.now());
-                businessHasCategory.setUpdatedAt(LocalDateTime.now());
-
-                // Save the BusinessHasCategory entity
-                businessHasCategoryRepository.save(businessHasCategory);
-//                businessCategoryRepository.save(businessHasCategory);
-
-            }
-
-        }
-
-        // Create Feedbacks
-        for (RegisterUserFeedbackRequest feedbackDto : dto.getFeedbackCategories()) {
-            FeedbackCategory feedbackCategory = feedbackCategoryRepository.findById(feedbackDto.getFeedbackCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Feedback Category not found"));
-
-            UserHasFeedback userHasFeedback = new UserHasFeedback();
-            userHasFeedback.setUser(user);
-            userHasFeedback.setFeedbackCategory(feedbackCategory);
-            userHasFeedback.setQuote(feedbackDto.getQuote());
-            userHasFeedbackRepository.save(userHasFeedback);
-        }
-
-        // send waiting approval email
-        sendWaitingApproval(user);
     }
 
     @Override

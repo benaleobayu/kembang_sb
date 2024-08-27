@@ -1,5 +1,4 @@
 package com.bca.byc.validation;
-
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;
@@ -7,13 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = PhoneNumberValidator.class)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PhoneNumberValidation {
-    String message() default "Invalid phone number";
-
+@Constraint(validatedBy = AgeRangeValidator.class)
+public @interface AgeRange {
+    String message() default "Age must be between {min} and {max} years";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
 }

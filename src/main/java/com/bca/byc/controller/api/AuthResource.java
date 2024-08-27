@@ -1,16 +1,14 @@
 package com.bca.byc.controller.api;
 
+import com.bca.byc.entity.LogDevice;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.model.auth.*;
+import com.bca.byc.repository.LogDeviceRespository;
 import com.bca.byc.repository.UserRepository;
-import com.bca.byc.response.ApiListResponse;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.UserApiResponse;
-import com.bca.byc.response.dataAccess;
-import com.bca.byc.security.UserPrincipal;
+import com.bca.byc.response.*;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.UserService;
 import com.bca.byc.service.auth.CustomAdminDetailsService;
@@ -18,19 +16,17 @@ import com.bca.byc.service.auth.UserDetailsServiceImpl;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -48,6 +44,7 @@ public class AuthResource {
     private CustomAdminDetailsService adminDetailsService;
 
     private UserRepository repository;
+    private LogDeviceRespository logDeviceRespository;
 
     private JwtUtil jwtUtil;
 
@@ -71,25 +68,6 @@ public class AuthResource {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
         }
     }
-
-    @PostMapping("/auth-register")
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody AuthRegisterRequest dto) {
-        log.debug("Register request received: {}", dto.getEmail());
-
-        if (repository.existsByEmail(dto.getEmail())) {
-            log.error("User registration failed: Email {} already exists", dto.getEmail());
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
-        }
-        try {
-            authService.saveUserWithRelations(dto);
-            log.info("User registered successfully: {}", dto.getEmail());
-            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. You are in the waiting status for approval. please check the email."));
-        } catch (Exception e) {
-            log.error("User registration failed for email {}: {}", dto.getEmail(), e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "User registration failed: " + e.getMessage()));
-        }
-    }
-
 
     @PostMapping("/validate-otp")
     public ResponseEntity<ApiListResponse> validateOtp(@RequestBody OtpModelDTO.OtpRequest otpRequest) {
@@ -118,24 +96,35 @@ public class AuthResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserApiResponse> createAuthenticationToken(
-            @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiListResponse> createAuthenticationToken(
+            @RequestParam(name = "deviceId") String deviceId,
+            @RequestParam(name = "version") String version,
+            @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new UserApiResponse(false, "Incorrect email or password", null));
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, "Incorrect email or password" + e.getMessage(), null));
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         final long expirationTime = jwtUtil.getExpirationTime();
 
-        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime);
+        // insert log
+        User user = userService.findByEmail(loginRequest.getEmail());
+        LogDevice logDevice = new LogDevice();
+        logDevice.setUser(user);
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(getClientIp(request));
+        logDeviceRespository.save(logDevice);
 
-        return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", data));
+        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime , user.getStatus().toString());
+
+        return ResponseEntity.ok(new ApiListResponse(true, "Authentication successful", data));
     }
 
     @SecurityRequirement(name = "Authorization")
@@ -184,42 +173,6 @@ public class AuthResource {
         }
     }
 
-//    @SecurityRequirement(name = "Authorization")
-//    @PatchMapping("/setpassword")
-//    public ResponseEntity<ApiListResponse> setPassword(
-//            @RequestBody UserSetPasswordRequest dto) {
-//        log.info("PATCH /api/v1/users/setpassword endpoint hit");
-//
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String email;
-//
-//        if (principal instanceof UserPrincipal) {
-//            email = ((UserPrincipal) principal).getUsername();
-//        } else if (principal instanceof String) {
-//            email = (String) principal;
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body(new ApiListResponse(false, "Unauthorized: Principal is not of expected type.", null));
-//        }
-
-//        try {
-//            // Set the new password
-//            userService.setNewPassword(email, dto);
-//            log.info("Password set successfully for user: {}", email);
-//
-//            Map<String, String> data = new HashMap<>();
-//            // get status of user
-//            data.put("status", (String) userService.findInfoByEmail(email).getStatus());
-//
-//            return ResponseEntity.ok(new ApiListResponse(true, "Password set successfully", data));
-//
-//        } catch (BadRequestException e) {
-//            log.error("BadRequestException: {}", e.getMessage());
-//            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
-//        }
-//    }
-
-
     // admin
     @PostMapping("/cms-login")
     public ResponseEntity<UserApiResponse> authCMS(@RequestBody AuthenticationRequest authenticationRequest) {
@@ -240,4 +193,16 @@ public class AuthResource {
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", data));
     }
 
+    private String getClientIp(HttpServletRequest request) {
+        String remoteAddr = "";
+
+        if (request != null) {
+            remoteAddr = request.getHeader("X-FORWARDED-FOR");
+            if (remoteAddr == null || remoteAddr.isEmpty()) {
+                remoteAddr = request.getRemoteAddr();
+            }
+        }
+
+        return remoteAddr;
+    }
 }

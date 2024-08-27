@@ -50,7 +50,7 @@ public class Business extends AbstractBaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "business", cascade = CascadeType.MERGE, orphanRemoval = true)
-    private List<BusinessHasCategory> businessCategories = new ArrayList<>();
+    private Set<BusinessHasCategory> businessCategories = new HashSet<>();
 
     // make manytomany with location
     @ManyToMany

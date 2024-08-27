@@ -30,4 +30,10 @@ public class UserHasExpect {
     @JoinColumn(name = "expect_item_id")
     private ExpectItem expectItem;
 
+    @Column(name = "other_expect")
+    private String otherExpect;
+
+    @Column(name = "other_expect_item")
+    private String otherExpectItem;
+
 }

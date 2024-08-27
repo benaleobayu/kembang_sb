@@ -5,7 +5,7 @@ import com.bca.byc.model.test.AutocheckCreateRequest;
 import com.bca.byc.model.test.AutocheckDetailResponse;
 import com.bca.byc.model.test.AutocheckUpdateRequest;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface TestAutocheckService {

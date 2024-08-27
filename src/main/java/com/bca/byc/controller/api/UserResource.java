@@ -1,5 +1,7 @@
 package com.bca.byc.controller.api;
 
+import com.bca.byc.convert.UserDTOConverter;
+import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.SimpleUserDetailResponse;
 import com.bca.byc.model.UserDetailResponse;
@@ -23,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,6 +38,8 @@ public class UserResource {
     private final UserRepository repository;
 
     private final UserService userService;
+
+    private UserDTOConverter userDTOConverter;
 
     private final JwtUtil jwtUtil;
 
@@ -122,21 +126,35 @@ public class UserResource {
     @GetMapping("/info")
     public ResponseEntity<ApiListResponse> getUserInfo() {
         log.info("GET /api/v1/users/info endpoint hit");
-        log.info("GET /api/v1/users/info endpoint hit");
 
-        // Retrieve the current authentication object
+        //  current authentication object
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Extract the email (sub) from the authentication principal
-        String email = (String) authentication.getPrincipal(); // Assuming the principal is the email
+        // Cast the principal to UserPrincipal to extract the email
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        String email = userPrincipal.getUsername(); // Assuming your UserPrincipal has a getEmail() method
 
         try {
-            // response true
-            return ResponseEntity.ok(new ApiListResponse(true, "User found", userService.findInfoByEmail(email)));
+            // Fetch the user entity
+            User user = userService.findInfoByEmail(email);
+
+            // Map the User entity to SimpleUserDetailResponse
+            SimpleUserDetailResponse userDetailResponse = mapToSimpleUserDetailResponse(user);
+
+            // Return the response with the mapped user details
+            return ResponseEntity.ok(new ApiListResponse(true, "User found",userDetailResponse) );
         } catch (Exception e) {
             // response error
             return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
         }
+    }
+
+    public SimpleUserDetailResponse mapToSimpleUserDetailResponse(User user) {
+        return new SimpleUserDetailResponse(
+                user.getName(),
+                user.getEmail(),
+                user.getStatus()
+        );
     }
 
 

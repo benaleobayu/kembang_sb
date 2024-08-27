@@ -1,19 +1,23 @@
 package com.bca.byc.model;
 
 
+import com.bca.byc.entity.ExpectItem;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class ExpectCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectCategoryDetailResponse implements Serializable {
 
         private Long id;
@@ -23,11 +27,13 @@ public class ExpectCategoryModelDTO {
         private Boolean status;
         private String createdAt;
         private String updatedAt;
+
+        private List<ExpectItemModelDTO.ExpectItemDetailResponse> expectItems = new ArrayList<>();
+
+
     }
 
     @Data
-    @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -46,8 +52,6 @@ public class ExpectCategoryModelDTO {
     }
 
     @Data
-    @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ExpectCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

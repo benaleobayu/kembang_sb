@@ -1,7 +1,7 @@
 package com.bca.byc.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberValidation, String> {
 

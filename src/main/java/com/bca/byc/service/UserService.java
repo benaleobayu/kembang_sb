@@ -5,7 +5,7 @@ import com.bca.byc.model.*;
 import com.bca.byc.model.auth.AuthRegisterRequest;
 import com.bca.byc.response.ResultPageResponse;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface UserService {
@@ -13,7 +13,7 @@ public interface UserService {
     boolean existsById(Long userId); // check by id
     User findByEmail(String email); // check by email
 
-    SimpleUserDetailResponse findInfoByEmail(String email);
+    User findInfoByEmail(String email);
 
     UserDetailResponse findDataById(Long userId); // for get 1 data
 

@@ -1,6 +1,6 @@
 package com.bca.byc.service;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.bca.byc.entity.Admin;
 import com.bca.byc.exception.BadRequestException;

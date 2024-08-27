@@ -5,7 +5,7 @@ import com.bca.byc.model.FaqCreateRequest;
 import com.bca.byc.model.FaqDetailResponse;
 import com.bca.byc.model.FaqUpdateRequest;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface FaqService {

@@ -1,19 +1,14 @@
 package com.bca.byc.model.auth;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.bca.byc.entity.LogDevice;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+@Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LoginRequest {
     private String email;
     private String password;
-
-    public LoginRequest() {}
-
-    public LoginRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
 }

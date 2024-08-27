@@ -85,15 +85,4 @@ public class PublicResource {
         }
     }
 
-    // expect item
-    @GetMapping("/expect-item")
-    public ResponseEntity<ApiListResponse> getAllExpectItem() {
-        log.info("GET /api/v1/public/expect-item endpoint hit");
-        try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found expect item", expectItemService.findAllData()));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
-        }
-    }
-
 }

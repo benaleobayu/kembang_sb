@@ -3,7 +3,7 @@ package com.bca.byc.service;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.InterestModelDTO;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface InterestService {
