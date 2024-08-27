@@ -3,7 +3,6 @@ package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.SettingsModelDTO;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.SettingsService;
 import com.bca.byc.service.validator.AgeRangeService;
@@ -32,24 +31,24 @@ public class SettingResource {
 
     @Operation(hidden = true)
     @GetMapping
-    public ResponseEntity<ApiListResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAll() {
         log.info("GET /v1/settings endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found settings", service.findAllData()));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found settings", service.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
     @Operation(hidden = true)
     @GetMapping("{id}")
-    public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /v1/settings/{id} endpoint hit");
         try {
             SettingsModelDTO.SettingsDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found settings", item));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found settings", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
@@ -92,12 +91,12 @@ public class SettingResource {
 
     // show by identity
     @GetMapping("/search")
-    public ResponseEntity<ApiListResponse> showTnc(@RequestParam("identity") String identity) {
+    public ResponseEntity<ApiResponse> showTnc(@RequestParam("identity") String identity) {
         log.info("GET /v1/settings/search?identity={} endpoint hit", identity);
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found settings", service.showByIdentity(identity)));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found settings", service.showByIdentity(identity)));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
@@ -119,10 +118,10 @@ public class SettingResource {
     }
 
     @GetMapping("/age-range")
-    public ResponseEntity<ApiListResponse> getAgeRange() {
+    public ResponseEntity<ApiResponse> getAgeRange() {
         log.info("GET /v1/settings/age-range endpoint hit");
         AgeRangeResponse response = new AgeRangeResponse(ageRangeService.getMinAge(), ageRangeService.getMaxAge());
-        return ResponseEntity.ok(new ApiListResponse(true, "Successfully found age range", response));
+        return ResponseEntity.ok(new ApiResponse(true, "Successfully found age range", response));
     }
 
     @Data

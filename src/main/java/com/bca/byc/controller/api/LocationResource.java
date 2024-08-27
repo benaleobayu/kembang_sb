@@ -2,7 +2,6 @@ package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.LocationModelDTO;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.MsLocationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,23 +25,23 @@ public class LocationResource {
     private MsLocationService service;
 
     @GetMapping
-    public ResponseEntity<ApiListResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAll() {
         log.info("GET /api/v1/location endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found location", service.findAllData()));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found location", service.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/location/{id} endpoint hit");
         try {
             LocationModelDTO.LocationDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found location", item));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found location", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 

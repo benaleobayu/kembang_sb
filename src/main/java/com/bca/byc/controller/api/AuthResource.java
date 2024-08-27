@@ -70,16 +70,16 @@ public class AuthResource {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<ApiListResponse> validateOtp(@RequestBody OtpModelDTO.OtpRequest otpRequest) {
+    public ResponseEntity<ApiResponse> validateOtp(@RequestBody OtpModelDTO.OtpRequest otpRequest) {
         boolean isValid = authService.validateOtp(otpRequest.getEmail(), otpRequest.getOtp());
         User user = userService.findByEmail(otpRequest.getEmail());
         if (isValid) {
             String token = jwtUtil.generateTokenByEmail(otpRequest.getEmail());
-            return ResponseEntity.ok(new ApiListResponse(true, "OTP validated successfully.", token));
+            return ResponseEntity.ok(new ApiResponse(true, "OTP validated successfully.", token));
         } else if (!user.getStatus().equals(StatusType.APPROVED)) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, "User not approved.", null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved.", null));
         } else {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, "Invalid OTP.", null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid OTP.", null));
         }
     }
 
@@ -96,7 +96,7 @@ public class AuthResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiListResponse> createAuthenticationToken(
+    public ResponseEntity<ApiResponse> createAuthenticationToken(
             @RequestParam(name = "deviceId") String deviceId,
             @RequestParam(name = "version") String version,
             @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
@@ -106,7 +106,7 @@ public class AuthResource {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, "Incorrect email or password" + e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Incorrect email or password" + e.getMessage(), null));
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
@@ -122,9 +122,9 @@ public class AuthResource {
         logDevice.setIpAddress(getClientIp(request));
         logDeviceRespository.save(logDevice);
 
-        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime , user.getStatus().toString());
+        DataAccess data = new DataAccess(jwt, "Bearer", expirationTime , user.getStatus().toString());
 
-        return ResponseEntity.ok(new ApiListResponse(true, "Authentication successful", data));
+        return ResponseEntity.ok(new ApiResponse(true, "Authentication successful", data));
     }
 
     @SecurityRequirement(name = "Authorization")
@@ -188,7 +188,7 @@ public class AuthResource {
         final String jwt = jwtUtil.generateTokenAdmin(userDetails);
         final long expirationTime = jwtUtil.getExpirationTime(); // Implement this method in JwtUtil to get the expiration time of the token.
 
-        dataAccess data = new dataAccess(jwt, "Bearer", expirationTime);
+        DataAccess data = new DataAccess(jwt, "Bearer", expirationTime);
 
         return ResponseEntity.ok(new UserApiResponse(true, "Authentication successful", data));
     }

@@ -8,7 +8,7 @@ import lombok.Data;
 public class UserApiResponse {
     private boolean success;
     private String message;
-    private dataAccess data;
+    private DataAccess data;
 
 }
 

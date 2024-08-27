@@ -8,7 +8,6 @@ import com.bca.byc.model.UserDetailResponse;
 import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.ResultPageResponse;
 import com.bca.byc.security.UserPrincipal;
@@ -18,12 +17,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 
@@ -44,36 +41,36 @@ public class UserResource {
     private final JwtUtil jwtUtil;
 
     @GetMapping
-    public ResponseEntity<ApiListResponse> getUsers() {
+    public ResponseEntity<ApiResponse> getUsers() {
         log.info("GET /api/v1/users endpoint hit");
 
         try {
             // response true
-            return ResponseEntity.ok(new ApiListResponse(true, "Users found", userService.findAllUsers()));
+            return ResponseEntity.ok(new ApiResponse(true, "Users found", userService.findAllUsers()));
         } catch (Exception e) {
             // response error
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
 
     }
 
     @GetMapping("/{userId}/details")
-    public ResponseEntity<ApiListResponse> getUsersById(@PathVariable("userId") Long userId) {
+    public ResponseEntity<ApiResponse> getUsersById(@PathVariable("userId") Long userId) {
         log.info("GET /api/v1/users/{} endpoint hit", userId);
 
         try {
             if (!userService.existsById(userId)) {
                 // response invalid
-                return ResponseEntity.badRequest().body(new ApiListResponse(false, "User not found", null));
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found", null));
             } else {
                 // define
                 UserDetailResponse user = userService.findDataById(userId);
                 // response true
-                return ResponseEntity.ok(new ApiListResponse(true, "User found", user));
+                return ResponseEntity.ok(new ApiResponse(true, "User found", user));
             }
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
@@ -124,7 +121,7 @@ public class UserResource {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<ApiListResponse> getUserInfo() {
+    public ResponseEntity<ApiResponse> getUserInfo() {
         log.info("GET /api/v1/users/info endpoint hit");
 
         //  current authentication object
@@ -142,10 +139,10 @@ public class UserResource {
             SimpleUserDetailResponse userDetailResponse = mapToSimpleUserDetailResponse(user);
 
             // Return the response with the mapped user details
-            return ResponseEntity.ok(new ApiListResponse(true, "User found",userDetailResponse) );
+            return ResponseEntity.ok(new ApiResponse(true, "User found",userDetailResponse) );
         } catch (Exception e) {
             // response error
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
