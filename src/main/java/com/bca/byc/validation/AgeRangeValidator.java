@@ -1,29 +1,41 @@
 package com.bca.byc.validation;
-import com.bca.byc.service.validator.AgeRangeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import com.bca.byc.entity.Settings;
+import com.bca.byc.repository.SettingsRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.time.LocalDate;
 import java.time.Period;
 
-@Component
 public class AgeRangeValidator implements ConstraintValidator<AgeRange, LocalDate> {
 
-    private final AgeRangeService ageRangeService;
+//    @Autowired
+//    private SettingsRepository repository;
 
-    @Autowired
-    public AgeRangeValidator(AgeRangeService ageRangeService) {
-        this.ageRangeService = ageRangeService;
+    private int minAge = 18;
+    private int maxAge = 35;
+
+    @Override
+    public void initialize(AgeRange constraintAnnotation) {
+        this.minAge = 18;
+        this.maxAge = 35;
     }
+//    @Override
+//    public void initialize(AgeRange constraintAnnotation) {
+//        this.minAge = repository.findByIdentity("MIN_AGE").map(Settings::getValue).orElse(18);
+//        this.maxAge = repository.findByIdentity("MAX_AGE").map(Settings::getValue).orElse(35);
+//    }
 
     @Override
     public boolean isValid(LocalDate birthdate, ConstraintValidatorContext context) {
         if (birthdate == null) {
-            return true; // Return true if birthdate is null, as it is not the responsibility of this validator to handle null values
+            return true;
         }
 
-        int age = Period.between(birthdate, LocalDate.now()).getYears();
-        return age >= 18 && age <= 35;
+        LocalDate today = LocalDate.now();
+        int age = Period.between(birthdate, today).getYears();
+        return age >= minAge && age <= maxAge;
     }
 }
