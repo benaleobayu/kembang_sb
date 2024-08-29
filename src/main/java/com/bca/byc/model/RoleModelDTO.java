@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 
 public class RoleModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class RoleDetailResponse {
 
         private Long id;
@@ -24,7 +24,7 @@ public class RoleModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class RoleCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -44,7 +44,7 @@ public class RoleModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class RoleUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

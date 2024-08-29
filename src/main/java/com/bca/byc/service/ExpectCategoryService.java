@@ -1,21 +1,22 @@
 package com.bca.byc.service;
 
-import jakarta.validation.Valid;
-
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ExpectCategoryModelDTO;
+import com.bca.byc.model.ExpectCategoryCreateRequest;
+import com.bca.byc.model.ExpectCategoryDetailResponse;
+import com.bca.byc.model.ExpectCategoryUpdateRequest;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
 public interface ExpectCategoryService {
 
-    ExpectCategoryModelDTO.ExpectCategoryDetailResponse findDataById(Long id) throws BadRequestException;
+    ExpectCategoryDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<ExpectCategoryModelDTO.ExpectCategoryDetailResponse> findAllData();
+    List<ExpectCategoryDetailResponse> findAllData();
 
-    void saveData(@Valid ExpectCategoryModelDTO.ExpectCategoryCreateRequest dto) throws BadRequestException;
+    void saveData(@Valid ExpectCategoryCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid ExpectCategoryModelDTO.ExpectCategoryUpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid ExpectCategoryUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

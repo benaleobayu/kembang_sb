@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 
 public class LocationModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class LocationDetailResponse {
 
         private Long id;
@@ -25,7 +25,7 @@ public class LocationModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class LocationCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -47,7 +47,7 @@ public class LocationModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class LocationUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

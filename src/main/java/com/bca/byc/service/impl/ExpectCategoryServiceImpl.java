@@ -3,7 +3,9 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.ExpectCategoryDTOConverter;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ExpectCategoryModelDTO;
+import com.bca.byc.model.ExpectCategoryCreateRequest;
+import com.bca.byc.model.ExpectCategoryDetailResponse;
+import com.bca.byc.model.ExpectCategoryUpdateRequest;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.service.ExpectCategoryService;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     private ExpectCategoryDTOConverter converter;
 
     @Override
-    public ExpectCategoryModelDTO.ExpectCategoryDetailResponse findDataById(Long id) throws BadRequestException {
+    public ExpectCategoryDetailResponse findDataById(Long id) throws BadRequestException {
         ExpectCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("ExpectCategory not found"));
 
@@ -30,7 +32,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
-    public List<ExpectCategoryModelDTO.ExpectCategoryDetailResponse> findAllData() {
+    public List<ExpectCategoryDetailResponse> findAllData() {
         // Get the list
         List<ExpectCategory> datas = repository.findAll();
 
@@ -41,7 +43,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
-    public void saveData(@Valid ExpectCategoryModelDTO.ExpectCategoryCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid ExpectCategoryCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         ExpectCategory data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +51,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
-    public void updateData(Long id, ExpectCategoryModelDTO.ExpectCategoryUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, ExpectCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
         ExpectCategory data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID ExpectCategory ID"));

@@ -1,9 +1,9 @@
 package com.bca.byc.controller.cms;
 
+import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.auth.AuthRegisterRequest;
 import com.bca.byc.model.UserDetailResponse;
 import com.bca.byc.model.UserUpdateRequest;
-import com.bca.byc.model.AdminModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,7 +73,7 @@ public class UserActiveController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminModelDTO.AdminCreateRequest dto = new AdminModelDTO.AdminCreateRequest();
+        AdminCreateRequest dto = new AdminCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");

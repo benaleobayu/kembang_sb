@@ -1,16 +1,15 @@
 package com.bca.byc.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -25,6 +24,9 @@ public class ExpectCategory extends AbstractBaseEntity {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    @Column(name = "is_other", columnDefinition = "boolean default false")
+    private Boolean isOther;
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;

@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 
 public class InterestCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestCategoryDetailResponse {
 
         private Long id;
@@ -24,7 +24,7 @@ public class InterestCategoryModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -44,7 +44,7 @@ public class InterestCategoryModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

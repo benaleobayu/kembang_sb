@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class BusinessCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessCategoryDetailResponse {
 
         private Long id;
@@ -31,7 +31,7 @@ public class BusinessCategoryModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -54,7 +54,7 @@ public class BusinessCategoryModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

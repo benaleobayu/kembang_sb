@@ -1,6 +1,5 @@
 package com.bca.byc.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +21,9 @@ public class ExpectItem extends AbstractBaseEntity {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    @Column(name = "is_other", columnDefinition = "boolean default false")
+    private Boolean isOther;
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;

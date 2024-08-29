@@ -3,7 +3,9 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.AdminDTOConverter;
 import com.bca.byc.entity.Admin;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminModelDTO;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.service.AdminService;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class AdminServiceImpl implements AdminService {
     private AdminDTOConverter converter;
 
     @Override
-    public AdminModelDTO.AdminDetailResponse findDataById(Long id) throws BadRequestException {
+    public AdminDetailResponse findDataById(Long id) throws BadRequestException {
         Admin data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
 
@@ -30,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<AdminModelDTO.AdminDetailResponse> findAllData() {
+    public List<AdminDetailResponse> findAllData() {
         // Get the list
         List<Admin> datas = repository.findAll();
 
@@ -41,7 +43,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void saveData(@Valid AdminModelDTO.AdminCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid AdminCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Admin data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updateData(Long id, AdminModelDTO.AdminUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, AdminUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Admin data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Admin ID"));

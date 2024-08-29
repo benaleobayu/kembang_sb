@@ -1,7 +1,9 @@
 package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ExpectCategoryModelDTO;
+import com.bca.byc.model.ExpectCategoryCreateRequest;
+import com.bca.byc.model.ExpectCategoryDetailResponse;
+import com.bca.byc.model.ExpectCategoryUpdateRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ExpectCategoryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,7 @@ public class ExpectCategoryResource {
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/expect-category/{id} endpoint hit");
         try {
-            ExpectCategoryModelDTO.ExpectCategoryDetailResponse item = service.findDataById(id);
+            ExpectCategoryDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found expect category", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
@@ -46,7 +48,7 @@ public class ExpectCategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ExpectCategoryModelDTO.ExpectCategoryCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ExpectCategoryCreateRequest item) {
         log.info("POST /api/v1/expect-category endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +60,7 @@ public class ExpectCategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody ExpectCategoryModelDTO.ExpectCategoryUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody ExpectCategoryUpdateRequest item) {
         log.info("PUT /api/v1/expect-category/{id} endpoint hit");
         try {
             service.updateData(id, item);

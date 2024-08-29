@@ -12,7 +12,7 @@ import java.util.List;
 public class BusinessModelDTO {
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessDetailResponse {
 
         private Long id;
@@ -45,7 +45,7 @@ public class BusinessModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessCreateRequest {
 
         @NotBlank(message = "user_id is required")
@@ -78,7 +78,7 @@ public class BusinessModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class BusinessUpdateRequest {
 
         @NotBlank(message = "Name is required")

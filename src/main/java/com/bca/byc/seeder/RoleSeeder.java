@@ -33,6 +33,10 @@ public class RoleSeeder implements CommandLineRunner {
 //         actionsByResource.put("admins", Arrays.asList("view", "create", "update", "delete"));
 //         actionsByResource.put("users", Arrays.asList("view", "create", "update", "delete"));
 //         actionsByResource.put("roles", Arrays.asList("view", "create", "update", "delete"));
+//         actionsByResource.put("expect_category", Arrays.asList("view", "create", "update", "delete"));
+//         actionsByResource.put("expect_item", Arrays.asList("view", "create", "update", "delete"));
+//         actionsByResource.put("faq_category", Arrays.asList("view", "create", "update", "delete"));
+//         actionsByResource.put("faq_category", Arrays.asList("view", "create", "update", "delete"));
 //         actionsByResource.put("activities", Arrays.asList("viewAny", "view"));
 //
 //         List<Permission> allPermissions = new ArrayList<>();

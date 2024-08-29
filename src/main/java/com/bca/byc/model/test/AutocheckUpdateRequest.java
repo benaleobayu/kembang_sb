@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+
 public class AutocheckUpdateRequest {
 
     private Long id;

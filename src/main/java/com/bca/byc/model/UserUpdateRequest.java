@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 
 @AllArgsConstructor
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+
 public class UserUpdateRequest {
 
     private String parentName;

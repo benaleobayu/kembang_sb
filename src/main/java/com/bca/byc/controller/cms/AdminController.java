@@ -1,6 +1,8 @@
 package com.bca.byc.controller.cms;
 
-import com.bca.byc.model.AdminModelDTO;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.SettingsAdminService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +38,7 @@ public class AdminController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<AdminModelDTO.AdminDetailResponse> alldata = service.findAllData();
+        List<AdminDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -54,7 +56,7 @@ public class AdminController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        AdminModelDTO.AdminDetailResponse data = service.findDataById(id);
+        AdminDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -70,7 +72,7 @@ public class AdminController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminModelDTO.AdminCreateRequest dto = new AdminModelDTO.AdminCreateRequest();
+        AdminCreateRequest dto = new AdminCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -79,7 +81,7 @@ public class AdminController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid AdminModelDTO.AdminCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid AdminCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -99,7 +101,7 @@ public class AdminController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminModelDTO.AdminDetailResponse dto = service.findDataById(id);
+        AdminDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -108,7 +110,7 @@ public class AdminController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid AdminModelDTO.AdminUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid AdminUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

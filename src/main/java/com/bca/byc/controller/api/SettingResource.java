@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -90,6 +91,7 @@ public class SettingResource {
     }
 
     // show by identity
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> showTnc(@RequestParam("identity") String identity) {
         log.info("GET /v1/settings/search?identity={} endpoint hit", identity);

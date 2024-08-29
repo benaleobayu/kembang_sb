@@ -3,6 +3,7 @@ package com.bca.byc.controller.api;
 import com.bca.byc.entity.LogDevice;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
+import com.bca.byc.enums.ActionType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.model.auth.*;
@@ -120,6 +121,7 @@ public class AuthResource {
         logDevice.setDeviceId(deviceId);
         logDevice.setVersion(version);
         logDevice.setIpAddress(getClientIp(request));
+        logDevice.setActionType(ActionType.LOGIN);
         logDeviceRespository.save(logDevice);
 
         DataAccess data = new DataAccess(jwt, "Bearer", expirationTime , user.getStatus().toString());

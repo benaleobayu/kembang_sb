@@ -8,7 +8,7 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+
 public class FaqCreateRequest {
 
     @NotBlank(message = "Question is mandatory")

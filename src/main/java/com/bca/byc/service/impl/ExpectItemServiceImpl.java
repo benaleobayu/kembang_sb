@@ -3,7 +3,9 @@ package com.bca.byc.service.impl;
 import com.bca.byc.convert.ExpectItemDTOConverter;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ExpectItemModelDTO;
+import com.bca.byc.model.ExpectItemCreateRequest;
+import com.bca.byc.model.ExpectItemDetailResponse;
+import com.bca.byc.model.ExpectItemUpdateRequest;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.service.ExpectItemService;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class ExpectItemServiceImpl implements ExpectItemService {
     private ExpectItemDTOConverter converter;
 
     @Override
-    public ExpectItemModelDTO.ExpectItemDetailResponse findDataById(Long id) throws BadRequestException {
+    public ExpectItemDetailResponse findDataById(Long id) throws BadRequestException {
         ExpectItem data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("ExpectItem not found"));
 
@@ -30,7 +32,7 @@ public class ExpectItemServiceImpl implements ExpectItemService {
     }
 
     @Override
-    public List<ExpectItemModelDTO.ExpectItemDetailResponse> findAllData() {
+    public List<ExpectItemDetailResponse> findAllData() {
         // Get the list
         List<ExpectItem> datas = repository.findAll();
 
@@ -41,7 +43,7 @@ public class ExpectItemServiceImpl implements ExpectItemService {
     }
 
     @Override
-    public void saveData(@Valid ExpectItemModelDTO.ExpectItemCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid ExpectItemCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         ExpectItem data = converter.convertToCreateRequest(dto);
         // save data
@@ -49,7 +51,7 @@ public class ExpectItemServiceImpl implements ExpectItemService {
     }
 
     @Override
-    public void updateData(Long id, ExpectItemModelDTO.ExpectItemUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, ExpectItemUpdateRequest dto) throws BadRequestException {
         // check exist and get
         ExpectItem data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID ExpectItem ID"));

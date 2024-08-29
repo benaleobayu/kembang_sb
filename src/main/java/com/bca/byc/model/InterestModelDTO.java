@@ -12,7 +12,7 @@ import java.util.List;
 public class InterestModelDTO {
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestDetailResponse {
 
         private Long id;
@@ -43,7 +43,7 @@ public class InterestModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestCreateRequest {
 
         @NotBlank(message = "User id is required")
@@ -76,7 +76,7 @@ public class InterestModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class InterestUpdateRequest {
 
         @NotBlank(message = "User id is required")

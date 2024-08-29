@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 
 public class FeedbackCategoryModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class FeedbackCategoryDetailResponse {
 
         private Long id;
@@ -25,7 +25,7 @@ public class FeedbackCategoryModelDTO {
     }
 
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class FeedbackCategoryCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -45,7 +45,7 @@ public class FeedbackCategoryModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class FeedbackCategoryUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

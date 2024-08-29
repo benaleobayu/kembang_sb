@@ -1,20 +1,22 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ExpectItemModelDTO;
-
+import com.bca.byc.model.ExpectItemCreateRequest;
+import com.bca.byc.model.ExpectItemDetailResponse;
+import com.bca.byc.model.ExpectItemUpdateRequest;
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 public interface ExpectItemService {
 
-    ExpectItemModelDTO.ExpectItemDetailResponse findDataById(Long id) throws BadRequestException;
+    ExpectItemDetailResponse findDataById(Long id) throws BadRequestException;
 
-    List<ExpectItemModelDTO.ExpectItemDetailResponse> findAllData();
+    List<ExpectItemDetailResponse> findAllData();
 
-    void saveData(@Valid ExpectItemModelDTO.ExpectItemCreateRequest dto) throws BadRequestException;
+    void saveData(@Valid ExpectItemCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long id, @Valid ExpectItemModelDTO.ExpectItemUpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid ExpectItemUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
 }

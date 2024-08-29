@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 
 public class ContentModelDTO {
     @Data
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class ContentDetailResponse {
 
         private Long id;
@@ -26,7 +26,7 @@ public class ContentModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class ContentCreateRequest {
 
         @NotBlank(message = "Name is mandatory")
@@ -46,7 +46,7 @@ public class ContentModelDTO {
 
     @Data
     @AllArgsConstructor
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    
     public static class ContentUpdateRequest {
 
         @NotBlank(message = "Name is mandatory")

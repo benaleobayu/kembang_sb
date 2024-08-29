@@ -44,7 +44,7 @@ public class User extends AbstractBaseEntity {
     @Column(name = "member_cin", length = 20)
     private String memberCin;
 
-//    @AgeRange(message = "Age must be between 18 and 35")
+    @AgeRange(message = "Age must be between 18 and 35")
     @Column(name = "member_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate memberBirthdate;
@@ -57,7 +57,7 @@ public class User extends AbstractBaseEntity {
     @Column(name = "child_cin", length = 20)
     private String childCin;
 
-//    @AgeRange(message = "Age must be between 18 and 35")
+    @AgeRange(message = "Age must be between 18 and 35")
     @Column(name = "child_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate childBirthdate;

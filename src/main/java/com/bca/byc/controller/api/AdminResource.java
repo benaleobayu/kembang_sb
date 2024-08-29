@@ -2,7 +2,9 @@ package com.bca.byc.controller.api;
 
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminModelDTO;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.AdminService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,7 +41,7 @@ public class AdminResource {
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/admin/{id} endpoint hit");
         try {
-            AdminModelDTO.AdminDetailResponse item = service.findDataById(id);
+            AdminDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found admin", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
@@ -47,7 +49,7 @@ public class AdminResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody AdminModelDTO.AdminCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody AdminCreateRequest item) {
         log.info("POST /api/v1/admin endpoint hit");
         try {
             service.saveData(item);
@@ -59,7 +61,7 @@ public class AdminResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody AdminModelDTO.AdminUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody AdminUpdateRequest item) {
         log.info("PUT /api/v1/admin/{id} endpoint hit");
         try {
             service.updateData(id, item);
