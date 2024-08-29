@@ -44,7 +44,7 @@ public class User extends AbstractBaseEntity {
     @Column(name = "member_cin", length = 20)
     private String memberCin;
 
-    @AgeRange(message = "Age must be between 18 and 35")
+    @AgeRange
     @Column(name = "member_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate memberBirthdate;
@@ -57,7 +57,7 @@ public class User extends AbstractBaseEntity {
     @Column(name = "child_cin", length = 20)
     private String childCin;
 
-    @AgeRange(message = "Age must be between 18 and 35")
+    @AgeRange
     @Column(name = "child_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate childBirthdate;
@@ -90,6 +90,13 @@ public class User extends AbstractBaseEntity {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
+    // file
+    @Column(name = "avatar", columnDefinition = "text")
+    private String avatar;
+
+    @Column(name = "cover", columnDefinition = "text")
+    private String cover;
+
     // details
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserAttributes userAttributes;
@@ -101,5 +108,16 @@ public class User extends AbstractBaseEntity {
     private List<UserHasFeedback> feedbacks = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserHasExpect> userHasExpects = new ArrayList<>();
+
+    // follow and followers
+    @ManyToMany
+    @JoinTable(name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id"))
+    private List<User> follows = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "follows")
+    private List<User> followers = new ArrayList<>();
+
 
 }

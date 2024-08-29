@@ -19,4 +19,5 @@ public class UserAttributes {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

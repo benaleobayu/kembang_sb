@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "pre-registration")
+@Table(name = "pre_registration")
 public class TestAutocheck extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false, length = 50)
@@ -41,7 +41,7 @@ public class TestAutocheck extends AbstractBaseEntity {
     // ---
 
     // child data
-    @Column(name = "child_bank_account", length = 20)
+    @Column(name = "child_bank_account", length = 20, columnDefinition = "varchar(20) default '0'")
     private String childBankAccount;
 
     @Column(name = "child_cin", length = 20)
