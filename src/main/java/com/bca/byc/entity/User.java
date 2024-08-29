@@ -90,12 +90,16 @@ public class User extends AbstractBaseEntity {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
+    // details
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserAttributes userAttributes;
+
     // relation
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Business> businesses = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserHasFeedback> feedbacks = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserHasExpect> userHasExpects = new ArrayList<>();
 
 }
