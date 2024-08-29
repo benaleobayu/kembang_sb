@@ -40,4 +40,14 @@ public interface UserService {
             String userName
     );
 
+    default ResultPageResponse<UserDetailResponse> listFollowUser() {
+        return listFollowUser(null, 5, null, null, null);
+    }
+
+    ResultPageResponse<UserDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
+
+
+    // follow
+    void followUser(Long userId, String email);
+
 }

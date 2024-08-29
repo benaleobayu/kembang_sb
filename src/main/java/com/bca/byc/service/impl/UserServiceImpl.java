@@ -138,6 +138,32 @@ public class UserServiceImpl implements UserService {
         return PaginationUtil.createResultPageDTO(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
     }
 
+    @Override
+    public ResultPageResponse<UserDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName) {
+        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        Page<User> pageResult = repository.findByNameLikeIgnoreCaseAndStatusAndUserAttributesIsRecommendedTrue(userName,StatusType.ACTIVATED,pageable);
+
+        List<UserDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
+        return PaginationUtil.createResultPageDTO(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
+    }
+
+    @Override
+    public void followUser(Long userId, String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+        User userToFollow = repository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if (!user.getFollows().contains(userToFollow)) {
+            user.getFollows().add(userToFollow);
+            repository.save(user);
+        }
+
+    }
+
 
     @Override
     public void updateData(Long id, @Valid UserUpdateRequest dto) {

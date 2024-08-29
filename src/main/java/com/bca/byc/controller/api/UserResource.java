@@ -15,6 +15,7 @@ import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.security.Principal;
 
 @Slf4j
 @AllArgsConstructor
@@ -35,10 +36,8 @@ public class UserResource {
     private final UserRepository repository;
 
     private final UserService userService;
-
-    private UserDTOConverter userDTOConverter;
-
     private final JwtUtil jwtUtil;
+    private UserDTOConverter userDTOConverter;
 
     @GetMapping
     public ResponseEntity<ApiResponse> getUsers() {
@@ -110,13 +109,34 @@ public class UserResource {
             @RequestParam(name = "userName", required = false) String userName
     ) {
         log.info("GET /api/v1/users/list endpoint hit");
+        // response true
+        return ResponseEntity.ok().body(userService.findDataList(pages, limit, sortBy, direction, userName));
+    }
 
+    // view
+    @GetMapping("/onboarding-user")
+    public ResponseEntity<ResultPageResponse<UserDetailResponse>> listFollowUser(
+            @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = true, defaultValue = "asc") String direction,
+            @RequestParam(name = "userName", required = false) String userName
+    ) {
+        log.info("GET /api/v1/users/onboarding-user endpoint hit");
+        // response true
+        return ResponseEntity.ok().body(userService.listFollowUser(pages, limit, sortBy, direction, userName));
+    }
+
+
+
+    @PostMapping("/{userId}/follow")
+    public ResponseEntity<ApiResponse> followUser(@PathVariable("userId") Long userId, Principal principal) {
+        log.info("POST /api/v1/users/{}/follow endpoint hit", userId);
         try {
-            // response true
-            return ResponseEntity.ok().body(userService.findDataList(pages, limit, sortBy, direction, userName));
-        } catch (Exception e) {
-            // response error
-            return ResponseEntity.badRequest().body(null);
+            userService.followUser(userId, principal.getName());
+            return ResponseEntity.ok(new ApiResponse(true, "User followed successfully"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
@@ -139,7 +159,7 @@ public class UserResource {
             SimpleUserDetailResponse userDetailResponse = mapToSimpleUserDetailResponse(user);
 
             // Return the response with the mapped user details
-            return ResponseEntity.ok(new ApiResponse(true, "User found",userDetailResponse) );
+            return ResponseEntity.ok(new ApiResponse(true, "User found", userDetailResponse));
         } catch (Exception e) {
             // response error
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));

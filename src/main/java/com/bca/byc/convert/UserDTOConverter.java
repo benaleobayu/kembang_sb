@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -26,7 +27,12 @@ public class UserDTOConverter {
         // Use DataFormatter here
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-        // return
+
+        // other attributes
+        dto.setIsRecommended(Optional.ofNullable(data.getUserAttributes().getIsRecommended()).orElse(false));
+        // count follower from follow table
+        dto.setTotalFollowers( data.getFollowers().size() );
+        dto.setTotalFollowing( data.getFollows().size() );
         return dto;
     }
 

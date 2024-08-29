@@ -39,4 +39,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // list pagination
     Page<User> findByNameLikeIgnoreCase(String name, Pageable pageable);
+
+    Page<User> findByNameLikeIgnoreCaseAndStatusAndUserAttributesIsRecommendedTrue(String userName, StatusType statusType, Pageable pageable);
 }
