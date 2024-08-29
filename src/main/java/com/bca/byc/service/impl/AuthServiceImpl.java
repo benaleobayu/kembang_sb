@@ -10,7 +10,6 @@ import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,16 +20,9 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
 
     private UserRepository repository;
-    private BusinessRepository businessRepository;
-    private BusinessCategoryRepository businessCategoryRepository;
-    private BusinessHasCategoryRepository businessHasCategoryRepository;
-    private FeedbackCategoryRepository feedbackCategoryRepository;
-    private UserHasFeedbackRepository userHasFeedbackRepository;
     private TestAutocheckRepository testAutocheckRepository;
 
     private OtpRepository otpRepository;
-
-    private PasswordEncoder passwordEncoder;
 
     private EmailService emailService;
 
@@ -76,6 +68,8 @@ public class AuthServiceImpl implements AuthService {
             user.setStatus(StatusType.APPROVED);
             user.setMemberCin(dataCheck.getMemberCin()); // set cin member
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
+            UserAttributes userAttributes = new UserAttributes();
+            userAttributes.setUser(user);
             repository.save(user);
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.getEmail());
@@ -84,6 +78,8 @@ public class AuthServiceImpl implements AuthService {
             user.setChildCin(dataCheck.getChildCin()); // set child cin
             user.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
+            UserAttributes userAttributes = new UserAttributes();
+            userAttributes.setUser(user);
             repository.save(user);
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.getEmail());
