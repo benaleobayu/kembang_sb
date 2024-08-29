@@ -164,6 +164,19 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void unfollowUser(Long userId, String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+        User userToUnfollow = repository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if (user.getFollows().contains(userToUnfollow)) {
+            user.getFollows().remove(userToUnfollow);
+            repository.save(user);
+        }
+    }
+
 
     @Override
     public void updateData(Long id, @Valid UserUpdateRequest dto) {

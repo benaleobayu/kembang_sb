@@ -50,4 +50,5 @@ public interface UserService {
     // follow
     void followUser(Long userId, String email);
 
+    void unfollowUser(Long userId, String email);
 }
