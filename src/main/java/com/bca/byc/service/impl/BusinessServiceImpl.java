@@ -4,8 +4,10 @@ import com.bca.byc.convert.BusinessCategoryDTOConverter;
 import com.bca.byc.convert.BusinessDTOConverter;
 import com.bca.byc.entity.Business;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.BusinessModelDTO;
 import com.bca.byc.model.BusinessCategoryModelDTO;
+import com.bca.byc.model.BusinessCreateRequest;
+import com.bca.byc.model.BusinessDetailResponse;
+import com.bca.byc.model.BusinessUpdateRequest;
 import com.bca.byc.repository.BusinessRepository;
 import com.bca.byc.service.BusinessService;
 import jakarta.validation.Valid;
@@ -27,10 +29,10 @@ public class BusinessServiceImpl implements BusinessService {
 
 
     @Override
-    public BusinessModelDTO.BusinessDetailResponse findDataById(Long id) throws BadRequestException {
+    public BusinessDetailResponse findDataById(Long id) throws BadRequestException {
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Business not found"));
-        BusinessModelDTO.BusinessDetailResponse dto = converter.convertToListResponse(data);
+        BusinessDetailResponse dto = converter.convertToListResponse(data);
 
 
         Set<BusinessCategoryModelDTO.BusinessCategoryDetailResponse> categoryDTOs = dto.getCategories().stream()
@@ -41,7 +43,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public List<BusinessModelDTO.BusinessDetailResponse> findAllData() {
+    public List<BusinessDetailResponse> findAllData() {
         // Get the list
         List<Business> datas = repository.findAll();
 
@@ -52,7 +54,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public void saveData(@Valid BusinessModelDTO.BusinessCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid BusinessCreateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
         Business data = converter.convertToCreateRequest(dto);
         // save data
@@ -60,7 +62,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public void updateData(Long id, BusinessModelDTO.BusinessUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, BusinessUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Business data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID Business ID"));

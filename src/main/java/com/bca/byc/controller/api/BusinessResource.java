@@ -1,7 +1,9 @@
 package com.bca.byc.controller.api;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.BusinessModelDTO;
+import com.bca.byc.model.BusinessCreateRequest;
+import com.bca.byc.model.BusinessDetailResponse;
+import com.bca.byc.model.BusinessUpdateRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.BusinessService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,7 @@ public class BusinessResource {
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /api/v1/business/{id} endpoint hit");
         try {
-            BusinessModelDTO.BusinessDetailResponse item = service.findDataById(id);
+            BusinessDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found business", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
@@ -46,7 +48,7 @@ public class BusinessResource {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessModelDTO.BusinessCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BusinessCreateRequest item) {
         log.info("POST /api/v1/business endpoint hit");
         try {
             service.saveData(item);
@@ -58,7 +60,7 @@ public class BusinessResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessModelDTO.BusinessUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody BusinessUpdateRequest item) {
         log.info("PUT /api/v1/business/{id} endpoint hit");
         try {
             service.updateData(id, item);
