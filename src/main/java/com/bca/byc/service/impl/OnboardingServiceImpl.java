@@ -100,7 +100,7 @@ public class OnboardingServiceImpl implements OnboardingService {
                 }
             } else if (expectDto.getExpectCategoryId() == 5) {
                 UserHasExpect userHasExpect = new UserHasExpect();
-                ExpectItem expectItem = expectItemRepository.findById(16L)
+                ExpectItem expectItem = expectItemRepository.findById(5L)
                         .orElseThrow(() -> new BadRequestException("Expect Item not found"));
                 userHasExpect.setUser(user);
                 userHasExpect.setExpectCategory(expectCategory);
