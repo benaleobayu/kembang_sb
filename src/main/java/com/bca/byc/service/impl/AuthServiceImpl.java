@@ -70,6 +70,9 @@ public class AuthServiceImpl implements AuthService {
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
             UserAttributes userAttributes = new UserAttributes();
             userAttributes.setUser(user);
+
+            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
+            user.setUserAttributes(savedUserAttributes);
             repository.save(user);
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.getEmail());
@@ -80,6 +83,9 @@ public class AuthServiceImpl implements AuthService {
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
             UserAttributes userAttributes = new UserAttributes();
             userAttributes.setUser(user);
+
+            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
+            user.setUserAttributes(savedUserAttributes);
             repository.save(user);
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.getEmail());
@@ -87,6 +93,11 @@ public class AuthServiceImpl implements AuthService {
             user.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1; // increment reject count
             user.setCountReject(newRejectCount);
+            UserAttributes userAttributes = new UserAttributes();
+            userAttributes.setUser(user);
+
+            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
+            user.setUserAttributes(savedUserAttributes);
             repository.save(user);
 
             if (newRejectCount >= 3) {
@@ -95,6 +106,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new BadRequestException("Your account is rejected. Please contact admin.");
             }
         }
+
     }
 
     @Override
