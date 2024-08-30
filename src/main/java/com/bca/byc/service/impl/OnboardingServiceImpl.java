@@ -1,17 +1,15 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.controller.api.LocationResource;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.OnboardingModelDTO;
 import com.bca.byc.repository.*;
 import com.bca.byc.service.OnboardingService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -80,7 +78,7 @@ public class OnboardingServiceImpl implements OnboardingService {
             ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
                     .orElseThrow(() -> new BadRequestException("Expect Category not found"));
 
-            if (expectDto.getItems() != null && !expectDto.getItems().getIds().isEmpty()) {
+            if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
                 for (Long expectItemId : expectDto.getItems().getIds()) {
                     ExpectItem expectItem = expectItemRepository.findById(expectItemId)
                             .orElseThrow(() -> new BadRequestException("Expect Item not found"));
@@ -100,10 +98,13 @@ public class OnboardingServiceImpl implements OnboardingService {
 
                     userHasExpectRepository.save(userHasExpect);
                 }
-            } else if (expectDto.getExpectCategoryId() == 99) {
+            } else if (expectDto.getExpectCategoryId() == 5) {
                 UserHasExpect userHasExpect = new UserHasExpect();
+                ExpectItem expectItem = expectItemRepository.findById(16L)
+                        .orElseThrow(() -> new BadRequestException("Expect Item not found"));
                 userHasExpect.setUser(user);
                 userHasExpect.setExpectCategory(expectCategory);
+                userHasExpect.setExpectItem(expectItem);
                 userHasExpect.setOtherExpect(expectDto.getOtherExpect());
                 userHasExpectRepository.save(userHasExpect);
             }
