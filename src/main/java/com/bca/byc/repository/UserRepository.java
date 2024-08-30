@@ -2,8 +2,6 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.User;
-import com.bca.byc.model.SimpleUserDetailResponse;
-import com.bca.byc.model.UserDetailResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

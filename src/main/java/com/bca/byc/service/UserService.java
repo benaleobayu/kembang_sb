@@ -15,13 +15,13 @@ public interface UserService {
 
     User findInfoByEmail(String email);
 
-    UserDetailResponse findDataById(Long userId); // for get 1 data
+    UserCmsDetailResponse findDataById(Long userId); // for get 1 data
 
-    List<UserDetailResponse> findAllUsers(); // for get all
+    List<UserCmsDetailResponse> findAllUsers(); // for get all
 
-    List<UserDetailResponse> findUserPendingAndActive(); // for inquiry get all pending and active
+    List<UserCmsDetailResponse> findUserPendingAndActive(); // for inquiry get all pending and active
 
-    List<UserDetailResponse> findUserActive(); // for inquiry get all pending and active
+    List<UserCmsDetailResponse> findUserActive(); // for inquiry get all pending and active
 
     void updateData(Long userId, @Valid UserUpdateRequest dto); // for update data user
 
@@ -32,7 +32,7 @@ public interface UserService {
     void saveData(AuthRegisterRequest dto); // for create user
 
     // view
-    ResultPageResponse<UserDetailResponse> findDataList(
+    ResultPageResponse<UserCmsDetailResponse> findDataList(
             Integer pages,
             Integer limit,
             String sortBy,
@@ -40,15 +40,12 @@ public interface UserService {
             String userName
     );
 
-    default ResultPageResponse<UserDetailResponse> listFollowUser() {
+    default ResultPageResponse<UserCmsDetailResponse> listFollowUser() {
         return listFollowUser(null, 5, null, null, null);
     }
 
-    ResultPageResponse<UserDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponse<UserCmsDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
 
 
-    // follow
-    void followUser(Long userId, String email);
-
-    void unfollowUser(Long userId, String email);
+    UserAppDetailResponse getUserDetails(String email);
 }

@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetailResponse findDataById(Long id) {
+    public UserCmsDetailResponse findDataById(Long id) {
         User data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDetailResponse> findAllUsers() {
+    public List<UserCmsDetailResponse> findAllUsers() {
         List<User> datas = repository.findAll();
 
         return datas.stream()
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDetailResponse> findUserPendingAndActive() {
+    public List<UserCmsDetailResponse> findUserPendingAndActive() {
         List<User> datas = repository.findUserPendingAndActive(StatusType.APPROVED, StatusType.REJECTED);
 
         return datas.stream()
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDetailResponse> findUserActive() {
+    public List<UserCmsDetailResponse> findUserActive() {
         List<User> datas = repository.findByStatus(StatusType.APPROVED);
 
         return datas.stream()
@@ -129,54 +129,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultPageResponse<UserDetailResponse> findDataList(Integer pages, Integer limit, String sortBy, String direction, String userName) {
+    public ResultPageResponse<UserCmsDetailResponse> findDataList(Integer pages, Integer limit, String sortBy, String direction, String userName) {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<User> pageResult = repository.findByNameLikeIgnoreCase(userName,pageable);
-        List<UserDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
+        List<UserCmsDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
         return PaginationUtil.createResultPageDTO(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
     }
 
     @Override
-    public ResultPageResponse<UserDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName) {
+    public ResultPageResponse<UserCmsDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName) {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         Page<User> pageResult = repository.findByNameLikeIgnoreCaseAndStatusAndUserAttributesIsRecommendedTrue(userName,StatusType.ACTIVATED,pageable);
 
-        List<UserDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
+        List<UserCmsDetailResponse> dtos = pageResult.stream().map(converter::convertToListResponse).collect(Collectors.toList());
         return PaginationUtil.createResultPageDTO(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
     }
 
     @Override
-    public void followUser(Long userId, String email) {
+    public UserAppDetailResponse getUserDetails(String email) {
         User user = repository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
-        User userToFollow = repository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("Email not found"));
+
+        User data = repository.findById(user.getId())
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
-        if (!user.getFollows().contains(userToFollow)) {
-            user.getFollows().add(userToFollow);
-            repository.save(user);
-        }
-
+        return converter.convertToInfoResponse(data);
     }
-
-    @Override
-    public void unfollowUser(Long userId, String email) {
-        User user = repository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
-        User userToUnfollow = repository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        if (user.getFollows().contains(userToUnfollow)) {
-            user.getFollows().remove(userToUnfollow);
-            repository.save(user);
-        }
-    }
-
 
     @Override
     public void updateData(Long id, @Valid UserUpdateRequest dto) {

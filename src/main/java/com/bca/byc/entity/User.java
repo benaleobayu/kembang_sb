@@ -4,13 +4,10 @@ import com.bca.byc.validation.AgeRange;
 import com.bca.byc.validation.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +106,11 @@ public class User extends AbstractBaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserHasExpect> userHasExpects = new ArrayList<>();
 
+    // many to one
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
     // follow and followers
     @ManyToMany
     @JoinTable(name = "user_followers",
@@ -118,6 +120,5 @@ public class User extends AbstractBaseEntity {
 
     @ManyToMany(mappedBy = "follows")
     private List<User> followers = new ArrayList<>();
-
 
 }

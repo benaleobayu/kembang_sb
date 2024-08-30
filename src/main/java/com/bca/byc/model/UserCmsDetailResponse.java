@@ -1,11 +1,10 @@
 package com.bca.byc.model;
 
 
-import com.bca.byc.entity.StatusType;
 import lombok.Data;
 
 @Data
-public class UserDetailResponse {
+public class UserCmsDetailResponse {
 
     private Long id;
     private String name;
@@ -22,6 +21,8 @@ public class UserDetailResponse {
     private String education;
     private String biodata;
     private String status;
+    private String avatar;
+    private String cover;
     private String createdAt;
     private String updatedAt;
 
@@ -29,5 +30,8 @@ public class UserDetailResponse {
 
     private Integer totalFollowers;
     private Integer totalFollowing;
+
+    private Boolean isFollowed = false;
+    private Boolean isFollowing = false;
 
 }

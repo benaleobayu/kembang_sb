@@ -2,7 +2,7 @@ package com.bca.byc.controller.cms;
 
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.UserDetailResponse;
+import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.model.component.Breadcrumb;
 import com.bca.byc.service.UserService;
@@ -57,7 +57,7 @@ public class UserActiveController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        UserDetailResponse data = service.findDataById(id);
+        UserCmsDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -102,7 +102,7 @@ public class UserActiveController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        UserDetailResponse dto = service.findDataById(id);
+        UserCmsDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);

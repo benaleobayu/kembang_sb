@@ -1,26 +1,23 @@
 package com.bca.byc.controller.api;
 
 import com.bca.byc.convert.UserDTOConverter;
-import com.bca.byc.entity.User;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.SimpleUserDetailResponse;
-import com.bca.byc.model.UserDetailResponse;
+import com.bca.byc.model.UserAppDetailResponse;
+import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.ResultPageResponse;
-import com.bca.byc.security.UserPrincipal;
 import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -63,7 +60,7 @@ public class UserResource {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "User not found", null));
             } else {
                 // define
-                UserDetailResponse user = userService.findDataById(userId);
+                UserCmsDetailResponse user = userService.findDataById(userId);
                 // response true
                 return ResponseEntity.ok(new ApiResponse(true, "User found", user));
             }
@@ -101,7 +98,7 @@ public class UserResource {
 
     // view
     @GetMapping("/list")
-    public ResponseEntity<ResultPageResponse<UserDetailResponse>> findDataList(
+    public ResponseEntity<ResultPageResponse<UserCmsDetailResponse>> findDataList(
             @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
@@ -114,8 +111,9 @@ public class UserResource {
     }
 
     // view
+    @Operation(hidden = true)
     @GetMapping("/onboarding-user")
-    public ResponseEntity<ResultPageResponse<UserDetailResponse>> listFollowUser(
+    public ResponseEntity<ResultPageResponse<UserCmsDetailResponse>> listFollowUser(
             @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
@@ -127,53 +125,19 @@ public class UserResource {
         return ResponseEntity.ok().body(userService.listFollowUser(pages, limit, sortBy, direction, userName));
     }
 
-    @PostMapping("/{userId}/follow")
-    public ResponseEntity<ApiResponse> followUser(@PathVariable("userId") Long userId, Principal principal) {
-        log.info("POST /api/v1/users/{}/follow endpoint hit", userId);
-            userService.followUser(userId, principal.getName());
-            return ResponseEntity.ok(new ApiResponse(true, "User followed successfully"));
-    }
-
-    @PostMapping("/{userId}/unfollow")
-    public ResponseEntity<ApiResponse> unfollowUser(@PathVariable("userId") Long userId, Principal principal) {
-        log.info("POST /api/v1/users/{}/unfollow endpoint hit", userId);
-            userService.unfollowUser(userId, principal.getName());
-            return ResponseEntity.ok(new ApiResponse(true, "User unfollowed successfully"));
-    }
-
     @GetMapping("/info")
-    public ResponseEntity<ApiResponse> getUserInfo() {
+    public ResponseEntity<ApiResponse> getUserDetail(Principal principal) {
         log.info("GET /api/v1/users/info endpoint hit");
 
-        //  current authentication object
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAppDetailResponse user = userService.getUserDetails(principal.getName());
+        // response true
+        return ResponseEntity.ok(new ApiResponse(true, "User found", user));
 
-        // Cast the principal to UserPrincipal to extract the email
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        String email = userPrincipal.getUsername(); // Assuming your UserPrincipal has a getEmail() method
-
-        try {
-            // Fetch the user entity
-            User user = userService.findInfoByEmail(email);
-
-            // Map the User entity to SimpleUserDetailResponse
-            SimpleUserDetailResponse userDetailResponse = mapToSimpleUserDetailResponse(user);
-
-            // Return the response with the mapped user details
-            return ResponseEntity.ok(new ApiResponse(true, "User found", userDetailResponse));
-        } catch (Exception e) {
-            // response error
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
-        }
     }
 
-    public SimpleUserDetailResponse mapToSimpleUserDetailResponse(User user) {
-        return new SimpleUserDetailResponse(
-                user.getName(),
-                user.getEmail(),
-                user.getStatus()
-        );
-    }
+
+
+
 
 
 }
