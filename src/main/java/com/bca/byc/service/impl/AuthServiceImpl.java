@@ -64,25 +64,18 @@ public class AuthServiceImpl implements AuthService {
         boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
         boolean child = dataCheck.getChildBankAccount().equals(dto.getChildBankAccount());
 
-        if (dto.getType().equals(UserType.MEMBER) && member) {
+        if ((dto.getType().equals(UserType.MEMBER) && member) || (dto.getType().equals(UserType.NOT_MEMBER) && child)) {
             user.setStatus(StatusType.APPROVED);
-            user.setMemberCin(dataCheck.getMemberCin()); // set cin member
+            if (dto.getType().equals(UserType.MEMBER)) {
+                user.setMemberCin(dataCheck.getMemberCin()); // set cin member
+            } else {
+                user.setChildCin(dataCheck.getChildCin()); // set child cin
+                user.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
+            }
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
             UserAttributes userAttributes = new UserAttributes();
             userAttributes.setUser(user);
-
-            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
-            user.setUserAttributes(savedUserAttributes);
-            repository.save(user);
-            String identity = "get"; // identity send registration otp
-            resendOtp(identity, dto.getEmail());
-        } else if (dto.getType().equals(UserType.NOT_MEMBER) && child) {
-            user.setStatus(StatusType.APPROVED);
-            user.setChildCin(dataCheck.getChildCin()); // set child cin
-            user.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
-            user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
-            UserAttributes userAttributes = new UserAttributes();
-            userAttributes.setUser(user);
+            userAttributes.setApprovedBy("SYSTEM");
 
             UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
             user.setUserAttributes(savedUserAttributes);
@@ -106,7 +99,6 @@ public class AuthServiceImpl implements AuthService {
                 throw new BadRequestException("Your account is rejected. Please contact admin.");
             }
         }
-
     }
 
     @Override
