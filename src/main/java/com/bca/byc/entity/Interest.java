@@ -59,7 +59,6 @@ public class Interest {
             joinColumns = @JoinColumn(name = "interest_id"),
             inverseJoinColumns = @JoinColumn(name = "interest_category_id")
     )
-
     private Set<InterestCategory> categories =  new HashSet<>();
 
 }

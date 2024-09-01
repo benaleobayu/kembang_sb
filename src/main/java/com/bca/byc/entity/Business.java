@@ -41,6 +41,9 @@ public class Business extends AbstractBaseEntity {
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status;
 
+    @Column(name = "is_primary", columnDefinition = "boolean default false")
+    private Boolean isPrimary;
+
     // relation
 
     @ManyToOne(fetch = FetchType.LAZY)
