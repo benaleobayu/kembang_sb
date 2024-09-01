@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.validation.ApproveEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,6 +12,10 @@ public class UserAttributes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ApproveEnum
+    @Column(name = "approved_by", columnDefinition = "varchar(20) default 'SYSTEM'")
+    private String approvedBy;
 
     private Boolean isRecommended;
     private Boolean isVerified;

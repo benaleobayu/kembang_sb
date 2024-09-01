@@ -111,6 +111,10 @@ public class User extends AbstractBaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @ManyToOne
+    @JoinColumn(name = "lob_id", referencedColumnName = "id")
+    private LineOfBusinessCategory lineOfBusiness;
+
     // follow and followers
     @ManyToMany
     @JoinTable(name = "user_followers",

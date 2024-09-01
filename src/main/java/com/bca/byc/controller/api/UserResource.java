@@ -8,7 +8,8 @@ import com.bca.byc.model.UserUpdatePasswordRequest;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.UserRepository;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.ResultPageResponse;
+import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserService;
 import com.bca.byc.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,7 +99,7 @@ public class UserResource {
 
     // view
     @GetMapping("/list")
-    public ResponseEntity<ResultPageResponse<UserCmsDetailResponse>> findDataList(
+    public ResponseEntity<ResultPageResponseDTO<UserAppDetailResponse>> findDataList(
             @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
@@ -113,7 +114,7 @@ public class UserResource {
     // view
     @Operation(hidden = true)
     @GetMapping("/onboarding-user")
-    public ResponseEntity<ResultPageResponse<UserCmsDetailResponse>> listFollowUser(
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserAppDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
@@ -122,7 +123,7 @@ public class UserResource {
     ) {
         log.info("GET /api/v1/users/onboarding-user endpoint hit");
         // response true
-        return ResponseEntity.ok().body(userService.listFollowUser(pages, limit, sortBy, direction, userName));
+        return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list onboarding user", userService.listFollowUser(pages, limit, sortBy, direction, userName)));
     }
 
     @GetMapping("/info")

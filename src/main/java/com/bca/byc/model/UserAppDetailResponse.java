@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.LineOfBusinessCategory;
 import com.bca.byc.entity.Location;
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.entity.UserType;
@@ -21,6 +22,8 @@ public class UserAppDetailResponse {
     private Location location; // TODO: location
 
 //    private List<Business> businesses; // <business>
+
+    private LineOfBusinessCategory lineOfBusiness;
 
     private Integer totalFollowers;
     private Integer totalFollowing;

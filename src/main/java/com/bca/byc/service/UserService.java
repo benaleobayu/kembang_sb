@@ -3,8 +3,8 @@ package com.bca.byc.service;
 import com.bca.byc.entity.User;
 import com.bca.byc.model.*;
 import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.response.ResultPageResponse;
 
+import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface UserService {
     void saveData(AuthRegisterRequest dto); // for create user
 
     // view
-    ResultPageResponse<UserCmsDetailResponse> findDataList(
+    ResultPageResponseDTO<UserAppDetailResponse> findDataList(
             Integer pages,
             Integer limit,
             String sortBy,
@@ -40,11 +40,11 @@ public interface UserService {
             String userName
     );
 
-    default ResultPageResponse<UserCmsDetailResponse> listFollowUser() {
+    default ResultPageResponseDTO<UserAppDetailResponse> listFollowUser() {
         return listFollowUser(null, 5, null, null, null);
     }
 
-    ResultPageResponse<UserCmsDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<UserAppDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
 
 
     UserAppDetailResponse getUserDetails(String email);

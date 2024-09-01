@@ -3,7 +3,8 @@ package com.bca.byc.controller.api;
 import com.bca.byc.model.OnboardingModelDTO;
 import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.ResultPageResponse;
+import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.UserPrincipal;
 import com.bca.byc.service.OnboardingService;
 import com.bca.byc.service.UserService;
@@ -26,6 +27,11 @@ public class OnboardingResource {
 
     private final OnboardingService service;
     private final UserService userService;
+//    private Integer pages;
+//    private Integer limit;
+//    private String sortBy;
+//    private String direction;
+//    private String userName;
 
     @PostMapping
     public ResponseEntity<ApiResponse> createOnboarding(@RequestBody OnboardingModelDTO.OnboardingCreateRequest dto) {
@@ -52,10 +58,15 @@ public class OnboardingResource {
     }
 
     @GetMapping("/onboarding-user")
-    public ResponseEntity<ResultPageResponse<UserCmsDetailResponse>> listFollowUser(@RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages, @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit, @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy, @RequestParam(name = "direction", required = true, defaultValue = "asc") String direction, @RequestParam(name = "userName", required = false) String userName) {
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserCmsDetailResponse>>> listFollowUser(
+            @RequestParam(name = "pages", required = true, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = true, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = true, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = true, defaultValue = "asc") String direction,
+            @RequestParam(name = "userName", required = false) String userName) {
         log.info("GET /api/v1/users/onboarding-user endpoint hit");
         // response true
-        return ResponseEntity.ok().body(userService.listFollowUser(pages, limit, sortBy, direction, userName));
+        return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list onboarding user", userService.listFollowUser(pages, limit, sortBy, direction, userName)));
     }
 
 
