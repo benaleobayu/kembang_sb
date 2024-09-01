@@ -1,16 +1,31 @@
 package com.bca.byc.util;
 
-import com.bca.byc.response.ResultPageResponse;
+import java.util.List;
+
+import com.bca.byc.response.ResultPageResponseDTO;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
 
 public class PaginationUtil {
 
-    public static <T> ResultPageResponse<T> createResultPageDTO(List<T> dtos, Long totalElements, Integer pages){
-        ResultPageResponse<T> result = new ResultPageResponse<T>();
-        result.setPages(pages);
-        result.setElements(totalElements);
+    public static <T> ResultPageResponseDTO<T> createResultPageDTO(
+            Long totalItems,
+            List<T> dtos,
+            Integer currentPage,
+            Integer prevPage,
+            Integer nextPage,
+            Integer firstPage,
+            Integer lastPage,
+            Integer perPage
+    ){
+        ResultPageResponseDTO<T> result = new ResultPageResponseDTO<T>();
+        result.setCurrentPage(currentPage);
+        result.setPrevPage(prevPage);
+        result.setNextPage(nextPage);
+        result.setFirstPage(firstPage);
+        result.setLastPage(lastPage);
+        result.setPerPage(perPage);
+        result.setTotalItems(totalItems);
         result.setResult(dtos);
         return result;
     }
