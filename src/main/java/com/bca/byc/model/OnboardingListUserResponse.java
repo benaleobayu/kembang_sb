@@ -27,7 +27,7 @@ public class OnboardingListUserResponse {
     private Integer totalPosts;
     private Integer totalEvents;
 
-    private Boolean isFollowing = false;
+    private Boolean isFollowed = false;
 
 
     @Data

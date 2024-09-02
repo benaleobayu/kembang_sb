@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class UserPrincipal implements UserDetails {
 
-    public final User user;
+    public User user;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(User user, Collection<? extends GrantedAuthority> authorities) {

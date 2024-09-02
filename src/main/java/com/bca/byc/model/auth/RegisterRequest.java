@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RegisterRequest {
 
     @NotBlank(message = "Name is mandatory")

@@ -2,7 +2,6 @@ package com.bca.byc.convert;
 
 import com.bca.byc.entity.User;
 import com.bca.byc.model.OnboardingListUserResponse;
-import com.bca.byc.model.UserAppDetailResponse;
 import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.model.auth.AuthRegisterRequest;
@@ -112,7 +111,7 @@ public class OnboardingDTOConverter {
             Long loggedInUserId = ((UserPrincipal) userDetails).user.getId(); // Assuming AppUser implements UserDetails and has getId()
             boolean isFollowing = data.getFollowers().stream()
                     .anyMatch(follower -> follower.getId().equals(loggedInUserId));
-            dto.setIsFollowing(isFollowing);
+            dto.setIsFollowed(isFollowing);
         }
 
 

@@ -61,8 +61,8 @@ public class AuthServiceImpl implements AuthService {
 
         // Check the TestAutocheck data
         TestAutocheck dataCheck = testAutocheckRepository.findByMemberBankAccount(dto.getMemberBankAccount());
-        boolean member = testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
-        boolean child = dataCheck.getChildBankAccount().equals(dto.getChildBankAccount());
+        boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.getMemberBankAccount());
+        boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.getChildBankAccount());
 
         if ((dto.getType().equals(UserType.MEMBER) && member) || (dto.getType().equals(UserType.NOT_MEMBER) && child)) {
             user.setStatus(StatusType.APPROVED);
