@@ -18,8 +18,11 @@ public class UserAttributes {
     @Column(name = "approved_by", columnDefinition = "varchar(20) default 'SYSTEM'")
     private String approvedBy;
 
+    @Column(name = "is_recommended", columnDefinition = "boolean default false")
     private Boolean isRecommended;
+    @Column(name = "is_verified", columnDefinition = "boolean default false")
     private Boolean isVerified;
+    @Column(name = "is_blocked", columnDefinition = "boolean default false")
     private Boolean isBlocked;
 
     @OneToOne

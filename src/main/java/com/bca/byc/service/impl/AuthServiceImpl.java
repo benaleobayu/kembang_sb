@@ -19,7 +19,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private UserRepository repository;
+    private UserRepository userRepository;
     private TestAutocheckRepository testAutocheckRepository;
 
     private OtpRepository otpRepository;
@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void saveUser(RegisterRequest dto) throws Exception {
-        Optional<User> existingUserOptional = repository.findByEmail(dto.getEmail());
+        Optional<User> existingUserOptional = userRepository.findByEmail(dto.getEmail());
 
         // Check if the user with the given email already exists and has an active status
         if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
@@ -73,25 +73,36 @@ public class AuthServiceImpl implements AuthService {
                 user.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
             }
             user.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
-            UserAttributes userAttributes = new UserAttributes();
+
+            UserAttributes userAttributes = user.getUserAttributes();
+            if (userAttributes == null) {
+                userAttributes = new UserAttributes();
+                user.setUserAttributes(userAttributes);
+            }
             userAttributes.setUser(user);
             userAttributes.setApprovedBy("SYSTEM");
+            userAttributes.setIsVerified(true);
 
-            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
-            user.setUserAttributes(savedUserAttributes);
-            repository.save(user);
+//            UserAttributes savedUserAttributes = userRepository.save(user).getUserAttributes();
+//            user.setUserAttributes(savedUserAttributes);
+            userRepository.save(user);
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.getEmail());
         } else {
             user.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1; // increment reject count
             user.setCountReject(newRejectCount);
-            UserAttributes userAttributes = new UserAttributes();
+
+            UserAttributes userAttributes = user.getUserAttributes();
+            if (userAttributes == null) {
+                userAttributes = new UserAttributes();
+                user.setUserAttributes(userAttributes);
+            }
             userAttributes.setUser(user);
 
-            UserAttributes savedUserAttributes = repository.save(user).getUserAttributes();
-            user.setUserAttributes(savedUserAttributes);
-            repository.save(user);
+//            UserAttributes savedUserAttributes = userRepository.save(user).getUserAttributes();
+//            user.setUserAttributes(savedUserAttributes);
+            userRepository.save(user);
 
             if (newRejectCount >= 3) {
                 throw new BadRequestException("Your account can't be created anymore. Please contact admin.");
@@ -124,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean validateOtp(String email, String otpCode) {
-        Optional<User> userOptional = repository.findByEmail(email);
+        Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             Optional<Otp> otpOptional = otpRepository.findByUserAndOtpAndValidIsTrue(user, otpCode);
@@ -134,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
                     otp.setValid(false); // Mark OTP as used
                     otpRepository.save(otp);
                     user.setStatus(StatusType.VERIFIED); // Enable the user
-                    repository.save(user);
+                    userRepository.save(user);
                     return true;
                 }
             }
@@ -144,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resendOtp(String identity, String email) throws MessagingException {
-        Optional<User> userOptional = repository.findByEmail(email);
+        Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             // Invalidate previous OTPs

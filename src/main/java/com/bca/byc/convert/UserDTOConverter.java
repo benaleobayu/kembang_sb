@@ -1,6 +1,7 @@
 package com.bca.byc.convert;
 
 import com.bca.byc.entity.User;
+import com.bca.byc.entity.UserAttributes;
 import com.bca.byc.model.UserAppDetailResponse;
 import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.model.UserUpdateRequest;
@@ -127,6 +128,12 @@ public class UserDTOConverter {
     public User convertToCreateRequest(@Valid RegisterRequest dto) {
         // mapping DTO Entity with Entity
         User data = modelMapper.map(dto, User.class);
+        UserAttributes userAttributes = new UserAttributes();
+        userAttributes.setApprovedBy("SYSTEM");
+        userAttributes.setIsRecommended(false);
+        userAttributes.setIsBlocked(false);
+        userAttributes.setIsVerified(false);
+        data.setUserAttributes(userAttributes);
         // return
         return data;
     }
