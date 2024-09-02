@@ -1,10 +1,9 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.LineOfBusinessCategory;
-import com.bca.byc.entity.Location;
-import com.bca.byc.entity.StatusType;
-import com.bca.byc.entity.UserType;
+import com.bca.byc.entity.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class UserAppDetailResponse {
@@ -19,16 +18,37 @@ public class UserAppDetailResponse {
     private String biodata;
     private String createdAt;
 
-    private Location location; // TODO: location
+    private LocationListResponse location; // TODO: location
 
-//    private List<Business> businesses; // <business>
-
-    private LineOfBusinessCategory lineOfBusiness;
+    private List<BusinessListResponse> businesses; // <business>
 
     private Integer totalFollowers;
     private Integer totalFollowing;
     private Integer totalPosts;
     private Integer totalEvents;
+
+
+    @Data
+    public static class BusinessListResponse {
+        private Long id;
+        private String name;
+        private String lineOfBusiness;
+        private Boolean isPrimary;
+//        private List<BusinessCategoryResponse> category;
+    }
+
+    @Data
+    public static class BusinessCategoryResponse {
+        private Long id;
+        private String name;
+
+    }
+
+    @Data
+    public static class LocationListResponse {
+        private Long id;
+        private String name;
+    }
 
 }
 

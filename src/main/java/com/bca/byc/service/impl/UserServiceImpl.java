@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<User> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);
+        Page<User> pageResult = repository.findByNameLikeIgnoreCaseAndStatusAndUserAttributesIsRecommendedTrue(userName, StatusType.ACTIVATED,pageable);
         List<UserAppDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserAppDetailResponse dto = converter.convertToInfoResponse(c);
             return dto;

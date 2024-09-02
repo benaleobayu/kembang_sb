@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,9 +24,6 @@ public class Business extends AbstractBaseEntity {
     @Column(name = "province", length = 50)
     private String province;
 
-    @Column(name = "line_of_business", length = 50)
-    private String lineOfBusiness;
-
     @Column(name = "address", length = 80)
     private String address;
 
@@ -48,9 +46,11 @@ public class Business extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
     private Set<BusinessHasCategory> businessCategories = new HashSet<>();
 
     // make manytomany with location
@@ -58,6 +58,7 @@ public class Business extends AbstractBaseEntity {
     @JoinTable(name = "business_has_location",
             joinColumns = @JoinColumn(name = "business_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id"))
+    @EqualsAndHashCode.Exclude
     private Set<Location> locations = new HashSet<>();
 
 

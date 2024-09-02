@@ -40,9 +40,9 @@ public interface UserService {
             String userName
     );
 
-    default ResultPageResponseDTO<UserAppDetailResponse> listFollowUser() {
-        return listFollowUser(null, 5, null, null, null);
-    }
+//    default ResultPageResponseDTO<UserAppDetailResponse> listFollowUser() {
+//        return listFollowUser(null, 5, null, null, null);
+//    }
 
     ResultPageResponseDTO<UserAppDetailResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
 

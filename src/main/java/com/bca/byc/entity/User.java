@@ -3,6 +3,7 @@ package com.bca.byc.entity;
 import com.bca.byc.validation.AgeRange;
 import com.bca.byc.validation.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -96,6 +97,7 @@ public class User extends AbstractBaseEntity {
 
     // details
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
     private UserAttributes userAttributes;
 
     // relation
@@ -109,11 +111,8 @@ public class User extends AbstractBaseEntity {
     // many to one
     @ManyToOne
     @JoinColumn(name = "location_id")
+    @JsonIgnore
     private Location location;
-
-    @ManyToOne
-    @JoinColumn(name = "lob_id", referencedColumnName = "id")
-    private LineOfBusinessCategory lineOfBusiness;
 
     // follow and followers
     @ManyToMany

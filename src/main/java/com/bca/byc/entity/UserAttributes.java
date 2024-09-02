@@ -3,6 +3,7 @@ package com.bca.byc.entity;
 import com.bca.byc.validation.ApproveEnum;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "user_attributes")
@@ -23,6 +24,7 @@ public class UserAttributes {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
     private User user;
 
 }
