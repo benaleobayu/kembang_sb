@@ -36,7 +36,7 @@ public class BusinessCategory extends AbstractBaseEntity {
     private BusinessCategory parentId;
 
     // show data as child in this entity
-    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentId", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<BusinessCategory> children = new ArrayList<>();
 
 }

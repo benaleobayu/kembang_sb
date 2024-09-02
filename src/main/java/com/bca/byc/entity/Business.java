@@ -49,7 +49,7 @@ public class Business extends AbstractBaseEntity {
     @EqualsAndHashCode.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "business", cascade = CascadeType.MERGE, orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     private Set<BusinessHasCategory> businessCategories = new HashSet<>();
 
