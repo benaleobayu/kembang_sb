@@ -28,20 +28,20 @@ public class AdminSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Create admin
-        if (adminRepository.count() == 0) {
-            Admin admin = new Admin();
-            admin.setName("Admin Unictive");
-            admin.setEmail("admin@unictive.net");
-            admin.setPassword(passwordEncoder.encode("password"));
-            admin.setCreatedAt(LocalDateTime.now());
-            admin.setUpdatedAt(LocalDateTime.now());
-
-            // Assign role
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            admin.setRole(adminRole);
-
-            adminRepository.save(admin);
-        }
+//        if (adminRepository.count() == 0) {
+//            Admin admin = new Admin();
+//            admin.setName("Admin Unictive");
+//            admin.setEmail("admin@unictive.net");
+//            admin.setPassword(passwordEncoder.encode("password"));
+//            admin.setCreatedAt(LocalDateTime.now());
+//            admin.setUpdatedAt(LocalDateTime.now());
+//
+//            // Assign role
+//            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+//                    .orElseThrow(() -> new RuntimeException("Role not found"));
+//            admin.setRole(adminRole);
+//
+//            adminRepository.save(admin);
+//        }
     }
 }
