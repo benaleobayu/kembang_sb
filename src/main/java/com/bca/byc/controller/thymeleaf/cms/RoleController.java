@@ -1,4 +1,4 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
 import com.bca.byc.entity.Role;
 import com.bca.byc.model.RoleModelDTO;

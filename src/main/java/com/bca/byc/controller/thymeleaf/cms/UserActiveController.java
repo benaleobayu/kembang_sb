@@ -1,10 +1,11 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
 import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.model.auth.AuthRegisterRequest;
+import com.bca.byc.model.UserCmsDetailResponse;
+import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.SettingsAdminService;
+import com.bca.byc.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,37 +19,37 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping(AdminController.thisUrl)
-public class AdminController {
+@RequestMapping(UserActiveController.thisUrl)
+public class UserActiveController {
 
-    private static final String prefixName = "cms/settings/";
-    private static final String suffixName = "admin";
+    private static final String prefixName = "cms/";
+    private static final String suffixName = "user";
     static final String thisUrl = prefixName + suffixName;
-    private final String titlePage = "Admin";
-
+    private final String titlePage = "User Active";
+    
     @Autowired
-    private SettingsAdminService service;
+    private UserService service;
 
     // get route index table
-    @GetMapping
+    @GetMapping("/active")
     public String index(Model model, HttpServletRequest request) {
         // set breadcrumb
-        List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
+        List<Breadcrumb> breadcrumbs = Arrays.asList(
+                new Breadcrumb("Home", "/", false),
                 new Breadcrumb(titlePage, request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<AdminDetailResponse> alldata = service.findAllData();
-        model.addAttribute("datas", alldata);
+        model.addAttribute("datas", service.findUserActive());
 
         // some part
         model.addAttribute("titlePage", titlePage);
         model.addAttribute("modelName", suffixName);
-        return thisUrl + "/index";
+        return thisUrl + "/active";
     }
 
     // get route detail data
-    @GetMapping("/{id}/detail")
+    @GetMapping("/active/{id}/detail")
     public String view(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
@@ -56,14 +57,14 @@ public class AdminController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        AdminDetailResponse data = service.findDataById(id);
+        UserCmsDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
     }
 
     // get route create data
-    @GetMapping("/create")
+    @GetMapping("/active/create")
     public String create(Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
@@ -80,8 +81,8 @@ public class AdminController {
     }
 
     // get method create data
-    @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid AdminCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    @PostMapping("/active/create")
+    public String create(@ModelAttribute("formData") @Valid AuthRegisterRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -92,7 +93,7 @@ public class AdminController {
     }
 
     // get route edit data
-    @GetMapping("/{id}/edit")
+    @GetMapping("/active/{id}/edit")
     public String edit(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
@@ -101,7 +102,7 @@ public class AdminController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminDetailResponse dto = service.findDataById(id);
+        UserCmsDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -109,8 +110,8 @@ public class AdminController {
     }
 
     // get method edit data
-    @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid AdminUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    @PostMapping("/active/{id}/edit")
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid UserUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

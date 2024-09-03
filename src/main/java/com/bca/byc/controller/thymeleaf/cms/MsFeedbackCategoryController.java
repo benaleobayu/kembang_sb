@@ -1,14 +1,11 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.auth.AuthRegisterRequest;
-import com.bca.byc.model.UserCmsDetailResponse;
-import com.bca.byc.model.UserUpdateRequest;
+import com.bca.byc.model.FeedbackCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.UserService;
+import com.bca.byc.service.MsFeedbackCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,62 +15,64 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
-@Controller
-@RequestMapping(UserActiveController.thisUrl)
-public class UserActiveController {
+import static com.bca.byc.controller.thymeleaf.cms.MsFeedbackCategoryController.thisUrl;
 
-    private static final String prefixName = "cms/";
-    private static final String suffixName = "user";
+@Controller
+@AllArgsConstructor
+@RequestMapping(thisUrl)
+public class MsFeedbackCategoryController {
+
+    private static final String prefixName = "cms/ms/";
+    private static final String suffixName = "feedback_category";
     static final String thisUrl = prefixName + suffixName;
-    private final String titlePage = "User Active";
-    
-    @Autowired
-    private UserService service;
+    private final String titlePage = "Feedback Category";
+
+    private final MsFeedbackCategoryService service;
 
     // get route index table
-    @GetMapping("/active")
+    @GetMapping
     public String index(Model model, HttpServletRequest request) {
         // set breadcrumb
-        List<Breadcrumb> breadcrumbs = Arrays.asList(
-                new Breadcrumb("Home", "/", false),
-                new Breadcrumb(titlePage, request.getRequestURI(), true));
+        List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
+                new Breadcrumb("Master " + titlePage, request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        model.addAttribute("datas", service.findUserActive());
+        List<FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse> alldata = service.findAllData();
+        model.addAttribute("datas", alldata);
 
         // some part
         model.addAttribute("titlePage", titlePage);
         model.addAttribute("modelName", suffixName);
-        return thisUrl + "/active";
+        return thisUrl + "/index";
     }
 
     // get route detail data
-    @GetMapping("/active/{id}/detail")
+    @GetMapping("/{id}/detail")
     public String view(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb(titlePage, thisUrl, false),
+                new Breadcrumb("Master " + titlePage, thisUrl, false),
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        UserCmsDetailResponse data = service.findDataById(id);
+        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
     }
 
     // get route create data
-    @GetMapping("/active/create")
+    @GetMapping("/create")
     public String create(Model model, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb(titlePage, thisUrl, false),
+                new Breadcrumb("Master " + titlePage, thisUrl, false),
                 new Breadcrumb("Create", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        AdminCreateRequest dto = new AdminCreateRequest();
+        FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto = new FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -81,8 +80,8 @@ public class UserActiveController {
     }
 
     // get method create data
-    @PostMapping("/active/create")
-    public String create(@ModelAttribute("formData") @Valid AuthRegisterRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    @PostMapping("/create")
+    public String create(@ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
@@ -93,16 +92,16 @@ public class UserActiveController {
     }
 
     // get route edit data
-    @GetMapping("/active/{id}/edit")
+    @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") Long id, HttpServletRequest request) {
         // set breadcrumb
         List<Breadcrumb> breadcrumbs = Arrays.asList(new Breadcrumb("Home", "/", false),
-                new Breadcrumb(titlePage, thisUrl, false),
+                new Breadcrumb("Master " + titlePage, thisUrl, false),
                 new Breadcrumb("Edit", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        UserCmsDetailResponse dto = service.findDataById(id);
+        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -110,8 +109,8 @@ public class UserActiveController {
     }
 
     // get method edit data
-    @PostMapping("/active/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid UserUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";

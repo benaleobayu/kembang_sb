@@ -1,11 +1,11 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
-import com.bca.byc.model.FeedbackCategoryModelDTO;
+import com.bca.byc.model.InterestCategoryModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.MsFeedbackCategoryService;
+import com.bca.byc.service.MsInterestCategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,19 +15,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.bca.byc.controller.cms.MsFeedbackCategoryController.thisUrl;
-
 @Controller
-@AllArgsConstructor
-@RequestMapping(thisUrl)
-public class MsFeedbackCategoryController {
+@RequestMapping(MsInterestCategoryController.thisUrl)
+public class MsInterestCategoryController {
 
     private static final String prefixName = "cms/ms/";
-    private static final String suffixName = "feedback_category";
+    private static final String suffixName = "interest_category";
     static final String thisUrl = prefixName + suffixName;
-    private final String titlePage = "Feedback Category";
+    private final String titlePage = "Interest Category";
 
-    private final MsFeedbackCategoryService service;
+    @Autowired
+    private MsInterestCategoryService service;
 
     // get route index table
     @GetMapping
@@ -38,7 +36,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse> alldata = service.findAllData();
+        List<InterestCategoryModelDTO.InterestCategoryDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
@@ -56,7 +54,7 @@ public class MsFeedbackCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse data = service.findDataById(id);
+        InterestCategoryModelDTO.InterestCategoryDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -72,7 +70,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto = new FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest();
+        InterestCategoryModelDTO.InterestCategoryCreateRequest dto = new InterestCategoryModelDTO.InterestCategoryCreateRequest();
         model.addAttribute("formData", dto);
         model.addAttribute("modelName", suffixName);
         model.addAttribute("formMode", "create");
@@ -81,14 +79,14 @@ public class MsFeedbackCategoryController {
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
         }
 
         service.saveData(dto);
-        return "redirect:" + thisUrl;
+        return "redirect:/cms/ms/" + suffixName;
     }
 
     // get route edit data
@@ -101,7 +99,7 @@ public class MsFeedbackCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        FeedbackCategoryModelDTO.FeedbackCategoryDetailResponse dto = service.findDataById(id);
+        InterestCategoryModelDTO.InterestCategoryDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
         model.addAttribute("modelName", suffixName);
@@ -110,13 +108,13 @@ public class MsFeedbackCategoryController {
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid FeedbackCategoryModelDTO.FeedbackCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";
         }
         service.updateData(id, dto);
-        return "redirect:" + thisUrl;
+        return "redirect:/cms/ms/" + suffixName;
     }
 
 

@@ -1,4 +1,4 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
 import com.bca.byc.entity.StatusType;
 import com.bca.byc.model.component.Breadcrumb;

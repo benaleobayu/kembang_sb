@@ -1,11 +1,11 @@
-package com.bca.byc.controller.cms;
+package com.bca.byc.controller.thymeleaf.cms;
 
-import com.bca.byc.model.InterestCategoryModelDTO;
+import com.bca.byc.model.SettingsModelDTO;
 import com.bca.byc.model.component.Breadcrumb;
-import com.bca.byc.service.MsInterestCategoryService;
+import com.bca.byc.service.SettingsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,16 +16,16 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping(MsInterestCategoryController.thisUrl)
-public class MsInterestCategoryController {
+@AllArgsConstructor
+@RequestMapping(SettingsController.thisUrl)
+public class SettingsController {
 
-    private static final String prefixName = "cms/ms/";
-    private static final String suffixName = "interest_category";
+    private static final String prefixName = "cms/settings/";
+    private static final String suffixName = "all";
     static final String thisUrl = prefixName + suffixName;
-    private final String titlePage = "Interest Category";
+    private final String titlePage = "All Settings";
 
-    @Autowired
-    private MsInterestCategoryService service;
+    private final SettingsService service;
 
     // get route index table
     @GetMapping
@@ -36,12 +36,12 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         //table
-        List<InterestCategoryModelDTO.InterestCategoryDetailResponse> alldata = service.findAllData();
+        List<SettingsModelDTO.SettingsDetailResponse> alldata = service.findAllData();
         model.addAttribute("datas", alldata);
 
         // some part
         model.addAttribute("titlePage", titlePage);
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         return thisUrl + "/index";
     }
 
@@ -54,7 +54,7 @@ public class MsInterestCategoryController {
                 new Breadcrumb("Details", request.getRequestURI(), true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        InterestCategoryModelDTO.InterestCategoryDetailResponse data = service.findDataById(id);
+        SettingsModelDTO.SettingsDetailResponse data = service.findDataById(id);
         model.addAttribute("formData", data);
         model.addAttribute("formMode", "view");
         return thisUrl + "/form_data";
@@ -70,23 +70,23 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.InterestCategoryCreateRequest dto = new InterestCategoryModelDTO.InterestCategoryCreateRequest();
+        SettingsModelDTO.SettingsCreateRequest dto = new SettingsModelDTO.SettingsCreateRequest();
         model.addAttribute("formData", dto);
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         model.addAttribute("formMode", "create");
         return thisUrl + "/form_data";
     }
 
     // get method create data
     @PostMapping("/create")
-    public String create(@ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String create(@ModelAttribute("formData") @Valid SettingsModelDTO.SettingsCreateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/create";
         }
 
         service.saveData(dto);
-        return "redirect:/cms/ms/" + suffixName;
+        return "redirect:" + "/" + thisUrl;
     }
 
     // get route edit data
@@ -99,22 +99,22 @@ public class MsInterestCategoryController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         // some part
-        InterestCategoryModelDTO.InterestCategoryDetailResponse dto = service.findDataById(id);
+        SettingsModelDTO.SettingsDetailResponse dto = service.findDataById(id);
         model.addAttribute("formData", dto);
         model.addAttribute("formMode", "update");
-        model.addAttribute("modelName", suffixName);
+        model.addAttribute("modelName", "all");
         return thisUrl + "/form_data";
     }
 
     // get method edit data
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid InterestCategoryModelDTO.InterestCategoryUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute("formData") @Valid SettingsModelDTO.SettingsUpdateRequest dto, BindingResult bindingResult, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("formData", dto);
             return thisUrl + "/" + id + "/edit";
         }
         service.updateData(id, dto);
-        return "redirect:/cms/ms/" + suffixName;
+        return "redirect:" + "/" + thisUrl;
     }
 
 
