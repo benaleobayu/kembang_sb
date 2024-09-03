@@ -4,7 +4,9 @@ import com.bca.byc.convert.UserDTOConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.auth.RegisterRequest;
-import com.bca.byc.repository.*;
+import com.bca.byc.repository.OtpRepository;
+import com.bca.byc.repository.TestAutocheckRepository;
+import com.bca.byc.repository.UserRepository;
 import com.bca.byc.service.AuthService;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
@@ -33,8 +35,12 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> existingUserOptional = userRepository.findByEmail(dto.getEmail());
 
         // Check if the user with the given email already exists and has an active status
-        if (existingUserOptional.isPresent() && existingUserOptional.get().getStatus().equals(StatusType.ACTIVATED)) {
-            throw new BadRequestException("Email already exists");
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            if (existingUser.getStatus().equals(StatusType.PRE_ACTIVATED) ||
+                    existingUser.getStatus().equals(StatusType.ACTIVATED)) {
+                throw new BadRequestException("Email already exists");
+            }
         }
 
         // Check if the user type is not customer

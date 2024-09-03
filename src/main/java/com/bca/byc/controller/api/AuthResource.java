@@ -65,7 +65,8 @@ public class AuthResource {
             log.info("User registered successfully: {}", dto.getEmail());
             return ResponseEntity.ok(new ApiResponse(true, "User registered successfully. Please check your email to activate your account."));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Error registering user", e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Error registering user: " + e.getMessage()));
         }
     }
 
