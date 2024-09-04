@@ -1,0 +1,39 @@
+package com.bca.byc.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+@Table(name = "role")
+@Entity
+public class Role extends AbstractBaseEntityNoUUID implements Serializable {
+
+    /**
+     *
+     */
+    @Serial
+    private static final long serialVersionUID = -3535157084126830747L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @OneToMany(mappedBy = "role")
+    private List<RoleHasPermission> permissions;
+
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        var authorities = permissions.stream().map(permission -> new SimpleGrantedAuthority(permission.getPermission().getName())).collect(Collectors.toList());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + name));
+        return authorities;
+    }
+
+}

@@ -1,0 +1,36 @@
+logging:  
+  level:    
+    '[com.bca.byc]': TRACE
+
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 600000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+    url: jdbc:postgresql://127.0.0.1:5432/book_catalog?reWriteBatchedInserts=true
+    username: postgres
+    password: 12345
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+    show-sql: true
+
+app:
+  currency: IDR
+  timezone: Asia/Jakarta
+  welcome-text: Hello World ...
+  jwt_expiration: 360000
+  secret: DB193852D89847196BDB193852D89847196B666871A223E666871A223E
+cloud:
+  api-key: ${CLOUD_KEY}
+server:
+  port: 8090
