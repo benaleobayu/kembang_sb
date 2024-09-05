@@ -45,10 +45,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new BadRequestException("User already exists");
         }
 
-        // Check if the user type is not customer
-        if (dto.type().equals(UserType.NOT_CUSTOMER)) {
-            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
-        }
+
 
         AppUser user;
         if (existingUserOptional.isEmpty()) {
@@ -64,8 +61,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             userDetail.setType(dto.type());
             userDetail.setPhone(dto.phone());
-            userDetail.setMemberBankAccount(dto.member_bank_account().concat(" "));
-            userDetail.setChildBankAccount(dto.child_bank_account().concat(" "));
+            userDetail.setMemberBankAccount(dto.member_bank_account());
+            userDetail.setChildBankAccount(dto.child_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
             userDetail.setChildBirthdate(dto.child_birthdate());
             user.setAppUserDetail(userDetail);
@@ -87,8 +84,11 @@ public class UserAuthServiceImpl implements UserAuthService {
             userDetail.setMemberBirthdate(dto.member_birthdate());
             userDetail.setChildBirthdate(dto.child_birthdate());
             user.setAppUserDetail(userDetail);
+        }
 
-
+        // Check if the user type is not customer
+        if (dto.type().equals(UserType.NOT_CUSTOMER)) {
+            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
         }
 
         // Check the PreRegister data
@@ -97,6 +97,10 @@ public class UserAuthServiceImpl implements UserAuthService {
         boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.child_bank_account());
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
+
+        assert dataCheck != null;
+        user.setName(dataCheck.getName());
+        userDetail.setName(dataCheck.getName());
 
         if ((dto.type().equals(UserType.MEMBER) && member) || (dto.type().equals(UserType.NOT_MEMBER) && child)) {
             userDetail.setStatus(StatusType.APPROVED);

@@ -1,29 +1,19 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.ApiUserInfoDetailResponse;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.response.ApiDataResponse;
-import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.DataAccess;
 import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.service.impl.AppAdminServiceImpl;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 
 @Slf4j
