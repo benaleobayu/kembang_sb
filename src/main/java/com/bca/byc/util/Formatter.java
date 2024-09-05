@@ -22,8 +22,6 @@ public class Formatter {
         return formatDate != null ? formatDate.format(formatterLocalDateTime) : null;
     }
 
-
-
     private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static String formatLocalDate(LocalDate dateTime) {

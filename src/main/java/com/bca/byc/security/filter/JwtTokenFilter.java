@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import static com.bca.byc.enums.ErrorCode.UNAUTHORIZED;
 
@@ -33,12 +34,28 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private static final String LOGIN_URL_APPS = "/api/auth/.*";
     private static final String PUBLIC_URL_APPS = "/api/v1/public/.*";
     private static final String LOGIN_URL_CMS = "/cms/auth/.*";
+    private static final Set<String> PERMIT_ENDPOINT_LIST = Set.of(LOGIN_URL_APPS, PUBLIC_URL_APPS, LOGIN_URL_CMS,
+            "/swagger-ui.html",
+            "/swagger-ui/index.html",
+            "/swagger-ui/index.css",
+            "/favicon.ico",
+            "/swagger-ui/swagger-ui.css",
+            "/swagger-ui/swagger-ui.css.map",
+            "/swagger-ui/swagger-ui-standalone-preset.js",
+            "/swagger-ui/swagger-ui-standalone-preset.js.map",
+            "/swagger-ui/swagger-ui-bundle.js",
+            "/swagger-ui/swagger-ui-bundle.js.map",
+            "/swagger-ui/favicon-32x32.png",
+            "/swagger-ui/favicon-16x16.png",
+            "/swagger-ui/swagger-initializer.js",
+            "/v3/api-docs/swagger-config",
+            "/v3/api-docs");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         // Skip token validation for the login URL
-        if (requestURI.matches(LOGIN_URL_APPS) || requestURI.matches(PUBLIC_URL_APPS) || requestURI.matches(LOGIN_URL_CMS)) {
+        if (PERMIT_ENDPOINT_LIST.stream().anyMatch(requestURI::matches)) {
             filterChain.doFilter(request, response);
             return;
         }

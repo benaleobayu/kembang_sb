@@ -77,9 +77,6 @@ public class SecurityConfig {
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
-
     @Bean
     public AuthenticationSuccessHandler usernamePasswordAuthSuccessHandler(ObjectMapper objectMapper, JWTTokenFactory jwtTokenFactory) {
         return new UsernamePasswordAuthSucessHandler(objectMapper, jwtTokenFactory);
