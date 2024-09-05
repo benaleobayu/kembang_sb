@@ -46,7 +46,7 @@ public class AppUserDTOConverter {
         dto.setAvatar(appUserDetail.getAvatar());
         dto.setCover(appUserDetail.getCover());
         dto.setBiodata(appUserDetail.getBiodata());
-        dto.setCreatedAt(Formatter.formatLocalDateTime(appUserDetail.getCreatedAt()));
+        dto.setCreatedAt(Formatter.formatDateTimeApps(appUserDetail.getCreatedAt()));
 
         // List of businesses
         if (data.getBusinesses() != null && !data.getBusinesses().isEmpty()) {

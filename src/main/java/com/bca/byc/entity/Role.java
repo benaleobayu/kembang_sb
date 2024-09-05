@@ -2,6 +2,7 @@ package com.bca.byc.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serial;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "role")
 @Entity

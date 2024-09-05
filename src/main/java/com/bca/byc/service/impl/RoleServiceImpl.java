@@ -6,18 +6,18 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.service.RoleCreateRequest;
+import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.service.RoleService;
-import com.bca.byc.service.RoleUpdateRequest;
+import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -85,7 +85,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public ResultPageResponseDTO<RoleDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+        userName = StringUtils.isEmpty(userName) ? "%" : (userName + "%");
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<Role> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);

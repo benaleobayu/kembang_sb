@@ -19,6 +19,10 @@ public class LogDevice extends AbstractBaseEntityNoUUID {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id")
+    private AppAdmin admin;
+
     @Column(name = "device_id")
     private String deviceId;
 

@@ -1,4 +1,4 @@
-package com.bca.byc.service;
+package com.bca.byc.model;
 
 import com.bca.byc.entity.Permission;
 

@@ -1,17 +1,20 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.Role;
+import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.model.RoleDetailResponse;
 
-import com.bca.byc.service.RoleCreateRequest;
-import com.bca.byc.service.RoleUpdateRequest;
+import com.bca.byc.model.RoleCreateRequest;
+import com.bca.byc.model.RoleUpdateRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -24,6 +27,14 @@ public class RoleDTOConverter {
         // mapping Entity with DTO Entity
         RoleDetailResponse dto = modelMapper.map(data, RoleDetailResponse.class);
         // return
+        List<SimpleGrantedAuthority> roleHasPermissionList = data.getAuthorities();
+        // get list permission
+//        List<String> permissions = roleHasPermissionList.stream()
+//                .map(SimpleGrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
+
+        List<RoleHasPermission> roleHasPermissions = data.getPermissions();
+        dto.setPermissions(roleHasPermissions);
         return dto;
     }
 

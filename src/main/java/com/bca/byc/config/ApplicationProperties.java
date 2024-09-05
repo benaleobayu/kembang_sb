@@ -1,8 +1,10 @@
 package com.bca.byc.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Data
 @Configuration
 @ConfigurationProperties(prefix = "app")
 public class ApplicationProperties {
@@ -13,28 +15,5 @@ public class ApplicationProperties {
 
 	private String currency;
 
-	public String getWelcomeText() {
-		return welcomeText;
-	}
-
-	public void setWelcomeText(String welcomeText) {
-		this.welcomeText = welcomeText;
-	}
-
-	public String getTimezone() {
-		return timezone;
-	}
-
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
-	}
-
-	public String getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
 
 }

@@ -1,11 +1,15 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.service.util.ClientInfoService;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.LogDevice;
+import com.bca.byc.enums.ActionType;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
+import com.bca.byc.repository.LogDeviceRespository;
 import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.response.ApiDataResponse;
+import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.DataAccess;
 import com.bca.byc.security.util.JWTHeaderTokenExtractor;
@@ -14,6 +18,7 @@ import com.bca.byc.service.UserAuthService;
 import com.bca.byc.service.impl.AppUserServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +45,34 @@ public class AppAuthController {
     private final JWTHeaderTokenExtractor jwtHeaderTokenExtractor;
 
     private final AppUserRepository userRepository;
+    private final LogDeviceRespository logDeviceRepository;
+
+    private final ClientInfoService clientInfoService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiDataResponse> authLogin(@RequestBody LoginRequestDTO dto) {
+    public ResponseEntity<ApiListResponse> authLogin(
+            @RequestParam(name = "deviceId") String deviceId,
+            @RequestParam(name = "version") String version,
+            @RequestBody LoginRequestDTO dto,
+            HttpServletRequest request) {
 
         final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
         final DataAccess dataAccess = new DataAccess(tokens, "Bearer", jwtUtil.getExpirationTime());
-        return ResponseEntity.ok().body(new ApiDataResponse(true, "success", dataAccess));
+
+        final String ipAddress = clientInfoService.getClientIp(request);
+
+        AppUser appUser = appUserService.findByEmail(dto.email());
+        LogDevice logDevice = new LogDevice();
+        logDevice.setUser(appUser);
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(ipAddress);
+        logDevice.setActionType(ActionType.LOGIN);
+        logDeviceRepository.save(logDevice);
+
+
+        return ResponseEntity.ok().body(new ApiListResponse(true, "success", dataAccess));
     }
 
     @PostMapping("/register")
@@ -65,17 +90,17 @@ public class AppAuthController {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<ApiDataResponse> validateOtp(@RequestBody OtpValidateRequest dto) {
+    public ResponseEntity<ApiListResponse> validateOtp(@RequestBody OtpValidateRequest dto) {
         boolean isValid = authService.validateOtp(dto.email(), dto.otp());
         Optional<AppUser> user = userRepository.findByEmail(dto.email());
         if (isValid) {
             final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
             final String token = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "OTP validated successfully.", token));
+            return ResponseEntity.ok(new ApiListResponse(true, "OTP validated successfully.", token));
         } else if (user.isPresent() && user.get().getAppUserDetail().getStatus().equals(StatusType.REJECTED)) {
-            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, "User not approved.", null));
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, "User not approved.", null));
         } else {
-            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, "Invalid OTP.", null));
+            return ResponseEntity.badRequest().body(new ApiListResponse(false, "Invalid OTP.", null));
         }
     }
 

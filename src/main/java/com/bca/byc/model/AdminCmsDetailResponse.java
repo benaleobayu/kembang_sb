@@ -15,6 +15,4 @@ public class AdminCmsDetailResponse {
     private String roleName;
     private List<String> permissions;
 
-
-
 }

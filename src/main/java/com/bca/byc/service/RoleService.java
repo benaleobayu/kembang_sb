@@ -1,7 +1,8 @@
 package com.bca.byc.service;
 
-import com.bca.byc.entity.RoleHasPermission;
+import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.model.RoleDetailResponse;
+import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 import com.bca.byc.exception.BadRequestException;

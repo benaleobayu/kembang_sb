@@ -1,5 +1,7 @@
 package com.bca.byc.config;
 
+import com.bca.byc.security.filter.JwtBlacklistFilter;
+import com.bca.byc.service.util.TokenBlacklistService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bca.byc.exception.CustomAccessDeniedHandler;
 import com.bca.byc.exception.CustomAuthenticationEntryPoint;
@@ -76,6 +78,9 @@ public class SecurityConfig {
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @Bean
     public AuthenticationSuccessHandler usernamePasswordAuthSuccessHandler(ObjectMapper objectMapper, JWTTokenFactory jwtTokenFactory) {
         return new UsernamePasswordAuthSucessHandler(objectMapper, jwtTokenFactory);
@@ -120,7 +125,9 @@ public class SecurityConfig {
         http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
-        http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class).addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtBlacklistFilter(tokenBlacklistService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
 
     }

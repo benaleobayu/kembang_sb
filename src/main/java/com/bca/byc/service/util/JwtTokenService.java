@@ -1,4 +1,4 @@
-package com.bca.byc.service.security;
+package com.bca.byc.service.util;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;

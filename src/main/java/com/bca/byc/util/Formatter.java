@@ -8,11 +8,21 @@ import java.time.format.DateTimeFormatter;
 
 public class Formatter {
 
+    // apps formater
+    private static final DateTimeFormatter formatterApps = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    public static String formatDateTimeApps(LocalDateTime formatDate) {
+        return formatDate != null ? formatDate.format(formatterApps) : null;
+    }
+
+    // cms formatter
     private static final DateTimeFormatter formatterLocalDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    public static String formatLocalDateTime(LocalDateTime dateTime) {
-        return dateTime != null ? dateTime.format(formatterLocalDateTime) : null;
+    public static String formatLocalDateTime(LocalDateTime formatDate) {
+        return formatDate != null ? formatDate.format(formatterLocalDateTime) : null;
     }
+
+
 
     private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 

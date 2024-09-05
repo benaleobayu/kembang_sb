@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;
@@ -25,4 +26,6 @@ public interface AdminService {
     ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
 
     AdminCmsDetailResponse getAdminDetail(String email);
+
+    AppAdmin findByEmail(String email);
 }

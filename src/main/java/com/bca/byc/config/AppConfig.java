@@ -4,7 +4,9 @@ import java.security.Key;
 
 import javax.crypto.SecretKey;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,11 +44,6 @@ public class AppConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
-//	@Bean
-//	public ObjectMapper objectMapper() {
-//		return new ObjectMapper();
-//	}
-
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();

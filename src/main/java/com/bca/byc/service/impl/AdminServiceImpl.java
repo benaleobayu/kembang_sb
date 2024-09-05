@@ -40,6 +40,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public AppAdmin findByEmail(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Email not found"));
+    }
+
+    @Override
     public List<AdminDetailResponse> findAllData() {
         // Get the list
         List<AppAdmin> datas = repository.findAll();
@@ -120,4 +126,6 @@ public class AdminServiceImpl implements AdminService {
 
         return converter.convertToInfoResponse(data);
     }
+
+
 }
