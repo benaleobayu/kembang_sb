@@ -29,13 +29,21 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RoleHasPermission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
         var authorities = permissions.stream().map(permission -> new SimpleGrantedAuthority(permission.getPermission().getName())).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_" + name));
         return authorities;
+    }
+
+    public List<RoleHasPermission> getRolePermission() {
+        return permissions;
+    }
+
+    public void setRolePermission(List<RoleHasPermission> roleHasPermissions) {
+        this.permissions = roleHasPermissions;
     }
 
 }

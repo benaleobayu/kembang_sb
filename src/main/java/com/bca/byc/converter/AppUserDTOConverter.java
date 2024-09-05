@@ -10,7 +10,6 @@ import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -121,10 +120,10 @@ public class AppUserDTOConverter {
 
         String userType;
         LocalDate birthdate;
-        if ( data.getAppUserDetail().getType() == UserType.MEMBER) {
+        if (data.getAppUserDetail().getType() == UserType.MEMBER) {
             userType = "Parent Solitaire / Prioritas";
             birthdate = userDetail.getMemberBirthdate();
-        } else if ( data.getAppUserDetail().getType() == UserType.NOT_MEMBER) {
+        } else if (data.getAppUserDetail().getType() == UserType.NOT_MEMBER) {
             userType = "Child Solitaire / Prioritas";
             birthdate = userDetail.getChildBirthdate();
         } else {
