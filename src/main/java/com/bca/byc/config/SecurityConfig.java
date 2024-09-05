@@ -1,7 +1,6 @@
 package com.bca.byc.config;
 
-import com.bca.byc.security.filter.JwtBlacklistFilter;
-import com.bca.byc.service.util.TokenBlacklistService;
+import com.bca.byc.security.filter.JwtTokenFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bca.byc.exception.CustomAccessDeniedHandler;
 import com.bca.byc.exception.CustomAuthenticationEntryPoint;
@@ -79,7 +78,7 @@ public class SecurityConfig {
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Autowired
-    private TokenBlacklistService tokenBlacklistService;
+    private JwtTokenFilter jwtTokenFilter;
 
     @Bean
     public AuthenticationSuccessHandler usernamePasswordAuthSuccessHandler(ObjectMapper objectMapper, JWTTokenFactory jwtTokenFactory) {
@@ -118,18 +117,31 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter, JwtAuthProcessingFilter jwtAuthProcessingFilter) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll().requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter,
+                                                   JwtAuthProcessingFilter jwtAuthProcessingFilter,
+                                                   JwtTokenFilter jwtTokenFilter) throws Exception {
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
+
         http.csrf(AbstractHttpConfigurer::disable);
-        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler));
-        http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler));
 
+        http.sessionManagement(sessionManagement -> sessionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(new JwtBlacklistFilter(tokenBlacklistService), UsernamePasswordAuthenticationFilter.class);
+        // Add JwtTokenFilter before authentication filters
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Add authentication filters
         http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
 
+        return http.build();
     }
 
 }

@@ -27,10 +27,9 @@ public class ErrorResponseDTO implements Serializable{
 	private List<String> details;
 	
 	private HttpStatus status;
-	
-	
-	
-	
+
+
+
 	public static ErrorResponseDTO of(final String message, List<String> details, final ErrorCode errorCode, HttpStatus status) {
 		return new ErrorResponseDTO(message, errorCode, details, status);
 	}

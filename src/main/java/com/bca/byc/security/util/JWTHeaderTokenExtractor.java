@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 
+
 @Component
 public class JWTHeaderTokenExtractor implements TokenExtractor {
 
@@ -21,15 +22,19 @@ public class JWTHeaderTokenExtractor implements TokenExtractor {
 
     @Override
 	public String extract(String payload) {
-		if (StringUtils.isBlank(payload)) {
-			throw new AuthenticationServiceException("Authorization header should be provided");
-		}
+//		if (StringUtils.isBlank(payload)) {
+//			throw new AuthenticationServiceException("Authorization header should be provided");
+//		}
+//
+//		if (payload.length() < HEADER_PREFIX.length()) {
+//			throw new AuthenticationServiceException("Invalid authorization header");
+//		}
 
-		if (payload.length() < HEADER_PREFIX.length()) {
-			throw new AuthenticationServiceException("Invalid authorization header");
+//		return payload.substring(HEADER_PREFIX.length());
+		if (payload != null && payload.startsWith("Bearer ")) {
+			return payload.substring(7); // Extract the token
 		}
-
-		return payload.substring(HEADER_PREFIX.length());
+		return null;
 	}
 
 	@Override
