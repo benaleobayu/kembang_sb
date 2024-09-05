@@ -22,4 +22,15 @@ public class RoleHasPermission {
     public RoleHasPermission() {
         this.id = new RoleHasPermissionId();
     }
+
+    public RoleHasPermission(Role data, Permission permission) {
+    }
+
+    @Override
+    public String toString() {
+        return "RoleHasPermission{" +
+                "id=" + id +
+                ", permission=" + permission.getName() +  // Just get the permission name to avoid recursive loop
+                '}';
+    }
 }

@@ -1,15 +1,18 @@
 package com.bca.byc.model;
 
 import com.bca.byc.entity.Permission;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 import java.util.List;
 
-public record RoleUpdateRequest(
+@Data
+public class RoleUpdateRequest{
 
-        Long id,
+    @NotBlank(message = "Name is required")
+    private String name;
 
-        String name,
+    private List<Long> addPermissionIds;
 
-        List<Permission> permissions
-) {
+    private List<Long> removePermissionIds;
 }

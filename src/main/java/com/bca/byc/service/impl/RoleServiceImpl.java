@@ -1,15 +1,21 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.RoleDTOConverter;
+import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
+import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RoleDetailResponse;
+import com.bca.byc.model.RoleListResponse;
+import com.bca.byc.repository.PermissionRepository;
+import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.service.RoleService;
 import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -27,21 +33,24 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    private RoleRepository repository;
-    private RoleDTOConverter converter;
+    private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
+    private final RoleHasPermissionRepository roleHasPermissionRepository;
+
+    private final RoleDTOConverter converter;
 
     @Override
     public RoleDetailResponse findDataById(Long id) throws BadRequestException {
-        Role data = repository.findById(id)
+        Role data = roleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Role not found"));
 
-        return converter.convertToListResponse(data);
+        return converter.convertToDetailResponse(data);
     }
 
     @Override
-    public List<RoleDetailResponse> findAllData() {
+    public List<RoleListResponse> findAllData() {
         // Get the list
-        List<Role> datas = repository.findAll();
+        List<Role> datas = roleRepository.findAll();
 
         // stream into the list
         return datas.stream()
@@ -54,43 +63,65 @@ public class RoleServiceImpl implements RoleService {
         // set entity to add with model mapper
         Role data = converter.convertToCreateRequest(dto);
         // save data
-        repository.save(data);
+        roleRepository.save(data);
     }
 
     @Override
-    public void updateData(Long id, RoleUpdateRequest dto) throws BadRequestException {
+    @Transactional
+    public void updateData(Long roleId, RoleUpdateRequest dto) throws BadRequestException {
         // check exist and get
-        Role data = repository.findById(id)
+        Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new BadRequestException("INVALID Role ID"));
 
         // update
-        converter.convertToUpdateRequest(data, dto);
+        if (dto.getAddPermissionIds() != null) {
+            for (Long permissionId : dto.getAddPermissionIds()) {
+                Permission permission = permissionRepository.findById(permissionId)
+                        .orElseThrow(() -> new RuntimeException("Permission not found"));
+                RoleHasPermission roleHasPermission = new RoleHasPermission(role, permission);
+                if (!roleHasPermissionRepository.existsByRoleAndPermission(role, permission)) {
+                    roleHasPermissionRepository.save(roleHasPermission);
+                }
+            }
+        }
 
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        // remove
+        if (dto.getRemovePermissionIds() != null) {
+            for (Long permissionId : dto.getRemovePermissionIds()) {
+                RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleIdAndPermissionId(roleId, permissionId);
+                if (roleHasPermission != null) {
+                    roleHasPermissionRepository.delete(roleHasPermission);
+                }
+            }
+        }
 
-        // save
-        repository.save(data);
+        // Updatename
+        if (dto.getName() != null) {
+            role.setName(dto.getName());
+        }
+        role.setUpdatedAt(LocalDateTime.now());
+
+        roleRepository.save(role);
     }
 
     @Override
     public void deleteData(Long id) throws BadRequestException {
         // delete data
-        if (!repository.existsById(id)) {
+        if (!roleRepository.existsById(id)) {
             throw new BadRequestException("Role not found");
         } else {
-            repository.deleteById(id);
+            roleRepository.deleteById(id);
         }
     }
 
     @Override
-    public ResultPageResponseDTO<RoleDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
+    public ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
         userName = StringUtils.isEmpty(userName) ? "%" : (userName + "%");
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Role> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);
-        List<RoleDetailResponse> dtos = pageResult.stream().map((c) -> {
-            RoleDetailResponse dto = converter.convertToListResponse(c);
+        Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(userName, pageable);
+        List<RoleListResponse> dtos = pageResult.stream().map((c) -> {
+            RoleListResponse dto = converter.convertToListResponse(c);
             return dto;
         }).collect(Collectors.toList());
 
