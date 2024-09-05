@@ -4,11 +4,9 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserDetail;
 import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
-import com.bca.byc.model.UserCmsDetailResponse;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.AppUserService;
-import com.bca.byc.service.impl.AppUserServiceImpl;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,18 +26,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OnboardingDTOConverter {
 
-    private AppUserRepository userRepository;
     private final AppUserService userService;
-
+    private AppUserRepository userRepository;
     private ModelMapper modelMapper;
 
     // for get data
-    public UserCmsDetailResponse convertToListResponse(AppUser data) {
+    public OnboardingListUserResponse convertToListResponse(AppUser data) {
         // mapping Entity with DTO Entity
-        UserCmsDetailResponse dto = modelMapper.map(data, UserCmsDetailResponse.class);
+        OnboardingListUserResponse dto = modelMapper.map(data, OnboardingListUserResponse.class);
         // Use DataFormatter here
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
 
 
         // count follower from follow table
@@ -47,7 +43,6 @@ public class OnboardingDTOConverter {
         dto.setTotalFollowing(data.getFollows().size());
 
         dto.setIsFollowed(data.getFollowers().stream().anyMatch(f -> f.getId().equals(data.getId())));
-        dto.setIsFollowing(data.getFollowers().stream().anyMatch(f -> f.getId().equals(data.getId())));
         return dto;
     }
 

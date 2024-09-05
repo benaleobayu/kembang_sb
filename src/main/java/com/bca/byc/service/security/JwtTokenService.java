@@ -1,6 +1,7 @@
 package com.bca.byc.service.security;
 
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -8,7 +9,8 @@ import java.util.Date;
 
 @Service
 public class JwtTokenService {
-    private static final long EXPIRATION_TIME = 864_000_000; // 10 days
+    @Value("${app.jwtExpirationInMs}")
+    private Long EXPIRATION_TIME; // 10 days
     private final SecretKey SECRET_KEY;
 
     public JwtTokenService(SecretKey secretKey) {
