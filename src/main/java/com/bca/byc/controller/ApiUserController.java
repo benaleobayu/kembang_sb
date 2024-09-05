@@ -28,7 +28,11 @@ public class ApiUserController {
 
         UserInfoResponse user = userService.getUserDetails(principal.getName());
         // response true
-        return ResponseEntity.ok(new ApiResponse(true, "User found", user));
+        try{
+            return ResponseEntity.ok(new ApiResponse(true, "User found", user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
 }

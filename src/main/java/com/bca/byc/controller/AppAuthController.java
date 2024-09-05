@@ -1,13 +1,12 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.service.util.ClientInfoService;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.LogDevice;
 import com.bca.byc.enums.ActionType;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
-import com.bca.byc.repository.LogDeviceRespository;
+import com.bca.byc.repository.LogDeviceRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
@@ -16,6 +15,8 @@ import com.bca.byc.security.util.JWTHeaderTokenExtractor;
 import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.service.UserAuthService;
 import com.bca.byc.service.impl.AppUserServiceImpl;
+import com.bca.byc.service.util.ClientInfoService;
+import com.bca.byc.service.util.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,9 +46,10 @@ public class AppAuthController {
     private final JWTHeaderTokenExtractor jwtHeaderTokenExtractor;
 
     private final AppUserRepository userRepository;
-    private final LogDeviceRespository logDeviceRepository;
+    private final LogDeviceRepository logDeviceRepository;
 
     private final ClientInfoService clientInfoService;
+    private final TokenBlacklistService tokenBlacklist;
 
     @PostMapping("/login")
     public ResponseEntity<ApiListResponse> authLogin(
@@ -71,13 +73,25 @@ public class AppAuthController {
         logDevice.setActionType(ActionType.LOGIN);
         logDeviceRepository.save(logDevice);
 
-
         return ResponseEntity.ok().body(new ApiListResponse(true, "success", dataAccess));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> authRegister(@Valid @RequestBody AppRegisterRequest dto) {
+    public ResponseEntity<ApiResponse> authRegister(
+            @RequestParam(name = "deviceId") String deviceId,
+            @RequestParam(name = "version") String version,
+            @Valid @RequestBody AppRegisterRequest dto,
+            HttpServletRequest request) {
         log.debug("Register request received: {}", dto.email());
+
+        final String ipAddress = clientInfoService.getClientIp(request);
+
+        LogDevice logDevice = new LogDevice();
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(ipAddress);
+        logDevice.setActionType(ActionType.SIGNUP);
+        logDeviceRepository.save(logDevice);
 
         try {
             authService.saveUser(dto);
@@ -154,6 +168,28 @@ public class AppAuthController {
             log.error("BadRequestException: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    // Method to invalidate token by blacklisting it
+    @SecurityRequirement(name = "Authorization")
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(
+            @RequestParam(name = "deviceId") String deviceId,
+            @RequestParam(name = "version") String version,
+            HttpServletRequest request) {
+        String token = jwtHeaderTokenExtractor.extract(request.getHeader("Authorization"));
+        tokenBlacklist.addToBlacklist(token);
+
+        final String ipAddress = clientInfoService.getClientIp(request);
+
+        LogDevice logDevice = new LogDevice();
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(ipAddress);
+        logDevice.setActionType(ActionType.LOGOUT);
+        logDeviceRepository.save(logDevice);
+
+        return ResponseEntity.ok().body(new ApiResponse(true, "User logged out successfully"));
     }
 
 

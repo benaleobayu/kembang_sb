@@ -1,16 +1,20 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.repository.LogDeviceRepository;
+import com.bca.byc.response.ApiResponse;
+import com.bca.byc.security.util.JWTHeaderTokenExtractor;
 import com.bca.byc.service.util.ClientInfoService;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.LogDevice;
 import com.bca.byc.enums.ActionType;
 import com.bca.byc.model.LoginRequestDTO;
-import com.bca.byc.repository.LogDeviceRespository;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.DataAccess;
 import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.service.impl.AppAdminServiceImpl;
+import com.bca.byc.service.util.TokenBlacklistService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -31,10 +35,13 @@ public class CmsAuthController {
 
     private final AppAdminServiceImpl appAdminService;
     private final AdminService adminService;
-    private final JWTTokenFactory jwtUtil;
 
-    private final LogDeviceRespository logDeviceRespository;
+    private final JWTTokenFactory jwtUtil;
+    private final JWTHeaderTokenExtractor jwtHeaderTokenExtractor;
+
+    private final LogDeviceRepository logDeviceRepository;
     private final ClientInfoService clientInfoService;
+    private final TokenBlacklistService tokenBlacklist;
 
     @PostMapping("/login")
     public ResponseEntity<ApiDataResponse> authLogin(@RequestBody LoginRequestDTO dto, HttpServletRequest request) {
@@ -53,9 +60,30 @@ public class CmsAuthController {
         logDevice.setVersion("1.0.0");
         logDevice.setIpAddress(ipAddress);
         logDevice.setActionType(ActionType.LOGIN);
-        logDeviceRespository.save(logDevice);
+        logDeviceRepository.save(logDevice);
 
         return ResponseEntity.ok().body(new ApiDataResponse(true, "success", dataAccess));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(
+            @RequestParam(name = "deviceId") String deviceId,
+            @RequestParam(name = "version") String version,
+            HttpServletRequest request) {
+        String token = jwtHeaderTokenExtractor.extract(request.getHeader("Authorization"));
+        tokenBlacklist.addToBlacklist(token);
+
+        final String ipAddress = clientInfoService.getClientIp(request);
+
+        LogDevice logDevice = new LogDevice();
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(ipAddress);
+        logDevice.setActionType(ActionType.LOGOUT);
+        logDeviceRepository.save(logDevice);
+
+        return ResponseEntity.ok().body(new ApiResponse(true, "User logged out successfully"));
     }
 
 
