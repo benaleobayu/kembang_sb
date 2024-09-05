@@ -1,7 +1,6 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.PreRegister;
-import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;

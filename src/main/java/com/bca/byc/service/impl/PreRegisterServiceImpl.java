@@ -51,6 +51,11 @@ public class PreRegisterServiceImpl implements PreRegisterService {
 
     @Override
     public void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException {
+        // check if email exists return error
+        if (repository.existsByEmail(dto.getEmail())) {
+            throw new BadRequestException("Email already exists");
+        }
+
         // set entity to add with model mapper
         PreRegister data = converter.convertToCreateRequest(dto);
         // save data

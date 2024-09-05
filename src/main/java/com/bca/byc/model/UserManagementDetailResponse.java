@@ -3,8 +3,10 @@ package com.bca.byc.model;
 import com.bca.byc.enums.StatusType;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
-public class PreRegisterDetailResponse {
+public class UserManagementDetailResponse {
 
     private Long id;
     private String name;
@@ -17,10 +19,10 @@ public class PreRegisterDetailResponse {
     private String childBankAccount;
     private String memberCin;
     private String childCin;
-    private String memberBirthdate;
-    private String childBirthdate;
+//    private String memberBirthdate;
+//    private String childBirthdate;
 
-//    private String birthDate;
+    private String birthDate;
 
     private String orders;
     private StatusType status;

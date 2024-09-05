@@ -28,7 +28,6 @@ public class PreRegister extends AbstractBaseEntity {
     @Column(name = "name")
     private String name;
 
-    @UniqueEmailPreRegister
     @Column(name="email", unique = true)
     private String email;
 
@@ -69,6 +68,14 @@ public class PreRegister extends AbstractBaseEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate childBirthdate;
     // ---
+
+    // other data
+
+    @Column(name = "branch_code", length = 80)
+    private String branchCode;
+
+    @Column(name = "pic_name")
+    private String picName;
 
 
 
