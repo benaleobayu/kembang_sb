@@ -1,6 +1,6 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.model.ApiUserInfoDetailResponse;
+import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.AppUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,7 @@ public class ApiUserController {
     public ResponseEntity<ApiResponse> getUserDetail(Principal principal) {
         log.info("GET /api/v1/users/info endpoint hit");
 
-        ApiUserInfoDetailResponse user = userService.getUserDetails(principal.getName());
+        UserInfoResponse user = userService.getUserDetails(principal.getName());
         // response true
         return ResponseEntity.ok(new ApiResponse(true, "User found", user));
     }

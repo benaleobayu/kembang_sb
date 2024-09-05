@@ -3,6 +3,7 @@ package com.bca.byc.repository.auth;
 import java.util.Optional;
 
 import com.bca.byc.enums.StatusType;
+import com.bca.byc.model.UserManagementDetailResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.bca.byc.entity.AppUser;
 
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
-	
+
 	Optional<AppUser> findByEmail(String email);
 
     boolean existsByEmail(String email);

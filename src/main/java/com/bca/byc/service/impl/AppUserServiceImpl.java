@@ -4,7 +4,7 @@ import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.ApiUserInfoDetailResponse;
+import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserDetailResponseDTO;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -56,7 +56,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ApiUserInfoDetailResponse getUserDetails(String email) {
+    public UserInfoResponse getUserDetails(String email) {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Email not found"));
 

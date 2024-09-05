@@ -1,9 +1,8 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.model.ApiUserInfoDetailResponse;
+import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
-import com.bca.byc.model.UserSetPasswordRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -19,7 +18,7 @@ public interface AppUserService extends UserDetailsService {
 
 	AppUser findByUsername(String subject);
 
-	ApiUserInfoDetailResponse getUserDetails(String name);
+	UserInfoResponse getUserDetails(String name);
 
 	void followUser(Long userId, String name);
 
