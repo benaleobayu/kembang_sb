@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.response.PermissionResponse;
 import lombok.Data;
 
 import java.util.List;
@@ -12,10 +13,6 @@ public class RoleDetailResponse {
     private String name;
     private Map<String, List<PermissionResponse>> permissions; // Map<permission, List<SimpleGrantedAuthority>>
 
-    @Data
-    public static class PermissionResponse {
-        private Long permissionId;
-        private String permissionName;
-        private Boolean disabled;
-    }
+
 }
+

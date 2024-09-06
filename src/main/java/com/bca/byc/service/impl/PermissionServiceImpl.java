@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.repository.PermissionRepository;
+import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.service.PermissionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
 
     @Override
-    public Map<String, List<RoleDetailResponse.PermissionResponse>> findAllData() {
+    public Map<String, List<PermissionResponse>> findAllData() {
         // Fetch all permissions
         List<Permission> allPermissions = permissionRepository.findAll();
 
@@ -32,14 +33,14 @@ public class PermissionServiceImpl implements PermissionService {
                 }));
 
         // Initialize
-        Map<String, List<RoleDetailResponse.PermissionResponse>> permissionGroups = new HashMap<>();
+        Map<String, List<PermissionResponse>> permissionGroups = new HashMap<>();
 
         // For each category
         for (Map.Entry<String, List<Permission>> entry : permissionsByCategory.entrySet()) {
             String category = entry.getKey();
             List<Permission> permissionsInCategory = entry.getValue();
 
-            List<RoleDetailResponse.PermissionResponse> permissionResponses = new ArrayList<>();
+            List<PermissionResponse> permissionResponses = new ArrayList<>();
 
             for (String defaultPermission : defaultPermissions) {
                 // Check if the current permission exists in the category
@@ -48,7 +49,7 @@ public class PermissionServiceImpl implements PermissionService {
                         .findFirst();
 
                 // Create a new PermissionResponse
-                RoleDetailResponse.PermissionResponse permissionResponse = new RoleDetailResponse.PermissionResponse();
+                PermissionResponse permissionResponse = new PermissionResponse();
 
                 if (matchingPermission.isPresent()) {
                     permissionResponse.setPermissionId(matchingPermission.get().getId());

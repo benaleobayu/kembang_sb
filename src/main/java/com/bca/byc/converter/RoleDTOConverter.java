@@ -11,6 +11,7 @@ import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
+import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class RoleDTOConverter {
         List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete");
 
         // Define a map to hold grouped permissions
-        Map<String, List<RoleDetailResponse.PermissionResponse>> permissionGroups = new HashMap<>();
+        Map<String, List<PermissionResponse>> permissionGroups = new HashMap<>();
 
         // Get role's permissions
         List<RoleHasPermission> roleHasPermissionList = data.getRolePermission();
@@ -66,7 +67,7 @@ public class RoleDTOConverter {
             List<RoleHasPermission> permissions = entry.getValue();
 
             // Create a list of PermissionResponse for each category
-            List<RoleDetailResponse.PermissionResponse> permissionDetails = new ArrayList<>();
+            List<PermissionResponse> permissionDetails = new ArrayList<>();
 
             // Iterate over default permissions (view, create, read, update, delete)
             for (String defaultPermission : defaultPermissions) {
@@ -76,7 +77,7 @@ public class RoleDTOConverter {
                         .findFirst();
 
                 // Create a new PermissionResponse
-                RoleDetailResponse.PermissionResponse permissionDetail = new RoleDetailResponse.PermissionResponse();
+                PermissionResponse permissionDetail = new PermissionResponse();
 
                 // If the permission exists in the role, set its details
                 if (matchingPermission.isPresent()) {

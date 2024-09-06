@@ -28,7 +28,7 @@ public class RoleSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 //        Map<String, List<String>> actionByResource = new HashMap<>();
-//        actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));
+//        actionByResource.put("admin", List.of("view", "create", "read", "update,));
 //        actionByResource.put("user", List.of("view", "create", "read", "update", "delete"));
 //        actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
 //        actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
@@ -52,10 +52,10 @@ public class RoleSeeder implements CommandLineRunner {
 //        });
 //
 //        // check role exist
-//        Role adminRole = roleRepository.findByName("ADMIN")
+//        Role adminRole = roleRepository.findByName("SUPERADMIN")
 //                .orElseGet(() -> {
 //                    Role role = new Role();
-//                    role.setName("ADMIN");
+//                    role.setName("SUPERADMIN");
 //                    return roleRepository.save(role);
 //                });
 //

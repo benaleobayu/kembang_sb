@@ -3,7 +3,6 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -44,13 +43,13 @@ public class UserInquiryController {
 
     // create
     @GetMapping("{id}")
-    public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /cms/v1/user-inquiry/{id} endpoint hit");
         try {
             UserManagementDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found register inquiry", item));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found register inquiry", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 

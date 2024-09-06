@@ -97,7 +97,7 @@ public class RoleServiceImpl implements RoleService {
 
         // Updatename
         if (dto.getName() != null) {
-            role.setName(dto.getName());
+            role.setName(dto.getName().toUpperCase());
         }
         role.setUpdatedAt(LocalDateTime.now());
 

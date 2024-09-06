@@ -1,17 +1,14 @@
 package com.bca.byc.controller;
 
 
-import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
 import com.bca.byc.model.RoleUpdateRequest;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.RoleService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.relation.RoleList;
 import java.net.URI;
 
 @Slf4j
@@ -53,23 +49,23 @@ public class RoleController {
 
     @Operation(hidden = true)
     @GetMapping("/all")
-    public ResponseEntity<ApiListResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAll() {
         log.info("GET /cms/v1/am/role endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found role", service.findAllData()));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found role", service.findAllData()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /cms/v1/am/role/{id} endpoint hit");
         try {
             RoleDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found role", item));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found role", item));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 

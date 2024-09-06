@@ -4,7 +4,6 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.response.ApiListResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -49,23 +48,23 @@ public class UserPreRegisterController {
 
     @Operation(hidden = true)
     @GetMapping("/all")
-    public ResponseEntity<ApiListResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAll() {
         log.info("GET /cms/v1/pre-register endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found pre-register user", service.findAllData()));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found pre-register user", service.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiListResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET /cms/v1/pre-register/{id} endpoint hit");
         try {
             PreRegisterDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiListResponse(true, "Successfully found pre-register user", item));
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully found pre-register user", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiListResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 

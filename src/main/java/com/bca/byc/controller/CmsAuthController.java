@@ -9,7 +9,7 @@ import com.bca.byc.entity.LogDevice;
 import com.bca.byc.enums.ActionType;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.response.ApiDataResponse;
-import com.bca.byc.response.DataAccess;
+import com.bca.byc.response.DataAccessResponse;
 import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.service.impl.AppAdminServiceImpl;
@@ -48,7 +48,7 @@ public class CmsAuthController {
 
         final UserDetails userDetails = appAdminService.loadUserByUsername(dto.email());
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
-        final DataAccess dataAccess = new DataAccess(tokens, "Bearer", jwtUtil.getExpirationTime());
+        final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
 
         final String ipAddress = clientInfoService.getClientIp(request);
         final String deviceId = clientInfoService.getBrowser(request);

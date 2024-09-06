@@ -40,10 +40,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 
-		// Misalnya, jika "admin" ada di dalam scopes, kita anggap sebagai admin
-		if (authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+		// if admin
+		if (authorities.contains(new SimpleGrantedAuthority(("ROLE_ADMIN").toUpperCase()))) {
 			UserDetails adminDetails = new UserDetails() {
-				// implementasi UserDetails seperti sebelumnya
 				@Override
 				public String getUsername() {
 					return subject;
