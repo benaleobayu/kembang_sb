@@ -7,21 +7,20 @@ import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
-import com.bca.byc.exception.BadRequestException;
 
 import java.util.List;
 
 public interface AdminService {
 
-    AdminDetailResponse findDataById(Long id) throws BadRequestException;
+    AdminDetailResponse findDataById(Long id) throws Exception;
 
     List<AdminDetailResponse> findAllData();
 
-    void saveData(@Valid AdminCreateRequest dto) throws BadRequestException;
+    void saveData(@Valid AdminCreateRequest dto) throws Exception;
 
-    void updateData(Long id, @Valid AdminUpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid AdminUpdateRequest dto) throws Exception;
 
-    void deleteData(Long id) throws BadRequestException;
+    void deleteData(Long id) throws Exception;
 
     ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
 

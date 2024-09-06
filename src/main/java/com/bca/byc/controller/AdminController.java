@@ -66,7 +66,7 @@ public class AdminController {
         try {
             AdminDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found admin", item));
-        } catch (BadRequestException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
@@ -78,7 +78,7 @@ public class AdminController {
             service.saveData(item);
             return ResponseEntity.created(URI.create("/cms/v1/am/admin/"))
                     .body(new ApiResponse(true, "Successfully created admin"));
-        } catch (BadRequestException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
@@ -89,7 +89,7 @@ public class AdminController {
         try {
             service.updateData(id, item);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated admin"));
-        } catch (BadRequestException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
@@ -100,7 +100,7 @@ public class AdminController {
         try {
             service.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted admin"));
-        } catch (BadRequestException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
