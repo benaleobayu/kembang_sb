@@ -1,13 +1,22 @@
 package com.bca.byc.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
+import com.bca.byc.model.PostCreateUpdateRequest;
+import com.bca.byc.model.PostDetailResponse;
 
 public interface PostService {
 
-    String uploadContent(MultipartFile fileName) throws IOException;
+    void init();
 
-    public byte[] downloadContent(String fileName) throws IOException;
+    PostDetailResponse findById(Long id) throws Exception;
+
+    void save(PostCreateUpdateRequest dto)  throws Exception;
+
+    void update(Long id, PostCreateUpdateRequest post)  throws Exception;
+
+    void deleteData(Long id)  throws Exception;
+
+//    String uploadContent(MultipartFile fileName) throws IOException;
+//
+//    public byte[] downloadContent(String fileName) throws IOException;
 
 }

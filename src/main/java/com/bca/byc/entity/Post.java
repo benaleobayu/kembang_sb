@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "post")
-@Builder
 public class Post extends AbstractBaseEntity {
 
     @Id
@@ -25,9 +24,8 @@ public class Post extends AbstractBaseEntity {
     @Column(name = "name")
     private String name;
 
-    @Lob
     @Column(name = "content", columnDefinition = "text")
-    private byte[] content;
+    private String content;
 
     @Column(name = "type")
     private String type;
