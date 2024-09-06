@@ -5,15 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class JwtTokenService {
+    private final SecretKey SECRET_KEY;
     @Value("${app.jwtExpirationInMs}")
     private Long EXPIRATION_TIME; // 10 days
-    private final SecretKey SECRET_KEY;
 
     public JwtTokenService(SecretKey secretKey) {
         SECRET_KEY = secretKey;

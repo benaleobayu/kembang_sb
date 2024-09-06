@@ -1,6 +1,5 @@
 package com.bca.byc.util;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class FileUploadHelper {
             fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
         }
 
-        String fileName = UUID.randomUUID().toString() + fileExtension;
+        String fileName = UUID.randomUUID() + fileExtension;
         Path filePath = uploadPath.resolve(fileName);
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -34,14 +33,13 @@ public class FileUploadHelper {
         return filePath.toString();
     }
 
-    public static String deleteFile(String filePath) {
+    public static void deleteFile(String filePath) {
         try {
             Path path = Paths.get(filePath);
             if (Files.exists(path)) {
                 Files.delete(path); // Delete the file if it exists
-                System.out.println("File deleted: " + path.toString());
+                System.out.println("File deleted: " + path);
             }
-            return "File deleted successfully";
         } catch (IOException e) {
             throw new RuntimeException("Error deleting file: " + filePath, e);
         }

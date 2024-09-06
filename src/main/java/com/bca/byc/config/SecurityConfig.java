@@ -1,10 +1,9 @@
 package com.bca.byc.config;
 
-import com.bca.byc.security.filter.JwtTokenFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bca.byc.exception.CustomAccessDeniedHandler;
 import com.bca.byc.exception.CustomAuthenticationEntryPoint;
 import com.bca.byc.security.filter.JwtAuthProcessingFilter;
+import com.bca.byc.security.filter.JwtTokenFilter;
 import com.bca.byc.security.filter.UsernamePasswordAuthProcessingFilter;
 import com.bca.byc.security.handler.UsernamePasswordAuthFailureHandler;
 import com.bca.byc.security.handler.UsernamePasswordAuthSucessHandler;
@@ -13,6 +12,7 @@ import com.bca.byc.security.provider.UsernamePasswordAuthProvider;
 import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.security.util.SkipPathRequestMatcher;
 import com.bca.byc.security.util.TokenExtractor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -64,7 +63,7 @@ public class SecurityConfig {
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
             "/v3/api-docs");
-    private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL,APPS_V1, CMS_V1);
+    private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL, APPS_V1, CMS_V1);
 
 
     @Autowired

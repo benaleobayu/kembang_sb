@@ -2,8 +2,6 @@ package com.bca.byc.entity;
 
 import com.bca.byc.enums.UserType;
 import com.bca.byc.validator.annotation.MemberTypeEnum;
-import com.bca.byc.validator.annotation.UniqueEmail;
-import com.bca.byc.validator.annotation.UniqueEmailPreRegister;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +26,7 @@ public class PreRegister extends AbstractBaseEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name="email", unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "phone")
@@ -78,13 +76,11 @@ public class PreRegister extends AbstractBaseEntity {
     private String picName;
 
 
-
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
-
 
 
 }
