@@ -109,20 +109,21 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Long id) {
         try {
-
             PostDetailResponse post = postService.findById(id);
+
             String content = post.getContent();
             if (content != null && !content.isEmpty()) {
                 String[] filePaths = content.split(",");
                 for (String filePath : filePaths) {
-                    FileUploadHelper.deleteFile(filePath.trim());
+                    String getFilePaths = filePath.replaceAll("\"", "").replaceAll("[\\[\\]]", "");
+                    FileUploadHelper.deleteFile(getFilePaths.trim());
                 }
             }
 
             postService.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Post deleted successfully"));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

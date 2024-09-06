@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.repository.PostRepository;
@@ -56,7 +57,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDetailResponse findById(Long id) throws Exception {
         Post data = postRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Admin not found"));
+                .orElseThrow(() -> new BadRequestException("Post not found"));
 
         return converter.convertToListResponse(data);
     }
@@ -77,7 +78,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteData(Long id) throws Exception {
         if (!postRepository.existsById(id)) {
-            throw new BadRequestException("Post not found");
+            throw new ResourceNotFoundException("Post not found");
         } else {
             postRepository.deleteById(id);
         }

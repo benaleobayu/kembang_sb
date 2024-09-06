@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +21,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 3423593371835697230L;
 
     @Id

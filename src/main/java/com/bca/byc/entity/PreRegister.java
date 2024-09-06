@@ -35,11 +35,11 @@ public class PreRegister extends AbstractBaseEntity {
     private String phone;
 
     @MemberTypeEnum
-    @Column(name = "member", columnDefinition = "varchar(80) default 'NOT_MEMBER'")
+    @Column(name = "member")
     private String memberType = "NOT_MEMBER";
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", columnDefinition = "varchar(80) default 'MEMBER'")
+    @Column(name = "type")
     private UserType type = UserType.MEMBER;
 
     @Column(name = "description", columnDefinition = "text")
