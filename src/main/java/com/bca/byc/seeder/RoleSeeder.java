@@ -27,58 +27,61 @@ public class RoleSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        Map<String, List<String>> actionByResource = new HashMap<>();
-//        actionByResource.put("admin", List.of("view", "create", "read", "update,));
-//        actionByResource.put("user", List.of("view", "create", "read", "update", "delete"));
-//        actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
-//        actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
-//        actionByResource.put("expect_item", List.of("view", "create", "read", "update", "delete"));
-//
-//        List<Permission> allPermissions = new ArrayList<>();
-//
-//        actionByResource.forEach((resource, actions) -> {
-//            actions.forEach(action -> {
-//                String permissionName = resource + "." + action;
-//                Optional<Permission> existingPermission = permissionRepository.findByName(permissionName);
-//                if (existingPermission.isEmpty()) {
-//                    Permission permission = new Permission();
-//                    permission.setName(permissionName);
-//                    permission.setGuardName("admin");
-//                    allPermissions.add(permissionRepository.save(permission));
-//                } else {
-//                    allPermissions.add(existingPermission.get());
-//                }
-//            });
-//        });
-//
-//        // check role exist
-//        Role adminRole = roleRepository.findByName("SUPERADMIN")
-//                .orElseGet(() -> {
-//                    Role role = new Role();
-//                    role.setName("SUPERADMIN");
-//                    return roleRepository.save(role);
-//                });
-//
-//        // assign
-//        allPermissions.forEach(permission -> {
-//            RoleHasPermissionId rolePermissionId = new RoleHasPermissionId();
-//            rolePermissionId.setRoleId(adminRole.getId());
-//            rolePermissionId.setPermissionId(permission.getId());
-//
-//            RoleHasPermission roleHasPermissions = new RoleHasPermission();
-//            roleHasPermissions.setId(rolePermissionId);
-//            roleHasPermissions.setRole(adminRole);
-//            roleHasPermissions.setPermission(permission);
-//
-//            roleHasPermissionRepository.save(roleHasPermissions);
-//        });
-//
-//        // check if role exist
-//        if (!roleRepository.findByName("USER").isPresent()) {
-//            Role role = new Role();
-//            role.setName("USER");
-//            roleRepository.save(role);
-//        }
+        Map<String, List<String>> actionByResource = new HashMap<>();
+        actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("user", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("pre-registration", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("user-inquiry", List.of("view", "read", "update", "delete"));
+        actionByResource.put("user-active", List.of("view", "read", "update", "delete"));
+        actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("expect_item", List.of("view", "create", "read", "update", "delete"));
+
+        List<Permission> allPermissions = new ArrayList<>();
+
+        actionByResource.forEach((resource, actions) -> {
+            actions.forEach(action -> {
+                String permissionName = resource + "." + action;
+                Optional<Permission> existingPermission = permissionRepository.findByName(permissionName);
+                if (existingPermission.isEmpty()) {
+                    Permission permission = new Permission();
+                    permission.setName(permissionName);
+                    permission.setGuardName("admin");
+                    allPermissions.add(permissionRepository.save(permission));
+                } else {
+                    allPermissions.add(existingPermission.get());
+                }
+            });
+        });
+
+        // check role exist
+        Role adminRole = roleRepository.findByName("SUPERADMIN")
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setName("SUPERADMIN");
+                    return roleRepository.save(role);
+                });
+
+        // assign
+        allPermissions.forEach(permission -> {
+            RoleHasPermissionId rolePermissionId = new RoleHasPermissionId();
+            rolePermissionId.setRoleId(adminRole.getId());
+            rolePermissionId.setPermissionId(permission.getId());
+
+            RoleHasPermission roleHasPermissions = new RoleHasPermission();
+            roleHasPermissions.setId(rolePermissionId);
+            roleHasPermissions.setRole(adminRole);
+            roleHasPermissions.setPermission(permission);
+
+            roleHasPermissionRepository.save(roleHasPermissions);
+        });
+
+        // check if role exist
+        if (!roleRepository.findByName("USER").isPresent()) {
+            Role role = new Role();
+            role.setName("USER");
+            roleRepository.save(role);
+        }
 
     }
 }

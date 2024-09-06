@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtTokenService {
@@ -18,8 +20,12 @@ public class JwtTokenService {
     }
 
     public String generateToken(String email) {
-        return Jwts.builder().subject(email).expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY) // Sign the token with the secret key
+        return Jwts.builder().subject(email)
+                .claim("scopes", List.of("ROLE_SUPERADMIN"))
+                .issuer("https://bca.co.id")
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SECRET_KEY)// Sign the token with the secret key
                 .compact();
     }
 }

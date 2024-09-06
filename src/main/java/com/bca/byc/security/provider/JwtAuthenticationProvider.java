@@ -41,7 +41,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				.collect(Collectors.toList());
 
 		// if admin
-		if (authorities.contains(new SimpleGrantedAuthority(("ROLE_ADMIN").toUpperCase()))) {
+		if (authorities.contains(new SimpleGrantedAuthority(("ROLE_SUPERADMIN").toUpperCase()))) {
 			UserDetails adminDetails = new UserDetails() {
 				@Override
 				public String getUsername() {
