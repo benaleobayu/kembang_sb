@@ -19,9 +19,9 @@ public class JwtTokenService {
         SECRET_KEY = secretKey;
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder().subject(email)
-                .claim("scopes", List.of("ROLE_SUPERADMIN"))
+                .claim("scopes", List.of(role))
                 .issuer("https://bca.co.id")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))

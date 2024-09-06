@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -47,6 +48,7 @@ public class SecurityConfig {
     private final static String CMS_V1 = "/cms/v1/**";
 
     private final static List<String> PERMIT_ENDPOINT_LIST = Arrays.asList(AUTH_URL, AUTH_URL_APPS, AUTH_URL_CMS, PUBLIC_URL_APPS,
+            "/static/**",
             "/swagger-ui.html",
             "/swagger-ui/index.html",
             "/swagger-ui/index.css",
@@ -121,6 +123,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
 
         http.csrf(AbstractHttpConfigurer::disable);
