@@ -3,9 +3,12 @@ package com.bca.byc.config;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.FileUploadHelper;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +32,24 @@ public class PostController {
     private final PostService postService;
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
+
+    @GetMapping
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "title") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "categories", required = false, defaultValue = "popular") String categories) {
+        // response true
+        String email = ContextPrincipal.getPrincipal();
+
+        try {
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, tag, categories)));
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+        }
+    }
 
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

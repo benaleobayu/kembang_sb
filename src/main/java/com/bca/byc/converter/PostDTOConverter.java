@@ -6,6 +6,7 @@ import com.bca.byc.entity.PostLocation;
 import com.bca.byc.entity.Tag;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -31,12 +32,21 @@ public class PostDTOConverter {
 
 
     // for get data
-    public PostDetailResponse convertToListResponse(Post data) {
+    public PostHomeResponse convertToListResponse(Post data) {
+        // mapping Entity with DTO Entity
+        PostHomeResponse dto = modelMapper.map(data, PostHomeResponse.class);
+        // return
+        return dto;
+    }
+
+     public PostDetailResponse convertToDetailResponse(Post data) {
         // mapping Entity with DTO Entity
         PostDetailResponse dto = modelMapper.map(data, PostDetailResponse.class);
         // return
         return dto;
     }
+
+
 
     // for create data
     public Post convertToCreateRequest(AppUser user, @Valid PostCreateUpdateRequest dto) {
