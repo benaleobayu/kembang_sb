@@ -39,7 +39,6 @@ public class PostServiceImpl implements PostService {
     public void save(PostCreateUpdateRequest dto) throws Exception {
         Post post = new Post();
 
-        post.setName(dto.getName());
         post.setTitle(dto.getTitle());
         post.setDescription(dto.getDescription());
         post.setContent(dto.getContent());

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<Post> findByName(String name);
+    Optional<Post> findByTitle(String title);
 
 }
