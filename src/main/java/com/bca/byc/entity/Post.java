@@ -41,6 +41,16 @@ public class Post extends AbstractBaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "post_has_tag_users",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<AppUser> tagUsers = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "post_location_id")
+    private PostLocation postLocation;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 

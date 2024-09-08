@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -32,5 +35,9 @@ public class PostLocation extends AbstractBaseEntityTimestamp {
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
+
+    // relations
+    @OneToMany(mappedBy = "postLocation")
+    private List<Post> posts = new ArrayList<>();
 
 }
