@@ -15,10 +15,6 @@ public class PostCreateUpdateRequest {
 
     private List<String> tagName;
 
-    // can input multiple tags
-    @Transient
-    private List<Long> tagIds; // <tag_id>
-
     // can input multiple users
     private List<Long> tagUserIds; // <user_id>
 

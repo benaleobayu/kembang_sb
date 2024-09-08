@@ -30,7 +30,6 @@ public class PostController {
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
-    private FileUploadHelper fileUploadHelper;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> createPost(
@@ -63,7 +62,7 @@ public class PostController {
                 .map(filePath -> "\"" + filePath + "\"")  // Add quotes around each file path
                 .collect(Collectors.joining(",", "[", "]"));  // Join with commas and wrap in square brackets
 
-        dto.setContent(fileNames);
+        dto.setContent(fileNames.replaceAll("src/main/resources/static/", "/"));
         dto.setType(fileType);  // "image" or "video"
         try {
             postService.save(email, dto);
