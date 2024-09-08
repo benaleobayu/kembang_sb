@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -35,17 +37,21 @@ public class Post extends AbstractBaseEntity {
 
     // relations
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
+
     @ManyToMany
     @JoinTable(name = "post_has_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "post_has_tag_users",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<AppUser> tagUsers = new ArrayList<>();
+    private Set<AppUser> tagUsers = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "post_location_id")

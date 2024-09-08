@@ -9,7 +9,7 @@ public interface PostService {
 
     PostDetailResponse findById(Long id) throws Exception;
 
-    void save(PostCreateUpdateRequest dto)  throws Exception;
+    void save(String email, PostCreateUpdateRequest dto)  throws Exception;
 
     void update(Long id, PostCreateUpdateRequest post)  throws Exception;
 

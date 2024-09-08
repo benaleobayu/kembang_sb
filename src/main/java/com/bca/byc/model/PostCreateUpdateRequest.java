@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.PostLocation;
 import jakarta.persistence.Transient;
 import lombok.Data;
 
@@ -12,17 +13,30 @@ public class PostCreateUpdateRequest {
 
     private String description;
 
+    private List<String> tagName;
+
     // can input multiple tags
-    private List<Long> tags; // <tag_id>
+    @Transient
+    private List<Long> tagIds; // <tag_id>
 
     // can input multiple users
-    private List<Long> tagUsers; // <user_id>
+    private List<Long> tagUserIds; // <user_id>
 
-    private Long locationId;
+    private PostLocationRequest postLocation;
 
     @Transient
     private String content;
 
     @Transient
     private String type;
+
+    @Data
+    public static class PostLocationRequest {
+
+        private String name;
+
+        private String url;
+
+        private String geoLocation;
+    }
 }

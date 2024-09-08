@@ -3,6 +3,7 @@ package com.bca.byc.config;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.FileUploadHelper;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,6 +37,8 @@ public class PostController {
             @RequestPart(value = "post", required = false) PostCreateUpdateRequest dto,
             @RequestPart("files") List<MultipartFile> files) {
 
+        String email = ContextPrincipal.getPrincipal();
+
         // Handle multiple file uploads and set content and type
         List<String> filePaths = new ArrayList<>();
         String fileType = null; // To track the type of the files (image or video)
@@ -63,7 +66,7 @@ public class PostController {
         dto.setContent(fileNames);
         dto.setType(fileType);  // "image" or "video"
         try {
-            postService.save(dto);
+            postService.save(email, dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Post created successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

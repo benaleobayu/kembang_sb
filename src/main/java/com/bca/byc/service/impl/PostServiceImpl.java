@@ -1,12 +1,14 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.repository.PostRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
     private final PostDTOConverter converter;
 
@@ -36,17 +39,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void save(PostCreateUpdateRequest dto) throws Exception {
-        Post post = new Post();
-
-        post.setTitle(dto.getTitle());
-        post.setDescription(dto.getDescription());
-        post.setContent(dto.getContent());
-        post.setType(dto.getType());
+    public void save(String email, PostCreateUpdateRequest dto) throws Exception {
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        Post post = converter.convertToCreateRequest(user, dto);
 
         postRepository.save(post);
     }
-
 
     @Override
     public PostDetailResponse findById(Long id) throws Exception {
