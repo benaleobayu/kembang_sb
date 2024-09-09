@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PostHomeResponse {
+public class AppSearchDetailResponse {
 
     private Long id;
 
@@ -30,6 +30,5 @@ public class PostHomeResponse {
     public static class TagResponse {
         private String name;
     }
-
 
 }
