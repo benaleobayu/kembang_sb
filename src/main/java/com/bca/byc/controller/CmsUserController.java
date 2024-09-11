@@ -17,15 +17,15 @@ public class CmsUserController {
 
     private final CmsUserService cmsUserService;
 
-//    @GetMapping
-//    public ResponseEntity<ApiResponse> getAllUsers(
-//            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10") int size
-//    ) {
-//        try{
-//            return ResponseEntity.ok(new ApiResponse(true, "Users found", cmsUserService.getAllUsers(page, size)));
-//        }catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, e.getMessage(), null));
-//        }
-//    }
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAllUsers(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        try{
+            return ResponseEntity.ok(new ApiResponse(true, "Users found", cmsUserService.getAllUsers(page, size)));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
 }

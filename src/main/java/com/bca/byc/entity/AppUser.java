@@ -2,8 +2,10 @@ package com.bca.byc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -81,6 +83,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();
@@ -114,4 +117,31 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
         return true;
     }
 
+
+    public AppUser() {
+
+    }
+
+    public AppUser(Long id, String name, String email, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public AppUser(Long id, String name, String email, String password, AppUserDetail appUserDetail, AppUserAttribute appUserAttribute, Integer countReject, List<Business> businesses, List<UserHasExpect> userHasExpects, Location location, List<AppUser> follows, List<AppUser> followers, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.appUserDetail = appUserDetail;
+        this.appUserAttribute = appUserAttribute;
+        this.countReject = countReject;
+        this.businesses = businesses;
+        this.userHasExpects = userHasExpects;
+        this.location = location;
+        this.follows = follows;
+        this.followers = followers;
+        this.role = role;
+    }
 }
