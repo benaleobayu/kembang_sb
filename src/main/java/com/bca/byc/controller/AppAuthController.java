@@ -23,6 +23,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +52,23 @@ public class AppAuthController {
     private final ClientInfoService clientInfoService;
     private final TokenBlacklistService tokenBlacklist;
 
+    private final AuthenticationManager authenticationManager;
+
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> authLogin(
             @RequestParam(name = "deviceId") String deviceId,
             @RequestParam(name = "version") String version,
             @RequestBody LoginRequestDTO dto,
             HttpServletRequest request) {
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.email(),dto.password())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Incorrect email or password" + e.getMessage(), null));
+        }
 
         final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
