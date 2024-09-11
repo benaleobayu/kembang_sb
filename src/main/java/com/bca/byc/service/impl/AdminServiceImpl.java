@@ -1,103 +1,59 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.AdminDTOConverter;
-import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.converter.AppSearchDTOConverter;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
-import com.bca.byc.repository.AdminRepository;
+import com.bca.byc.model.AppSearchDetailResponse;
+import com.bca.byc.repository.AppSearchRepository;
+import com.bca.byc.repository.PostRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.service.AdminService;
+import com.bca.byc.service.AppSearchService;
 import com.bca.byc.util.PaginationUtil;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
-public class AdminServiceImpl implements AdminService {
+@RequiredArgsConstructor
+public class AppSearchServiceImpl implements AppSearchService {
 
-    private AdminRepository repository;
-    private AdminDTOConverter converter;
-
-    @Override
-    public AdminDetailResponse findDataById(Long id) throws BadRequestException {
-        AppAdmin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Admin not found"));
-
-        return converter.convertToListResponse(data);
-    }
+    private final AppUserRepository appUserRepository;
+    private final AppSearchRepository repository;
+    private final PostRepository postRepository;
+    private final AppSearchDTOConverter converter;
 
     @Override
-    public AppAdmin findByEmail(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Email not found"));
-    }
+    public ResultPageResponseDTO<AppSearchDetailResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String tag, String categories) {
+        // get user id
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        Long userId = user.getId();
 
-    @Override
-    public List<AdminDetailResponse> findAllData() {
-        // Get the list
-        List<AppAdmin> datas = repository.findAll();
-
-        // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void saveData(@Valid AdminCreateRequest dto) throws BadRequestException {
-        // set entity to add with model mapper
-        AppAdmin data = converter.convertToCreateRequest(dto);
-        // save data
-        repository.save(data);
-    }
-
-    @Override
-    public void updateData(Long id, AdminUpdateRequest dto) throws BadRequestException {
-        // check exist and get
-        AppAdmin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID Admin ID"));
-
-        // update
-        converter.convertToUpdateRequest(data, dto);
-
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-
-        // save
-        repository.save(data);
-    }
-
-    @Override
-    public void deleteData(Long id) throws BadRequestException {
-        // delete data
-        if (!repository.existsById(id)) {
-            throw new BadRequestException("Admin not found");
-        } else {
-            repository.deleteById(id);
-        }
-    }
-
-    @Override
-    public ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+        tag = StringUtils.isEmpty(tag) ? "%" : tag + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppAdmin> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);
-        List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
-            AdminDetailResponse dto = converter.convertToListResponse(c);
+
+        Page<Post> pageResult = null;
+        if ("posts".equalsIgnoreCase(categories)) {
+            pageResult = postRepository.findRandomPosts(tag, pageable);
+        } else if ("accounts".equalsIgnoreCase(categories)) {
+            pageResult = postRepository.findLatestPostsFromFollowingUsers(userId, tag, pageable);
+        } else {
+            pageResult = postRepository.findByTitleLikeIgnoreCase(tag, pageable);
+        }
+
+        assert pageResult != null;
+        List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
+            AppSearchDetailResponse dto = converter.convertToListResponse(c);
             return dto;
         }).collect(Collectors.toList());
 
@@ -115,17 +71,4 @@ public class AdminServiceImpl implements AdminService {
                 pageResult.getSize() // per page
         );
     }
-
-    @Override
-    public AdminCmsDetailResponse getAdminDetail(String email) {
-        AppAdmin user = repository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Email not found"));
-
-        AppAdmin data = repository.findById(user.getId())
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        return converter.convertToInfoResponse(data);
-    }
-
-
 }
