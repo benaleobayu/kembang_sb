@@ -4,6 +4,12 @@
 # Log files
 *.log
 
+# elastic
+.env
+logstash/
+postgres/
+docker-compose.yaml
+
 # BlueJ files
 *.ctxt
 
