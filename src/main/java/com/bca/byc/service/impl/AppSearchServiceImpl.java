@@ -72,4 +72,5 @@ public class AppSearchServiceImpl implements AppSearchService {
                 totalPages - 1, // last page
                 pageResult.getSize() // per page
         );
+    }
 }
