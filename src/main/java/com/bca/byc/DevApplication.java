@@ -20,4 +20,19 @@ public class DevApplication {
     public static void main(String[] args) {
         SpringApplication.run(DevApplication.class, args);
     }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Collections.singletonList("https://admin-byc2024.kelolain.id")); // Allow specific origin
+        corsConfiguration.setAllowedMethods(Collections.singletonList("*")); // Allow all HTTP methods (GET, POST, etc.)
+        corsConfiguration.setAllowedHeaders(Collections.singletonList("*")); // Allow all headers
+        corsConfiguration.setAllowCredentials(true); // Allow credentials like cookies
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return new CorsFilter(source);
+    }
+
 }

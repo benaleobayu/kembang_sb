@@ -45,22 +45,22 @@ public class AdminUserSeeder implements CommandLineRunner {
         }
 
         // create user
-        if (appUserRepository.count() == 0) {
-            AppUser user = new AppUser();
-            user.setName("user");
-            user.setEmail("user@unictive.net");
-            user.setPassword(passwordEncoder.encode("password"));
-            user.setActive(true);
-            user.setCreatedAt(LocalDateTime.now());
-            user.setUpdatedAt(LocalDateTime.now());
-
-            // set role
-            Role userRole = roleRepository.findByName("USER")
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            user.setRole(userRole);
-
-            appUserRepository.save(user);
-        }
+//        if (appUserRepository.count() == 0) {
+//            AppUser user = new AppUser();
+//            user.setName("user");
+//            user.setEmail("user@unictive.net");
+//            user.setPassword(passwordEncoder.encode("password"));
+//            user.setActive(true);
+//            user.setCreatedAt(LocalDateTime.now());
+//            user.setUpdatedAt(LocalDateTime.now());
+//
+//            // set role
+//            Role userRole = roleRepository.findByName("USER")
+//                    .orElseThrow(() -> new RuntimeException("Role not found"));
+//            user.setRole(userRole);
+//
+//            appUserRepository.save(user);
+//        }
 
     }
 }
