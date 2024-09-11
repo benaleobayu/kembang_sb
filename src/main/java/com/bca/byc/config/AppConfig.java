@@ -1,6 +1,7 @@
 package com.bca.byc.config;
 
 import java.security.Key;
+import java.util.Collections;
 
 import javax.crypto.SecretKey;
 
@@ -17,6 +18,9 @@ import com.bca.byc.security.util.JWTTokenFactory;
 
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 
 @Configuration

@@ -47,6 +47,7 @@ public class SecurityConfig {
     private final static String CMS_V1 = "/cms/v1/**";
 
     private final static List<String> PERMIT_ENDPOINT_LIST = Arrays.asList(AUTH_URL, AUTH_URL_APPS, AUTH_URL_CMS, PUBLIC_URL_APPS,
+            "/auth/login",
             "/static/**",
             "/swagger-ui.html",
             "/swagger-ui/index.html",
@@ -62,7 +63,8 @@ public class SecurityConfig {
             "/swagger-ui/favicon-16x16.png",
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
-            "/v3/api-docs");
+            "/v3/api-docs"
+    );
     private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL, APPS_V1, CMS_V1);
 
 
@@ -120,15 +122,28 @@ public class SecurityConfig {
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
                                                    JwtTokenFilter jwtTokenFilter) throws Exception {
 
+        http.cors();
+
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
 
         http.csrf(AbstractHttpConfigurer::disable);
+
+        http.formLogin(formLogin -> formLogin
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/swagger/index.html")
+                .failureUrl("/auth/login?error=true")
+                .usernameParameter("email")
+                .permitAll());
+
         http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler));
+
 
         http.sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
