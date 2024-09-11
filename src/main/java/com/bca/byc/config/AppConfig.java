@@ -1,6 +1,7 @@
 package com.bca.byc.config;
 
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.crypto.SecretKey;
@@ -19,6 +20,7 @@ import com.bca.byc.security.util.JWTTokenFactory;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -52,5 +54,21 @@ public class AppConfig {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
- 
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowedOrigins(Arrays.asList(
+				"https://admin-byc2024.kelolain.id",
+				"http://localhost:4200"
+		));
+		corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+		corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+		corsConfiguration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfiguration);
+
+		return source;
+	}
 }

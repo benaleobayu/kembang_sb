@@ -28,6 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +68,8 @@ public class SecurityConfig {
     );
     private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL, APPS_V1, CMS_V1);
 
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     @Autowired
     private UsernamePasswordAuthProvider usernamePasswordAuthProvider;
@@ -121,15 +124,14 @@ public class SecurityConfig {
                                                    UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter,
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
                                                    JwtTokenFilter jwtTokenFilter) throws Exception {
-
-        http.cors();
+        http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
+        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource));
 
-        http.csrf(AbstractHttpConfigurer::disable);
 
         http.formLogin(formLogin -> formLogin
                 .loginPage("/auth/login")
