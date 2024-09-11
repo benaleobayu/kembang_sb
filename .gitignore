@@ -27,6 +27,7 @@ log/
 target/
 !src/main/resources/
 !src/test/resources/
+!lib/hcp
 
 # Gradle
 .gradle/
@@ -66,3 +67,6 @@ ehthumbs.db
 
 .fake
 /.jetclient/
+
+application.properties
+run-app.sh
