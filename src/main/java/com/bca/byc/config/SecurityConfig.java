@@ -28,9 +28,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @EnableWebSecurity
@@ -67,9 +70,6 @@ public class SecurityConfig {
             "/v3/api-docs"
     );
     private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL, APPS_V1, CMS_V1);
-
-    @Autowired
-    private CorsConfigurationSource corsConfigurationSource;
 
     @Autowired
     private UsernamePasswordAuthProvider usernamePasswordAuthProvider;
@@ -130,7 +130,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
-        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource));
+
+        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
 
 
         http.formLogin(formLogin -> formLogin
@@ -157,6 +158,26 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "https://admin-byc2024.kelolain.id",
+                "https://cms-byc2024.kelolain.id",
+                "http://localhost:4200"
+        ));
+//        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+//        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        corsConfiguration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return source;
     }
 
 }
