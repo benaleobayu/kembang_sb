@@ -16,7 +16,6 @@ public record AppRegisterRequest(
         UserType type,
 
         @Schema(description = "john.doe@example.com", example = "john.doe@example.com")
-        @UniqueEmail
         @NotBlank(message = "email is required")
         String email,
 
