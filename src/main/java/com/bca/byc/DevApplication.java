@@ -10,6 +10,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @SpringBootApplication(scanBasePackages = "com.bca.byc")
@@ -23,8 +24,10 @@ public class DevApplication {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("https://admin-byc2024.kelolain.id")); // Allow specific origin
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:4200")); // Allow specific origin
+        corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "https://admin-byc2024.kelolain.id",
+                "http://localhost:4200"
+        )); // Allow specific origins
         corsConfiguration.setAllowedMethods(Collections.singletonList("*")); // Allow all HTTP methods (GET, POST, etc.)
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*")); // Allow all headers
         corsConfiguration.setAllowCredentials(true); // Allow credentials like cookies
