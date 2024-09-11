@@ -32,7 +32,7 @@ public class JWTTokenFactory {
         Date currentTimeDate = Date.from(currentTime.atZone(ZoneId.of("Asia/Jakarta")).toInstant());
 
         //waktu kapan token expired
-        LocalDateTime expiredTime = currentTime.plusMinutes(15);
+        LocalDateTime expiredTime = currentTime.plusMinutes(24*60);
         Date expiredTimeDate = Date.from(expiredTime.atZone(ZoneId.of("Asia/Jakarta")).toInstant());
 
         String token = Jwts.builder().claims(claims)
