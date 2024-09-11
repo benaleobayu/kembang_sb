@@ -122,8 +122,7 @@ public class SecurityConfig {
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
                                                    JwtTokenFilter jwtTokenFilter) throws Exception {
 
-        http.cors(AbstractHttpConfigurer::disable);
-
+        http.cors();
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers("/auth/login").permitAll()
