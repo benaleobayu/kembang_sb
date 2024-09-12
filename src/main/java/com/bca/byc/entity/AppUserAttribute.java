@@ -1,10 +1,14 @@
 package com.bca.byc.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "app_user_attribute")
 public class AppUserAttribute {
 
@@ -23,4 +27,7 @@ public class AppUserAttribute {
     private Boolean isDeleted = false;
 
     private Boolean isRecommended = false;
+
+    public AppUserAttribute(Long appUserAttribute) {
+    }
 }

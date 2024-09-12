@@ -2,6 +2,7 @@ package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.entity.Elastic.AppUserElastic;
 import com.bca.byc.repository.AppUserElasticRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.Page;
 import com.bca.byc.service.cms.CmsUserService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CmsUserServiceImpl implements CmsUserService {
 
+    private final AppUserRepository appUserRepository;
     private final AppUserElasticRepository appUserElasticRepository;
 
     @Override
@@ -26,5 +28,10 @@ public class CmsUserServiceImpl implements CmsUserService {
                 pageable,
                 userList.getTotalElements()
         );
+    }
+
+    @Override
+    public Long countAllUsers() {
+        return appUserRepository.count();
     }
 }

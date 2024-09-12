@@ -4,16 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "app_user_detail")
 public class AppUserDetail extends AbstractBaseEntityTimestamp{
 
@@ -59,7 +64,7 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", columnDefinition = "varchar(255) default 'MEMBER'")
-    private UserType type;
+    private UserType type = UserType.MEMBER;
 
     @Column(name = "member_type", length = 50)
     private String memberType;
@@ -77,4 +82,6 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp{
     private String cover;
 
 
+    public AppUserDetail(Long appUserDetail) {
+    }
 }

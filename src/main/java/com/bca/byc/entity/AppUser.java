@@ -122,11 +122,13 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
 
     }
 
-    public AppUser(Long id, String name, String email, String password) {
+    public AppUser(Long id, String name, String email, String password, Long appUserDetail, Long appUserAttribute) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.appUserDetail = new AppUserDetail(appUserDetail);
+        this.appUserAttribute = new AppUserAttribute(appUserAttribute);
     }
 
     public AppUser(Long id, String name, String email, String password, AppUserDetail appUserDetail, AppUserAttribute appUserAttribute, Integer countReject, List<Business> businesses, List<UserHasExpect> userHasExpects, Location location, List<AppUser> follows, List<AppUser> followers, Role role) {

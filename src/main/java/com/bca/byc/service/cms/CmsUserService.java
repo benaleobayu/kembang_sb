@@ -9,4 +9,5 @@ public interface CmsUserService {
 
     Page<AppUserElastic> getAllUsers(Integer page, Integer size);
 
+    Long countAllUsers();
 }

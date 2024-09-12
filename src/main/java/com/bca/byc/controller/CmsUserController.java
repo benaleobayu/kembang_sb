@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.cms.CmsUserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,15 @@ public class CmsUserController {
             return ResponseEntity.ok(new ApiResponse(true, "Users found", cmsUserService.getAllUsers(page, size)));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<ApiDataResponse> countAllUsers() {
+        try{
+            return ResponseEntity.ok(new ApiDataResponse(true, "Users found", cmsUserService.countAllUsers()));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiDataResponse(false, e.getMessage(), null));
         }
     }
 }
