@@ -59,7 +59,6 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             AppUserDetail userDetail = new AppUserDetail();
 
-            userDetail.setType(dto.type());
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
             userDetail.setChildBankAccount(dto.child_bank_account());
@@ -86,10 +85,10 @@ public class UserAuthServiceImpl implements UserAuthService {
             user.setAppUserDetail(userDetail);
         }
 
-        // Check if the user type is not customer
-        if (dto.type().equals(UserType.NOT_CUSTOMER)) {
-            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
-        }
+//        // Check if the user type is not customer
+//        if (dto.type().equals(UserType.NOT_CUSTOMER)) {
+//            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
+//        }
 
         // Check the PreRegister data
         PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccount(dto.member_bank_account());
@@ -98,19 +97,17 @@ public class UserAuthServiceImpl implements UserAuthService {
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        assert dataCheck != null;
-        user.setName(dataCheck.getName());
-        userDetail.setName(dataCheck.getName());
-
-        if ((dto.type().equals(UserType.MEMBER) && member) || (dto.type().equals(UserType.NOT_MEMBER) && child)) {
+        if (dto.child_bank_account() == null && member || child) {
             userDetail.setStatus(StatusType.APPROVED);
             user.setAppUserDetail(userDetail);
-            if (dto.type().equals(UserType.MEMBER)) {
+            if (dto.child_bank_account() == null) {
                 userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
             } else {
                 userDetail.setChildCin(dataCheck.getChildCin()); // set child cin
                 userDetail.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
             }
+            user.setName(dataCheck.getName());
+            userDetail.setName(dataCheck.getName());
             userDetail.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
             userDetail.setApprovedBy("SYSTEM");
             user.setAppUserDetail(userDetail);

@@ -12,9 +12,6 @@ import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record AppRegisterRequest(
-        @Schema(description = "BCA Member", example = "MEMBER | NOT_MEMBER | NOT_CUSTOMER")
-        UserType type,
-
         @Schema(description = "john.doe@example.com", example = "john.doe@example.com")
         @NotBlank(message = "email is required")
         String email,
