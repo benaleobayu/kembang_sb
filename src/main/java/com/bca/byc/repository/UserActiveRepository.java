@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
 
-    Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsApprovedTrueAndAppUserAttributeIsSuspendedFalse(String userName, StatusType statusType, Pageable pageable);
+    Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatus(String userName, StatusType statusType, Pageable pageable);
 }
+

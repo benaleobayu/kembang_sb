@@ -96,7 +96,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsApprovedTrueAndAppUserAttributeIsSuspendedFalse(userName, StatusType.ACTIVATED, pageable);
+        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatus(userName, StatusType.ACTIVATED, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;
