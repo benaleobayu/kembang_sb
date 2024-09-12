@@ -1,7 +1,6 @@
 package com.bca.byc.controller;
 
 
-import java.lang.Exception;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
@@ -18,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -31,18 +28,18 @@ public class UserActiveController {
 
     @GetMapping
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
-                @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-                @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-                @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-                @RequestParam(name = "userName", required = false) String userName) {
-            // response true
-            try{
-                return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list user active", service.listData(pages, limit, sortBy, direction, userName)));
-            }catch (ExpiredJwtException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
-            }
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "userName", required = false) String userName) {
+        // response true
+        try {
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list user active", service.listData(pages, limit, sortBy, direction, userName)));
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
+    }
 
 
     @GetMapping("/all")

@@ -3,17 +3,14 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
-import com.bca.byc.entity.AppUserDetail;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -84,7 +81,7 @@ public class UserActiveServiceImpl implements UserActiveService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
         AppUserAttribute attribute = data.getAppUserAttribute();
         // toggle
-        if(attribute.getIsSuspended().equals(true)){
+        if (attribute.getIsSuspended().equals(true)) {
             attribute.setIsSuspended(false);
         } else {
             attribute.setIsSuspended(true);

@@ -2,7 +2,6 @@ package com.bca.byc.model;
 
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
