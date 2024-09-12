@@ -1,4 +1,4 @@
-package com.bca.byc.config;
+package com.bca.byc.controller;
 
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
