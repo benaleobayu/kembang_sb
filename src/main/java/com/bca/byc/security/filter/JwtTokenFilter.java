@@ -54,7 +54,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // Handle CORS preflight requests
         response.setHeader("Access-Control-Allow-Origin", "*");  // You can replace "*" with the specific allowed origins if needed
-        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, 'PATCH', OPTIONS, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         response.setHeader("Access-Control-Max-Age", "3600");
 
