@@ -18,14 +18,4 @@ public class DevApplication {
         SpringApplication.run(DevApplication.class, args);
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "https://admin-byc2024.kelolain.id");
-            }
-        };
-    }
 }
