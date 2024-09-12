@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -50,6 +51,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        // Handle CORS preflight requests
+        response.setHeader("Access-Control-Allow-Origin", "*");  // You can replace "*" with the specific allowed origins if needed
+        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+        response.setHeader("Access-Control-Max-Age", "3600");
+
+        // Allow preflight requests (OPTIONS)
+        if (HttpMethod.OPTIONS.name().equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return; // Stop further filter chain execution for preflight requests
+        }
+        // Handle the JWT token validation for other requests
         String requestURI = request.getRequestURI();
         // Skip token validation for the login URL
         if (PERMIT_ENDPOINT_LIST.stream().anyMatch(requestURI::matches)) {
