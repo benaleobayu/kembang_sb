@@ -76,3 +76,4 @@ ehthumbs.db
 
 application.properties
 run-app.sh
+/logstash/
