@@ -146,7 +146,7 @@ public class OnboardingServiceImpl implements OnboardingService {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = userRepository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsRecommendedTrue(userName,StatusType.ACTIVATED, pageable);
+        Page<AppUser> pageResult = userRepository.findOnboardingUser(userName,StatusType.ACTIVATED, pageable);
         List<OnboardingListUserResponse> dtos = pageResult.stream().map((c) -> {
             OnboardingListUserResponse dto = onboardingConverter.convertToListOnboardingResponse(c);
             return dto;
