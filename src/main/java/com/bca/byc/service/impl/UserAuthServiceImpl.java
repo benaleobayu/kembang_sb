@@ -44,9 +44,6 @@ public class UserAuthServiceImpl implements UserAuthService {
                 existingUserOptional.isPresent() && existingUserOptional.get().getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)) {
             throw new BadRequestException("User already exists");
         }
-
-
-
         AppUser user;
         if (existingUserOptional.isEmpty()) {
             // Create a new user if not existing

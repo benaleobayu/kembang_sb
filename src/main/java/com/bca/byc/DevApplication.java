@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,12 +18,14 @@ import java.util.Collections;
 
 @SpringBootApplication(scanBasePackages = "com.bca.byc")
 @EnableJpaRepositories(basePackages = "com.bca.byc.repository")
+@EnableElasticsearchRepositories(basePackages = "com.bca.byc.repository.Elastic")
 @EntityScan(basePackages = "com.bca.byc.entity")
 //@EnableScheduling
 public class DevApplication {
     public static void main(String[] args) {
         SpringApplication.run(DevApplication.class, args);
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
