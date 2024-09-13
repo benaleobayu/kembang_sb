@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserSuspendedRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -55,6 +56,17 @@ public class UserSuspendedController {
         log.info("PATCH /cms/v1/users-suspended/{id}/delete endpoint hit");
         try {
             service.makeUserIsDeletedTrue(id);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted user", null));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
+
+   @PostMapping("/delete")
+    public ResponseEntity<ApiResponse> delete(@RequestBody UserSuspendedRequest dto) {
+        log.info("POST /cms/v1/users-suspended/delete endpoint hit");
+        try {
+            service.makeUserBulkDeleteTrue(dto.getIds());
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted user", null));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));

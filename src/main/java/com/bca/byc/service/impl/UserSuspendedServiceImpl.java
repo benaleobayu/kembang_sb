@@ -6,6 +6,7 @@ import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserSuspendedRequest;
 import com.bca.byc.repository.UserSuspendedRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
@@ -18,7 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -35,7 +38,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedTrue(userName, StatusType.ACTIVATED, pageable);
+        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedTrueAndAppUserAttributeIsDeletedFalse(userName, StatusType.ACTIVATED, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToDetailResponse(c);
             return dto;
@@ -82,5 +85,15 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         userAttribute.setIsSuspended(false);
         user.setAppUserAttribute(userAttribute);
         repository.save(user);
+    }
+
+    @Override
+    public void makeUserBulkDeleteTrue(Set<Long> ids) {
+        repository.findByIdIn(ids).forEach(user -> {
+            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            userAttribute.setIsDeleted(true);
+            user.setAppUserAttribute(userAttribute);
+            repository.save(user);
+        });
     }
 }
