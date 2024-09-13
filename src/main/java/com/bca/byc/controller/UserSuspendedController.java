@@ -84,4 +84,15 @@ public class UserSuspendedController {
         }
     }
 
+    @PostMapping("/restore")
+    public ResponseEntity<ApiResponse> restore(@RequestBody UserSuspendedRequest dto) {
+        log.info("POST /cms/v1/users-suspended/restore endpoint hit");
+        try {
+            service.makeUserBulkRestoreTrue(dto.getIds());
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully restored user", null));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+        }
+    }
+
 }

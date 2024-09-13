@@ -17,4 +17,6 @@ public interface UserSuspendedService {
     void makeUserIsSuspendedFalse(Long id);
 
     void makeUserBulkDeleteTrue(Set<Long> ids);
+
+    void makeUserBulkRestoreTrue(Set<Long> ids);
 }

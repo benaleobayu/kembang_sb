@@ -96,4 +96,14 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
             repository.save(user);
         });
     }
+
+    @Override
+    public void makeUserBulkRestoreTrue(Set<Long> ids) {
+        repository.findByIdIn(ids).forEach(user -> {
+            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            userAttribute.setIsSuspended(false);
+            user.setAppUserAttribute(userAttribute);
+            repository.save(user);
+        });
+    }
 }
