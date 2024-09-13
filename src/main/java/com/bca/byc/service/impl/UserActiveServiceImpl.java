@@ -3,9 +3,11 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
+import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserActiveService;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 public class UserActiveServiceImpl implements UserActiveService {
 
     private UserActiveRepository repository;
+    private UserActiveElasticRepository elasticRepository;
     private UserActiveDTOConverter converter;
 
     @Override
@@ -96,7 +99,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatus(userName, StatusType.ACTIVATED, pageable);
+        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedFalse(userName, StatusType.ACTIVATED, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;
@@ -114,6 +117,18 @@ public class UserActiveServiceImpl implements UserActiveService {
                 1, // first page
                 totalPages - 1, // last page
                 pageResult.getSize() // per page
+        );
+    }
+
+    @Override
+    public com.bca.byc.response.Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        var userList = elasticRepository.findAllBy(pageable);
+
+        return new com.bca.byc.response.Page<>(
+                userList.stream().collect(Collectors.toList()),
+                pageable,
+                userList.getTotalElements()
         );
     }
 }

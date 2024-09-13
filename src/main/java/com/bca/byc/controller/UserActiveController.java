@@ -1,17 +1,14 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.response.ApiDataResponse;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
-import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +16,28 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/cms/v1/user-active")
-@Tag(name = "UserActive API")
+@Tag(name = "CMS User Active API")
 public class UserActiveController {
 
-    private UserActiveService service;
+    private final UserActiveService service;
+
+    public UserActiveController(UserActiveService service) {
+        this.service = service;
+    }
+
+    // elastic search
+    @GetMapping("/list")
+    public ResponseEntity<ApiDataResponse<Page<UserActiveElastic>>> getAllActiveUser(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        try {
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found user active", service.getAllActiveUser(page, size)));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
+        }
+    }
 
     @GetMapping
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(

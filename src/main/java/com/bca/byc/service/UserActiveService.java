@@ -1,7 +1,9 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.response.Page;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
@@ -20,4 +22,6 @@ public interface UserActiveService {
     void suspendData(Long id) throws BadRequestException;
 
     ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+
+    Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size);
 }
