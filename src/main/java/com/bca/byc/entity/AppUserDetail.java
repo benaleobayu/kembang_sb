@@ -1,8 +1,8 @@
 package com.bca.byc.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "app_user_detail")
-public class AppUserDetail extends AbstractBaseEntityTimestamp{
+public class AppUserDetail extends AbstractBaseEntityTimestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

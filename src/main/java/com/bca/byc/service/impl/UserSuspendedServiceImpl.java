@@ -59,9 +59,9 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     @Override
     public UserManagementDetailResponse findDataById(Long id) throws BadRequestException {
         AppUser data = repository.findById(id)
-                        .orElseThrow(() -> new BadRequestException("user not found"));
+                .orElseThrow(() -> new BadRequestException("user not found"));
 
-                return converter.convertToDetailResponse(data);
+        return converter.convertToDetailResponse(data);
     }
 
     @Override

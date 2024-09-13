@@ -3,7 +3,6 @@ package com.bca.byc.service.impl;
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.Otp;
 import com.bca.byc.enums.StatusType;
-import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.UserSetPasswordRequest;
@@ -204,9 +203,9 @@ public class UserAuthServiceImpl implements UserAuthService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         AppUserDetail userDetail = user.getAppUserDetail();
 
-        if (userDetail.getStatus().equals(StatusType.VERIFIED)){
+        if (userDetail.getStatus().equals(StatusType.VERIFIED)) {
             userDetail.setStatus(StatusType.PRE_ACTIVATED);
-        }else {
+        } else {
             userDetail.setStatus(userDetail.getStatus());
         }
         user.setAppUserDetail(userDetail);

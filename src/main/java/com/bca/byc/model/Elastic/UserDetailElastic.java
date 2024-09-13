@@ -1,6 +1,5 @@
 package com.bca.byc.model.Elastic;
 
-import com.bca.byc.entity.AppUserDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
