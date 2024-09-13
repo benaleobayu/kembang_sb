@@ -1,4 +1,4 @@
-package com.bca.byc.entity.Elastic;
+package com.bca.byc.model.Elastic;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.lang.annotation.Documented;
-
 
 @Document(indexName = "app_user")
 @Data

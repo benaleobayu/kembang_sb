@@ -59,11 +59,11 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp{
     private String biodata;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status", columnDefinition = "int default 0")
+    @Column(name = "status")
     private StatusType status = StatusType.PENDING;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", columnDefinition = "varchar(255) default 'MEMBER'")
+    @Column(name = "type")
     private UserType type = UserType.MEMBER;
 
     @Column(name = "member_type", length = 50)
@@ -81,7 +81,6 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp{
     @Column(name = "cover", columnDefinition = "text")
     private String cover;
 
-
-    public AppUserDetail(Long appUserDetail) {
+    public AppUserDetail(Integer appUserDetail) {
     }
 }

@@ -16,18 +16,24 @@ public class AppUserAttribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "is_verified", columnDefinition = "boolean default false")
     private Boolean isVerified = false;
 
+    @Column(name = "is_approved", columnDefinition = "boolean default false")
     private Boolean isApproved = false;
 
+    @Column(name = "is_rejected", columnDefinition = "boolean default false")
     private Boolean isRejected = false;
 
+    @Column(name = "is_suspended", columnDefinition = "boolean default false")
     private Boolean isSuspended = false;
 
+    @Column(name = "is_deleted", columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
+    @Column(name = "is_recommended", columnDefinition = "boolean default false")
     private Boolean isRecommended = false;
 
-    public AppUserAttribute(Long appUserAttribute) {
+    public AppUserAttribute(Integer appUserAttribute) {
     }
 }
