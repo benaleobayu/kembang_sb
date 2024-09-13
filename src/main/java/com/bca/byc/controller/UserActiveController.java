@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/cms/v1/user-active")
+@RequestMapping("/cms/v1/um/active")
 @Tag(name = "CMS User Active API")
 public class UserActiveController {
 

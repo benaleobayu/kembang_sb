@@ -9,6 +9,8 @@ import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PreRegisterService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,12 +27,13 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @Validated
-@RequestMapping("/cms/v1/pre-register")
+@RequestMapping("/cms/v1/um/pre-register")
 @Tag(name = "CMS User Pre-Register API")
 public class UserPreRegisterController {
 
     private PreRegisterService service;
 
+    @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @GetMapping
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -43,17 +46,6 @@ public class UserPreRegisterController {
             return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, userName)));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
-        }
-    }
-
-    @Operation(hidden = true)
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAll() {
-        log.info("GET /cms/v1/pre-register endpoint hit");
-        try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found pre-register user", service.findAllData()));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
         }
     }
 

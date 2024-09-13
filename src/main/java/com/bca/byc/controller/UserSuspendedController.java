@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/cms/v1/user-suspended")
+@RequestMapping("/cms/v1/um/suspended")
 @Tag(name = "CMS User Suspended API")
 public class UserSuspendedController {
 
@@ -42,7 +42,7 @@ public class UserSuspendedController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
-        log.info("GET /cms/v1/users-suspended/{id} endpoint hit");
+        log.info("GET /cms/v1/um/suspended/{id} endpoint hit");
         try {
             UserManagementDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found user", item));
@@ -53,7 +53,7 @@ public class UserSuspendedController {
 
     @PatchMapping("/{id}/delete")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
-        log.info("PATCH /cms/v1/users-suspended/{id}/delete endpoint hit");
+        log.info("PATCH /cms/v1/um/suspended/{id}/delete endpoint hit");
         try {
             service.makeUserIsDeletedTrue(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted user", null));
@@ -64,7 +64,7 @@ public class UserSuspendedController {
 
    @PostMapping("/delete")
     public ResponseEntity<ApiResponse> delete(@RequestBody UserSuspendedRequest dto) {
-        log.info("POST /cms/v1/users-suspended/delete endpoint hit");
+        log.info("POST /cms/v1/um/suspended/delete endpoint hit");
         try {
             service.makeUserBulkDeleteTrue(dto.getIds());
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted user", null));
@@ -75,7 +75,7 @@ public class UserSuspendedController {
 
     @PatchMapping("/{id}/restore")
     public ResponseEntity<ApiResponse> restore(@PathVariable("id") Long id) {
-        log.info("PATCH /cms/v1/users-suspended/{id}/restore endpoint hit");
+        log.info("PATCH /cms/v1/um/suspended/{id}/restore endpoint hit");
         try {
             service.makeUserIsSuspendedFalse(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully restored user", null));
@@ -86,7 +86,7 @@ public class UserSuspendedController {
 
     @PostMapping("/restore")
     public ResponseEntity<ApiResponse> restore(@RequestBody UserSuspendedRequest dto) {
-        log.info("POST /cms/v1/users-suspended/restore endpoint hit");
+        log.info("POST /cms/v1/um/suspended/restore endpoint hit");
         try {
             service.makeUserBulkRestoreTrue(dto.getIds());
             return ResponseEntity.ok(new ApiResponse(true, "Successfully restored user", null));
