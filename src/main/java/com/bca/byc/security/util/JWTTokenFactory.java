@@ -12,6 +12,7 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -24,15 +25,21 @@ public class JWTTokenFactory {
     private int jwtExpirationInMs;
 
     public AccessJWTToken createAccessJWTToken(String email, Collection<? extends GrantedAuthority> authorities) {
-        Claims claims = Jwts.claims().subject(email)
-                .add("scopes", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).build();
+        authorities = authorities != null ? authorities : Collections.emptyList();
+        Claims claims;
+        if (authorities.isEmpty()) {
+            claims = Jwts.claims().subject(email).build();
+        } else {
+            claims = Jwts.claims().subject(email)
+                    .add("scopes", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).build();
+        }
 
         //waktu kapan token dibuat
         LocalDateTime currentTime = LocalDateTime.now();
         Date currentTimeDate = Date.from(currentTime.atZone(ZoneId.of("Asia/Jakarta")).toInstant());
 
         //waktu kapan token expired
-        LocalDateTime expiredTime = currentTime.plusMinutes(24*60);
+        LocalDateTime expiredTime = currentTime.plusMinutes(24 * 60);
         Date expiredTimeDate = Date.from(expiredTime.atZone(ZoneId.of("Asia/Jakarta")).toInstant());
 
         String token = Jwts.builder().claims(claims)

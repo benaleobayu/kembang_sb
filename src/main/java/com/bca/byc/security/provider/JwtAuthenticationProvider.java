@@ -1,6 +1,7 @@
 package com.bca.byc.security.provider;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		RawAccessJwtToken token = (RawAccessJwtToken) authentication.getCredentials();
 		Jws<Claims> jwsClaims = token.parseClaims(key);
 		String subject = jwsClaims.getPayload().getSubject();
-		List<String> scopes = jwsClaims.getPayload().get("scopes", List.class);
+		List<String> scopes;
+		if (jwsClaims.getBody().get("scopes") != null) {
+			scopes = (List<String>) jwsClaims.getBody().get("scopes");
+		} else {
+			scopes = Collections.emptyList();
+		}
 		List<GrantedAuthority> authorities = scopes.stream()
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
@@ -80,7 +86,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		if (appUser == null) {
 			throw new AuthenticationException("User not found") {};
 		}
-		return new JwtAuthenticationToken(appUser, authorities);
+		return new JwtAuthenticationToken(appUser, null);
 	}
 
 	@Override

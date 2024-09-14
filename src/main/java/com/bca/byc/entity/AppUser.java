@@ -75,10 +75,10 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
 
 
     /////////////////
-
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role role;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "role_id", referencedColumnName = "id")
+//    private Role role;
 
     public AppUser() {
 
@@ -104,12 +104,12 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
         this.location = location;
         this.follows = follows;
         this.followers = followers;
-        this.role = role;
+//        this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
+        return null;
     }
 
     @Override
