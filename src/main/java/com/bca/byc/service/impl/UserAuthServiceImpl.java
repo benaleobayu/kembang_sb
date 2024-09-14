@@ -52,7 +52,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             Role role = roleRepository.findByName("USER").orElseThrow(
                     () -> new BadRequestException("Role not found")
             );
-            user.setRole(role);
+//            user.setRole(role);
 
             AppUserDetail userDetail = new AppUserDetail();
 

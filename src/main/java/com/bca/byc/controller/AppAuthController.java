@@ -121,7 +121,7 @@ public class AppAuthController {
         Optional<AppUser> user = userRepository.findByEmail(dto.email());
         if (isValid) {
             final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
-            final String token = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
+            final String token = jwtUtil.createAccessJWTToken(userDetails.getUsername(), null).getToken();
             return ResponseEntity.ok(new ApiResponse(true, "OTP validated successfully.", token));
         } else if (user.isPresent() && user.get().getAppUserDetail().getStatus().equals(StatusType.REJECTED)) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved.", null));
