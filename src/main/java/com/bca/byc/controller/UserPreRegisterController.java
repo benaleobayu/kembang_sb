@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,9 +38,10 @@ public class UserPreRegisterController {
     private PreRegisterService service;
     static final String urlRoute = "/cms/v1/um/pre-register";
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listFollowUser(
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -54,6 +56,7 @@ public class UserPreRegisterController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get detail Pre-Register User by id", description = "Get detail Pre-Register User by id")
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
@@ -66,6 +69,7 @@ public class UserPreRegisterController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
@@ -79,6 +83,7 @@ public class UserPreRegisterController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update Pre-Register User", description = "Update Pre-Register User")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody PreRegisterUpdateRequest item) {
@@ -91,6 +96,7 @@ public class UserPreRegisterController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete Pre-Register User", description = "Delete Pre-Register User")
     @DeleteMapping()
     public ResponseEntity<ApiResponse> delete(@RequestParam("ids") List<Long> ids) {
