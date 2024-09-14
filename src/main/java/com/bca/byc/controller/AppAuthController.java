@@ -71,7 +71,7 @@ public class AppAuthController {
         }
 
         final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
-        final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
+        final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), null).getToken();
         final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
 
         final String ipAddress = clientInfoService.getClientIp(request);
