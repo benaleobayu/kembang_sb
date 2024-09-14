@@ -33,7 +33,7 @@ public class OnboardingController {
     private final OnboardingService service;
     private final AppUserService userService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ApiResponse> createOnboarding(@RequestBody OnboardingCreateRequest dto) {
 

@@ -51,18 +51,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-//        // Handle CORS preflight requests
-//        response.setHeader("Access-Control-Allow-Origin", "*");  // You can replace "*" with the specific allowed origins if needed
-//        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, 'PATCH', OPTIONS, DELETE");
-//        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-//        response.setHeader("Access-Control-Max-Age", "3600");
-//
-//        // Allow preflight requests (OPTIONS)
-//        if (HttpMethod.OPTIONS.name().equalsIgnoreCase(request.getMethod())) {
-//            response.setStatus(HttpServletResponse.SC_OK);
-//            return; // Stop further filter chain execution for preflight requests
-//        }
         // Handle the JWT token validation for other requests
         String requestURI = request.getRequestURI();
         // Skip token validation for the login URL
