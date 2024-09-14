@@ -22,16 +22,20 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
+
+import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
 @Validated
-@RequestMapping("/cms/v1/um/pre-register")
+@RequestMapping(urlRoute)
 @Tag(name = "CMS User Pre-Register API")
 public class UserPreRegisterController {
 
     private PreRegisterService service;
+    static final String urlRoute = "/cms/v1/um/pre-register";
 
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @GetMapping
@@ -42,6 +46,7 @@ public class UserPreRegisterController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "userName", required = false) String userName) {
         // response true
+        log.info("GET " + urlRoute + " list endpoint hit");
         try {
             return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, userName)));
         } catch (ExpiredJwtException e) {
@@ -49,9 +54,10 @@ public class UserPreRegisterController {
         }
     }
 
+    @Operation(summary = "Get detail Pre-Register User by id", description = "Get detail Pre-Register User by id")
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
-        log.info("GET /cms/v1/pre-register/{id} endpoint hit");
+        log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             PreRegisterDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully found pre-register user", item));
@@ -60,9 +66,10 @@ public class UserPreRegisterController {
         }
     }
 
+    @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
-        log.info("POST /cms/v1/pre-register endpoint hit");
+        log.info("POST " + urlRoute + " endpoint hit");
         try {
             service.saveData(item);
             return ResponseEntity.created(URI.create("/cms/v1/pre-register/"))
@@ -72,9 +79,10 @@ public class UserPreRegisterController {
         }
     }
 
+    @Operation(summary = "Update Pre-Register User", description = "Update Pre-Register User")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody PreRegisterUpdateRequest item) {
-        log.info("PUT /cms/v1/pre-register/{id} endpoint hit");
+        log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated pre-register user"));
@@ -83,11 +91,12 @@ public class UserPreRegisterController {
         }
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
-        log.info("DELETE /cms/v1/pre-register/{id} endpoint hit");
+    @Operation(summary = "Delete Pre-Register User", description = "Delete Pre-Register User")
+    @DeleteMapping()
+    public ResponseEntity<ApiResponse> delete(@RequestParam("ids") List<Long> ids) {
+        log.info("DELETE " + urlRoute + "/ids={ids} endpoint hit");
         try {
-            service.deleteData(id);
+            service.deleteData(ids);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted pre-register user"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

@@ -28,6 +28,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final AppUserRepository userRepository;
     private final AppUserDetailRepository userDetailRepository;
     private final AppUserAttributeRepository userAttributeRepository;
+    private final PreRegisterRepository preRegisterRepository;
     private final RoleRepository roleRepository;
     private final OtpRepository otpRepository;
 
@@ -93,7 +94,9 @@ public class UserAuthServiceImpl implements UserAuthService {
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        if (dto.child_bank_account() == null && member || child) {
+        if (dto.child_bank_account() == null  && member ||
+                dto.child_bank_account().isEmpty() && member ||
+                child) {
             userDetail.setStatus(StatusType.APPROVED);
             user.setAppUserDetail(userDetail);
             if (dto.child_bank_account() == null) {
@@ -112,6 +115,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             user.setAppUserAttribute(userAttribute);
 
             userRepository.save(user);
+            preRegisterRepository.delete(dataCheck); // will be uncomment after testing
             String identity = "get"; // identity send registration otp
             resendOtp(identity, dto.email());
         } else {

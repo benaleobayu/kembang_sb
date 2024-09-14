@@ -19,7 +19,7 @@ public interface PreRegisterService {
 
     void updateData(Long id, @Valid PreRegisterUpdateRequest dto) throws BadRequestException;
 
-    void deleteData(Long id) throws BadRequestException;
+    void deleteData(List<Long> id) throws BadRequestException;
 
     ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
 }

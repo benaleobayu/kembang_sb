@@ -79,13 +79,12 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void deleteData(Long id) throws BadRequestException {
-        // delete data
-        if (!repository.existsById(id)) {
-            throw new BadRequestException("PreRegister not found");
-        } else {
-            repository.deleteById(id);
+    public void deleteData(List<Long> ids) throws BadRequestException {
+        List<PreRegister> users = repository.findAllById(ids);
+        if (users.isEmpty()) {
+            throw new BadRequestException("user on pre-register not found");
         }
+        repository.deleteAll(users);
     }
 
     @Override

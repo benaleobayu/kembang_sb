@@ -75,7 +75,6 @@ public class PreRegister extends AbstractBaseEntity {
     @Column(name = "pic_name")
     private String picName;
 
-
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
 
