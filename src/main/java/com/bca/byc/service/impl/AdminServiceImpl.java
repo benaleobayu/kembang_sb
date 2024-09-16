@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AdminDTOConverter;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
@@ -16,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +48,21 @@ public class AdminServiceImpl implements AdminService {
         AppAdmin data = repository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
 
-        return converter.convertToPermissionResponse(data);
+        AdminPermissionResponse dto = new AdminPermissionResponse();
+
+        List<String> permissions = new ArrayList<>();
+
+        for (RoleHasPermission roleHasPermission : data.getRole().getRolePermission()) {
+            String[] parts = roleHasPermission.getPermission().getName().split("\\.");
+            if (parts.length > 1) {
+                String category = parts[0];
+                String permission = parts[1];
+                permissions.add(category + "." + permission);
+            }
+        }
+
+        dto.setPermissions(permissions);
+        return dto;
     }
 
     @Override

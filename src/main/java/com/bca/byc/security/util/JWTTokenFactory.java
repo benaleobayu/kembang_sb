@@ -1,9 +1,11 @@
 package com.bca.byc.security.util;
 
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.security.model.AccessJWTToken;
+import com.bca.byc.service.AppAdminService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -11,27 +13,28 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JWTTokenFactory {
 
     private final Key secret;
-
+    private final AppAdminService adminService;
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
 
     public AccessJWTToken createAccessJWTToken(String email, Collection<? extends GrantedAuthority> authorities) {
         authorities = authorities != null ? authorities : Collections.emptyList();
+        AppAdmin user = adminService.findByEmail(email);
         Claims claims;
         if (authorities.isEmpty()) {
             claims = Jwts.claims().subject(email).build();
         } else {
             claims = Jwts.claims().subject(email)
-                    .add("scopes", authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())).build();
+                    .add("scopes", Arrays.asList(user.getRole().getName())).build();
         }
 
         //waktu kapan token dibuat

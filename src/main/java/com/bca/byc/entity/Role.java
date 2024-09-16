@@ -29,7 +29,7 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoleHasPermission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {

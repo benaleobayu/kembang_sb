@@ -2,11 +2,11 @@ package com.bca.byc.response;
 
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class AdminPermissionResponse {
 
-    private Set<String> permissions;
+    private List<String> permissions;
 
 }

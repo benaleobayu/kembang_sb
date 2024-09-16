@@ -119,14 +119,14 @@ public class AdminController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<ApiResponse> getAdminDetail(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<AdminPermissionResponse> getAdminDetail(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
             String email = userDetails.getUsername(); // Assuming email is used as the username
             AdminPermissionResponse data = service.getPermissionDetail(email);
-            return ResponseEntity.ok(new ApiResponse(true, "User found", data));
+            return ResponseEntity.ok().body(data);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse(false, "Unauthorized access", null));
+                    .body(new AdminPermissionResponse());
         }
     }
 }

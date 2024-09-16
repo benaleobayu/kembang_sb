@@ -31,7 +31,9 @@ public class PreRegisterDTOConverter {
 
         // created & updated by
         dto.setCreatedBy(data.getCreatedBy().getUsername());
-        dto.setUpdatedBy(data.getUpdatedBy().getUsername());
+        if (data.getUpdatedBy() != null) {
+            dto.setUpdatedBy(data.getUpdatedBy().getUsername());
+        }
 
         // return
         return dto;

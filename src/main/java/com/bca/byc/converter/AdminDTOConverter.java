@@ -1,19 +1,19 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
-import com.bca.byc.model.*;
+import com.bca.byc.model.AdminCmsDetailResponse;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.service.RoleService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdminDTOConverter {
 
-    private ModelMapper modelMapper;
     private final RoleService roleService;
+    private ModelMapper modelMapper;
 
     // for get data
     public AdminDetailResponse convertToListResponse(AppAdmin data) {
@@ -128,7 +128,7 @@ public class AdminDTOConverter {
 
         AdminPermissionResponse dto = modelMapper.map(data, AdminPermissionResponse.class);
 
-        Set<String> permissions = new HashSet<>();
+        List<String> permissions = new ArrayList<>();
 
         for (RoleHasPermission roleHasPermission : data.getRole().getRolePermission()) {
             String[] parts = roleHasPermission.getPermission().getName().split("\\.");
