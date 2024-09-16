@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PreRegisterDTOConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
@@ -8,6 +9,7 @@ import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.AppAdminService;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +32,8 @@ public class PreRegisterServiceImpl implements PreRegisterService {
 
     private PreRegisterRepository repository;
     private PreRegisterDTOConverter converter;
+
+    private AppAdminService adminService;
 
     @Override
     public PreRegisterDetailResponse findDataById(Long id) throws BadRequestException {
@@ -50,14 +55,17 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException {
+    public void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException {
         // check if email exists return error
         if (repository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
 
+        AppAdmin admin = adminService.findByEmail(email);
+
         // set entity to add with model mapper
-        PreRegister data = converter.convertToCreateRequest(dto);
+        PreRegister data = converter.convertToCreateRequest(dto, admin);
+
         // save data
         repository.save(data);
     }

@@ -15,7 +15,7 @@ public interface PreRegisterService {
 
     List<PreRegisterDetailResponse> findAllData();
 
-    void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException;
+    void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException;
 
     void updateData(Long id, @Valid PreRegisterUpdateRequest dto) throws BadRequestException;
 
