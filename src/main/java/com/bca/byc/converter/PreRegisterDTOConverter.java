@@ -2,11 +2,14 @@ package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
+import com.bca.byc.entity.PreRegisterLog;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 @Component
 @AllArgsConstructor
 public class PreRegisterDTOConverter {
+
+    private PreRegisterLogRepository logRepository;
 
     private ModelMapper modelMapper;
 
@@ -76,5 +81,34 @@ public class PreRegisterDTOConverter {
 
         // set updated_by
         data.setUpdatedBy(data.getCreatedBy());
+    }
+
+    public PreRegister convertToApprovalRequest(PreRegister data, AppAdmin admin) {
+        PreRegisterLog log = new PreRegisterLog();
+        log.setStatus(LogStatus.APPROVED);
+        log.setPreRegister(data);
+        log.setMessage("Approved by " + admin.getName());
+        log.setUpdatedBy(admin.getName());
+        logRepository.save(log);
+
+        AdminType typeAdmin = admin.getType();
+        switch (typeAdmin){
+            case SUPERADMIN:
+                data.setStatusApproval(AdminApprovalStatus.APPROVED);
+                break;
+            case OPERATIONAL:
+                data.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
+                break;
+            case SUPERVISOR:
+                data.setStatusApproval(AdminApprovalStatus.SPV_APPROVED);
+                break;
+            case MANAGER:
+                data.setStatusApproval(AdminApprovalStatus.MGR_APPROVED);
+                break;
+            default:
+                data.setStatusApproval(AdminApprovalStatus.PENDING);
+                break;
+        }
+        return data;
     }
 }

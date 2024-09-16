@@ -22,5 +22,7 @@ public interface PreRegisterService {
     void deleteData(List<Long> id) throws BadRequestException;
 
     ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+
+    void approveData(Long id, String email) throws BadRequestException;
 }
 
