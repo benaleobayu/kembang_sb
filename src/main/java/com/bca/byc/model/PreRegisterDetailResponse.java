@@ -27,4 +27,7 @@ public class PreRegisterDetailResponse {
     private String createdAt;
     private String updatedAt;
 
+    private String createdBy;
+    private String updatedBy;
+
 }
