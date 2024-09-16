@@ -73,10 +73,15 @@ public class AdminDTOConverter {
                     return parts.length > 1 ? parts[0] : "other"; // default to "other" if no category
                 }));
 
+        List<AdminCmsDetailResponse.MenuName> menuNames = new ArrayList<>();
+
         // Iterate over each category (e.g., role, admin, user)
         for (Map.Entry<String, List<RoleHasPermission>> entry : permissionsByCategory.entrySet()) {
             String category = entry.getKey();
             List<RoleHasPermission> permissions = entry.getValue();
+
+            AdminCmsDetailResponse.MenuName menuName = new AdminCmsDetailResponse.MenuName();
+            menuName.setMenuName(category);
 
             // Create a list of PermissionResponse for each category
             List<PermissionResponse> permissionDetails = new ArrayList<>();
@@ -107,11 +112,13 @@ public class AdminDTOConverter {
             }
 
             // Add the permissionDetails to the permissionGroups map
-            permissionGroups.put(category, permissionDetails);
+            menuName.setPermissions(permissionDetails);
+
+            menuNames.add(menuName);
         }
 
         // Set the grouped permissions to the DTO
-        dto.setPermissions(permissionGroups);
+        dto.setPermissions(menuNames);
         // return
         return dto;
     }
