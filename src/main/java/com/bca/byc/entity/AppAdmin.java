@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 
+import com.bca.byc.enums.AdminType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,11 +32,18 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails {
     @Column(name = "status", columnDefinition = "boolean default true")
     private boolean status = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private AdminType type = AdminType.GENERAL;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
     private Role role;
 
+
+
+    // ------------------------------------
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();
