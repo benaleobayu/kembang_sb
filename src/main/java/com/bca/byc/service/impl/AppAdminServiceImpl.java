@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.UserDetailResponseDTO;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -31,5 +32,11 @@ public class AppAdminServiceImpl implements AppAdminService {
 		dto.setUsername(username);
 		return dto;
 	}
+
+    @Override
+    public AppAdmin findByEmail(String email) {
+        return appAdminRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("invalid email admin"));
+    }
 
 }
