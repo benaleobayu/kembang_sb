@@ -1,7 +1,6 @@
 package com.bca.byc.seeder;
 
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Role;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-@Order(2)
+@Order(1)
 @AllArgsConstructor
 public class AdminUserSeeder implements CommandLineRunner {
 
@@ -27,7 +26,7 @@ public class AdminUserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //create admin
-        if (appAdminRepository.count() == 0) {
+        if (appAdminRepository.findByEmail("admin@unictive.net").isEmpty()) {
             AppAdmin admin = new AppAdmin();
             admin.setName("admin");
             admin.setEmail("admin@unictive.net");
@@ -43,6 +42,76 @@ public class AdminUserSeeder implements CommandLineRunner {
 
             appAdminRepository.save(admin);
         }
+
+        if (appAdminRepository.findByEmail("admin-opt@unictive.net").isEmpty()) {
+            AppAdmin adminOperator = new AppAdmin();
+            adminOperator.setName("admin-operator");
+            adminOperator.setEmail("admin-opt@unictive.net");
+            adminOperator.setPassword(passwordEncoder.encode("password"));
+            adminOperator.setActive(true);
+            adminOperator.setCreatedAt(LocalDateTime.now());
+            adminOperator.setUpdatedAt(LocalDateTime.now());
+
+            Role adminOperatorRole;
+            if (roleRepository.findByName("ADMIN-OPERATOR").isPresent()) {
+                adminOperatorRole = roleRepository.findByName("ADMIN-OPERATOR")
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                adminOperatorRole = new Role();
+                adminOperatorRole.setName("ADMIN-OPERATOR");
+                roleRepository.save(adminOperatorRole);
+            }
+            adminOperator.setRole(adminOperatorRole);
+
+            appAdminRepository.save(adminOperator);
+        }
+
+        if (appAdminRepository.findByEmail("admin-spv@unictive.net").isEmpty()) {
+            AppAdmin adminSPV = new AppAdmin();
+            adminSPV.setName("admin-spv");
+            adminSPV.setEmail("admin-spv@unictive.net");
+            adminSPV.setPassword(passwordEncoder.encode("password"));
+            adminSPV.setActive(true);
+            adminSPV.setCreatedAt(LocalDateTime.now());
+            adminSPV.setUpdatedAt(LocalDateTime.now());
+
+            Role adminSPVRole;
+            if (roleRepository.findByName("ADMIN-SUPERVISOR").isPresent()) {
+                adminSPVRole = roleRepository.findByName("ADMIN-SUPERVISOR")
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                adminSPVRole = new Role();
+                adminSPVRole.setName("ADMIN-SUPERVISOR");
+                roleRepository.save(adminSPVRole);
+            }
+            adminSPV.setRole(adminSPVRole);
+
+            appAdminRepository.save(adminSPV);
+        }
+
+        if (appAdminRepository.findByEmail("admin-mgr@unictive.net").isEmpty()) {
+            AppAdmin adminManager = new AppAdmin();
+            adminManager.setName("admin-manager");
+            adminManager.setEmail("admin-mgr@unictive.net");
+            adminManager.setPassword(passwordEncoder.encode("password"));
+            adminManager.setActive(true);
+            adminManager.setCreatedAt(LocalDateTime.now());
+            adminManager.setUpdatedAt(LocalDateTime.now());
+
+            Role adminManagerRole;
+            if (roleRepository.findByName("ADMIN-MANAGER").isPresent()) {
+                adminManagerRole = roleRepository.findByName("ADMIN-MANAGER")
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                adminManagerRole = new Role();
+                adminManagerRole.setName("ADMIN-MANAGER");
+                roleRepository.save(adminManagerRole);
+            }
+            adminManager.setRole(adminManagerRole);
+
+            appAdminRepository.save(adminManager);
+        }
+
 
         // create user
 //        if (appUserRepository.count() == 0) {
