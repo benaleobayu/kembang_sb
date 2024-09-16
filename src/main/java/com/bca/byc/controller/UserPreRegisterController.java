@@ -58,7 +58,7 @@ public class UserPreRegisterController {
         }
     }
 
-    @PreAuthorize("hasPermission('pre-registration.read')")
+    @PreAuthorize("hasAuthority('pre-registration.read')")
     @Operation(summary = "Get detail Pre-Register User by id", description = "Get detail Pre-Register User by id")
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
@@ -71,7 +71,7 @@ public class UserPreRegisterController {
         }
     }
 
-    @PreAuthorize("hasPermission('pre-registration.create')")
+    @PreAuthorize("hasAuthority('pre-registration.create')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
@@ -90,7 +90,7 @@ public class UserPreRegisterController {
         System.out.println(email);
 
         try {
-            service.saveData(item);
+            service.saveData(item, email);
             return ResponseEntity.created(URI.create("/cms/v1/pre-register/"))
                     .body(new ApiResponse(true, "Successfully created pre-register user"));
         } catch (Exception e) {
