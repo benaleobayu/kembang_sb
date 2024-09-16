@@ -1,7 +1,6 @@
 package com.bca.byc.model;
 
 import com.bca.byc.enums.UserType;
-import com.bca.byc.validator.annotation.UniqueEmail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -38,6 +37,5 @@ public class PreRegisterCreateRequest {
     private String memberCin;
 
     private String childCin;
-
 
 }
