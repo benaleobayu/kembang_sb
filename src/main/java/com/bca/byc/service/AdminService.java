@@ -5,12 +5,15 @@ import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
 public interface AdminService {
+
+    AppAdmin findByEmail(String email);
 
     AdminDetailResponse findDataById(Long id) throws Exception;
 
@@ -26,5 +29,5 @@ public interface AdminService {
 
     AdminCmsDetailResponse getAdminDetail(String email);
 
-    AppAdmin findByEmail(String email);
+    AdminPermissionResponse getPermissionDetail(String email);
 }

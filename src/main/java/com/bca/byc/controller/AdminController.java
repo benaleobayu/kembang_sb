@@ -5,6 +5,7 @@ import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -110,6 +111,18 @@ public class AdminController {
         if (userDetails != null) {
             String email = userDetails.getUsername(); // Assuming email is used as the username
             AdminCmsDetailResponse data = service.getAdminDetail(email);
+            return ResponseEntity.ok(new ApiResponse(true, "User found", data));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(false, "Unauthorized access", null));
+        }
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<ApiResponse> getAdminDetail(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            String email = userDetails.getUsername(); // Assuming email is used as the username
+            AdminPermissionResponse data = service.getPermissionDetail(email);
             return ResponseEntity.ok(new ApiResponse(true, "User found", data));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

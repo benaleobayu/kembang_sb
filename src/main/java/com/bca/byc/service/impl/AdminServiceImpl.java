@@ -8,6 +8,7 @@ import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.repository.AdminRepository;
+import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AdminService;
 import jakarta.validation.Valid;
@@ -26,6 +27,13 @@ public class AdminServiceImpl implements AdminService {
     private AdminDTOConverter converter;
 
     @Override
+    public AppAdmin findByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(
+                () -> new BadRequestException("Admin not found")
+        );
+    }
+
+    @Override
     public AdminDetailResponse findDataById(Long id) throws BadRequestException {
         AppAdmin data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
@@ -34,10 +42,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AppAdmin findByEmail(String email) {
-        return repository.findByEmail(email).orElseThrow(
-                () -> new BadRequestException("Admin not found")
-        );
+    public AdminPermissionResponse getPermissionDetail(String email) {
+        AppAdmin data = repository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Admin not found"));
+
+        return converter.convertToPermissionResponse(data);
     }
 
     @Override

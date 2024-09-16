@@ -5,6 +5,7 @@ import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.model.*;
+import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.service.RoleService;
 import lombok.AllArgsConstructor;
@@ -120,6 +121,26 @@ public class AdminDTOConverter {
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
         // return
+        return dto;
+    }
+
+    public AdminPermissionResponse convertToPermissionResponse(AppAdmin data) {
+
+        AdminPermissionResponse dto = modelMapper.map(data, AdminPermissionResponse.class);
+
+        Set<String> permissions = new HashSet<>();
+
+        for (RoleHasPermission roleHasPermission : data.getRole().getRolePermission()) {
+            String[] parts = roleHasPermission.getPermission().getName().split("\\.");
+            if (parts.length > 1) {
+                String category = parts[0];
+                String permission = parts[1];
+                permissions.add(category + "." + permission);
+            }
+        }
+
+        dto.setPermissions(permissions);
+
         return dto;
     }
 }
