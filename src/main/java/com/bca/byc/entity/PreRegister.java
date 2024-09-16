@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.validator.annotation.MemberTypeEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -80,6 +81,19 @@ public class PreRegister extends AbstractBaseEntity {
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private AppAdmin createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private AppAdmin updatedBy;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status_approval")
+    private AdminApprovalStatus statusApproval = AdminApprovalStatus.PENDING;
+
 
 
 }
