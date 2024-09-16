@@ -3,16 +3,13 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PreRegisterDTOConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
-import com.bca.byc.entity.PreRegisterLog;
-import com.bca.byc.enums.AdminApprovalStatus;
-import com.bca.byc.enums.AdminType;
-import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
+import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppAdminService;
 import com.bca.byc.service.PreRegisterService;
@@ -134,9 +131,24 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         }
 
         PreRegister data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("PreRegister not found"));
+                .orElseThrow(() -> new BadRequestException("data pre register not found"));
         // update on converter
         converter.convertToApprovalRequest(data, admin);
+        // save
+        repository.save(data);
+    }
+
+    @Override
+    public void rejectData(Long id, RejectRequest reason, String email) throws BadRequestException {
+        AppAdmin admin = adminService.findByEmail(email);
+        if (admin == null) {
+            throw new BadRequestException("Invalid email admin");
+        }
+
+        PreRegister data = repository.findById(id)
+                .orElseThrow(() -> new BadRequestException("data pre register not found"));
+        // update on converter
+        converter.convertToRejectRequest(data, reason, admin);
         // save
         repository.save(data);
     }

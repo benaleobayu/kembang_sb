@@ -10,6 +10,7 @@ import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.PreRegisterLogRepository;
+import com.bca.byc.response.RejectRequest;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -92,7 +93,7 @@ public class PreRegisterDTOConverter {
         logRepository.save(log);
 
         AdminType typeAdmin = admin.getType();
-        switch (typeAdmin){
+        switch (typeAdmin) {
             case SUPERADMIN:
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
@@ -110,5 +111,19 @@ public class PreRegisterDTOConverter {
                 break;
         }
         return data;
+    }
+
+    public PreRegister convertToRejectRequest(PreRegister data, RejectRequest reason, AppAdmin admin) {
+        PreRegisterLog log = new PreRegisterLog();
+        log.setStatus(LogStatus.APPROVED);
+        log.setPreRegister(data);
+        log.setMessage(reason.message());
+        log.setUpdatedBy(admin.getName());
+        logRepository.save(log);
+
+        data.setEmail(data.getEmail().concat("_rejected"));
+        data.setStatusApproval(AdminApprovalStatus.REJECTED);
+        return data;
+
     }
 }

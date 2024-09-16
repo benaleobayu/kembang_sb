@@ -7,6 +7,7 @@ import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PreRegisterService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -139,4 +140,24 @@ public class UserPreRegisterController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+    // patch approve
+    @PreAuthorize("hasAuthority('pre-registration.update')")
+    @Operation(summary = "Reject Pre-Register User", description = "Reject Pre-Register User")
+    @PatchMapping("{id}/reject")
+    public ResponseEntity<ApiResponse> reject(
+            @PathVariable("id") Long id,
+            @RequestBody RejectRequest reason,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("PATCH " + urlRoute + "/{id}/reject endpoint hit");
+        try {
+            String email = userDetails.getUsername();
+            service.rejectData(id, reason, email);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully rejecting pre-register user"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+
 }
