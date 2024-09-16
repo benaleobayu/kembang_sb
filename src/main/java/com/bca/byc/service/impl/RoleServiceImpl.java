@@ -140,5 +140,13 @@ public class RoleServiceImpl implements RoleService {
         );
     }
 
+    @Override
+    public List<String> getAdminRoles() {
+        List<String> adminRoles = roleRepository.findAllAdminRoles();
+        return adminRoles.stream()
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+    }
+
 
 }

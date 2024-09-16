@@ -34,7 +34,7 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
 
     public List<SimpleGrantedAuthority> getAuthorities() {
         var authorities = permissions.stream().map(permission -> new SimpleGrantedAuthority(permission.getPermission().getName())).collect(Collectors.toList());
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + name));
+        authorities.add(new SimpleGrantedAuthority(name));
         return authorities;
     }
 

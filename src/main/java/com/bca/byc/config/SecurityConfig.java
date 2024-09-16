@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -28,12 +30,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @EnableWebSecurity
@@ -93,6 +91,11 @@ public class SecurityConfig {
         return new UsernamePasswordAuthFailureHandler(objectMapper);
     }
 
+    @Bean
+    public CustomPermissionEvaluator permissionEvaluator() {
+        return new CustomPermissionEvaluator();
+    }
+
     @Autowired
     void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(usernamePasswordAuthProvider).authenticationProvider(jwtAuthenticationProvider);
@@ -109,7 +112,6 @@ public class SecurityConfig {
         filter.setAuthenticationManager(manager);
         return filter;
     }
-
 
     @Bean
     public JwtAuthProcessingFilter jwtAuthProcessingFilter(TokenExtractor tokenExtractor, AuthenticationFailureHandler failureHandler, AuthenticationManager authManager) {
@@ -130,8 +132,6 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
-
-//        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
 
         http.formLogin(formLogin -> formLogin
                 .loginPage("/auth/login")
@@ -159,21 +159,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(Arrays.asList(
-//                "https://admin-byc2024.kelolain.id",
-//                "http://localhost:4200"
-//        ));
-//        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
-//        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
-//        corsConfiguration.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//
-//        return source;
-//    }
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setPermissionEvaluator(permissionEvaluator());
+        return expressionHandler;
+    }
+
 
 }

@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.security.model.JwtAuthenticationToken;
 import com.bca.byc.service.AppUserService;
+import com.bca.byc.service.RoleService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +30,7 @@ import lombok.AllArgsConstructor;
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private final AppUserService appUserService;
+	private final RoleService roleService;
 	private final SecretKey key;
 
 	@Override
@@ -36,18 +38,20 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		RawAccessJwtToken token = (RawAccessJwtToken) authentication.getCredentials();
 		Jws<Claims> jwsClaims = token.parseClaims(key);
 		String subject = jwsClaims.getPayload().getSubject();
-		List<String> scopes;
-		if (jwsClaims.getBody().get("scopes") != null) {
-			scopes = (List<String>) jwsClaims.getBody().get("scopes");
-		} else {
-			scopes = Collections.emptyList();
-		}
+
+		List<String> scopes = (List<String>) jwsClaims.getBody().getOrDefault("scopes", Collections.emptyList());
+
 		List<GrantedAuthority> authorities = scopes.stream()
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 
-		// if admin
-		if (authorities.contains(new SimpleGrantedAuthority(("ROLE_SUPERADMIN").toUpperCase()))) {
+		List<String> adminRoles = roleService.getAdminRoles();  // Mendapatkan role admin CMS
+
+		boolean isAdmin = authorities.stream()
+				.anyMatch(auth -> adminRoles.contains(auth.getAuthority().toUpperCase()));
+
+		// jika admin cms
+		if (isAdmin) {
 			UserDetails adminDetails = new UserDetails() {
 				@Override
 				public String getUsername() {
@@ -81,7 +85,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			return new JwtAuthenticationToken(adminDetails, authorities);
 		}
 
-		// Untuk user biasa
+		// Untuk user app
 		AppUser appUser = appUserService.findByUsername(subject);
 		if (appUser == null) {
 			throw new AuthenticationException("User not found") {};

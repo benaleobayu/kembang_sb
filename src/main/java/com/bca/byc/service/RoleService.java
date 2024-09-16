@@ -24,5 +24,6 @@ public interface RoleService {
 
     ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
 
+    List<String> getAdminRoles();
 }
 
