@@ -1,11 +1,13 @@
 package com.bca.byc;
 
+import com.bca.byc.util.SshTunnelUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -20,7 +22,10 @@ import java.util.Collections;
 @EntityScan(basePackages = "com.bca.byc.entity")
 //@EnableScheduling
 public class DevApplication {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+
+//        SshTunnelUtil.setupSshTunnel("root", "45.32.122.20", 22, "8kF*b*6jDH3buK69", "localhost", 5432, 5432);
+
         SpringApplication.run(DevApplication.class, args);
     }
 
