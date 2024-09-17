@@ -7,6 +7,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.reponse.excel.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
@@ -151,6 +152,13 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         converter.convertToRejectRequest(data, reason, admin);
         // save
         repository.save(data);
+    }
+
+    @Override
+    public List<PreRegisterExportResponse> findAllDataToExport() {
+        return repository.findAll().stream()
+                .map(converter::convertToExportResponse)
+                .collect(Collectors.toList());
     }
 }
 

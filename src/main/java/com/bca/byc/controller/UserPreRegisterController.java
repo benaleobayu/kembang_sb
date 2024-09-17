@@ -5,18 +5,20 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
-import com.bca.byc.response.RejectRequest;
-import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.reponse.excel.PreRegisterExportResponse;
+import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
+import com.bca.byc.service.UserManagementExportService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -41,6 +46,7 @@ public class UserPreRegisterController {
 
     static final String urlRoute = "/cms/v1/um/pre-register";
     private PreRegisterService service;
+    private UserManagementExportService exportService;
 
     @PreAuthorize("hasAuthority('pre-registration.view')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
@@ -159,5 +165,21 @@ public class UserPreRegisterController {
         }
     }
 
+    @GetMapping("/export")
+    public ResponseEntity<ApiDataResponse<InputStreamResource>> exportExcel() throws IOException {
+        List<PreRegisterExportResponse> items = service.findAllDataToExport();
+        ByteArrayInputStream in = exportService.exportExcelPreRegister(items);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=pre-register.xlsx");
+        try{
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                    .body(new ApiDataResponse<>(true, "Success", in));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
+        }
+    }
 
 }
