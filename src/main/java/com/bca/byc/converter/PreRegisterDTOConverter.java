@@ -64,10 +64,15 @@ public class PreRegisterDTOConverter {
             case SUPERVISOR:
                 data.setStatusApproval(AdminApprovalStatus.SPV_APPROVED);
                 break;
+            case MANAGER:
+                data.setStatusApproval(AdminApprovalStatus.MGR_APPROVED);
+                break;
             default:
                 data.setStatusApproval(AdminApprovalStatus.PENDING);
                 break;
         }
+
+        data.setStatus(true);
 
         // return
         return data;
@@ -121,6 +126,7 @@ public class PreRegisterDTOConverter {
         log.setUpdatedBy(admin.getName());
         logRepository.save(log);
 
+        data.setDeleted(true);
         data.setEmail(data.getEmail().concat("_rejected"));
         data.setStatusApproval(AdminApprovalStatus.REJECTED);
         return data;

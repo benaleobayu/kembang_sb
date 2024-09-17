@@ -1,15 +1,23 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.PreRegister;
+import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.service.AppAdminService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,7 +43,6 @@ class UserPreRegisterControllerTest {
     private ObjectMapper objectMapper;
 
     private String token;
-
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -77,6 +84,8 @@ class UserPreRegisterControllerTest {
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);
         LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
+        
+        
         // Create a sample PreRegisterCreateRequest object
         PreRegisterCreateRequest request = new PreRegisterCreateRequest();
         request.setName(faker.name().fullName());
@@ -91,6 +100,8 @@ class UserPreRegisterControllerTest {
         request.setChildBirthdate(birthdate);
         request.setMemberCin(cinNumber.toString());
         request.setChildCin(cinNumber.toString());
+        request.setStatus(true);
+        request.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
 
         // Convert request to JSON
         String requestJson = objectMapper.writeValueAsString(request);
@@ -119,7 +130,7 @@ class UserPreRegisterControllerTest {
         Long cinNumber = faker.number().randomNumber(11, true);
         LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
         // Create a sample PreRegisterCreateRequest object
-        PreRegisterCreateRequest request = new PreRegisterCreateRequest();
+        PreRegisterUpdateRequest request = new PreRegisterUpdateRequest();
         request.setName(faker.name().fullName());
         request.setEmail(faker.internet().emailAddress());
         request.setPhone(faker.phoneNumber().phoneNumber());
