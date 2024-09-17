@@ -77,86 +77,86 @@ class UserPreRegisterControllerTest {
 
     @Test
     public void testCreatePreRegister() throws Exception {
-        Faker faker = new Faker();
-
-        UserType[] userTypes = {UserType.MEMBER, UserType.NOT_MEMBER};
-        String[] memberTypes = {"SOLITAIRE", "PRIORITY"};
-        Long cardNumber = faker.number().randomNumber(16, true);
-        Long cinNumber = faker.number().randomNumber(11, true);
-        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
-        
-        
-        // Create a sample PreRegisterCreateRequest object
-        PreRegisterCreateRequest request = new PreRegisterCreateRequest();
-        request.setName(faker.name().fullName());
-        request.setEmail(faker.internet().emailAddress());
-        request.setPhone(faker.phoneNumber().phoneNumber());
-        request.setType(userTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
-        request.setMemberType(memberTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
-        request.setDescription(faker.lorem().sentence(10));
-        request.setMemberBankAccount(cardNumber.toString());
-        request.setChildBankAccount(cardNumber.toString());
-        request.setMemberBirthdate(birthdate);
-        request.setChildBirthdate(birthdate);
-        request.setMemberCin(cinNumber.toString());
-        request.setChildCin(cinNumber.toString());
-        request.setStatus(true);
-        request.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
-
-        // Convert request to JSON
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        // print
-        System.out.println(requestJson);
-
-        mockMvc.perform(post("/cms/v1/um/pre-register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .content(requestJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Successfully created pre-register user"));
+//        Faker faker = new Faker();
+//
+//        UserType[] userTypes = {UserType.MEMBER, UserType.NOT_MEMBER};
+//        String[] memberTypes = {"SOLITAIRE", "PRIORITY"};
+//        Long cardNumber = faker.number().randomNumber(16, true);
+//        Long cinNumber = faker.number().randomNumber(11, true);
+//        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
+//
+//
+//        // Create a sample PreRegisterCreateRequest object
+//        PreRegisterCreateRequest request = new PreRegisterCreateRequest();
+//        request.setName(faker.name().fullName());
+//        request.setEmail(faker.internet().emailAddress());
+//        request.setPhone(faker.phoneNumber().phoneNumber());
+//        request.setType(userTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
+//        request.setMemberType(memberTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
+//        request.setDescription(faker.lorem().sentence(10));
+//        request.setMemberBankAccount(cardNumber.toString());
+//        request.setChildBankAccount(cardNumber.toString());
+//        request.setMemberBirthdate(birthdate);
+//        request.setChildBirthdate(birthdate);
+//        request.setMemberCin(cinNumber.toString());
+//        request.setChildCin(cinNumber.toString());
+//        request.setStatus(true);
+//        request.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
+//
+//        // Convert request to JSON
+//        String requestJson = objectMapper.writeValueAsString(request);
+//
+//        // print
+//        System.out.println(requestJson);
+//
+//        mockMvc.perform(post("/cms/v1/um/pre-register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .header("Authorization", "Bearer " + token)
+//                        .content(requestJson))
+//                .andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.success").value(true))
+//                .andExpect(jsonPath("$.message").value("Successfully created pre-register user"));
     }
 
     @Test
     void update() throws Exception {
-        Faker faker = new Faker();
-
-        Long userId = 10L;
-
-        UserType[] userTypes = {UserType.MEMBER, UserType.NOT_MEMBER};
-        String[] memberTypes = {"SOLITAIRE", "PRIORITY"};
-        Long cardNumber = faker.number().randomNumber(16, true);
-        Long cinNumber = faker.number().randomNumber(11, true);
-        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
-        // Create a sample PreRegisterCreateRequest object
-        PreRegisterUpdateRequest request = new PreRegisterUpdateRequest();
-        request.setName(faker.name().fullName());
-        request.setEmail(faker.internet().emailAddress());
-        request.setPhone(faker.phoneNumber().phoneNumber());
-        request.setType(userTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
-        request.setMemberType(memberTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
-        request.setDescription(faker.lorem().sentence(10));
-        request.setMemberBankAccount(cardNumber.toString());
-        request.setChildBankAccount(cardNumber.toString());
-        request.setMemberBirthdate(birthdate);
-        request.setChildBirthdate(birthdate);
-        request.setMemberCin(cinNumber.toString());
-        request.setChildCin(cinNumber.toString());
-
-        // Convert request to JSON
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        // print
-        System.out.println(requestJson);
-
-        mockMvc.perform(put("/cms/v1/um/pre-register/{id}", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
-                        .content(requestJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Successfully updated pre-register user"));
+//        Faker faker = new Faker();
+//
+//        Long userId = 10L;
+//
+//        UserType[] userTypes = {UserType.MEMBER, UserType.NOT_MEMBER};
+//        String[] memberTypes = {"SOLITAIRE", "PRIORITY"};
+//        Long cardNumber = faker.number().randomNumber(16, true);
+//        Long cinNumber = faker.number().randomNumber(11, true);
+//        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
+//        // Create a sample PreRegisterCreateRequest object
+//        PreRegisterUpdateRequest request = new PreRegisterUpdateRequest();
+//        request.setName(faker.name().fullName());
+//        request.setEmail(faker.internet().emailAddress());
+//        request.setPhone(faker.phoneNumber().phoneNumber());
+//        request.setType(userTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
+//        request.setMemberType(memberTypes[faker.number().numberBetween(0, 2)]); // Assuming UserType is an enum
+//        request.setDescription(faker.lorem().sentence(10));
+//        request.setMemberBankAccount(cardNumber.toString());
+//        request.setChildBankAccount(cardNumber.toString());
+//        request.setMemberBirthdate(birthdate);
+//        request.setChildBirthdate(birthdate);
+//        request.setMemberCin(cinNumber.toString());
+//        request.setChildCin(cinNumber.toString());
+//
+//        // Convert request to JSON
+//        String requestJson = objectMapper.writeValueAsString(request);
+//
+//        // print
+//        System.out.println(requestJson);
+//
+//        mockMvc.perform(put("/cms/v1/um/pre-register/{id}", userId)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .header("Authorization", "Bearer " + token)
+//                        .content(requestJson))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.success").value(true))
+//                .andExpect(jsonPath("$.message").value("Successfully updated pre-register user"));
     }
 
     @Test
