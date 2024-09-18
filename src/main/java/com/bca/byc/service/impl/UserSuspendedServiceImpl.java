@@ -6,7 +6,6 @@ import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.UserSuspendedRequest;
 import com.bca.byc.repository.UserSuspendedRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
