@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ import static com.bca.byc.controller.UserActiveController.urlRoute;
 @Slf4j
 @RestController
 @RequestMapping(urlRoute)
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Tag(name = "CMS User Active API")
 @SecurityRequirement(name = "Authorization")
 public class UserActiveController {
