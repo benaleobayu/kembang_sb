@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-@Order(1)
+@Order(2)
 @AllArgsConstructor
 public class AdminUserSeeder implements CommandLineRunner {
 
