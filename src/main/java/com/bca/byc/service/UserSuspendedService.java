@@ -4,11 +4,19 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public interface UserSuspendedService {
 
-    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
+                                                                 Integer limit,
+                                                                 String sortBy,
+                                                                 String direction,
+                                                                 String userName,
+                                                                 Long locationId,
+                                                                 LocalDate startDate,
+                                                                 LocalDate endDate);
 
     UserManagementDetailResponse findDataById(Long id) throws BadRequestException;
 

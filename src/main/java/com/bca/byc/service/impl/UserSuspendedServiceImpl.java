@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppUserDTOConverter;
+import com.bca.byc.converter.UserSuspendedDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.StatusType;
@@ -11,13 +12,15 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
 import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,16 +32,28 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
 
     private final UserSuspendedRepository repository;
 
-    private final AppUserDTOConverter converter;
+    private final UserSuspendedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
+                                                                        Integer limit,
+                                                                        String sortBy,
+                                                                        String direction,
+                                                                        String keyword,
+                                                                        Long locationId,
+                                                                        LocalDate startDate,
+                                                                        LocalDate endDate) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedTrueAndAppUserAttributeIsDeletedFalse(userName, StatusType.ACTIVATED, pageable);
+
+        // set date
+        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
+        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
-            UserManagementDetailResponse dto = converter.convertToDetailResponse(c);
+            UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;
         }).collect(Collectors.toList());
 
@@ -62,7 +77,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         AppUser data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("user not found"));
 
-        return converter.convertToDetailResponse(data);
+        return converter.convertToListResponse(data);
     }
 
     @Override
