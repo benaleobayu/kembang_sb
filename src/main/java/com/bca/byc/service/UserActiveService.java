@@ -7,6 +7,7 @@ import com.bca.byc.response.Page;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface UserActiveService {
@@ -21,7 +22,7 @@ public interface UserActiveService {
 
     void suspendData(Long id) throws BadRequestException;
 
-    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate);
 
     Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size);
 }

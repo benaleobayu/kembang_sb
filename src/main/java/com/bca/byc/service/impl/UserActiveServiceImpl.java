@@ -3,7 +3,6 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
-import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,11 +95,23 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
+                                                                        Integer limit,
+                                                                        String sortBy,
+                                                                        String direction,
+                                                                        String keyword,
+                                                                        Long locationId,
+                                                                        LocalDate startDate,
+                                                                        LocalDate endDate) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedFalse(userName, StatusType.ACTIVATED, pageable);
+
+        // set date
+        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
+        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;
