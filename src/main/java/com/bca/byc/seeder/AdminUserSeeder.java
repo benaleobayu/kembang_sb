@@ -36,8 +36,15 @@ public class AdminUserSeeder implements CommandLineRunner {
             admin.setUpdatedAt(LocalDateTime.now());
 
             // set role
-            Role adminRole = roleRepository.findByName("SUPERADMIN")
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Role adminRole;
+            if (roleRepository.findByName("SUPERADMIN").isPresent()) {
+                adminRole = roleRepository.findByName("SUPERADMIN")
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                adminRole = new Role();
+                adminRole.setName("SUPERADMIN");
+                roleRepository.save(adminRole);
+            }
             admin.setRole(adminRole);
 
             appAdminRepository.save(admin);
