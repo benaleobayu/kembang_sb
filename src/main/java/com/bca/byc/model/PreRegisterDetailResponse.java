@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.StatusType;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ public class PreRegisterDetailResponse {
 //    private String birthDate;
 
     private String orders;
-    private StatusType status;
+    private AdminApprovalStatus approvalStatus;
     private String createdAt;
     private String updatedAt;
 

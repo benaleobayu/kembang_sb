@@ -1,8 +1,10 @@
 package com.bca.byc.security.util;
 
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.security.model.AccessJWTToken;
 import com.bca.byc.service.AppAdminService;
+import com.bca.byc.service.AppUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +30,11 @@ public class JWTTokenFactory {
 
     public AccessJWTToken createAccessJWTToken(String email, Collection<? extends GrantedAuthority> authorities) {
         authorities = authorities != null ? authorities : Collections.emptyList();
-        AppAdmin user = adminService.findByEmail(email);
         Claims claims;
         if (authorities.isEmpty()) {
             claims = Jwts.claims().subject(email).build();
         } else {
+            AppAdmin user = adminService.findByEmail(email);
             claims = Jwts.claims().subject(email)
                     .add("scopes", Arrays.asList(user.getRole().getName())).build();
         }

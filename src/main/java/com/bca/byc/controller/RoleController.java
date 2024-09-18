@@ -27,7 +27,6 @@ import java.net.URI;
 @RequestMapping("/cms/v1/am/role")
 @Tag(name = "CMS Role API")
 @SecurityRequirement(name = "Authorization")
-
 public class RoleController {
 
     private RoleService service;
@@ -38,10 +37,10 @@ public class RoleController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "userName", required = false) String userName) {
+            @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, userName)));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, keyword)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }

@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.Otp;
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppRegisterRequest;
@@ -88,7 +89,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 //        }
 
         // Check the PreRegister data
-        PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccount(dto.member_bank_account());
+        PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
         boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.member_bank_account());
         boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.child_bank_account());
         AppUserDetail userDetail = user.getAppUserDetail();

@@ -23,7 +23,7 @@ public class JwtTokenService {
                 .claim("scopes", List.of(role))
                 .issuer("https://bca.co.id")
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME * 30))
                 .signWith(SECRET_KEY)// Sign the token with the secret key
                 .compact();
     }
