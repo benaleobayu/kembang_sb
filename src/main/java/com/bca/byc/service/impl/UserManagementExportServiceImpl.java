@@ -1,7 +1,16 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.entity.PreRegister;
 import com.bca.byc.reponse.excel.PreRegisterExportResponse;
+import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.service.UserManagementExportService;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -12,36 +21,69 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserManagementExportServiceImpl implements UserManagementExportService {
+
+    private final PreRegisterRepository preRegisterRepository;
+
     @Override
-    public ByteArrayInputStream exportExcelPreRegister(List<PreRegisterExportResponse> items) throws IOException {
-        String[] columns = {"Name", "Email", "Created At", "Updated At"};
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Users");
+    public void exportExcelPreRegister(HttpServletResponse response) throws IOException {
+        List<PreRegister> datas = preRegisterRepository.findAll();
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Pre-Register");
 
-            // Header
-            Row headerRow = sheet.createRow(0);
-            for (int col = 0; col < columns.length; col++) {
-                Cell cell = headerRow.createCell(col);
-                cell.setCellValue(columns[col]);
-                cell.setCellStyle(createHeaderStyle(workbook));
-            }
+        CellStyle headerStyle = createHeaderStyle(workbook);
 
-            // Body
-            int rowIdx = 1;
-            int index = 0;
-            for (PreRegisterExportResponse data : items) {
-                Row row = sheet.createRow(rowIdx++);
+        HSSFRow row = sheet.createRow(0);
+        row.createCell(0).setCellValue("Name");
+        row.getCell(0).setCellStyle(headerStyle);
+        row.createCell(1).setCellValue("Email");
+        row.getCell(1).setCellStyle(headerStyle);
+        row.createCell(2).setCellValue("Phone");
+        row.getCell(2).setCellStyle(headerStyle);
+        row.createCell(3).setCellValue("Member");
+        row.getCell(3).setCellStyle(headerStyle);
+        row.createCell(4).setCellValue("Type");
+        row.getCell(4).setCellStyle(headerStyle);
+        row.createCell(5).setCellValue("Member Bank Account");
+        row.getCell(5).setCellStyle(headerStyle);
+        row.createCell(6).setCellValue("Member CIN");
+        row.getCell(6).setCellStyle(headerStyle);
+        row.createCell(7).setCellValue("Member Birthdate");
+        row.getCell(7).setCellStyle(headerStyle);
+        row.createCell(8).setCellValue("Child Bank Account");
+        row.getCell(8).setCellStyle(headerStyle);
+        row.createCell(9).setCellValue("Child CIN");
+        row.getCell(9).setCellStyle(headerStyle);
+        row.createCell(10).setCellValue("Child Birthdate");
+        row.getCell(10).setCellStyle(headerStyle);
+        row.createCell(11).setCellValue("Admin Approval Status");
+        row.getCell(11).setCellStyle(headerStyle);
+        row.createCell(12).setCellValue("Created At");
+        row.getCell(12).setCellStyle(headerStyle);
 
-                row.createCell(index).setCellValue(data.getId());
-                row.createCell(index+1).setCellValue(data.getName());
-                row.createCell(index + 1).setCellValue(data.getEmail());
-                row.createCell(index + 1).setCellValue(data.getMemberBirthdate());
-            }
-
-            workbook.write(out);
-            return new ByteArrayInputStream(out.toByteArray());
+        int dataRowIndex = 1;
+        for (PreRegister data : datas) {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex++);
+            dataRow.createCell(0).setCellValue(data.getName());
+            dataRow.createCell(1).setCellValue(data.getEmail());
+            dataRow.createCell(2).setCellValue(data.getPhone());
+            dataRow.createCell(3).setCellValue(data.getMemberType());
+            dataRow.createCell(4).setCellValue(data.getType().toString());
+            dataRow.createCell(5).setCellValue(data.getMemberBankAccount());
+            dataRow.createCell(6).setCellValue(data.getMemberCin());
+            dataRow.createCell(7).setCellValue(data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(8).setCellValue(data.getChildBankAccount());
+            dataRow.createCell(9).setCellValue(data.getChildCin());
+            dataRow.createCell(10).setCellValue(data.getChildBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(11).setCellValue(data.getStatusApproval() == null ? null : data.getStatusApproval().toString());
+            dataRow.createCell(12).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
+
+        ServletOutputStream ops = response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
     }
 
     private CellStyle createHeaderStyle(Workbook workbook) {

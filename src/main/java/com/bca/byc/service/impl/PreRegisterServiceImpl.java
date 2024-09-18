@@ -3,10 +3,12 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PreRegisterDTOConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.reponse.excel.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
@@ -24,8 +26,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,11 +50,17 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
+    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<PreRegister> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);
+
+        // set date
+        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
+        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+
+        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, start, end, pageable);
+
         List<PreRegisterDetailResponse> dtos = pageResult.stream().map((c) -> {
             PreRegisterDetailResponse dto = converter.convertToListResponse(c);
             return dto;
@@ -159,6 +168,29 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         return repository.findAll().stream()
                 .map(converter::convertToExportResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String, List<?>>> listStatus() {
+        List<String> statuses = Arrays.stream(AdminApprovalStatus.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        List<AttributeResponse> listStatusResponse = statuses.stream()
+                .map((c) -> {
+                    AttributeResponse response = new AttributeResponse();
+                    response.setId(statuses.indexOf(c));
+                    response.setName(c);
+                    return response;
+                })
+                .collect(Collectors.toList());
+
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+
+        Map<String, List<?>> listStatus = new HashMap<>();
+        listStatus.put("status", listStatusResponse);
+        attributes.add(listStatus);
+
+        return attributes;
     }
 }
 

@@ -5,20 +5,19 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.reponse.excel.PreRegisterExportResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -28,10 +27,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
@@ -42,6 +40,7 @@ import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
 @Validated
 @RequestMapping(urlRoute)
 @Tag(name = "CMS User Pre-Register API")
+@SecurityRequirement(name = "Authorization")
 public class UserPreRegisterController {
 
     static final String urlRoute = "/cms/v1/um/pre-register";
@@ -56,11 +55,13 @@ public class UserPreRegisterController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "userName", required = false) String userName) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " list endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, userName)));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, startDate, endDate), service.listStatus()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
@@ -166,20 +167,12 @@ public class UserPreRegisterController {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<ApiDataResponse<InputStreamResource>> exportExcel() throws IOException {
-        List<PreRegisterExportResponse> items = service.findAllDataToExport();
-        ByteArrayInputStream in = exportService.exportExcelPreRegister(items);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=pre-register.xlsx");
-        try{
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                    .body(new ApiDataResponse<>(true, "Success", in));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
-        }
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=pre-register.xls";
+        response.setHeader(headerKey, headerValue);
+        exportService.exportExcelPreRegister(response);
     }
 
 }

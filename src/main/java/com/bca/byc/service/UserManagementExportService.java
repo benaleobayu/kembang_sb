@@ -1,6 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.reponse.excel.PreRegisterExportResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -12,5 +13,5 @@ import java.util.List;
 public interface UserManagementExportService {
 
 
-    ByteArrayInputStream exportExcelPreRegister(List<PreRegisterExportResponse> items) throws IOException;
+    void exportExcelPreRegister(HttpServletResponse response) throws IOException;
 }

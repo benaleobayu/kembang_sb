@@ -9,7 +9,9 @@ import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface PreRegisterService {
 
@@ -23,12 +25,14 @@ public interface PreRegisterService {
 
     void deleteData(List<Long> id) throws BadRequestException;
 
-    ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate);
 
     void approveData(Long id, String email) throws BadRequestException;
 
     void rejectData(Long id, RejectRequest reason, String email) throws BadRequestException;
 
     List<PreRegisterExportResponse> findAllDataToExport();
+
+    List<Map<String, List<?>>> listStatus();
 }
 

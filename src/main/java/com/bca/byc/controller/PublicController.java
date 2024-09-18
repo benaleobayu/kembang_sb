@@ -8,16 +8,18 @@ import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.*;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 import static com.bca.byc.controller.PublicController.urlRoute;
 
@@ -102,11 +104,13 @@ public class PublicController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "userName", required = false) String userName) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " data-pre-register endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, userName)));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, startDate, endDate )));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
