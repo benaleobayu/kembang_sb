@@ -110,7 +110,7 @@ public class PublicController {
         // response true
         log.info("GET " + urlRoute + " data-pre-register endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, startDate, endDate )));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, startDate, endDate ), preRegisterService.listStatus()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
