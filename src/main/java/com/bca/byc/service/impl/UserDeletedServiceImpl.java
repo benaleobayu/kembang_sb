@@ -1,6 +1,6 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.AppUserDTOConverter;
+import com.bca.byc.converter.UserDeletedDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
@@ -10,12 +10,12 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,10 +29,17 @@ public class UserDeletedServiceImpl implements UserDeletedService {
 
     private final UserDeletedRepository repository;
 
-    private final AppUserDTOConverter converter;
+    private final UserDeletedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
+                                                                        Integer limit,
+                                                                        String sortBy,
+                                                                        String direction,
+                                                                        String keyword,
+                                                                        Long locationId,
+                                                                        LocalDate startDate,
+                                                                        LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -41,9 +48,9 @@ public class UserDeletedServiceImpl implements UserDeletedService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.findByKeywordAndCreatedAtDeletedUser(keyword, start, end, pageable);
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndDeletedAndCreatedAt(keyword, locationId, start, end, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
-            UserManagementDetailResponse dto = converter.convertToDetailResponse(c);
+            UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;
         }).collect(Collectors.toList());
 
@@ -67,7 +74,7 @@ public class UserDeletedServiceImpl implements UserDeletedService {
         AppUser data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("user not found"));
 
-        return converter.convertToDetailResponse(data);
+        return converter.convertToListResponse(data);
     }
 
     @Override

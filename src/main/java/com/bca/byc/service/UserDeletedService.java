@@ -9,7 +9,13 @@ import java.util.Set;
 
 public interface UserDeletedService {
 
-    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName, LocalDate startDate, LocalDate endDate);
+    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
+                                                                 Integer limit,
+                                                                 String sortBy,
+                                                                 String direction,
+                                                                 String keyword,
+                                                                 Long locationId, LocalDate startDate,
+                                                                 LocalDate endDate);
 
     UserManagementDetailResponse findDataById(Long id) throws BadRequestException;
 
