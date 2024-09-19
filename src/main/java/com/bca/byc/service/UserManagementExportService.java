@@ -14,4 +14,6 @@ public interface UserManagementExportService {
 
 
     void exportExcelPreRegister(HttpServletResponse response) throws IOException;
+
+    void exportExcelUserActive(HttpServletResponse response) throws IOException;
 }
