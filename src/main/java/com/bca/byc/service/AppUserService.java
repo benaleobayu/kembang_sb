@@ -1,6 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
 import jakarta.validation.Valid;
@@ -23,4 +24,6 @@ public interface AppUserService extends UserDetailsService {
 	void followUser(Long userId, String name);
 
 	void unfollowUser(Long userId, String name);
+
+    void updateUserData(String email, AppUserProfileRequest dto);
 }

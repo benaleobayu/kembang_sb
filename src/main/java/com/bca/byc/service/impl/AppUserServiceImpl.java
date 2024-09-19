@@ -4,6 +4,7 @@ import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
+import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserDetailResponseDTO;
@@ -22,6 +23,8 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository appUserRepository;
     private final AppUserDTOConverter converter;
+
+    private final AppUserDTOConverter userConverter;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -93,5 +96,13 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
+    @Override
+    public void updateUserData(String email, AppUserProfileRequest dto) {
+
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+        userConverter.convertToUpdateProfile(user, dto);
+        appUserRepository.save(user);
+    }
 
 }

@@ -1,11 +1,12 @@
 package com.bca.byc.converter;
 
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.AppUserDetail;
+import com.bca.byc.entity.*;
 import com.bca.byc.enums.UserType;
-import com.bca.byc.model.AppRegisterRequest;
-import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.*;
+import com.bca.byc.repository.ExpectCategoryRepository;
+import com.bca.byc.repository.ExpectItemRepository;
+import com.bca.byc.repository.UserHasExpectRepository;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AppUserDTOConverter {
     private ModelMapper modelMapper;
+    private final ExpectCategoryRepository expectCategoryRepository;
+    private final ExpectItemRepository expectItemRepository;
+    private final UserHasExpectRepository userHasExpectRepository;
 
     // for create data
     public AppUser convertToCreateRequest(@Valid AppRegisterRequest dto) {
@@ -147,4 +152,60 @@ public class AppUserDTOConverter {
     }
 
 
+    public void convertToUpdateProfile(AppUser data, AppUserProfileRequest dto) {
+        modelMapper.map(dto, data);
+        data.setName(dto.getName());
+        data.setEmail(dto.getEmail());
+        data.setLocation(dto.getLocation());
+
+        AppUserDetail appUserDetail = data.getAppUserDetail();
+        appUserDetail.setPhone(dto.getPhone());
+        appUserDetail.setBiodata(dto.getBiography());
+
+        List<String> education = dto.getEducation();
+        if (education != null) {
+            appUserDetail.setEducation(String.join(", ", education));
+        } else {
+            appUserDetail.setEducation(null);
+        }
+
+        for (AppUserProfileRequest.ProfileExpectCategoryResponse expectDto : dto.getUserHasExpects()) {
+            ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
+                    .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+
+            if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
+                for (Long expectItemId : expectDto.getItems().getIds()) {
+                    ExpectItem expectItem = expectItemRepository.findById(expectItemId)
+                            .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+
+                    UserHasExpectId userHasExpectId = new UserHasExpectId();
+                    userHasExpectId.setUserId(data.getId());
+                    userHasExpectId.setExpectCategoryId(expectCategory.getId());
+                    userHasExpectId.setExpectItemId(expectItem.getId());
+
+                    UserHasExpect userHasExpect = new UserHasExpect();
+                    userHasExpect.setId(userHasExpectId);
+                    userHasExpect.setUser(data);
+                    userHasExpect.setExpectCategory(expectCategory);
+                    userHasExpect.setExpectItem(expectItem);
+                    userHasExpect.setOtherExpect(expectDto.getOtherExpect());
+                    userHasExpect.setOtherExpectItem(expectDto.getItems().getOtherExpectItem());
+
+                    userHasExpectRepository.save(userHasExpect);
+                }
+            } else if (expectDto.getExpectCategoryId() == 5) {
+                UserHasExpect userHasExpect = new UserHasExpect();
+                ExpectItem expectItem = expectItemRepository.findById(5L)
+                        .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+                userHasExpect.setUser(data);
+                userHasExpect.setExpectCategory(expectCategory);
+                userHasExpect.setExpectItem(expectItem);
+                userHasExpect.setOtherExpect(expectDto.getOtherExpect());
+                userHasExpectRepository.save(userHasExpect);
+            }
+        }
+
+
+
+    }
 }
