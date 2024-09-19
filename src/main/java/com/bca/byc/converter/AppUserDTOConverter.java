@@ -6,6 +6,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
+import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.UserHasExpectRepository;
 import com.bca.byc.util.Formatter;
 import jakarta.validation.Valid;
@@ -27,6 +28,8 @@ public class AppUserDTOConverter {
     private final ExpectCategoryRepository expectCategoryRepository;
     private final ExpectItemRepository expectItemRepository;
     private final UserHasExpectRepository userHasExpectRepository;
+
+    private final LocationRepository locationRepository;
 
     // for create data
     public AppUser convertToCreateRequest(@Valid AppRegisterRequest dto) {
@@ -156,7 +159,11 @@ public class AppUserDTOConverter {
         modelMapper.map(dto, data);
         data.setName(dto.getName());
         data.setEmail(dto.getEmail());
-        data.setLocation(dto.getLocation());
+
+        Location location = locationRepository.findById(dto.getLocation())
+                        .orElseThrow(() -> new BadRequestException("Location not found"));
+
+        data.setLocation(location);
 
         AppUserDetail appUserDetail = data.getAppUserDetail();
         appUserDetail.setPhone(dto.getPhone());

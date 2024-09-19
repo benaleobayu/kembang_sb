@@ -17,7 +17,7 @@ public class AppUserProfileRequest {
 
     private String biography;
 
-    private Location location;
+    private Long location;
 
     private List<String> education;
 
