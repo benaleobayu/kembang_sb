@@ -131,8 +131,8 @@ public class UserActiveController {
         log.info("GET " + urlRoute + "/export endpoint hit");
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pre-register.xls";
+        String headerValue = "attachment; filename=user-active.xls";
         response.setHeader(headerKey, headerValue);
-        exportService.exportExcelPreRegister(response);
+        exportService.exportExcelUserActive(response);
     }
 }
