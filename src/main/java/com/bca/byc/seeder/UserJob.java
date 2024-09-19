@@ -39,6 +39,7 @@ public class UserJob {
         StatusType[] statusTypes = {StatusType.REJECTED, StatusType.PRE_ACTIVATED, StatusType.ACTIVATED};
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);
+        String [] memberAs = {"member", "child"};
         AppUserDetail userDetail = new AppUserDetail(
                 null,
                 faker.name().fullName(),
@@ -52,12 +53,13 @@ public class UserJob {
                 faker.educator().campus(),
                 faker.lorem().characters(120),
                 statusTypes[faker.number().numberBetween(0,3)],
-                userType[faker.number().numberBetween(0,1)],
-                memberType[faker.number().numberBetween(0,1)],
+                userType[faker.number().numberBetween(0,2)],
+                memberType[faker.number().numberBetween(0,2)],
                 "SYSTEM",
                 LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),
                 faker.avatar().image(),
-                faker.avatar().image()
+                faker.avatar().image(),
+                memberAs[faker.number().numberBetween(0,2)]
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
 
