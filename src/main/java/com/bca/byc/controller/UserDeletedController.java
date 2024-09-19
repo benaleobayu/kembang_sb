@@ -10,6 +10,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.service.UserManagementExportService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,7 @@ public class UserDeletedController {
 
     static final String urlRoute = "/cms/v1/um/deleted";
 
+    @Operation(summary = "Get list user deleted", description = "Get list user deleted")
     @GetMapping
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -57,6 +59,7 @@ public class UserDeletedController {
         }
     }
 
+    @Operation(summary = "Get detail user deleted", description = "Get detail user deleted")
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
         log.info("GET" + urlRoute + "/{id} endpoint hit");
@@ -68,6 +71,7 @@ public class UserDeletedController {
         }
     }
 
+    @Operation(summary = "Restore user deleted by id", description = "Restore user deleted by id")
     @PatchMapping("/{id}/restore")
     public ResponseEntity<ApiResponse> restore(@PathVariable("id") Long id) {
         log.info("PATCH " + urlRoute + "/{id}/restore endpoint hit");
@@ -79,6 +83,7 @@ public class UserDeletedController {
         }
     }
 
+    @Operation(summary = "Bulk Restore user deleted by id", description = "Bulk Restore user deleted by id")
     @PostMapping("/restore")
     public ResponseEntity<ApiResponse> restore(@RequestBody BulkByIdRequest dto) {
         log.info("POST " + urlRoute + "/restore endpoint hit");
@@ -90,6 +95,7 @@ public class UserDeletedController {
         }
     }
 
+    @Operation(summary = "Export user deleted", description = "Export user deleted")
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
