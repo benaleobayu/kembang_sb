@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.Location;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

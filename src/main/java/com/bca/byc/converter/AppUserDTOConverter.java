@@ -3,7 +3,10 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.*;
+import com.bca.byc.model.AppRegisterRequest;
+import com.bca.byc.model.AppUserProfileRequest;
+import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.repository.LocationRepository;
@@ -17,19 +20,17 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @AllArgsConstructor
 public class AppUserDTOConverter {
-    private ModelMapper modelMapper;
     private final ExpectCategoryRepository expectCategoryRepository;
     private final ExpectItemRepository expectItemRepository;
     private final UserHasExpectRepository userHasExpectRepository;
-
     private final LocationRepository locationRepository;
+    private ModelMapper modelMapper;
 
     // for create data
     public AppUser convertToCreateRequest(@Valid AppRegisterRequest dto) {
@@ -161,7 +162,7 @@ public class AppUserDTOConverter {
         data.setEmail(dto.getEmail());
 
         Location location = locationRepository.findById(dto.getLocation())
-                        .orElseThrow(() -> new BadRequestException("Location not found"));
+                .orElseThrow(() -> new BadRequestException("Location not found"));
 
         data.setLocation(location);
 
@@ -211,7 +212,6 @@ public class AppUserDTOConverter {
                 userHasExpectRepository.save(userHasExpect);
             }
         }
-
 
 
     }
