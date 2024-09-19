@@ -41,6 +41,7 @@ public class OnboardingServiceImpl implements OnboardingService {
     private ExpectItemRepository expectItemRepository;
     private UserHasExpectRepository userHasExpectRepository;
     private LocationRepository locationRepository;
+    private BusinessHasLocationRepository businessHasLocationRepository;
 
     private OnboardingDTOConverter onboardingConverter;
 
@@ -88,7 +89,13 @@ public class OnboardingServiceImpl implements OnboardingService {
                             .orElseThrow(() -> new BadRequestException("Location not found"));
                     locations.add(location);
                 }
-                business.setLocations(locations);
+
+                for (Location location : locations) {
+                    BusinessHasLocation businessHasLocation = new BusinessHasLocation();
+                    businessHasLocation.setBusiness(business);
+                    businessHasLocation.setLocation(location);
+                    businessHasLocationRepository.save(businessHasLocation);
+                }
             }
 
             // Create Expect Categories
