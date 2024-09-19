@@ -158,8 +158,6 @@ public class AppUserDTOConverter {
 
     public void convertToUpdateProfile(AppUser data, AppUserProfileRequest dto) {
         modelMapper.map(dto, data);
-        data.setName(dto.getName());
-        data.setEmail(dto.getEmail());
 
         Location location = locationRepository.findById(dto.getLocation())
                 .orElseThrow(() -> new BadRequestException("Location not found"));
@@ -167,7 +165,6 @@ public class AppUserDTOConverter {
         data.setLocation(location);
 
         AppUserDetail appUserDetail = data.getAppUserDetail();
-        appUserDetail.setPhone(dto.getPhone());
         appUserDetail.setBiodata(dto.getBiography());
 
         List<String> education = dto.getEducation();

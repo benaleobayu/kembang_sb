@@ -8,12 +8,6 @@ import java.util.List;
 @Data
 public class AppUserProfileRequest {
 
-    private String name;
-
-    private String email;
-
-    private String phone;
-
     private String biography;
 
     private Long location;
