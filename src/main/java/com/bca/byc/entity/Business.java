@@ -57,12 +57,9 @@ public class Business extends AbstractBaseEntityNoUUID {
     private Set<BusinessHasCategory> businessCategories = new HashSet<>();
 
     // make manytomany with location
-    @ManyToMany
-    @JoinTable(name = "business_has_location",
-            joinColumns = @JoinColumn(name = "business_id"),
-            inverseJoinColumns = @JoinColumn(name = "location_id"))
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
     @EqualsAndHashCode.Exclude
-    private Set<Location> locations = new HashSet<>();
+    private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
 
 }

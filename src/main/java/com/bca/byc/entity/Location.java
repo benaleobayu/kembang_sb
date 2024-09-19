@@ -33,7 +33,7 @@ public class Location extends AbstractBaseEntityNoUUID {
     private Boolean status;
 
     // relations
-    @ManyToMany(mappedBy = "locations")
-    private Set<Business> businesses = new HashSet<>();
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
 }
