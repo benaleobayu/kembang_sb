@@ -1,10 +1,8 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.UserSuspendedDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
-import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.repository.UserSuspendedRepository;
@@ -51,7 +49,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndSuspendedAndCreatedAt(keyword, locationId, start, end, pageable);
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToListResponse(c);
             return dto;

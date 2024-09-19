@@ -11,6 +11,7 @@ import com.bca.byc.service.UserManagementExportService;
 import com.bca.byc.service.UserSuspendedService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ import static com.bca.byc.controller.UserSuspendedController.urlRoute;
 @AllArgsConstructor
 @RequestMapping(urlRoute)
 @Tag(name = "CMS User Suspended API")
+@SecurityRequirement(name = "Authorization")
 public class UserSuspendedController {
 
     static final String urlRoute = "/cms/v1/um/suspended";
