@@ -59,9 +59,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
-            userDetail.setChildBankAccount(dto.child_bank_account());
+            userDetail.setChildBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
-            userDetail.setChildBirthdate(dto.child_birthdate());
             user.setAppUserDetail(userDetail);
 
             AppUserAttribute userAttribute = new AppUserAttribute();
@@ -77,9 +76,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
-            userDetail.setChildBankAccount(dto.child_bank_account());
+            userDetail.setChildBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
-            userDetail.setChildBirthdate(dto.child_birthdate());
             user.setAppUserDetail(userDetail);
         }
 
@@ -91,16 +89,16 @@ public class UserAuthServiceImpl implements UserAuthService {
         // Check the PreRegister data
         PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
         boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.member_bank_account());
-        boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.child_bank_account());
+        boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.parent_bank_account());
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        if (dto.child_bank_account() == null  && member ||
-                dto.child_bank_account().isEmpty() && member ||
+        if (dto.parent_bank_account() == null  && member ||
+                dto.parent_bank_account().isEmpty() && member ||
                 child) {
             userDetail.setStatus(StatusType.APPROVED);
             user.setAppUserDetail(userDetail);
-            if (dto.child_bank_account() == null) {
+            if (dto.parent_bank_account() == null) {
                 userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
             } else {
                 userDetail.setChildCin(dataCheck.getChildCin()); // set child cin

@@ -18,7 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.SecretKey;
 import java.util.Collection;
@@ -33,81 +32,79 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final AdminService adminService;
     private final RoleService roleService;
 
-
     private final SecretKey key;
-    private final RestTemplate restTemplate;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         RawAccessJwtToken token = (RawAccessJwtToken) authentication.getCredentials();
         Jws<Claims> jwsClaims = token.parseClaims(key);
-        String subject = jwsClaims.getPayload().getSubject();
+        String subject = jwsClaims.getBody().getSubject();
 
-//		List<String> scopes = (List<String>) jwsClaims.getBody().getOrDefault("scopes", Collections.emptyList());
+        // Periksa apakah payload memiliki "scopes"
+        List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
 
-//		List<GrantedAuthority> authorities = scopes.stream()
-//				.map(SimpleGrantedAuthority::new)
-//				.collect(Collectors.toList());
+        if (scopes != null && !scopes.isEmpty()) {
+            // Jika "scopes" ada, proses sebagai admin
+            AdminPermissionResponse permissions = adminService.getPermissionDetail(subject);
+            List<GrantedAuthority> authorities = permissions.getPermissions().stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
-        AdminPermissionResponse permissions = adminService.getPermissionDetail(subject);
-        List<GrantedAuthority> authorities = permissions.getPermissions().stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+            List<String> adminRoles = roleService.getAdminRoles();  // Mendapatkan role admin CMS
+            AppAdmin admin = adminService.findByEmail(subject);
 
-        List<String> adminRoles = roleService.getAdminRoles();  // Mendapatkan role admin CMS
+            boolean isAdmin = adminRoles.stream()
+                    .anyMatch(role -> admin.getRole().getName().equalsIgnoreCase(role));
 
-        AppAdmin admins = adminService.findByEmail(subject);
+            if (isAdmin) {
+                UserDetails adminDetails = new UserDetails() {
+                    @Override
+                    public String getUsername() {
+                        return subject;
+                    }
 
-        boolean isAdmin = adminRoles.stream()
-                .anyMatch(role -> admins.getRole().getName().equalsIgnoreCase(role));
+                    @Override
+                    public Collection<? extends GrantedAuthority> getAuthorities() {
+                        return authorities;
+                    }
 
-        // jika admin cms
-        if (isAdmin) {
-            UserDetails adminDetails = new UserDetails() {
-                @Override
-                public String getUsername() {
-                    return subject;
-                }
+                    @Override
+                    public boolean isEnabled() {
+                        return true;
+                    }
 
-                @Override
-                public Collection<? extends GrantedAuthority> getAuthorities() {
-                    return authorities;
-                }
+                    @Override
+                    public boolean isCredentialsNonExpired() {
+                        return true;
+                    }
 
-                @Override
-                public boolean isEnabled() {
-                    return true;
-                }
+                    @Override
+                    public boolean isAccountNonLocked() {
+                        return true;
+                    }
 
-                @Override
-                public boolean isCredentialsNonExpired() {
-                    return true;
-                }
+                    @Override
+                    public boolean isAccountNonExpired() {
+                        return true;
+                    }
 
-                @Override
-                public boolean isAccountNonLocked() {
-                    return true;
-                }
-
-                @Override
-                public boolean isAccountNonExpired() {
-                    return true;
-                }
-
-                @Override
-                public String getPassword() {
-                    return null;
-                }
-            };
-            return new JwtAuthenticationToken(adminDetails, authorities);
+                    @Override
+                    public String getPassword() {
+                        return null; // Admin password tidak diperlukan di sini
+                    }
+                };
+                return new JwtAuthenticationToken(adminDetails, authorities);
+            }
         }
 
-        // Untuk user app
+        // Jika "scopes" tidak ada, proses sebagai user biasa
         AppUser appUser = appUserService.findByUsername(subject);
         if (appUser == null) {
             throw new AuthenticationException("User not found") {
             };
         }
+
+        // Tidak ada authorities yang perlu diatur untuk user biasa dalam kasus ini
         return new JwtAuthenticationToken(appUser, null);
     }
 

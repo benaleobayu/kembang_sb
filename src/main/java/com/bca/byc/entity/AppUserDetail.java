@@ -80,6 +80,9 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp {
     @Column(name = "cover", columnDefinition = "text")
     private String cover;
 
+    @Column(name = "user_as")
+    private String userAs;
+
     public AppUserDetail(Integer appUserDetail) {
     }
 }

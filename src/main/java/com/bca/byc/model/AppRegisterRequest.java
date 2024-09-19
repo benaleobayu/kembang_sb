@@ -24,16 +24,12 @@ public record AppRegisterRequest(
         @AgeRange(message = "Member must be at least 18 to 35 years old")
         LocalDate member_birthdate,
 
-        @Schema(description = "birthdate child of member", example = "2004-01-01")
-        @AgeRange(message = "Member must be at least 18 years old")
-        LocalDate child_birthdate,
-
         @Schema(description = "1234 5678 9012 3456", example = "1234 5678 9012 3456")
         @Size(max = 25, message = "Card number or account number must be at least 10 characters")
         String member_bank_account,
 
         @Schema(description = "1234 5678 0000 0000", example = "1234 5678 0000 0000")
         @Size(max = 16, message = "Card number or account number must be at least 16 characters")
-        String child_bank_account
+        String parent_bank_account
 ) {
 }
