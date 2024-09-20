@@ -52,6 +52,7 @@ public class PostDTOConverter {
         // mapping DTO Entity with Entity
         Post data = modelMapper.map(dto, Post.class);
 
+        data.setId(null);
         // set user
         data.setUser(user);
         // set list of Tags
@@ -88,7 +89,7 @@ public class PostDTOConverter {
         data.setPostLocation(postLocation);
 
         // return
-
+        data.setCreatedAt(LocalDateTime.now());
         return data;
     }
 

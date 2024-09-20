@@ -1,9 +1,11 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -24,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +38,8 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final AppUserRepository userRepository;
+
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
@@ -57,20 +63,19 @@ public class PostController {
     }
 
 
-    @Operation(summary = "Create post", description = "Create post")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<ApiResponse> createPost(
             @RequestPart(value = "post", required = false) PostCreateUpdateRequest dto,
-            @RequestPart(value = "content", required = false) PostContentRequest content,
+            @RequestPart(value = "content", required = false) List<PostContentRequest> contentRequests,
             @RequestPart("files") List<MultipartFile> files) {
 
         String email = ContextPrincipal.getPrincipal();
-
-        // Handle multiple file uploads and set content and type
         List<PostContent> contentList = new ArrayList<>();
+
         try {
             if (files != null && !files.isEmpty()) {
-                for (MultipartFile file : files) {
+                for (int i = 0; i < files.size(); i++) {  // Start loop from 0
+                    MultipartFile file = files.get(i);
                     String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
                     String contentType = file.getContentType();
                     String fileType = null;
@@ -83,21 +88,34 @@ public class PostController {
                         }
                     }
 
+                    // Retrieve the corresponding PostContentRequest
+                    PostContentRequest contentRequest = contentRequests.get(i);
+
                     PostContent postContent = new PostContent();
+                    postContent.setIndex(i);
                     postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
                     postContent.setType(fileType);
+                    postContent.setOriginalName(contentRequest.getOriginalName()); // Set original name
+
+                    // Handle tagUserIds
+                    Set<AppUser> appUsers = new HashSet<>();
+                    if (contentRequest.getTagUserIds() != null) {
+                        for (Long userId : contentRequest.getTagUserIds()) {
+                            AppUser user = userRepository.findById(userId)
+                                    .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                            appUsers.add(user);
+                        }
+                    }
+                    postContent.setTagUsers(appUsers); // Store Set<AppUser>
 
                     contentList.add(postContent);
                 }
             }
 
+            // Save post and its content
             postService.save(email, dto, contentList);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Post created successfully"));
 
-        } catch (IOFileUploadException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

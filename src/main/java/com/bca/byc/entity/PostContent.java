@@ -21,6 +21,12 @@ public class PostContent extends AbstractBaseEntityNoUUID {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "index")
+    private Integer index;
+
+    @Column(name = "original_name")
+    private String originalName;
+
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
