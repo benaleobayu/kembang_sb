@@ -20,9 +20,6 @@ public class Post extends AbstractBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
@@ -35,11 +32,24 @@ public class Post extends AbstractBaseEntity {
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
 
+    @Column(name = "is_commentable", columnDefinition = "boolean default true")
+    private Boolean isCommentable = true;
+
+    @Column(name = "is_shareable", columnDefinition = "boolean default true")
+    private Boolean isShareable = true;
+
+    @Column(name = "is_show_likes", columnDefinition = "boolean default true")
+    private Boolean isShowLikes = true;
+
     // relations
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_category_id")
+    private PostCategory postCategory;
 
     @ManyToMany
     @JoinTable(name = "post_has_tag",
