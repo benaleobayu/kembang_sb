@@ -27,4 +27,12 @@ public class PostCategory extends AbstractBaseEntityNoUUID {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private AppAdmin createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private AppAdmin updatedBy;
+
 }
