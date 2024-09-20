@@ -4,7 +4,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.reponse.excel.PreRegisterExportResponse;
+import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;

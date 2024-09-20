@@ -1,4 +1,4 @@
-package com.bca.byc.reponse.excel;
+package com.bca.byc.model.export;
 
 import lombok.Data;
 

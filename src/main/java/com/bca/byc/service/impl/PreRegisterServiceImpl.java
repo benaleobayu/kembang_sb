@@ -9,7 +9,7 @@ import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.model.attribute.AttributeResponse;
-import com.bca.byc.reponse.excel.PreRegisterExportResponse;
+import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
