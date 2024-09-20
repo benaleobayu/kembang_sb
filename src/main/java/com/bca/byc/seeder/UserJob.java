@@ -31,7 +31,7 @@ public class UserJob {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Scheduled(fixedDelay = 50)
+//    @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
         String[] memberType = {"Solitaire", "Priority"};

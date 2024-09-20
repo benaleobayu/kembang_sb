@@ -20,7 +20,7 @@ public class PreRegisterJob {
     private final PreRegisterRepository repository;
     private final AppAdminRepository adminRepository;
 
-    @Scheduled(fixedDelay = 50)
+//    @Scheduled(fixedDelay = 50)
     public void run() {
         Faker faker = new Faker();
 
