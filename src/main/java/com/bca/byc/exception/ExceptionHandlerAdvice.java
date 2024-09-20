@@ -48,10 +48,13 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException.class)
     protected ResponseEntity<ErrorResponseDTO> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
+        // Add this logging statement
+        System.out.println("ExpiredJwtException handled: " + ex.getMessage());
+
         List<String> details = new ArrayList<>();
         details.add("Token has expired. Please log in again.");
-        ErrorResponseDTO errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.TOKEN_EXPIRED, HttpStatus.FOUND);
+        return ResponseEntity.status(HttpStatus.FOUND).body(errorResponse);
     }
 
     @Override

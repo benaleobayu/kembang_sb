@@ -3,6 +3,7 @@ package com.bca.byc.config;
 import com.bca.byc.exception.CustomAccessDeniedHandler;
 import com.bca.byc.exception.CustomAuthenticationEntryPoint;
 import com.bca.byc.security.filter.JwtAuthProcessingFilter;
+import com.bca.byc.security.filter.JwtAuthenticationFilter;
 import com.bca.byc.security.filter.JwtTokenFilter;
 import com.bca.byc.security.filter.UsernamePasswordAuthProcessingFilter;
 import com.bca.byc.security.handler.UsernamePasswordAuthFailureHandler;
@@ -13,7 +14,9 @@ import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.security.util.SkipPathRequestMatcher;
 import com.bca.byc.security.util.TokenExtractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -31,6 +34,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,6 +100,11 @@ public class SecurityConfig {
         return new CustomPermissionEvaluator();
     }
 
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(SecretKey jwtToken, ObjectMapper objectMapper) {
+        return new JwtAuthenticationFilter(jwtToken, objectMapper);
+    }
+
     @Autowired
     void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(usernamePasswordAuthProvider).authenticationProvider(jwtAuthenticationProvider);
@@ -125,7 +134,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter,
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
-                                                   JwtTokenFilter jwtTokenFilter) throws Exception {
+                                                   JwtTokenFilter jwtTokenFilter,
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
@@ -151,6 +161,7 @@ public class SecurityConfig {
 
         // Add JwtTokenFilter before authentication filters
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // Add authentication filters
         http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
