@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface PostLocationRepository extends JpaRepository<PostLocation, Long> {
 
 
-    PostLocation findByName(String postLocationName);
+    PostLocation findByPlaceName(String postLocationName);
 }

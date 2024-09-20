@@ -27,7 +27,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeException {
-        validateFileType(avatar);
+        FileUploadHelper.validateFileType(avatar);
 
         String avatarPath = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/avatar");
 
@@ -41,7 +41,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeException {
-        validateFileType(cover);
+        FileUploadHelper.validateFileType(cover);
 
         String coverPath = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/cover");
 
@@ -51,14 +51,5 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         userDetail.setCover(coverPath.replace("src/main/resources/static/", "/"));
         userDetailRepository.save(userDetail);
         userRepository.save(appUser);
-    }
-
-
-    private void validateFileType(MultipartFile file) throws InvalidFileTypeException {
-        String contentType = file.getContentType();
-        if (contentType == null ||
-                (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-            throw new InvalidFileTypeException("Only JPEG and PNG images are allowed.");
-        }
     }
 }

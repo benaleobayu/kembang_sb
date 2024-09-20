@@ -11,5 +11,4 @@ public class PostCategoryCreateUpdateRequest {
     private String icon;
     private String description;
     private Boolean isActive;
-    private Boolean isDeleted;
 }

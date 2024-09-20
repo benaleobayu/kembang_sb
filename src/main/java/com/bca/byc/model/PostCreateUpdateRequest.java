@@ -15,7 +15,7 @@ public class PostCreateUpdateRequest {
     // can input multiple users
     private List<Long> tagUserIds; // user _id
 
-//    private PostLocationRequest postLocation;
+    private PostLocationRequest postLocation;
 
     private Long postCategoryId;
 
@@ -28,19 +28,17 @@ public class PostCreateUpdateRequest {
 
     // not to request input
 
-    @Transient
-    private String content;
-
-    @Transient
-    private String type;
-
     @Data
     public static class PostLocationRequest {
 
-        private String name;
+        private String placeName;
 
-        private String url;
+        private String description;
 
-        private String geoLocation;
+        private String placedId;
+
+        private Double longitude;
+
+        private Double latitude;
     }
 }

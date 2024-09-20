@@ -23,12 +23,6 @@ public class Post extends AbstractBaseEntity {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "content", columnDefinition = "text")
-    private String content;
-
-    @Column(name = "type")
-    private String type;
-
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
 

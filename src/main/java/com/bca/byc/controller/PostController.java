@@ -1,16 +1,20 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
+import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.FileUploadHelper;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.IOFileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,79 +25,86 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/post")
 @Tag(name = "Apps Post API")
+@SecurityRequirement(name = "Authorization")
 public class PostController {
 
     private final PostService postService;
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
+    @Operation(summary = "Get list post", description = "Get list post")
     @GetMapping
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "categories", required = false, defaultValue = "popular") String categories) {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, tag, categories)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword, categories)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
         }
     }
 
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "Create post", description = "Create post")
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<ApiResponse> createPost(
             @RequestPart(value = "post", required = false) PostCreateUpdateRequest dto,
+            @RequestPart(value = "content", required = false) PostContentRequest content,
             @RequestPart("files") List<MultipartFile> files) {
 
         String email = ContextPrincipal.getPrincipal();
 
         // Handle multiple file uploads and set content and type
-        List<String> filePaths = new ArrayList<>();
-        String fileType = null; // To track the type of the files (image or video)
-
+        List<PostContent> contentList = new ArrayList<>();
         try {
-            for (MultipartFile file : files) {
-                String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
-                filePaths.add(filePath);
-                String contentType = file.getContentType();
-                if (contentType != null) {
-                    if (contentType.startsWith("image/")) {
-                        fileType = "image";
-                    } else if (contentType.startsWith("video/")) {
-                        fileType = "video";
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                    String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
+                    String contentType = file.getContentType();
+                    String fileType = null;
+
+                    if (contentType != null) {
+                        if (contentType.startsWith("image/")) {
+                            fileType = "image";
+                        } else if (contentType.startsWith("video/")) {
+                            fileType = "video";
+                        }
                     }
+
+                    PostContent postContent = new PostContent();
+                    postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
+                    postContent.setType(fileType);
+
+                    contentList.add(postContent);
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error while uploading files", e);
-        }
-        String fileNames = filePaths.stream()
-                .map(filePath -> "\"" + filePath + "\"")  // Add quotes around each file path
-                .collect(Collectors.joining(",", "[", "]"));  // Join with commas and wrap in square brackets
 
-        dto.setContent(fileNames.replaceAll("src/main/resources/static/", "/"));
-        dto.setType(fileType);  // "image" or "video"
-        try {
-            postService.save(email, dto);
+            postService.save(email, dto, contentList);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Post created successfully"));
+
+        } catch (IOFileUploadException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     // READ (Get a post by ID)
+    @Operation(summary = "Get a post by ID", description = "Get a post by ID")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getPost(@PathVariable Long id) {
         try {
@@ -105,10 +116,12 @@ public class PostController {
     }
 
     // UPDATE Post
+    @Operation(summary = "Update post", description = "Update post")
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiResponse> updatePost(
             @PathVariable Long id,
-            @RequestPart("post") PostCreateUpdateRequest post,
+            @RequestPart(value = "post") PostCreateUpdateRequest post,
+            @RequestPart(value = "content", required = false) PostContentRequest content,
             @RequestPart("files") List<MultipartFile> files) throws Exception {
 
         // Similar file upload handling as in createPost
@@ -122,13 +135,14 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
-        post.setContent(String.join(",", filePaths));
+        content.setContent(String.join(",", filePaths));
         postService.update(id, post);
 
         return ResponseEntity.ok(new ApiResponse(true, "Post updated successfully"));
     }
 
     // DELETE Post
+    @Operation(summary = "Delete post", description = "Delete post")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Long id) {
         try {
@@ -149,21 +163,5 @@ public class PostController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
-
-//    @PostMapping
-//    public ResponseEntity<String> uploadPost(
-//            @RequestParam("file")MultipartFile file
-//            ) throws IOException {
-//        String uploadContent = postService.uploadContent(file);
-//        return ResponseEntity.status(HttpStatus.OK).body(uploadContent);
-//    }
-//
-//    @GetMapping("/{fileName}")
-//    public ResponseEntity<String> downloadPost(
-//            @PathVariable String fileName) throws IOException {
-//        byte[] postContent = postService.downloadContent(fileName);
-//        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(new String(postContent));
-//    }
 
 }

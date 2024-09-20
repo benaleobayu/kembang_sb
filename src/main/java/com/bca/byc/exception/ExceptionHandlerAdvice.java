@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,13 @@ import java.util.List;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        String message = "The media type " + ex.getContentType() + " is not supported.";
+        return new ResponseEntity<>(new ApiResponse(false, message), headers, status);
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
@@ -55,6 +63,13 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         details.add("Token has expired. Please log in again.");
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.TOKEN_EXPIRED, HttpStatus.FOUND);
         return ResponseEntity.status(HttpStatus.FOUND).body(errorResponse);
+    }
+
+    // Exception handler for other exceptions
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(false, ex.getMessage()));
     }
 
     @Override

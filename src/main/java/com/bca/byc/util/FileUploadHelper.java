@@ -1,5 +1,6 @@
 package com.bca.byc.util;
 
+import com.bca.byc.exception.InvalidFileTypeException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,6 +43,14 @@ public class FileUploadHelper {
             }
         } catch (IOException e) {
             throw new RuntimeException("Error deleting file: " + filePath, e);
+        }
+    }
+
+    public static void validateFileType(MultipartFile file) throws InvalidFileTypeException {
+        String contentType = file.getContentType();
+        if (contentType == null ||
+                (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+            throw new InvalidFileTypeException("Only JPEG and PNG images are allowed.");
         }
     }
 

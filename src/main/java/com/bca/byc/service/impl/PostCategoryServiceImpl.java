@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PostCategoryDTOConverter;
 import com.bca.byc.entity.PostCategory;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCategoryCreateUpdateRequest;
 import com.bca.byc.model.PostCategoryDetailResponse;
 import com.bca.byc.repository.PostCategoryRepository;
@@ -30,9 +31,9 @@ public class PostCategoryServiceImpl implements PostCategoryService {
     private PostCategoryDTOConverter converter;
 
     @Override
-    public PostCategoryDetailResponse findDataById(Long id) throws BadRequestException {
+    public PostCategoryDetailResponse findDataById(Long id) throws ResourceNotFoundException {
         PostCategory data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("PostCategory not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Post Category not found"));
 
         return converter.convertToListResponse(data);
     }

@@ -21,17 +21,20 @@ public class PostLocation extends AbstractBaseEntityTimestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @Column(name = "placeName", nullable = false, length = 50)
+    private String placeName;
 
-    @Column(name = "url", columnDefinition = "text")
-    private String url;
-
-    @Column(name = "geo_location", columnDefinition = "text")
-    private String geoLocation;
+    @Column(name = "placeId")
+    private String placeId;
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "latitude")
+    private Double latitude;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;

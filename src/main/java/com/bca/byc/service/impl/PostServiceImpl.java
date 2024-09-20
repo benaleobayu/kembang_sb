@@ -3,11 +3,14 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -32,14 +35,20 @@ public class PostServiceImpl implements PostService {
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
     private final PostDTOConverter converter;
+    private final PostContentRepository postContentRepository;
 
     @Override
-    public void save(String email, PostCreateUpdateRequest dto) throws Exception {
+    public void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
         Post post = converter.convertToCreateRequest(user, dto);
 
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+
+        for (PostContent postContent : contentList) {
+            postContent.setPost(savedPost);
+            postContentRepository.save(postContent);
+        }
     }
 
     @Override
