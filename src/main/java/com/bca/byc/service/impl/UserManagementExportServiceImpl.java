@@ -1,14 +1,10 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.model.export.UserActiveExportResponse;
-import com.bca.byc.reponse.excel.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.UserActiveRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.UserManagementExportService;
-import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -16,14 +12,10 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
