@@ -2,7 +2,6 @@ package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostLocation;
 import com.bca.byc.entity.Tag;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
@@ -39,13 +38,12 @@ public class PostDTOConverter {
         return dto;
     }
 
-     public PostDetailResponse convertToDetailResponse(Post data) {
+    public PostDetailResponse convertToDetailResponse(Post data) {
         // mapping Entity with DTO Entity
         PostDetailResponse dto = modelMapper.map(data, PostDetailResponse.class);
         // return
         return dto;
     }
-
 
 
     // for create data
@@ -69,22 +67,25 @@ public class PostDTOConverter {
         data.setTags(tags);
         // set list of TagUsers
         Set<AppUser> tagUsers = new HashSet<>();
-        for (Long TagUserIds : dto.getTagUserIds()){
+        for (Long TagUserIds : dto.getTagUserIds()) {
             Optional<AppUser> tagUser = userRepository.findById(TagUserIds);
             tagUser.ifPresent(tagUsers::add);
         }
         data.setTagUsers(tagUsers);
+
         // set the post location
-        PostLocation postLocation = postLocationRepository.findByName(dto.getPostLocation().getName());
-        if (postLocation == null) {
-            postLocation = new PostLocation();
-            postLocation.setName(dto.getPostLocation().getName());
-            postLocation.setUrl(dto.getPostLocation().getUrl());
-            postLocation.setGeoLocation(dto.getPostLocation().getGeoLocation());
-            postLocation = postLocationRepository.save(postLocation);
-        }
-        data.setPostLocation(postLocation);
+//        PostLocation postLocation = postLocationRepository.findByName(dto.getPostLocation().getName());
+//        if (postLocation == null) {
+//            postLocation = new PostLocation();
+//            postLocation.setName(dto.getPostLocation().getName());
+//            postLocation.setUrl(dto.getPostLocation().getUrl());
+//            postLocation.setGeoLocation(dto.getPostLocation().getGeoLocation());
+//            postLocation = postLocationRepository.save(postLocation);
+//        }
+//        data.setPostLocation(postLocation);
+
         // return
+
         return data;
     }
 

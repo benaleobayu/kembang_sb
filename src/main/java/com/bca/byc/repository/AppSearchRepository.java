@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AppSearchRepository extends JpaRepository<Post, Long> {
-    Page<Post> findByTitleLikeIgnoreCase(String userName, Pageable pageable);
+    Page<Post> findByDescriptionLikeIgnoreCase(String userName, Pageable pageable);
 
-    Post findByTitle(String email);
+    Post findByDescription(String email);
 }

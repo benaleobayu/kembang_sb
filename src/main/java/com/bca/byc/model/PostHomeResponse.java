@@ -9,8 +9,6 @@ public class PostHomeResponse {
 
     private Long id;
 
-    private String title;
-
     private String description;
 
     private String content;

@@ -37,7 +37,7 @@ public class PostController {
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "title") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "tag", required = false) String tag,
             @RequestParam(name = "categories", required = false, defaultValue = "popular") String categories) {

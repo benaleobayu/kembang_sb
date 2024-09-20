@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<Post> findByTitle(String title);
+    Optional<Post> findByDescription(String title);
 
-    Page<Post> findByTitleLikeIgnoreCase(String title, Pageable pageable);
+    Page<Post> findByDescriptionLikeIgnoreCase(String title, Pageable pageable);
 
     @Query("SELECT p FROM Post p WHERE p.user.id IN " +
             "(SELECT u.appUserAttribute.id FROM AppUser u WHERE u.appUserAttribute.id IN " +
@@ -24,6 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.user.id IN " +
             "(SELECT u.id FROM AppUser u JOIN u.follows f WHERE :userId = f.id)" +
-            "AND LOWER (p.title) LIKE LOWER(:tag) ")
+            "AND LOWER (p.description) LIKE LOWER(:tag) ")
     Page<Post> findLatestPostsFromFollowingUsers(@Param("userId") Long userId,@Param("tag") String tag, Pageable pageable);
 }

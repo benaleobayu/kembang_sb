@@ -89,7 +89,7 @@ public class PostServiceImpl implements PostService {
         } else if ("following".equalsIgnoreCase(categories)) {
             pageResult = postRepository.findLatestPostsFromFollowingUsers(userId, tag, pageable);
         } else {
-            pageResult = postRepository.findByTitleLikeIgnoreCase(tag, pageable);
+            pageResult = postRepository.findByDescriptionLikeIgnoreCase(tag, pageable);
         }
 
         assert pageResult != null;
