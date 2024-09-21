@@ -28,7 +28,7 @@ public class ApiDataController {
 
     private final TagService tagService;
 
-   @GetMapping
+   @GetMapping("/tag")
    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
                @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
                @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
