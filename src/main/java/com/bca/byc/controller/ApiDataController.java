@@ -1,20 +1,23 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.entity.PostCategory;
+import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.data.TagDetailResponse;
-import com.bca.byc.repository.TagRepository;
-import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.PostCategoryService;
 import com.bca.byc.service.TagService;
+import com.bca.byc.service.UserActiveService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -27,21 +30,56 @@ public class ApiDataController {
     static final String urlRoute = "/api/v1/data";
 
     private final TagService tagService;
+    private final UserActiveService tagUserService;
+    private final PostCategoryService postCategoryService;
 
-   @GetMapping("/tag")
-   public ResponseEntity<PaginationResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
-               @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-               @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-               @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-               @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-               @RequestParam(name = "keyword", required = false) String keyword) {
-           // response true
-           try{
-               return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list tag detail", tagService.listDataTag(pages, limit, sortBy, direction, keyword)));
-           }catch (Exception e) {
-               return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
-           }
-       }
+    @Operation(summary = "Get all tags", description = "Get all tags")
+    @GetMapping("/tag")
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        try {
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list tag detail", tagService.listDataTag(pages, limit, sortBy, direction, keyword)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    @Operation(summary = "Get all tags user", description = "Get all tags user")
+    @GetMapping("/tag-user")
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<ListTagUserResponse>>> listDataTagUser(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        try {
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list tag detail", tagUserService.listDataTagUser(pages, limit, sortBy, direction, keyword)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    @Operation(summary = "Get all post categories", description = "Get all post categories", hidden = true)
+    @GetMapping("/post-category")
+    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostCategory>>> listData(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        try {
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post category", postCategoryService.listData(pages, limit, sortBy, direction, keyword)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
+        }
+    }
 
 
 }
