@@ -10,16 +10,11 @@ import com.bca.byc.repository.AppUserDetailRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +26,7 @@ public class UserJob {
 
     private final PasswordEncoder passwordEncoder;
 
-//    @Scheduled(fixedDelay = 50)
+    //    @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
         String[] memberType = {"Solitaire", "Priority"};
@@ -39,7 +34,7 @@ public class UserJob {
         StatusType[] statusTypes = {StatusType.REJECTED, StatusType.PRE_ACTIVATED, StatusType.ACTIVATED};
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);
-        String [] memberAs = {"member", "child"};
+        String[] memberAs = {"member", "child"};
         AppUserDetail userDetail = new AppUserDetail(
                 null,
                 faker.name().fullName(),
@@ -52,14 +47,14 @@ public class UserJob {
                 cinNumber.toString(),
                 faker.educator().campus(),
                 faker.lorem().characters(120),
-                statusTypes[faker.number().numberBetween(0,3)],
-                userType[faker.number().numberBetween(0,2)],
-                memberType[faker.number().numberBetween(0,2)],
+                statusTypes[faker.number().numberBetween(0, 3)],
+                userType[faker.number().numberBetween(0, 2)],
+                memberType[faker.number().numberBetween(0, 2)],
                 "SYSTEM",
                 LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),
                 faker.avatar().image(),
                 faker.avatar().image(),
-                memberAs[faker.number().numberBetween(0,2)]
+                memberAs[faker.number().numberBetween(0, 2)]
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
 

@@ -8,7 +8,6 @@ import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class PreRegisterJob {
     private final PreRegisterRepository repository;
     private final AppAdminRepository adminRepository;
 
-//    @Scheduled(fixedDelay = 50)
+    //    @Scheduled(fixedDelay = 50)
     public void run() {
         Faker faker = new Faker();
 

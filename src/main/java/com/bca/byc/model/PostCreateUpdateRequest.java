@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import jakarta.persistence.Transient;
 import lombok.Data;
 
 import java.util.List;

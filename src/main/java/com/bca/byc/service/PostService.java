@@ -13,13 +13,13 @@ public interface PostService {
 
     PostDetailResponse findById(Long id) throws Exception;
 
-    void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList)  throws Exception, InvalidFileTypeException;
+    void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException;
 
-    void update(Long id, PostCreateUpdateRequest post)  throws Exception;
+    void update(Long id, PostCreateUpdateRequest post) throws Exception;
 
-    void deleteData(Long id)  throws Exception;
+    void deleteData(Long id) throws Exception;
 
-    ResultPageResponseDTO<PostHomeResponse> listData(String email,Integer pages, Integer limit, String sortBy, String direction, String tag, String categories);
+    ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String tag, String categories);
 
 //    String uploadContent(MultipartFile fileName) throws IOException;
 //

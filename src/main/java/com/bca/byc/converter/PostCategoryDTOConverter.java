@@ -1,23 +1,18 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.PostCategoryCreateUpdateRequest;
 import com.bca.byc.model.PostCategoryDetailResponse;
-
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.response.ApiResponse;
 import com.bca.byc.util.Formatter;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
@@ -25,8 +20,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostCategoryDTOConverter {
 
-    private ModelMapper modelMapper;
     private final AppAdminRepository adminRepository;
+    private ModelMapper modelMapper;
 
     // for get data
     public PostCategoryDetailResponse convertToListResponse(PostCategory data) {

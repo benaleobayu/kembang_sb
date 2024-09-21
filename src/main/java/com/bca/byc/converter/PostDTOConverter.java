@@ -1,24 +1,24 @@
 package com.bca.byc.converter;
 
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostLocation;
+import com.bca.byc.entity.Tag;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.util.FileUploadHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
