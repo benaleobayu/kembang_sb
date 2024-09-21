@@ -34,24 +34,85 @@ public class AppSearchServiceImpl implements AppSearchService {
     private final AppSearchDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<AppSearchDetailResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String tag, String categories) {
+    public ResultPageResponseDTO<AppSearchDetailResponse> listResultPosts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // get user id
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
         Long userId = user.getId();
 
-        tag = StringUtils.isEmpty(tag) ? "%" : tag + "%";
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(tag, pageable);
-        Page<Post> pageResult = null;
-        if ("posts".equalsIgnoreCase(categories)) {
-            pageResult = postRepository.findRandomPosts(tag, pageable);
-        } else if ("accounts".equalsIgnoreCase(categories)) {
-            pageResult = postRepository.findLatestPostsFromFollowingUsers(userId, tag, pageable);
-        } else {
-            pageResult = postRepository.findByDescriptionLikeIgnoreCase(tag, pageable);
-        }
+//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(keyword, pageable);
+        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+
+        assert pageResult != null;
+        List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
+            AppSearchDetailResponse dto = converter.convertToListResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        int currentPage = pageResult.getNumber() + 1;
+        int totalPages = pageResult.getTotalPages();
+
+        return PaginationUtil.createResultPageDTO(
+                pageResult.getTotalElements(), // total items
+                dtos,
+                currentPage, // current page
+                currentPage > 1 ? currentPage - 1 : 1, // prev page
+                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
+                1, // first page
+                totalPages - 1, // last page
+                pageResult.getSize() // per page
+        );
+    }
+
+    @Override
+    public ResultPageResponseDTO<AppSearchDetailResponse> listResultTags(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        // get user id
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        Long userId = user.getId();
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(keyword, pageable);
+        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+
+        assert pageResult != null;
+        List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
+            AppSearchDetailResponse dto = converter.convertToListResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        int currentPage = pageResult.getNumber() + 1;
+        int totalPages = pageResult.getTotalPages();
+
+        return PaginationUtil.createResultPageDTO(
+                pageResult.getTotalElements(), // total items
+                dtos,
+                currentPage, // current page
+                currentPage > 1 ? currentPage - 1 : 1, // prev page
+                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
+                1, // first page
+                totalPages - 1, // last page
+                pageResult.getSize() // per page
+        );
+    }
+
+    @Override
+    public ResultPageResponseDTO<AppSearchDetailResponse> listResultAccounts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        // get user id
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        Long userId = user.getId();
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(keyword, pageable);
+        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
 
         assert pageResult != null;
         List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
