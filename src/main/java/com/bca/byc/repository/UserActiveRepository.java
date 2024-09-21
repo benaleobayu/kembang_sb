@@ -2,6 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
+import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,5 +58,26 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "aua.isSuspended = false AND " +
             "aua.isDeleted = false")
     List<UserActiveExportResponse> findDataForExport();
+
+
+    @Query("SELECT new com.bca.byc.model.data.ListTagUserResponse(" +
+            "u.id, aud.avatar, aud.name, " +
+            "aud.name, aud.name, b.isPrimary " +
+            ") " +
+            "FROM AppUser u " +
+            "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
+            "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "LEFT JOIN Business b ON b.user.id = u.id " +
+            "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
+            "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
+            "WHERE " +
+            "(LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
+            "LOWER(aud.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
+            "LOWER(aud.phone) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
+            "LOWER(aud.memberBankAccount) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
+            "aud.status = 6 AND " +
+            "aua.isSuspended = false AND " +
+            "aua.isDeleted = false")
+    Page<ListTagUserResponse> findListTagUser(String keyword, Pageable pageable);
 }
 

@@ -6,6 +6,7 @@ import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -133,6 +134,30 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
+    public ResultPageResponseDTO<ListTagUserResponse> listDataTagUser(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        Page<ListTagUserResponse> pageResult = repository.findListTagUser(keyword, pageable);
+        List<ListTagUserResponse> dtos = pageResult.getContent();
+
+        int currentPage = pageResult.getNumber() + 1;
+        int totalPages = pageResult.getTotalPages();
+
+        return PaginationUtil.createResultPageDTO(
+                pageResult.getTotalElements(), // total items
+                dtos,
+                currentPage, // current page
+                currentPage > 1 ? currentPage - 1 : 1, // prev page
+                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
+                1, // first page
+                totalPages - 1, // last page
+                pageResult.getSize() // per page
+        );
+    }
+
+    @Override
     public com.bca.byc.response.Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         var userList = elasticRepository.findAllBy(pageable);
@@ -143,4 +168,5 @@ public class UserActiveServiceImpl implements UserActiveService {
                 userList.getTotalElements()
         );
     }
+
 }

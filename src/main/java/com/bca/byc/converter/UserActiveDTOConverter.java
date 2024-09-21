@@ -3,9 +3,12 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.AppUser;
 
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jakarta.validation.Valid;
@@ -17,6 +20,9 @@ import java.time.LocalDateTime;
 public class UserActiveDTOConverter {
 
     private ModelMapper modelMapper;
+
+    @Value("${app.base.url}")
+    static String baseUrl;
 
     // for get data
     public UserManagementDetailResponse convertToListResponse(AppUser data) {
@@ -41,6 +47,25 @@ public class UserActiveDTOConverter {
         modelMapper.map(dto, data);
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
+    }
+
+    public ListTagUserResponse convertToListTagUserRespose(AppUser data) {
+        ListTagUserResponse dto = modelMapper.map(data, ListTagUserResponse.class);
+
+        dto.setId(data.getId());
+        dto.setName(data.getAppUserDetail().getName());
+        String avatar = null;
+
+        if (data.getAppUserDetail().getAvatar() != null && data.getAppUserDetail().getAvatar().startsWith("/upload")) {
+            avatar = baseUrl + data.getAppUserDetail().getAvatar();
+        } else {
+            avatar = data.getAppUserDetail().getAvatar();
+        }
+
+        dto.setAvatar(avatar);
+
+        // return
+        return dto;
     }
 }
 
