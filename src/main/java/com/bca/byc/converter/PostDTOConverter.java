@@ -68,12 +68,12 @@ public class PostDTOConverter {
         }
         data.setTags(tags);
         // set list of TagUsers
-        Set<AppUser> tagUsers = new HashSet<>();
-        for (Long TagUserIds : dto.getTagUserIds()) {
-            Optional<AppUser> tagUser = userRepository.findById(TagUserIds);
-            tagUser.ifPresent(tagUsers::add);
-        }
-        data.setTagUsers(tagUsers);
+//        Set<AppUser> tagUsers = new HashSet<>();
+//        for (Long TagUserIds : dto.getTagUserIds()) {
+//            Optional<AppUser> tagUser = userRepository.findById(TagUserIds);
+//            tagUser.ifPresent(tagUsers::add);
+//        }
+//        data.setTagUsers(tagUsers);
 
 //         set the post location
         PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());

@@ -12,7 +12,7 @@ public class PostCreateUpdateRequest {
     private List<String> tagName; // tag _id
 
     // can input multiple users
-    private List<Long> tagUserIds; // user _id
+//    private List<Long> tagUserIds; // user _id
 
     private PostLocationRequest postLocation;
 
@@ -23,6 +23,8 @@ public class PostCreateUpdateRequest {
     private Boolean isShareable;
 
     private Boolean isShowLikes;
+
+    private Boolean isPosted;
 
 
     // not to request input
