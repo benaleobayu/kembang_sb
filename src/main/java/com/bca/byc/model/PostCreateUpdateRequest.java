@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class PostCreateUpdateRequest {
     private List<String> tagName; // tag _id
 
     // can input multiple users
+//    @JsonIgnore
 //    private List<Long> tagUserIds; // user _id
 
     private PostLocationRequest postLocation;

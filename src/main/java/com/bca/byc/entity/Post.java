@@ -58,11 +58,11 @@ public class Post extends AbstractBaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "post_has_tag_users",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<AppUser> tagUsers = new HashSet<>();
+//    @ManyToMany
+//    @JoinTable(name = "post_has_tag_users",
+//            joinColumns = @JoinColumn(name = "post_id"),
+//            inverseJoinColumns = @JoinColumn(name = "user_id"))
+//    private Set<AppUser> tagUsers = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "post_location_id")

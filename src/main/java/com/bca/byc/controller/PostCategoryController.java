@@ -43,7 +43,6 @@ public class PostCategoryController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
         }
-
     }
 
     @Operation(summary = "Get all post categories", description = "Get all post categories", hidden = true)
