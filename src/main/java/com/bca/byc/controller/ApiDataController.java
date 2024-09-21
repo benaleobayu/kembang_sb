@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping(ApiDataController.urlRoute)
-@Tag(name = "Data API")
+@Tag(name = "Apps Data API")
 @SecurityRequirement(name = "Authorization")
 public class ApiDataController {
 
@@ -65,7 +65,7 @@ public class ApiDataController {
         }
     }
 
-    @Operation(summary = "Get all post categories", description = "Get all post categories", hidden = true)
+    @Operation(summary = "Get all post categories", description = "Get all post categories")
     @GetMapping("/post-category")
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostCategory>>> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
