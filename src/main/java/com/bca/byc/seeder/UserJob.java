@@ -61,11 +61,17 @@ public class UserJob {
         AppUserAttribute appUserAttribute = new AppUserAttribute(
                 null,
                 faker.random().nextBoolean(),
+                null,
                 faker.random().nextBoolean(),
+                null,
                 faker.random().nextBoolean(),
+                null,
                 faker.random().nextBoolean(),
+                null,
                 faker.random().nextBoolean(),
-                faker.random().nextBoolean()
+                null,
+                faker.random().nextBoolean(),
+                null
         );
         AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
 

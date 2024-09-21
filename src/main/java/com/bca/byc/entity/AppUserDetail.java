@@ -83,6 +83,4 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp {
     @Column(name = "user_as")
     private String userAs;
 
-    public AppUserDetail(Integer appUserDetail) {
-    }
 }
