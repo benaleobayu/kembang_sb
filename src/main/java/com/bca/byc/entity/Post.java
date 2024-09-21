@@ -3,6 +3,7 @@ package com.bca.byc.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,12 @@ public class Post extends AbstractBaseEntity {
 
     @Column(name = "is_show_likes", columnDefinition = "boolean default true")
     private Boolean isShowLikes = true;
+
+    @Column(name = "is_posted", columnDefinition = "boolean default false")
+    private Boolean isPosted = false;
+
+    @Column(name = "post_at")
+    private LocalDateTime postAt;
 
     // relations
 
