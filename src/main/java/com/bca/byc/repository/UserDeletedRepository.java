@@ -1,6 +1,7 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.model.export.UserActiveExportResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
@@ -36,4 +38,19 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
 
     Set<AppUser> findByIdIn(Set<Long> ids);
 
+    @Query("SELECT new com.bca.byc.model.export.UserActiveExportResponse(" +
+            "u.id, loc.name, aud.name, " +
+            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberBirthdate ELSE aud.childBirthdate END, " +
+            "u.email, " +
+            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberCin ELSE aud.childCin END, " +
+            "aud.phone, u.createdAt) " +
+            "FROM AppUser u " +
+            "LEFT JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
+            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "LEFT JOIN Location  loc ON loc.id = u.location.id " +
+            "WHERE " +
+            "aud.status = 6 AND " +
+            "aua.isSuspended = true AND " +
+            "aua.isDeleted = true")
+    List<UserActiveExportResponse> findDataForExport();
 }

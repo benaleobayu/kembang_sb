@@ -123,9 +123,9 @@ public class UserSuspendedController {
     public void exportExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pre-register.xls";
+        String headerValue = "attachment; filename=user-suspended.xls";
         response.setHeader(headerKey, headerValue);
-        exportService.exportExcelPreRegister(response);
+        exportService.exportExcelUserSuspended(response);
     }
 
 }

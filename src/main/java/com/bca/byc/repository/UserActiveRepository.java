@@ -51,7 +51,11 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "FROM AppUser u " +
             "LEFT JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "LEFT JOIN Location  loc ON loc.id = u.location.id")
+            "LEFT JOIN Location  loc ON loc.id = u.location.id " +
+            "WHERE " +
+            "aud.status = 6 AND " +
+            "aua.isSuspended = false AND " +
+            "aua.isDeleted = false")
     List<UserActiveExportResponse> findDataForExport();
 }
 
