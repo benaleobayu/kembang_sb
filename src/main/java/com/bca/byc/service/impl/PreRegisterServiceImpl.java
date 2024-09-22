@@ -9,7 +9,6 @@ import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.model.attribute.AttributeResponse;
-import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
@@ -50,7 +49,14 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate) {
+    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages,
+                                                                     Integer limit,
+                                                                     String sortBy,
+                                                                     String direction,
+                                                                     String keyword,
+                                                                     AdminApprovalStatus status,
+                                                                     LocalDate startDate,
+                                                                     LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -59,7 +65,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, start, end, pageable);
+        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, status,  start, end, pageable);
 
         List<PreRegisterDetailResponse> dtos = pageResult.stream().map((c) -> {
             PreRegisterDetailResponse dto = converter.convertToListResponse(c);
@@ -161,13 +167,6 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         converter.convertToRejectRequest(data, reason, admin);
         // save
         repository.save(data);
-    }
-
-    @Override
-    public List<PreRegisterExportResponse> findAllDataToExport() {
-        return repository.findAll().stream()
-                .map(converter::convertToExportResponse)
-                .collect(Collectors.toList());
     }
 
     @Override

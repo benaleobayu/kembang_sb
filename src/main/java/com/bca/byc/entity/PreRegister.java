@@ -56,16 +56,16 @@ public class PreRegister extends AbstractBaseEntity {
     private LocalDate memberBirthdate;
     // ---
 
-    // child data
-    @Column(name = "child_bank_account", length = 20, columnDefinition = "varchar(20) default '0'")
-    private String childBankAccount;
+    // parent data
+    @Column(name = "parent_bank_account", length = 20, columnDefinition = "varchar(20) default '0'")
+    private String parentBankAccount;
 
-    @Column(name = "child_cin", length = 20)
-    private String childCin;
+    @Column(name = "parent_cin", length = 20)
+    private String parentCin;
 
-    @Column(name = "child_birthdate")
+    @Column(name = "parent_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate childBirthdate;
+    private LocalDate parentBirthdate;
     // ---
 
     // other data

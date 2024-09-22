@@ -90,7 +90,7 @@ public class PreRegisterDTOConverter {
         data.setUpdatedBy(data.getCreatedBy());
     }
 
-    public PreRegister convertToApprovalRequest(PreRegister data, AppAdmin admin) {
+    public void convertToApprovalRequest(PreRegister data, AppAdmin admin) {
         PreRegisterLog log = new PreRegisterLog();
         log.setStatus(LogStatus.APPROVED);
         log.setPreRegister(data);
@@ -116,10 +116,9 @@ public class PreRegisterDTOConverter {
                 data.setStatusApproval(AdminApprovalStatus.PENDING);
                 break;
         }
-        return data;
     }
 
-    public PreRegister convertToRejectRequest(PreRegister data, RejectRequest reason, AppAdmin admin) {
+    public void convertToRejectRequest(PreRegister data, RejectRequest reason, AppAdmin admin) {
         PreRegisterLog log = new PreRegisterLog();
         log.setStatus(LogStatus.APPROVED);
         log.setPreRegister(data);
@@ -130,7 +129,6 @@ public class PreRegisterDTOConverter {
         data.setDeleted(true);
         data.setEmail(data.getEmail().concat("_rejected"));
         data.setStatusApproval(AdminApprovalStatus.REJECTED);
-        return data;
 
     }
 
