@@ -89,7 +89,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         // Check the PreRegister data
         PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
         boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.member_bank_account());
-        boolean child = dataCheck != null && dataCheck.getChildBankAccount().equals(dto.parent_bank_account());
+        boolean child = dataCheck != null && dataCheck.getParentBankAccount().equals(dto.parent_bank_account());
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
@@ -101,8 +101,8 @@ public class UserAuthServiceImpl implements UserAuthService {
             if (dto.parent_bank_account() == null) {
                 userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
             } else {
-                userDetail.setChildCin(dataCheck.getChildCin()); // set child cin
-                userDetail.setChildBankAccount(dataCheck.getChildBankAccount()); // set child bank account
+                userDetail.setChildCin(dataCheck.getParentCin()); // set child cin
+                userDetail.setChildBankAccount(dataCheck.getParentBankAccount()); // set child bank account
             }
             user.setName(dataCheck.getName());
             userDetail.setName(dataCheck.getName());
