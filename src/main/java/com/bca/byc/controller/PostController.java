@@ -12,6 +12,8 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.FileUploadHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,18 +64,26 @@ public class PostController {
     }
 
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @Operation(summary = "Create Post", description = "Create Post")
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> createPost(
-            @RequestPart(value = "post", required = false) PostCreateUpdateRequest dto,
-            @RequestPart(value = "content", required = false) List<PostContentRequest> contentRequests,
+            @RequestPart(value = "post", required = false) String postString,
+            @RequestPart(value = "content", required = false) String contentString,
             @RequestPart("files") List<MultipartFile> files) {
 
         String email = ContextPrincipal.getPrincipal();
         List<PostContent> contentList = new ArrayList<>();
 
         try {
+            // Parse postString to PostCreateUpdateRequest
+            PostCreateUpdateRequest dto = new ObjectMapper().readValue(postString, PostCreateUpdateRequest.class);
+
+            // Parse contentString to List<PostContentRequest>
+            List<PostContentRequest> contentRequests = new ObjectMapper().readValue(contentString,
+                    new TypeReference<List<PostContentRequest>>() {});
+
             if (files != null && !files.isEmpty()) {
-                for (int i = 0; i < files.size(); i++) {  // Start loop from 0
+                for (int i = 0; i < files.size(); i++) {
                     MultipartFile file = files.get(i);
                     String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
                     String contentType = file.getContentType();
@@ -94,7 +104,7 @@ public class PostController {
                     postContent.setIndex(i);
                     postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
                     postContent.setType(fileType);
-                    postContent.setOriginalName(contentRequest.getOriginalName()); // Set original name
+                    postContent.setOriginalName(contentRequest.getOriginalName());
 
                     // Handle tagUserIds
                     Set<AppUser> appUsers = new HashSet<>();
@@ -105,7 +115,7 @@ public class PostController {
                             appUsers.add(user);
                         }
                     }
-                    postContent.setTagUsers(appUsers); // Store Set<AppUser>
+                    postContent.setTagUsers(appUsers);
 
                     contentList.add(postContent);
                 }
