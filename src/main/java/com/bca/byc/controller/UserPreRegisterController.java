@@ -1,10 +1,12 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.service.UserManagementService;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
@@ -46,6 +48,7 @@ public class UserPreRegisterController {
     static final String urlRoute = "/cms/v1/um/pre-register";
     private PreRegisterService service;
     private UserManagementExportService exportService;
+    private UserManagementService userManagementService;
 
     @PreAuthorize("hasAuthority('pre-registration.view')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
@@ -53,15 +56,16 @@ public class UserPreRegisterController {
     public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "status", required = false, defaultValue = "APPROVED") AdminApprovalStatus status,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " list endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, startDate, endDate), service.listStatus()));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
