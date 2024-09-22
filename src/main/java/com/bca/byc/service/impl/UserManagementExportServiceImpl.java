@@ -61,9 +61,9 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(5).setCellValue(data.getMemberBankAccount());
             dataRow.createCell(6).setCellValue(data.getMemberCin());
             dataRow.createCell(7).setCellValue(data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(8).setCellValue(data.getChildBankAccount());
-            dataRow.createCell(9).setCellValue(data.getChildCin());
-            dataRow.createCell(10).setCellValue(data.getChildBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(8).setCellValue(data.getParentBankAccount());
+            dataRow.createCell(9).setCellValue(data.getParentCin());
+            dataRow.createCell(10).setCellValue(data.getParentBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(11).setCellValue(data.getStatusApproval() == null ? null : data.getStatusApproval().toString());
             dataRow.createCell(12).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
