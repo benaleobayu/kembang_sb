@@ -1,6 +1,7 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.response.ApiResponse;
@@ -30,16 +31,14 @@ import static com.bca.byc.controller.PublicController.urlRoute;
 @AllArgsConstructor
 public class PublicController {
 
+    static final String urlRoute = "/api/v1/public";
     private final SettingService settingsService;
     private final FaqCategoryService faqCategoryService;
     private final MsBusinessCategoryService businessCategoryService;
     private final MsLocationService locationService;
     private final ExpectItemService expectItemService;
     private final ExpectCategoryService expectCategoryService;
-
     private final PreRegisterService preRegisterService;
-
-    static final String urlRoute = "/api/v1/public";
 
     // show by identity
     @GetMapping("/setting")
@@ -105,12 +104,13 @@ public class PublicController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "status", required = false, defaultValue = "APPROVED") AdminApprovalStatus status,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " data-pre-register endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, startDate, endDate ), preRegisterService.listStatus()));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), preRegisterService.listStatus()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }
