@@ -14,5 +14,9 @@ public class ListTagUserResponse {
     private String businessName;
     private String lineOfBusiness;
     private Boolean isPrimary;
+
+    public ListTagUserResponse() {
+
+    }
 }
 

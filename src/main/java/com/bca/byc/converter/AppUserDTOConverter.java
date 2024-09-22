@@ -144,10 +144,6 @@ public class AppUserDTOConverter {
 
         dto.setType(userType);
         dto.setStatus(userDetail.getStatus());
-        dto.setMemberCin(userDetail.getMemberCin());
-        dto.setMemberBankAccount(userDetail.getMemberBankAccount());
-        dto.setChildCin(userDetail.getChildCin());
-        dto.setChildBankAccount(userDetail.getChildBankAccount());
 
         dto.setCreatedAt(Formatter.formatLocalDateTime(userDetail.getCreatedAt()));
 

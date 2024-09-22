@@ -15,6 +15,7 @@ import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,9 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
+
+    @Value("${app.base.url}")
+    static String baseUrl;
 
     private UserActiveRepository repository;
     private UserActiveElasticRepository elasticRepository;
@@ -140,7 +144,24 @@ public class UserActiveServiceImpl implements UserActiveService {
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         Page<ListTagUserResponse> pageResult = repository.findListTagUser(keyword, pageable);
-        List<ListTagUserResponse> dtos = pageResult.getContent();
+        List<ListTagUserResponse> dtos = pageResult.stream().map((data) -> {
+            ListTagUserResponse dto = new ListTagUserResponse();
+
+            String avatar;
+            if (data.getAvatar() != null && data.getAvatar().startsWith("/uploads")) {
+                avatar = baseUrl + data.getAvatar();
+            } else {
+                avatar = data.getAvatar();
+            }
+
+            dto.setAvatar(avatar);
+            dto.setId(data.getId());
+            dto.setName(data.getName());
+            // Set other fields...
+
+            return dto;
+        }).collect(Collectors.toList());
+
 
         int currentPage = pageResult.getNumber() + 1;
         int totalPages = pageResult.getTotalPages();

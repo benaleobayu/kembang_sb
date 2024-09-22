@@ -14,17 +14,16 @@ public class UserManagementDetailResponse {
     private String phone;
     private String type;
     private String memberType;
-    private String description;
-    private String memberBankAccount;
-    private String childBankAccount;
-    private String memberCin;
-    private String childCin;
+//    private String description;
+    private String memberCardNumber;
+    private String parentBankAccount;
+    private String cin;
 //    private String memberBirthdate;
 //    private String childBirthdate;
 
     private String birthDate;
 
-    private String orders;
+    private Long orders;
     private StatusType status;
     private String createdAt;
     private String updatedAt;
