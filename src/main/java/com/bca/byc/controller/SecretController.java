@@ -19,7 +19,7 @@ public class SecretController {
     @GetMapping("/generate-token")
     public String generateToken(
             @RequestParam("email") String email,
-            @RequestParam(value = "role", required = false, defaultValue = "SUPERADMIN") String role) {
+            @RequestParam(value = "role", required = false, defaultValue = "user") String role) {
         return jwtTokenService.generateToken(email, role);
     }
 
