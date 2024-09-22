@@ -29,7 +29,8 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "aua.isSuspended = false AND " +
             "aua.isDeleted = false AND " +
-            "u.createdAt BETWEEN :startDate AND :endDate")
+            "u.createdAt BETWEEN :startDate AND :endDate " +
+            "ORDER BY u.id DESC")
     Page<AppUser> findByKeywordAndStatusAndDeletedAndCreatedAt(@Param("keyword") String keyword,
                                                      @Param("locationId") Long locationId,
                                                      @Param("startDate") LocalDateTime start,

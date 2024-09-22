@@ -33,7 +33,8 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
             "aua.isDeleted = false AND " +
-            "u.createdAt BETWEEN :startDate AND :endDate")
+            "u.createdAt BETWEEN :startDate AND :endDate " +
+            "ORDER BY u.createdAt DESC")
     Page<AppUser> findByKeywordAndStatusAndSuspendedAndCreatedAt(@Param("keyword") String keyword,
                                                                  @Param("locationId") Long locationId,
                                                                  @Param("startDate") LocalDateTime start,
@@ -53,6 +54,7 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "WHERE " +
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
-            "aua.isDeleted = false ")
+            "aua.isDeleted = false " +
+            "ORDER BY u.createdAt DESC")
     List<UserActiveExportResponse> findDataForExport();
 }
