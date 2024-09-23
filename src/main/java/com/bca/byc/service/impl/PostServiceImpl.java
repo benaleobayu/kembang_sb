@@ -82,24 +82,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String tag, String categories) {
+    public ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // get user id
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
         Long userId = user.getId();
 
-        tag = StringUtils.isEmpty(tag) ? "%" : tag + "%";
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(tag, pageable);
-        Page<Post> pageResult = null;
-        if ("popular".equalsIgnoreCase(categories)) {
-            pageResult = postRepository.findRandomPosts(tag, pageable);
-        } else if ("following".equalsIgnoreCase(categories)) {
-            pageResult = postRepository.findLatestPostsFromFollowingUsers(userId, tag, pageable);
-        } else {
-            pageResult = postRepository.findByDescriptionLikeIgnoreCase(tag, pageable);
-        }
+        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((c) -> {
@@ -121,29 +113,5 @@ public class PostServiceImpl implements PostService {
                 pageResult.getSize() // per page
         );
     }
-
-//    @Override
-//    public String uploadContent(MultipartFile fileName) throws IOException {
-//
-//        Post post = postRepository.save(Post.builder()
-//                .name(fileName.getOriginalFilename())
-//                .type(fileName.getContentType())
-//                .content(ImageUtil.compressImage(fileName.getBytes()))
-//                .build());
-//
-//        if (post != null){
-//            return "fileName uploaded successfully: " + fileName.getOriginalFilename();
-//        }
-//
-//        return null;
-//    }
-//
-//    @Override
-//    public byte[] downloadContent(String fileName) throws IOException {
-//        Optional<Post> dbImageData = postRepository.findByName(fileName);
-//        byte[] content = ImageUtil.decompressImage(dbImageData.get().getContent());
-//        return content;
-//    }
-
 
 }

@@ -51,13 +51,12 @@ public class PostController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "categories", required = false, defaultValue = "popular") String categories) {
+            @RequestParam(name = "keyword", required = false) String keyword){
         // response true
         String email = ContextPrincipal.getPrincipal();
 
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword, categories)));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
         }

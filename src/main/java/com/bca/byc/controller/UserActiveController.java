@@ -7,6 +7,7 @@ import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.service.UserManagementExportService;
+import com.bca.byc.service.UserManagementService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,7 +36,8 @@ public class UserActiveController {
 
     static final String urlRoute = "/cms/v1/um/active";
     private final UserActiveService service;
-    private UserManagementExportService exportService;
+    private final UserManagementExportService exportService;
+    private final UserManagementService userManagementService;
 
     // elastic search
     @Operation(hidden = true)
@@ -65,7 +67,7 @@ public class UserActiveController {
     ) {
         // response true
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
+            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate), userManagementService.listAttributeUserActive()));
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
         }

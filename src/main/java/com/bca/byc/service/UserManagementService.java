@@ -5,4 +5,6 @@ import java.util.Map;
 
 public interface UserManagementService {
     List<Map<String, List<?>>> listAttributePreRegister();
+
+    List<Map<String, List<?>>> listAttributeUserActive();
 }

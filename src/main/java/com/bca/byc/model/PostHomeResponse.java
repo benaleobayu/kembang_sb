@@ -11,23 +11,34 @@ public class PostHomeResponse {
 
     private String description;
 
-    private String content;
-
-    private String type;
+    private List<PostContent> posts;
 
     private List<TagResponse> tags;
 
     private AppUserResponse appUser;
 
     @Data
-    public static class AppUserResponse {
+    private static class AppUserResponse {
         private String name;
     }
 
     @Data
-    public static class TagResponse {
+    private static class TagResponse {
         private String name;
     }
 
+    @Data
+    private static class PostContent {
+
+        private Long id;
+
+        private String content;
+
+        private String type;
+
+        private String description;
+
+        private String thumbnail;
+    }
 
 }

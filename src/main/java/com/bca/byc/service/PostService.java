@@ -19,7 +19,7 @@ public interface PostService {
 
     void deleteData(Long id) throws Exception;
 
-    ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String tag, String categories);
+    ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
 //    String uploadContent(MultipartFile fileName) throws IOException;
 //
