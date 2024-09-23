@@ -1,12 +1,10 @@
 package com.bca.byc.converter;
 
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostLocation;
-import com.bca.byc.entity.Tag;
+import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -29,6 +27,7 @@ public class PostDTOConverter {
     private final TagRepository tagRepository;
     private final AppUserRepository userRepository;
     private final PostLocationRepository postLocationRepository;
+    private final PostCategoryRepository postCategoryRepository;
 
 
     // for get data
@@ -76,6 +75,16 @@ public class PostDTOConverter {
 //        data.setTagUsers(tagUsers);
 
 //         set the post location
+
+        // post category
+        PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
+
+        if (postCategory == null) {
+            data.setPostCategory(null);
+        } else {
+            data.setPostCategory(postCategory);
+        }
+
         PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
         if (postLocation == null) {
             postLocation = new PostLocation();
