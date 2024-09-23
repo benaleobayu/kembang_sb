@@ -1,9 +1,6 @@
 package com.bca.byc.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serial;
@@ -30,8 +27,16 @@ public abstract class AbstractBaseEntityNoUUID implements Serializable {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private AppAdmin createdBy;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private AppAdmin updatedBy;
 
     @PrePersist
     protected void onCreate() {
