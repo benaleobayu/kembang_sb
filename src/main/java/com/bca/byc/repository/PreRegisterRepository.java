@@ -21,7 +21,7 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             "LOWER(p.email) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
             "LOWER(p.phone) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
             "LOWER(p.memberBankAccount) LIKE CONCAT('%', :keyword, '%')) AND " +
-            "p.statusApproval = :status AND " +
+            "( :status IS NULL OR p.statusApproval = :status  ) AND " +
             "p.createdAt BETWEEN :startDate AND :endDate ")
     Page<PreRegister> searchByKeywordAndDateRange(
             @Param("keyword") String keyword,

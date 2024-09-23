@@ -59,7 +59,7 @@ public class UserPreRegisterController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "status", required = false, defaultValue = "APPROVED") AdminApprovalStatus status,
+            @RequestParam(name = "status", required = false) AdminApprovalStatus status,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
