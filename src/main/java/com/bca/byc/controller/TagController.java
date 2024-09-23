@@ -5,7 +5,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.data.TagCreateUpdateRequest;
 import com.bca.byc.model.data.TagDetailResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.AppPaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.TagService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ public class TagController {
     private TagService service;
 
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
+    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -36,9 +36,9 @@ public class TagController {
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         try{
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list tag detail", service.listDataTag(pages, limit, sortBy, direction, keyword)));
+            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list tag detail", service.listDataTag(pages, limit, sortBy, direction, keyword)));
         }catch (Exception e) {
-            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new AppPaginationResponse<>(false, e.getMessage(), null));
         }
     }
 

@@ -56,6 +56,32 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public ResultPageResponseDTO<TagDetailResponse> listDataTagApps(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Tag> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        List<TagDetailResponse> dtos = pageResult.stream().map((c) -> {
+            TagDetailResponse dto = converter.convertToListResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        int currentPage = pageResult.getNumber() + 1;
+        int totalPages = pageResult.getTotalPages();
+
+        return PaginationUtil.createResultPageDTO(
+                pageResult.getTotalElements(), // total items
+                dtos,
+                currentPage, // current page
+                currentPage > 1 ? currentPage - 1 : 1, // prev page
+                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
+                1, // first page
+                totalPages - 1, // last page
+                pageResult.getSize() // per page
+        );
+    }
+
+    @Override
     public TagDetailResponse findDataById(Long id) throws BadRequestException {
         Tag data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Tag not found"));

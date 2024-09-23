@@ -4,7 +4,7 @@ package com.bca.byc.controller;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.AppPaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserInquiryService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,7 +28,7 @@ public class UserInquiryController {
     // list
     @Operation(hidden = true)
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -36,9 +36,9 @@ public class UserInquiryController {
             @RequestParam(name = "userName", required = false) String userName) {
         // response true
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list user inquiry", service.listData(pages, limit, sortBy, direction, userName)));
+            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list user inquiry", service.listData(pages, limit, sortBy, direction, userName)));
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.bca.byc.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;

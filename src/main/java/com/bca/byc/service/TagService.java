@@ -12,6 +12,8 @@ public interface TagService {
 
     ResultPageResponseDTO<TagDetailResponse> listDataTag(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
+    ResultPageResponseDTO<TagDetailResponse> listDataTagApps(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
     TagDetailResponse findDataById(Long id) throws BadRequestException;
 
     void saveData(@Valid TagCreateUpdateRequest dto) throws BadRequestException;

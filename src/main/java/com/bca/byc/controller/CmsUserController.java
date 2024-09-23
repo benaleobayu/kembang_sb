@@ -4,7 +4,7 @@ import com.bca.byc.model.Elastic.AppUserElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.Page;
-import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.AppPaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.CmsUserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,7 +41,7 @@ public class CmsUserController {
 
     // postgres
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
                 @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
                 @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
                 @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -49,9 +49,9 @@ public class CmsUserController {
                 @RequestParam(name = "keyword", required = false) String keyword) {
             // response true
             try{
-                return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list User", cmsUserService.listData(pages, limit, sortBy, direction, keyword)));
+                return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list User", cmsUserService.listData(pages, limit, sortBy, direction, keyword)));
             }catch (ExpiredJwtException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
             }
         }
 

@@ -5,7 +5,7 @@ import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.AppPaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.*;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -98,7 +98,7 @@ public class PublicController {
 
     // get test pre register
     @GetMapping("/data-pre-register")
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
+    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -110,9 +110,9 @@ public class PublicController {
         // response true
         log.info("GET " + urlRoute + " data-pre-register endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), preRegisterService.listStatus()));
+            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate)));
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
         }
     }
 

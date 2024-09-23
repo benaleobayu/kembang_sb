@@ -11,10 +11,6 @@ public class PostCreateUpdateRequest {
 
     private List<String> tagName; // tag _id
 
-    // can input multiple users
-//    @JsonIgnore
-//    private List<Long> tagUserIds; // user _id
-
     private PostLocationRequest postLocation;
 
     private Long postCategoryId;
@@ -26,9 +22,6 @@ public class PostCreateUpdateRequest {
     private Boolean isShowLikes;
 
     private Boolean isPosted;
-
-
-    // not to request input
 
     @Data
     public static class PostLocationRequest {

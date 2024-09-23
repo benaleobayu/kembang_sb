@@ -7,7 +7,7 @@ import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationResponse;
+import com.bca.byc.response.AppPaginationResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
@@ -48,7 +48,7 @@ public class PostController {
 
     @Operation(summary = "Get list post", description = "Get list post")
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
+    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
@@ -58,9 +58,9 @@ public class PostController {
         String email = ContextPrincipal.getPrincipal();
 
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
+            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new PaginationResponse<>(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new AppPaginationResponse<>(false, e.getMessage(), null));
         }
     }
 
