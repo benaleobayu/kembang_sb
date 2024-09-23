@@ -77,7 +77,7 @@ public class PostDTOConverter {
 //         set the post location
 
         // post category
-        PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
+        PostCategory postCategory = postCategoryRepository.findById(dto.getPostCategoryId() == null ? 0 : Long.parseLong(dto.getPostCategoryId())).orElse(null);
 
         if (postCategory == null) {
             data.setPostCategory(null);
