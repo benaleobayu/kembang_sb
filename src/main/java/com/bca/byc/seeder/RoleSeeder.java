@@ -16,16 +16,17 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-@Order(1)
+//@Order(1)
 @AllArgsConstructor
-public class RoleSeeder implements CommandLineRunner {
+//public class RoleSeeder implements CommandLineRunner {
+public class RoleSeeder  {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
 
 
-    @Override
+//    @Override
     public void run(String... args) {
         Map<String, List<String>> actionByResource = new HashMap<>();
         actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));

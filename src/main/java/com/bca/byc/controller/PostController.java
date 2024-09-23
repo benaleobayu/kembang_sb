@@ -12,6 +12,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.FileUploadHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +39,7 @@ import java.util.Set;
 @SecurityRequirement(name = "Authorization")
 public class PostController {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final PostService postService;
     private final AppUserRepository userRepository;
 
@@ -51,7 +53,7 @@ public class PostController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword){
+            @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
@@ -74,56 +76,38 @@ public class PostController {
         List<PostContent> contentList = new ArrayList<>();
 
         try {
-            // Parse postString to PostCreateUpdateRequest
-            PostCreateUpdateRequest dto = new ObjectMapper().readValue(postString, PostCreateUpdateRequest.class);
+            // Validate postString
+            if (postString == null || postString.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Post data is missing"));
+            }
+            PostCreateUpdateRequest dto = objectMapper.readValue(postString, PostCreateUpdateRequest.class);
 
-            // Parse contentString to List<PostContentRequest>
-            List<PostContentRequest> contentRequests = new ObjectMapper().readValue(contentString,
+            // Validate contentString
+            if (contentString == null || contentString.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Content data is missing"));
+            }
+            List<PostContentRequest> contentRequests = objectMapper.readValue(contentString,
                     new TypeReference<List<PostContentRequest>>() {});
 
-            if (files != null && !files.isEmpty()) {
-                for (int i = 0; i < files.size(); i++) {
-                    MultipartFile file = files.get(i);
-                    String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
-                    String contentType = file.getContentType();
-                    String fileType = null;
+            // Validate if contentRequests and files match in size
+            if (files.size() != contentRequests.size()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Mismatch between files and content data"));
+            }
 
-                    if (contentType != null) {
-                        if (contentType.startsWith("image/")) {
-                            fileType = "image";
-                        } else if (contentType.startsWith("video/")) {
-                            fileType = "video";
-                        }
-                    }
-
-                    // Retrieve the corresponding PostContentRequest
-                    PostContentRequest contentRequest = contentRequests.get(i);
-
-                    PostContent postContent = new PostContent();
-                    postContent.setIndex(i);
-                    postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
-                    postContent.setType(fileType);
-                    postContent.setOriginalName(contentRequest.getOriginalName());
-
-                    // Handle tagUserIds
-                    Set<AppUser> appUsers = new HashSet<>();
-                    if (contentRequest.getTagUserIds() != null) {
-                        for (Long userId : contentRequest.getTagUserIds()) {
-                            AppUser user = userRepository.findById(userId)
-                                    .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-                            appUsers.add(user);
-                        }
-                    }
-                    postContent.setTagUsers(appUsers);
-
-                    contentList.add(postContent);
-                }
+            // Process files and content
+            for (int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                PostContentRequest contentRequest = contentRequests.get(i);
+                PostContent postContent = processFile(file, contentRequest, i);
+                contentList.add(postContent);
             }
 
             // Save post and its content
             postService.save(email, dto, contentList);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Post created successfully"));
 
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid JSON format: " + e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
@@ -190,4 +174,42 @@ public class PostController {
         }
     }
 
+
+
+
+    // ----------------------------------------- method ---------------------------------------------
+    private PostContent processFile(MultipartFile file, PostContentRequest contentRequest, int index) throws IOException {
+        // Simpan file ke direktori tertentu
+        String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
+        String contentType = file.getContentType();
+        String fileType = null;
+
+        if (contentType != null) {
+            if (contentType.startsWith("image/")) {
+                fileType = "image";
+            } else if (contentType.startsWith("video/")) {
+                fileType = "video";
+            }
+        }
+
+        // Membuat PostContent dari file dan contentRequest yang sesuai
+        PostContent postContent = new PostContent();
+        postContent.setIndex(index);
+        postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
+        postContent.setType(fileType);
+        postContent.setOriginalName(contentRequest.getOriginalName());
+
+        // Menangani tagUserIds
+        Set<AppUser> appUsers = new HashSet<>();
+        if (contentRequest.getTagUserIds() != null) {
+            for (Long userId : contentRequest.getTagUserIds()) {
+                AppUser user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                appUsers.add(user);
+            }
+        }
+        postContent.setTagUsers(appUsers);
+
+        return postContent;
+    }
 }

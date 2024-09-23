@@ -14,16 +14,17 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-@Order(2)
+//@Order(2)
 @AllArgsConstructor
-public class AdminUserSeeder implements CommandLineRunner {
+//public class AdminUserSeeder implements CommandLineRunner {
+public class AdminUserSeeder  {
 
     private final AppAdminRepository appAdminRepository;
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
+//    @Override
     public void run(String... args) throws Exception {
         //create admin
         if (appAdminRepository.findByEmail("admin@unictive.net").isEmpty()) {
