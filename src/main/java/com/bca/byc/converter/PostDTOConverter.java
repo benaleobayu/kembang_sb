@@ -50,7 +50,7 @@ public class PostDTOConverter {
     public Post convertToCreateRequest(AppUser user, @Valid PostCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         Post data = modelMapper.map(dto, Post.class);
-
+        // for a new post
         data.setId(null);
         // set user
         data.setUser(user);
@@ -73,13 +73,14 @@ public class PostDTOConverter {
 //            tagUser.ifPresent(tagUsers::add);
 //        }
 //        data.setTagUsers(tagUsers);
-
 //         set the post location
 
         // post category
-
-            data.setPostCategory(dto.getPostCategoryId() == null ? null : postCategoryRepository.findById(dto.getPostCategoryId()).orElse(null));
-
+        if (dto.getPostCategoryId() != null) {
+            PostCategory postCategory = postCategoryRepository.findById(dto.getPostCategoryId()).orElse(null);
+            data.setPostCategory(postCategory);
+        }
+        // post location
         PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
         if (postLocation == null) {
             postLocation = new PostLocation();
@@ -91,7 +92,6 @@ public class PostDTOConverter {
             postLocation = postLocationRepository.save(postLocation);
         }
         data.setPostLocation(postLocation);
-
         // return
         data.setCreatedAt(LocalDateTime.now());
         return data;
