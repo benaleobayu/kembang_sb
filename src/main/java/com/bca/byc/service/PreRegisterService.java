@@ -2,9 +2,8 @@ package com.bca.byc.service;
 
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
@@ -19,9 +18,9 @@ public interface PreRegisterService {
 
     List<PreRegisterDetailResponse> findAllData();
 
-    void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException;
+    void saveData(@Valid PreRegisterCreateUpdateRequest dto, String email) throws BadRequestException;
 
-    void updateData(Long id, @Valid PreRegisterUpdateRequest dto) throws BadRequestException;
+    void updateData(Long id, @Valid PreRegisterCreateUpdateRequest dto) throws BadRequestException;
 
     void deleteData(List<Long> id) throws BadRequestException;
 

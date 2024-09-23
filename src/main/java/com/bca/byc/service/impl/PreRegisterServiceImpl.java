@@ -5,9 +5,8 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.repository.PreRegisterRepository;
@@ -65,7 +64,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, status,  start, end, pageable);
+        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, status, start, end, pageable);
 
         List<PreRegisterDetailResponse> dtos = pageResult.stream().map((c) -> {
             PreRegisterDetailResponse dto = converter.convertToListResponse(c);
@@ -99,7 +98,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException {
+    public void saveData(@Valid PreRegisterCreateUpdateRequest dto, String email) throws BadRequestException {
         // check if email exists return error
         if (repository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
@@ -115,7 +114,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void updateData(Long id, PreRegisterUpdateRequest dto) throws BadRequestException {
+    public void updateData(Long id, PreRegisterCreateUpdateRequest dto) throws BadRequestException {
         // check exist and get
         PreRegister data = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("INVALID PreRegister ID"));
@@ -176,7 +175,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
                 .collect(Collectors.toList());
         List<AttributeResponse> listStatusResponse = statuses.stream()
                 .map((c) -> {
-                    AttributeResponse response = new AttributeResponse();
+                    AttributeResponse response = new AttributeResponse<>();
                     response.setId(statuses.indexOf(c));
                     response.setName(c);
                     return response;

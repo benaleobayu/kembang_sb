@@ -6,14 +6,14 @@ import com.bca.byc.entity.PreRegisterLog;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
-import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -49,11 +49,23 @@ public class PreRegisterDTOConverter {
     }
 
     // for create data
-    public PreRegister convertToCreateRequest(@Valid PreRegisterCreateRequest dto, AppAdmin admin) {
+    public PreRegister convertToCreateRequest(@Valid PreRegisterCreateUpdateRequest dto, AppAdmin admin) {
         // mapping DTO Entity with Entity
         PreRegister data = modelMapper.map(dto, PreRegister.class);
 
+        CreateUpdateSameConvert(data,
+                dto.getName(),
+                dto.getPicName(),
+                dto.getEmail(),
+                dto.getPhone(),
+                dto.getMemberBankAccount(),
+                dto.getParentBankAccount(),
+                dto.getMemberCin(),
+                dto.getParentCin(),
+                dto);
+
         data.setCreatedBy(admin);
+        System.out.println(admin);
 
         AdminType typeEquals = admin.getType();
 
@@ -82,15 +94,28 @@ public class PreRegisterDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(PreRegister data, @Valid PreRegisterUpdateRequest dto) {
+    public void convertToUpdateRequest(PreRegister data, @Valid PreRegisterCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
+
+        CreateUpdateSameConvert(data,
+                dto.getName(),
+                dto.getPicName(),
+                dto.getEmail(),
+                dto.getPhone(),
+                dto.getMemberBankAccount(),
+                dto.getParentBankAccount(),
+                dto.getMemberCin(),
+                dto.getParentCin(),
+                dto);
+
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
 
         // set updated_by
         data.setUpdatedBy(data.getCreatedBy());
     }
+
 
     public void convertToApprovalRequest(PreRegister data, AppAdmin admin) {
         PreRegisterLog log = new PreRegisterLog();
@@ -132,5 +157,25 @@ public class PreRegisterDTOConverter {
         data.setEmail(data.getEmail().concat("_rejected"));
         data.setStatusApproval(AdminApprovalStatus.REJECTED);
 
+    }
+
+    private void CreateUpdateSameConvert(PreRegister data,
+                                         String name,
+                                         String picName,
+                                         String email,
+                                         String phone,
+                                         String memberBankAccount,
+                                         String parentBankAccount,
+                                         String memberCin,
+                                         String parentCin,
+                                         @Valid PreRegisterCreateUpdateRequest dto) {
+        data.setName(StringUtils.capitalize(name));
+        data.setPicName(StringUtils.capitalize(picName));
+        data.setEmail(email.toLowerCase());
+        data.setPhone(phone.replaceAll("[^0-9]", ""));
+        data.setMemberBankAccount(memberBankAccount.replaceAll("[^0-9]", ""));
+        data.setParentBankAccount(parentBankAccount.replaceAll("[^0-9]", ""));
+        data.setMemberCin(memberCin.replaceAll("[^0-9]", ""));
+        data.setParentCin(parentCin.replaceAll("[^0-9]", ""));
     }
 }

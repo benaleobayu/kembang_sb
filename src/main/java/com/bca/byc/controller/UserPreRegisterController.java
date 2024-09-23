@@ -3,9 +3,8 @@ package com.bca.byc.controller;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.service.UserManagementService;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
@@ -78,7 +77,7 @@ public class UserPreRegisterController {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             PreRegisterDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, userManagementService.listAttributeDetailPreRegister()));
+            return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, userManagementService.listAttributeCreateUpdatePreRegister()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiWithAttributeResponse(false, e.getMessage(), null));
         }
@@ -87,7 +86,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.create')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateUpdateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         // principal
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -114,7 +113,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Update Pre-Register User", description = "Update Pre-Register User")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody PreRegisterUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody PreRegisterCreateUpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -170,6 +169,7 @@ public class UserPreRegisterController {
         }
     }
 
+    @PreAuthorize("hasAuthority('pre-registration.export')")
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
@@ -177,6 +177,12 @@ public class UserPreRegisterController {
         String headerValue = "attachment; filename=pre-register.xls";
         response.setHeader(headerKey, headerValue);
         exportService.exportExcelPreRegister(response);
+    }
+
+    @GetMapping("/attribute")
+    public ResponseEntity<ApiAttributeResponse> listAttribute() {
+        log.info("GET " + urlRoute + "/attribute endpoint hit");
+        return ResponseEntity.ok(new ApiAttributeResponse(true, "Successfully get list attribute", userManagementService.listAttributeCreateUpdatePreRegister()));
     }
 
 }

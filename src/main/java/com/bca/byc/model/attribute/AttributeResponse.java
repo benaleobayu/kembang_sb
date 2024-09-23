@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AttributeResponse {
+public class AttributeResponse<S> {
 
     private Integer id;
+    private String value;
     private String name;
 
     public AttributeResponse() {

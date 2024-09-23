@@ -1,28 +1,15 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.PreRegister;
-import com.bca.byc.enums.AdminApprovalStatus;
-import com.bca.byc.enums.AdminType;
-import com.bca.byc.enums.UserType;
-import com.bca.byc.model.PreRegisterCreateRequest;
-import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.service.AppAdminService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -86,8 +73,8 @@ class UserPreRegisterControllerTest {
 //        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
 //
 //
-//        // Create a sample PreRegisterCreateRequest object
-//        PreRegisterCreateRequest request = new PreRegisterCreateRequest();
+//        // Create a sample PreRegisterCreateUpdateRequest object
+//        PreRegisterCreateUpdateRequest request = new PreRegisterCreateUpdateRequest();
 //        request.setName(faker.name().fullName());
 //        request.setEmail(faker.internet().emailAddress());
 //        request.setPhone(faker.phoneNumber().phoneNumber());
@@ -129,7 +116,7 @@ class UserPreRegisterControllerTest {
 //        Long cardNumber = faker.number().randomNumber(16, true);
 //        Long cinNumber = faker.number().randomNumber(11, true);
 //        LocalDate birthdate = LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35));
-//        // Create a sample PreRegisterCreateRequest object
+//        // Create a sample PreRegisterCreateUpdateRequest object
 //        PreRegisterUpdateRequest request = new PreRegisterUpdateRequest();
 //        request.setName(faker.name().fullName());
 //        request.setEmail(faker.internet().emailAddress());
