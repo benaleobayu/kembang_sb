@@ -25,7 +25,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/cms/v1/am/role")
-@Tag(name = "CMS Role API")
+@Tag(name = "Role API")
 @SecurityRequirement(name = "Authorization")
 public class RoleController {
 

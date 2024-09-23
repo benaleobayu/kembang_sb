@@ -21,7 +21,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping(TagController.urlRoute)
-@Tag(name = "Tag API")
+@Tag(name = "Tag API [Masterdata]")
 public class TagController {
 
     static final String urlRoute = "/cms/v1/ms/tag";
@@ -58,7 +58,7 @@ public class TagController {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
             service.saveData(item);
-            return ResponseEntity.created(URI.create("/cms/v1/ms/tag/"))
+            return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created tag"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

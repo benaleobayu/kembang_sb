@@ -41,7 +41,7 @@ import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
 @AllArgsConstructor
 @Validated
 @RequestMapping(urlRoute)
-@Tag(name = "CMS User Pre-Register API")
+@Tag(name = "User Pre-Register API")
 @SecurityRequirement(name = "Authorization")
 public class UserPreRegisterController {
 

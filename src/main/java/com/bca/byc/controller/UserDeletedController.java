@@ -30,7 +30,7 @@ import static com.bca.byc.controller.UserDeletedController.urlRoute;
 @RestController
 @AllArgsConstructor
 @RequestMapping(urlRoute)
-@Tag(name = "CMS User Deleted API")
+@Tag(name = "User Deleted API")
 @SecurityRequirement(name = "Authorization")
 public class UserDeletedController {
 

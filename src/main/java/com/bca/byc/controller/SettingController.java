@@ -26,7 +26,7 @@ import java.net.URI;
 @Slf4j
 @RestController
 @RequestMapping("/cms/v1/settings")
-@Tag(name = "Apps Settings API")
+@Tag(name = "Additional Config API")
 @SecurityRequirement(name = "Authorization")
 public class SettingController {
 

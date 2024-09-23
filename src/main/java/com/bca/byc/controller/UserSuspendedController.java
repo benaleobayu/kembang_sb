@@ -30,7 +30,7 @@ import static com.bca.byc.controller.UserSuspendedController.urlRoute;
 @RestController
 @AllArgsConstructor
 @RequestMapping(urlRoute)
-@Tag(name = "CMS User Suspended API")
+@Tag(name = "User Suspended API")
 @SecurityRequirement(name = "Authorization")
 public class UserSuspendedController {
 

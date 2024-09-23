@@ -29,7 +29,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/cms/v1/am/admin")
-@Tag(name = "CMS Admin API")
+@Tag(name = "Admin API")
 public class AdminController {
 
     private AdminService service;

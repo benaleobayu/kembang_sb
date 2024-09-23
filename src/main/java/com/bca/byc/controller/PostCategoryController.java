@@ -23,7 +23,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping(PostCategoryController.urlRoute)
-@Tag(name = "CMS Post Category API")
+@Tag(name = "Post Category API [Masterdata]")
 @SecurityRequirement(name = "Authorization")
 public class PostCategoryController {
 

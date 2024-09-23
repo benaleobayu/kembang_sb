@@ -29,7 +29,7 @@ import java.util.ArrayList;
 @Slf4j
 @RestController
 @RequestMapping("/cms/auth")
-@Tag(name = "CMS Authentication API")
+@Tag(name = "Authentication API")
 @AllArgsConstructor
 public class CmsAuthController {
 

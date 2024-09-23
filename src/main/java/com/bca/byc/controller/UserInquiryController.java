@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/cms/v1/user-inquiry")
-@Tag(name = "CMS User Inquiry API")
+@Tag(name = "User Inquiry API")
 public class UserInquiryController {
 
     private UserInquiryService service;

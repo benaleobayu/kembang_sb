@@ -30,7 +30,7 @@ import static com.bca.byc.controller.UserActiveController.urlRoute;
 @RestController
 @RequestMapping(urlRoute)
 @AllArgsConstructor
-@Tag(name = "CMS User Active API")
+@Tag(name = "User Active API")
 @SecurityRequirement(name = "Authorization")
 public class UserActiveController {
 
