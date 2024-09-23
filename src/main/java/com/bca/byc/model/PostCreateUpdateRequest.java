@@ -16,6 +16,7 @@ public class PostCreateUpdateRequest {
 //    @JsonIgnore
 //    private List<Long> tagUserIds; // user _id
 
+    @JsonIgnore
     private PostLocationRequest postLocation;
 
     private Long postCategoryId;
