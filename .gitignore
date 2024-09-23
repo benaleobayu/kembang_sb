@@ -33,7 +33,6 @@ log/
 target/
 !src/main/resources/
 !src/test/resources/
-!lib/hcp
 
 # Gradle
 .gradle/
