@@ -36,6 +36,12 @@ public class RoleDTOConverter {
     public RoleListResponse convertToListResponse(Role data) {
         // mapping Entity with DTO Entity
         RoleListResponse dto = modelMapper.map(data, RoleListResponse.class);
+
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+
+        dto.setCreatedBy(data.getCreatedBy() == null ? null : data.getCreatedBy().getName());
+        dto.setUpdatedBy( data.getUpdatedBy() == null ? null : data.getUpdatedBy().getName());
         // return the DTO
         return dto;
     }

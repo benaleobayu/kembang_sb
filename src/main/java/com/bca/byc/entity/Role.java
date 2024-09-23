@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.github.javafaker.Bool;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +29,12 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "orders", columnDefinition = "int default 1")
+    private Integer orders = 1;
+
+    @Column(name = "status", columnDefinition = "boolean default true")
+    private Boolean status = true;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoleHasPermission> permissions;
