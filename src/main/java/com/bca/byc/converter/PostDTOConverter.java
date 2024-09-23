@@ -80,7 +80,7 @@ public class PostDTOConverter {
         if (postLocation == null) {
             postLocation = new PostLocation();
             postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
-            postLocation.setPlaceId(dto.getPostLocation().getPlacedId());
+            postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
             postLocation.setDescription(dto.getPostLocation().getDescription());
             postLocation.setLatitude(dto.getPostLocation().getLatitude());
             postLocation.setLongitude(dto.getPostLocation().getLongitude());
