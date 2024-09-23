@@ -67,6 +67,7 @@ public class SecurityConfig {
             "/swagger-ui/favicon-16x16.png",
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
+            "/v3/api-docs/**",
             "/v3/api-docs"
     );
     private final static List<String> AUTHENTICATED_ENDPOINT_LIST = Arrays.asList(V1_URL, V2_URL, APPS_V1, CMS_V1);

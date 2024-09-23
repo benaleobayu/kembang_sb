@@ -43,6 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             "/swagger-ui/favicon-16x16.png",
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
+            "/v3/api-docs/.*",
             "/v3/api-docs");
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
