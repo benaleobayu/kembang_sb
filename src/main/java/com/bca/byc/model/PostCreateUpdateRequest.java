@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -16,7 +15,6 @@ public class PostCreateUpdateRequest {
 //    @JsonIgnore
 //    private List<Long> tagUserIds; // user _id
 
-    @JsonIgnore
     private PostLocationRequest postLocation;
 
     private Long postCategoryId;
@@ -39,7 +37,7 @@ public class PostCreateUpdateRequest {
 
         private String description;
 
-        private String placedId;
+        private String placeId;
 
         private Double longitude;
 
