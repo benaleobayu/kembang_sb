@@ -32,6 +32,9 @@ public class PreRegisterDTOConverter {
     public PreRegisterDetailResponse convertToListResponse(PreRegister data) {
         // mapping Entity with DTO Entity
         PreRegisterDetailResponse dto = modelMapper.map(data, PreRegisterDetailResponse.class);
+
+        dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
+        dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));
         // Use DataFormatter here
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
