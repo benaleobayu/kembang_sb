@@ -101,6 +101,9 @@ public class PostController {
                 PostContent postContent = processFile(file, contentRequest, i);
                 contentList.add(postContent);
             }
+            // log debug TODO deleted after test
+            System.out.println("Post String: " + postString);
+            System.out.println("Content String: " + contentString);
 
             // Save post and its content
             postService.save(email, dto, contentList);
