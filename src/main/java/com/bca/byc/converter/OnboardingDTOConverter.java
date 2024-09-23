@@ -7,7 +7,7 @@ import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.model.UserUpdateRequest;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.AppUserService;
-import com.bca.byc.util.Formatter;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -9,10 +9,9 @@ import com.bca.byc.enums.LogStatus;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
-import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.response.RejectRequest;
-import com.bca.byc.util.Formatter;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -133,12 +132,5 @@ public class PreRegisterDTOConverter {
         data.setEmail(data.getEmail().concat("_rejected"));
         data.setStatusApproval(AdminApprovalStatus.REJECTED);
 
-    }
-
-    public PreRegisterExportResponse convertToExportResponse(PreRegister data) {
-        PreRegisterExportResponse dto = modelMapper.map(data, PreRegisterExportResponse.class);
-
-
-        return dto;
     }
 }

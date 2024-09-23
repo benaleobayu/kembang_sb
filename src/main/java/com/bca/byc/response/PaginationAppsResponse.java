@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-public class AppPaginationResponse<T> implements Serializable {
+public class PaginationAppsResponse<T> implements Serializable {
 
     private boolean success;
     private String message;

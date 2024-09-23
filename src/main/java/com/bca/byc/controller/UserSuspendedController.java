@@ -5,7 +5,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.AppPaginationResponse;
+import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserManagementExportService;
 import com.bca.byc.service.UserSuspendedService;
@@ -40,7 +40,7 @@ public class UserSuspendedController {
 
     @Operation(summary = "Get list user suspended", description = "Get list user suspended")
     @GetMapping
-    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -52,9 +52,9 @@ public class UserSuspendedController {
     ) {
         // response true
         try {
-            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
+            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
         }
     }
 

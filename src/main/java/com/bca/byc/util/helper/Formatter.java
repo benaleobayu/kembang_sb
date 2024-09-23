@@ -1,4 +1,4 @@
-package com.bca.byc.util;
+package com.bca.byc.util.helper;
 
 import org.jsoup.Jsoup;
 

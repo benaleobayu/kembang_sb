@@ -4,7 +4,7 @@ import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.BusinessCategoryCreateRequest;
 import com.bca.byc.model.BusinessCategoryDetailResponse;
 import com.bca.byc.model.BusinessCategoryUpdateRequest;
-import com.bca.byc.util.Formatter;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

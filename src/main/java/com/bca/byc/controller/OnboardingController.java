@@ -4,7 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.OnboardingCreateRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.AppPaginationResponse;
+import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.OnboardingService;
@@ -59,7 +59,7 @@ public class OnboardingController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/onboarding-user")
-    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<OnboardingListUserResponse>>> listFollowUser(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<OnboardingListUserResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -68,9 +68,9 @@ public class OnboardingController {
         log.info("GET /api/v1/users/onboarding-user endpoint hit");
         // response true
         try{
-            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list onboarding user", service.listFollowUser(pages, limit, sortBy, direction, userName)));
+            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list onboarding user", service.listFollowUser(pages, limit, sortBy, direction, userName)));
         }catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
         }
     }
 

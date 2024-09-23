@@ -6,7 +6,7 @@ import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
 import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.AppPaginationResponse;
+import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,17 +32,17 @@ public class RoleController {
     private RoleService service;
 
     @GetMapping
-    public ResponseEntity<AppPaginationResponse<ResultPageResponseDTO<RoleListResponse>>> listFollowUser(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<RoleListResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         try {
-            return ResponseEntity.ok().body(new AppPaginationResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, keyword)));
+            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, keyword)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AppPaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
         }
     }
 

@@ -4,7 +4,7 @@ import com.bca.byc.entity.Location;
 import com.bca.byc.model.LocationCreateRequest;
 import com.bca.byc.model.LocationDetailResponse;
 import com.bca.byc.model.LocationUpdateRequest;
-import com.bca.byc.util.Formatter;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -3,7 +3,7 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
-import com.bca.byc.util.Formatter;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

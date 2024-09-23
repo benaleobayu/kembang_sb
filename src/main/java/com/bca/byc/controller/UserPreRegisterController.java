@@ -53,7 +53,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.view')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @GetMapping
-    public ResponseEntity<PaginationResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -65,22 +65,22 @@ public class UserPreRegisterController {
         // response true
         log.info("GET " + urlRoute + " list endpoint hit");
         try {
-            return ResponseEntity.ok().body(new PaginationResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
         } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationResponse<>(false, "Unauthorized", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationCmsResponse<>(false, "Unauthorized", null));
         }
     }
 
     @PreAuthorize("hasAuthority('pre-registration.read')")
     @Operation(summary = "Get detail Pre-Register User by id", description = "Get detail Pre-Register User by id")
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiWithAttributeResponse> getById(@PathVariable("id") Long id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             PreRegisterDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found pre-register user", item));
+            return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, userManagementService.listAttributeDetailPreRegister()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiWithAttributeResponse(false, e.getMessage(), null));
         }
     }
 
