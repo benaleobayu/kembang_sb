@@ -17,7 +17,7 @@ public class PostCreateUpdateRequest {
 
     private PostLocationRequest postLocation;
 
-    private String postCategoryId;
+    private Long postCategoryId;
 
     private Boolean isCommentable;
 
