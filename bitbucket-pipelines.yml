@@ -3,17 +3,20 @@ image: maven:3.3.9
 definitions:
   steps:
     - step: &build-step
-        name: SonarQube analysis
+        name: Build and SonarQube analysis
+        caches:
+          - sonar
+          - maven
         script:
+          - mvn clean install  # Compiling the project to generate class files
           - pipe: sonarsource/sonarqube-scan:2.0.1
             variables:
-              SONAR_HOST_URL: ${SONAR_HOST_URL} # Get the value from the repository/workspace variable.
-              SONAR_TOKEN: ${SONAR_TOKEN} # Get the value from the repository/workspace variable. You shouldn't set secret in clear text here.
+              SONAR_HOST_URL: ${SONAR_HOST_URL}
+              SONAR_TOKEN: ${SONAR_TOKEN}
+              SONAR_SCANNER_OPTS: "-Dsonar.java.binaries=target/classes"  # Pointing to compiled classes
   caches:
     sonar: ~/.sonar
-
-clone:
-  depth: full
+    maven: ~/.m2
 
 pipelines:
   branches:
