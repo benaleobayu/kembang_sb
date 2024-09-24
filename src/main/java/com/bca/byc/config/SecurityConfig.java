@@ -53,6 +53,7 @@ public class SecurityConfig {
     private final static List<String> PERMIT_ENDPOINT_LIST = Arrays.asList(AUTH_URL, AUTH_URL_APPS, AUTH_URL_CMS, PUBLIC_URL_APPS,
             "/auth/login",
             "/static/**",
+            "/uploads/**",
             "/swagger-ui.html",
             "/swagger-ui/index.html",
             "/swagger-ui/index.css",
