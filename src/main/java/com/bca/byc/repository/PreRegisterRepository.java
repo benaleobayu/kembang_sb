@@ -29,4 +29,11 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
+
+
+
+
+
+    // validator
+    boolean existsByMemberCin(String cin);
 }
