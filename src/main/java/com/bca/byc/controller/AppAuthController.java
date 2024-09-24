@@ -8,6 +8,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.repository.LogDeviceRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.DataAccessResponse;
 import com.bca.byc.security.util.JWTHeaderTokenExtractor;
@@ -25,11 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public class AppAuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> authLogin(
+    public ResponseEntity<?> authLogin(
             @RequestParam(name = "deviceId") String deviceId,
             @RequestParam(name = "version") String version,
             @RequestBody LoginRequestDTO dto,
@@ -64,10 +63,10 @@ public class AppAuthController {
 
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.email(),dto.password())
+                    new UsernamePasswordAuthenticationToken(dto.email(), dto.password())
             );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again.", null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again."));
         }
 
         final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
@@ -85,7 +84,7 @@ public class AppAuthController {
         logDevice.setActionType(ActionType.LOGIN);
         logDeviceRepository.save(logDevice);
 
-        return ResponseEntity.ok().body(new ApiResponse(true, "success", dataAccess));
+        return ResponseEntity.ok().body(new ApiDataResponse<>(true, "success", dataAccess));
     }
 
     @PostMapping("/register")
@@ -116,17 +115,17 @@ public class AppAuthController {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<ApiResponse> validateOtp(@RequestBody OtpValidateRequest dto) {
+    public ResponseEntity<?> validateOtp(@RequestBody OtpValidateRequest dto) {
         boolean isValid = authService.validateOtp(dto.email(), dto.otp());
         Optional<AppUser> user = userRepository.findByEmail(dto.email());
         if (isValid) {
             final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
             final String token = jwtUtil.createAccessJWTToken(userDetails.getUsername(), null).getToken();
-            return ResponseEntity.ok(new ApiResponse(true, "OTP validated successfully.", token));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "OTP validated successfully.", token));
         } else if (user.isPresent() && user.get().getAppUserDetail().getStatus().equals(StatusType.REJECTED)) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved.", null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "User not approved."));
         } else {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid OTP.", null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid OTP."));
         }
     }
 

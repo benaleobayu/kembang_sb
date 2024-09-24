@@ -7,7 +7,6 @@ import com.bca.byc.response.Page;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.CmsUserService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,30 +41,26 @@ public class CmsUserController {
     // postgres
     @GetMapping
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
-                @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-                @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-                @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-                @RequestParam(name = "keyword", required = false) String keyword) {
-            // response true
-            try{
-                return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list User", cmsUserService.listData(pages, limit, sortBy, direction, keyword)));
-            }catch (ExpiredJwtException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-            }
-        }
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list User", cmsUserService.listData(pages, limit, sortBy, direction, keyword)));
+    }
 
     @GetMapping("/count")
     public ResponseEntity<ApiDataResponse> countAllUsers() {
-        try{
+        try {
             return ResponseEntity.ok(new ApiDataResponse(true, "Users found", cmsUserService.countAllUsers()));
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiDataResponse(false, e.getMessage(), null));
         }
     }
 
     @GetMapping("/elastic/count")
-    private Long getCountByElastic(){
+    private Long getCountByElastic() {
         return cmsUserService.getElasticCount();
     }
 

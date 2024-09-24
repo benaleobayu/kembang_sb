@@ -3,16 +3,15 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserInquiryService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,24 +34,20 @@ public class UserInquiryController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "userName", required = false) String userName) {
         // response true
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user inquiry", service.listData(pages, limit, sortBy, direction, userName)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user inquiry", service.listData(pages, limit, sortBy, direction, userName)));
     }
 
 
     // create
     @Operation(hidden = true)
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         log.info("GET /cms/v1/user-inquiry/{id} endpoint hit");
         try {
             UserManagementDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found register inquiry", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found register inquiry", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

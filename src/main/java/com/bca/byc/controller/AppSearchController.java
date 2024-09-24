@@ -7,10 +7,8 @@ import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppSearchService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +33,10 @@ public class AppSearchController {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, tag)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, tag)));
     }
-   @GetMapping("/result/tag")
+
+    @GetMapping("/result/tag")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultTagResponse>>> listResultTags(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
@@ -51,13 +46,10 @@ public class AppSearchController {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultTags(email, pages, limit, sortBy, direction, tag)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultTags(email, pages, limit, sortBy, direction, tag)));
     }
-   @GetMapping("/result/account")
+
+    @GetMapping("/result/account")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultAccountResponse>>> listResultAccounts(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
@@ -67,13 +59,8 @@ public class AppSearchController {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultAccounts(email, pages, limit, sortBy, direction, tag)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultAccounts(email, pages, limit, sortBy, direction, tag)));
     }
-
 
 
 }

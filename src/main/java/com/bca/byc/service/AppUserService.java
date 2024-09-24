@@ -21,9 +21,6 @@ public interface AppUserService extends UserDetailsService {
 
 	UserInfoResponse getUserDetails(String name);
 
-	void followUser(Long userId, String name);
+	void updateUserData(String email, AppUserProfileRequest dto);
 
-	void unfollowUser(Long userId, String name);
-
-    void updateUserData(String email, AppUserProfileRequest dto);
 }

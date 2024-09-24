@@ -4,12 +4,12 @@ package com.bca.byc.controller;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.service.UserManagementExportService;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +33,9 @@ import static com.bca.byc.controller.UserDeletedController.urlRoute;
 @SecurityRequirement(name = "Authorization")
 public class UserDeletedController {
 
+    static final String urlRoute = "/cms/v1/um/deleted";
     private UserDeletedService service;
     private UserManagementExportService exportService;
-
-    static final String urlRoute = "/cms/v1/um/deleted";
 
     @Operation(summary = "Get list user deleted", description = "Get list user deleted")
     @GetMapping
@@ -52,46 +50,42 @@ public class UserDeletedController {
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         // response true
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
     }
 
     @Operation(summary = "Get detail user deleted", description = "Get detail user deleted")
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         log.info("GET" + urlRoute + "/{id} endpoint hit");
         try {
             UserManagementDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found user", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found user", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     @Operation(summary = "Restore user deleted by id", description = "Restore user deleted by id")
     @PatchMapping("/{id}/restore")
-    public ResponseEntity<ApiResponse> restore(@PathVariable("id") Long id) {
+    public ResponseEntity<?> restore(@PathVariable("id") Long id) {
         log.info("PATCH " + urlRoute + "/{id}/restore endpoint hit");
         try {
             service.makeUserIsDeletedFalse(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully restored user", null));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully restored user", null));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     @Operation(summary = "Bulk Restore user deleted by id", description = "Bulk Restore user deleted by id")
     @PostMapping("/restore")
-    public ResponseEntity<ApiResponse> restore(@RequestBody BulkByIdRequest dto) {
+    public ResponseEntity<?> restore(@RequestBody BulkByIdRequest dto) {
         log.info("POST " + urlRoute + "/restore endpoint hit");
         try {
             service.makeUserBulkRestoreTrue(dto.getIds());
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully restored user", null));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully restored user", null));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

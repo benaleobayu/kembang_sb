@@ -70,33 +70,6 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void followUser(Long userId, String email) {
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
-        AppUser userToFollow = appUserRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        if (!user.getFollows().contains(userToFollow)) {
-            user.getFollows().add(userToFollow);
-            appUserRepository.save(user);
-        }
-
-    }
-
-    @Override
-    public void unfollowUser(Long userId, String email) {
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
-        AppUser userToUnfollow = appUserRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        if (user.getFollows().contains(userToUnfollow)) {
-            user.getFollows().remove(userToUnfollow);
-            appUserRepository.save(user);
-        }
-    }
-
-    @Override
     public void updateUserData(String email, AppUserProfileRequest dto) {
 
         AppUser user = appUserRepository.findByEmail(email)

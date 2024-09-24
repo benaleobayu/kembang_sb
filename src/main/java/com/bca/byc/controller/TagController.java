@@ -4,6 +4,7 @@ package com.bca.byc.controller;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.data.TagCreateUpdateRequest;
 import com.bca.byc.model.data.TagDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -35,21 +36,21 @@ public class TagController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
-        try{
+        try {
             return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list tag detail", service.listDataTag(pages, limit, sortBy, direction, keyword)));
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new PaginationAppsResponse<>(false, e.getMessage(), null));
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             TagDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found tag", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found tag", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

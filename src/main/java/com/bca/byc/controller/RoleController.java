@@ -5,6 +5,7 @@ import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
 import com.bca.byc.model.RoleUpdateRequest;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -15,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,32 +39,28 @@ public class RoleController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, keyword)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list role", service.listData(pages, limit, sortBy, direction, keyword)));
     }
 
     @Operation(hidden = true)
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAll() {
+    public ResponseEntity<?> getAll() {
         log.info("GET /cms/v1/am/role endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found role", service.findAllData()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found role", service.findAllData()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         log.info("GET /cms/v1/am/role/{id} endpoint hit");
         try {
             RoleDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found role", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found role", item));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

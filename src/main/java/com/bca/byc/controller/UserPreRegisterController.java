@@ -5,11 +5,10 @@ import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.service.UserManagementService;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.bca.byc.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +17,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -63,11 +61,7 @@ public class UserPreRegisterController {
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " list endpoint hit");
-        try {
-            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationCmsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
     }
 
     @PreAuthorize("hasAuthority('pre-registration.read')")

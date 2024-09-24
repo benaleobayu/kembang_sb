@@ -4,16 +4,15 @@ package com.bca.byc.controller;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.*;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,57 +41,57 @@ public class PublicController {
 
     // show by identity
     @GetMapping("/setting")
-    public ResponseEntity<ApiResponse> showTnc(@RequestParam("identity") String identity) {
+    public ResponseEntity<?> showTnc(@RequestParam("identity") String identity) {
         log.info("GET /v1/settings/search?identity={} endpoint hit", identity);
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found settings", settingsService.showByIdentity(identity)));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found settings", settingsService.showByIdentity(identity)));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
 
     // how all faq
     @GetMapping("/faq")
-    public ResponseEntity<ApiResponse> getAllFaqWithCategory() {
+    public ResponseEntity<?> getAllFaqWithCategory() {
         log.info("GET /api/v1/public/faq endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found Faq ", faqCategoryService.findAllData()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found Faq ", faqCategoryService.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     // business cateogory
     @GetMapping("/business-category")
-    public ResponseEntity<ApiResponse> getAllBusinessCategory() {
+    public ResponseEntity<?> getAllBusinessCategory() {
         log.info("GET /api/v1/public/business_category endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found business category", businessCategoryService.findByParentIdIsNull()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found business category", businessCategoryService.findByParentIdIsNull()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     // location
     @GetMapping("/location")
-    public ResponseEntity<ApiResponse> getAllLocation() {
+    public ResponseEntity<?> getAllLocation() {
         log.info("GET /api/v1/public/location endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found location", locationService.findAllData()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found location", locationService.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     // expect category
     @GetMapping("/expect-category")
-    public ResponseEntity<ApiResponse> getAllExpectCategory() {
+    public ResponseEntity<?> getAllExpectCategory() {
         log.info("GET /api/v1/public/expect-category endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found expect category", expectCategoryService.findAllData()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found expect category", expectCategoryService.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
@@ -109,11 +108,7 @@ public class PublicController {
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         // response true
         log.info("GET " + urlRoute + " data-pre-register endpoint hit");
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate)));
-        } catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list pre-register", preRegisterService.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate)));
     }
 
 }

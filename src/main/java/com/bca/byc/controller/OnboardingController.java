@@ -9,11 +9,9 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.OnboardingService;
 import com.bca.byc.service.impl.AppUserServiceImpl;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -67,11 +65,7 @@ public class OnboardingController {
             @RequestParam(name = "userName", required = false) String userName) {
         log.info("GET /api/v1/users/onboarding-user endpoint hit");
         // response true
-        try{
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list onboarding user", service.listFollowUser(pages, limit, sortBy, direction, userName)));
-        }catch (ExpiredJwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PaginationAppsResponse<>(false, "Unauthorized", null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list onboarding user", service.listFollowUser(pages, limit, sortBy, direction, userName)));
     }
 
 

@@ -4,6 +4,7 @@ import com.bca.byc.entity.PostCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PostCategoryCreateUpdateRequest;
 import com.bca.byc.model.PostCategoryDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -47,24 +48,24 @@ public class PostCategoryController {
 
     @Operation(summary = "Get all post categories", description = "Get all post categories", hidden = true)
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAll() {
+    public ResponseEntity<?> getAll() {
         log.info("GET " + urlRoute + " endpoint hit");
         try {
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found post categories", service.findAllData()));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post categories", service.findAllData()));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
     @Operation(summary = "Get post category by id", description = "Get post category by id")
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             PostCategoryDetailResponse item = service.findDataById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found post categories", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post categories", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 

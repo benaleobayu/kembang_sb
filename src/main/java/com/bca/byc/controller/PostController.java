@@ -6,6 +6,7 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -57,11 +58,8 @@ public class PostController {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new PaginationAppsResponse<>(false, e.getMessage(), null));
-        }
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
+
     }
 
 
@@ -87,7 +85,8 @@ public class PostController {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "Content data is missing"));
             }
             List<PostContentRequest> contentRequests = objectMapper.readValue(contentString,
-                    new TypeReference<List<PostContentRequest>>() {});
+                    new TypeReference<List<PostContentRequest>>() {
+                    });
 
             // Validate if contentRequests and files match in size
             if (files.size() != contentRequests.size()) {
@@ -119,12 +118,12 @@ public class PostController {
     // READ (Get a post by ID)
     @Operation(summary = "Get a post by ID", description = "Get a post by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getPost(@PathVariable Long id) {
+    public ResponseEntity<?> getPost(@PathVariable Long id) {
         try {
             PostDetailResponse item = postService.findById(id);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully found post", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post", item));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
 
@@ -176,8 +175,6 @@ public class PostController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
-
 
 
     // ----------------------------------------- method ---------------------------------------------
