@@ -106,7 +106,7 @@ public class SecurityConfig {
     }
 
     @Autowired
-    void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
+    void registerProvider(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(usernamePasswordAuthProvider).authenticationProvider(jwtAuthenticationProvider);
     }
 
