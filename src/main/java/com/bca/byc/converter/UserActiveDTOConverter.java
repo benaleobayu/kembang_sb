@@ -1,17 +1,14 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppUser;
-
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
-import com.bca.byc.util.helper.Formatter;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
@@ -19,10 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserActiveDTOConverter {
 
-    private ModelMapper modelMapper;
-
     @Value("${app.base.url}")
     static String baseUrl;
+    private ModelMapper modelMapper;
 
     // for get data
     public UserManagementDetailResponse convertToListResponse(AppUser data) {
@@ -57,7 +53,7 @@ public class UserActiveDTOConverter {
 
         dto.setId(data.getId());
         dto.setName(data.getAppUserDetail().getName());
-        String avatar = null;
+        String avatar;
 
         if (data.getAppUserDetail().getAvatar() != null && data.getAppUserDetail().getAvatar().startsWith("/uploads")) {
             avatar = baseUrl + data.getAppUserDetail().getAvatar();

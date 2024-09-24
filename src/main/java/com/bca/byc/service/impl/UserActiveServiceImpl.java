@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class UserActiveServiceImpl implements UserActiveService {
 
     @Value("${app.base.url}")
-    static String baseUrl;
+    private String baseUrl;
 
     private UserActiveRepository repository;
     private UserActiveElasticRepository elasticRepository;
@@ -148,12 +148,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         List<ListTagUserResponse> dtos = pageResult.stream().map((data) -> {
             ListTagUserResponse dto = new ListTagUserResponse();
 
-            String avatar;
-            if (data.getAvatar() != null && data.getAvatar().startsWith("/uploads")) {
-                avatar = baseUrl + data.getAvatar();
-            } else {
-                avatar = data.getAvatar();
-            }
+            String avatar = data.getAvatar().startsWith("uploads/") ? baseUrl + "/" + data.getAvatar() : data.getAvatar();
 
             dto.setAvatar(avatar);
             dto.setId(data.getId());

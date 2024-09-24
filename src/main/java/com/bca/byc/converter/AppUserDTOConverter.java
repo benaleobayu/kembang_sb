@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -32,6 +33,10 @@ public class AppUserDTOConverter {
     private final UserHasExpectRepository userHasExpectRepository;
     private final LocationRepository locationRepository;
     private ModelMapper modelMapper;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
+
 
     // for create data
     public AppUser convertToCreateRequest(@Valid AppRegisterRequest dto) {
@@ -52,8 +57,8 @@ public class AppUserDTOConverter {
         AppUserDetail appUserDetail = data.getAppUserDetail();
         dto.setStatus(appUserDetail.getStatus());
         dto.setType(appUserDetail.getType());
-        dto.setAvatar(appUserDetail.getAvatar());
-        dto.setCover(appUserDetail.getCover());
+        dto.setAvatar(appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
+        dto.setCover(appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
         dto.setBiodata(appUserDetail.getBiodata());
         dto.setCreatedAt(Formatter.formatDateTimeApps(appUserDetail.getCreatedAt()));
 
