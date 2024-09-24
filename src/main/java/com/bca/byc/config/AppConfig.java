@@ -26,6 +26,9 @@ public class AppConfig {
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationMs;
 
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     @Autowired
     private AppAdminService adminService;
 
@@ -53,6 +56,12 @@ public class AppConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+
+    @Bean
+    public String baseUrl() {
+        return baseUrl;
     }
 
 }
