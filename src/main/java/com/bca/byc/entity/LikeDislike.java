@@ -1,4 +1,4 @@
-package com.bca.byc.entity;
+ package com.bca.byc.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
