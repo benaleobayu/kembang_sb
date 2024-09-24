@@ -1,7 +1,6 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.UserActionService;
 import com.bca.byc.service.util.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-import static com.bca.byc.controller.AppUserController.urlRoute;
+import static com.bca.byc.controller.AppUserActionController.urlRoute;
 
 @Slf4j
 @RestController
@@ -24,7 +23,7 @@ import static com.bca.byc.controller.AppUserController.urlRoute;
 @AllArgsConstructor
 @Tag(name = "Apps")
 @SecurityRequirement(name = "Authorization")
-public class AppUserController {
+public class AppUserActionController {
 
     static final String urlRoute = "/api/v1";
 
