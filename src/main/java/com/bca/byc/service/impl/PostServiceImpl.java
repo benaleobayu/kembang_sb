@@ -1,17 +1,14 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostContent;
+import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.repository.PostContentRepository;
-import com.bca.byc.repository.PostRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
@@ -25,7 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,20 +36,62 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostDTOConverter converter;
     private final PostContentRepository postContentRepository;
+    private final TagRepository tagRepository;
+    private final AppUserRepository userRepository;
+    private final PostLocationRepository postLocationRepository;
+    private final PostCategoryRepository postCategoryRepository;
 
     @Override
     public void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
-        Post post = converter.convertToCreateRequest(user, dto);
 
-        Post savedPost = postRepository.save(post);
+        Post data = new Post();
+        data.setId(null);
+        data.setUser(user);
+
+        // Set list of Tags
+        Set<Tag> tags = new HashSet<>();
+        if (dto.getTagName() != null) {
+            for (String tagName : dto.getTagName()) {
+                Optional<Tag> tag = tagRepository.findByName(tagName);
+                tag.ifPresentOrElse(tags::add, () -> {
+                    Tag newTag = new Tag();
+                    newTag.setName(tagName);
+                    tags.add(tagRepository.save(newTag));
+                });
+            }
+        }
+        data.setTags(tags);
+
+        // Post category
+        if (dto.getPostCategoryId() != null) {
+            PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
+            data.setPostCategory(postCategory);
+        }
+
+        // Post location
+        PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
+        if (postLocation == null) {
+            postLocation = new PostLocation();
+            postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
+            postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
+            postLocation.setDescription(dto.getPostLocation().getDescription());
+            postLocation.setLatitude(dto.getPostLocation().getLatitude());
+            postLocation.setLongitude(dto.getPostLocation().getLongitude());
+            postLocation = postLocationRepository.save(postLocation);
+        }
+        data.setPostLocation(postLocation);
+
+        data.setCreatedAt(LocalDateTime.now());
+        Post savedPost = postRepository.save(data);
 
         for (PostContent postContent : contentList) {
             postContent.setPost(savedPost);
             postContentRepository.save(postContent);
         }
     }
+
 
     @Override
     public PostDetailResponse findById(Long id) throws Exception {
