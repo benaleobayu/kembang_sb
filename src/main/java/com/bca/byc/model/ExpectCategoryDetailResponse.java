@@ -21,4 +21,17 @@ public class ExpectCategoryDetailResponse implements Serializable {
     private List<ExpectItemDetailResponse> expectItems = new ArrayList<>();
 
 
+    public ExpectCategoryDetailResponse() {
+    }
+
+    public ExpectCategoryDetailResponse(Long id, String name, List<ExpectItemDetailResponse> expectItems) {
+        this.id = id;
+        this.name = name;
+        this.expectItems = expectItems;
+    }
+
+    public ExpectCategoryDetailResponse(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

@@ -54,7 +54,9 @@ public class UserJob {
                 LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),
                 faker.avatar().image(),
                 faker.avatar().image(),
-                memberAs[faker.number().numberBetween(0, 2)]
+                memberAs[faker.number().numberBetween(0, 2)],
+                faker.code().asin(),
+                faker.name().firstName()
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
 

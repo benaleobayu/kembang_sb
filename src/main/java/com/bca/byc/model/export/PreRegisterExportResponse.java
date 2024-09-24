@@ -13,9 +13,9 @@ public class PreRegisterExportResponse {
     private String memberType;
     private String description;
     private String memberBankAccount;
-    private String childBankAccount;
+    private String parentBankAccount;
     private String memberCin;
-    private String childCin;
+    private String parentCin;
     private String memberBirthdate;
-    private String childBirthdate;
+    private String parentBirthdate;
 }

@@ -16,15 +16,15 @@ public class AppUserDetailDetailResponse {
 
     private String memberBankAccount;
 
-    private String childBankAccount;
+    private String parentBankAccount;
 
     private LocalDate memberBirthdate;
 
-    private LocalDate childBirthdate;
+    private LocalDate parentBirthdate;
 
     private String memberCin;
 
-    private String childCin;
+    private String parentCin;
 
     private String education;
 

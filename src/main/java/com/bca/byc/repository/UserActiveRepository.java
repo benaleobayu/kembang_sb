@@ -46,9 +46,9 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT new com.bca.byc.model.export.UserActiveExportResponse(" +
             "u.id, loc.name, aud.name, " +
-            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberBirthdate ELSE aud.childBirthdate END, " +
+            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberBirthdate ELSE aud.parentBirthdate END, " +
             "u.email, " +
-            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberCin ELSE aud.childCin END, " +
+            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberCin ELSE aud.parentCin END, " +
             "aud.phone, u.createdAt) " +
             "FROM AppUser u " +
             "LEFT JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +

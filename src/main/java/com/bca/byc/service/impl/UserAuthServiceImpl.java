@@ -59,7 +59,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
-            userDetail.setChildBankAccount(dto.parent_bank_account());
+            userDetail.setParentBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
             user.setAppUserDetail(userDetail);
 
@@ -76,7 +76,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
-            userDetail.setChildBankAccount(dto.parent_bank_account());
+            userDetail.setParentBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
             user.setAppUserDetail(userDetail);
         }
@@ -102,8 +102,8 @@ public class UserAuthServiceImpl implements UserAuthService {
                 userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
                 userDetail.setUserAs("member");
             } else {
-                userDetail.setChildCin(dataCheck.getParentCin()); // set child cin
-                userDetail.setChildBankAccount(dataCheck.getParentBankAccount()); // set child bank account
+                userDetail.setParentCin(dataCheck.getParentCin()); // set child cin
+                userDetail.setParentBankAccount(dataCheck.getParentBankAccount()); // set child bank account
                 userDetail.setUserAs("child");
             }
             user.setName(dataCheck.getName());

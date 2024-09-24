@@ -7,6 +7,7 @@ import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.repository.LocationRepository;
@@ -58,15 +59,15 @@ public class AppUserDTOConverter {
 
         // List of businesses
         if (data.getBusinesses() != null && !data.getBusinesses().isEmpty()) {
-            List<UserInfoResponse.BusinessListResponse> businesses = data.getBusinesses().stream().map(b -> {
-                UserInfoResponse.BusinessListResponse business = new UserInfoResponse.BusinessListResponse();
+            List<BusinessListResponse> businesses = data.getBusinesses().stream().map(b -> {
+                BusinessListResponse business = new BusinessListResponse();
                 business.setId(b.getId());
                 business.setName(b.getName());
                 business.setIsPrimary(b.getIsPrimary());
 
-                List<UserInfoResponse.BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
+                List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
                         .map(bc -> {
-                            UserInfoResponse.BusinessCategoryResponse businessCategoryResponse = new UserInfoResponse.BusinessCategoryResponse();
+                            BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
                             businessCategoryResponse.setId(bc.getBusinessCategoryParent().getId());
                             businessCategoryResponse.setName(bc.getBusinessCategoryParent().getName());
                             return businessCategoryResponse;
@@ -75,7 +76,7 @@ public class AppUserDTOConverter {
 
                 // Set Line of Business based on the first category's parent name
                 String lineOfBusiness = businessCategoryResponses.stream()
-                        .map(UserInfoResponse.BusinessCategoryResponse::getName)
+                        .map(BusinessListResponse.BusinessCategoryResponse::getName)
                         .findFirst()
                         .orElse("Unknown Business Category");
                 business.setLineOfBusiness(lineOfBusiness);
@@ -134,10 +135,10 @@ public class AppUserDTOConverter {
             birthdate = userDetail.getMemberBirthdate();
         } else if (data.getAppUserDetail().getType() == UserType.NOT_MEMBER) {
             userType = "Child Solitaire / Prioritas";
-            birthdate = userDetail.getChildBirthdate();
+            birthdate = userDetail.getParentBirthdate();
         } else {
             userType = "Not Member";
-            birthdate = userDetail.getChildBirthdate();
+            birthdate = userDetail.getParentBirthdate();
         }
 
         dto.setBirthDate(Formatter.formatLocalDate(birthdate));

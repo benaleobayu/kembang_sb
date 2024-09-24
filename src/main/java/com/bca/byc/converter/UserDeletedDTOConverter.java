@@ -22,20 +22,25 @@ public class UserDeletedDTOConverter {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
         dto.setName(data.getAppUserDetail().getName());
-        dto.setPhone(data.getAppUserDetail().getPhone());
-        dto.setType(data.getAppUserDetail().getType().toString());
-        dto.setMemberType(data.getAppUserDetail().getMemberType());
-        dto.setMemberCardNumber(data.getAppUserDetail().getMemberBankAccount());
-        dto.setParentBankAccount(data.getAppUserDetail().getChildBankAccount());
-        dto.setCin(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
-                data.getAppUserDetail().getMemberCin() : data.getAppUserDetail().getChildCin());
         dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
                 Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
-                Formatter.formatLocalDate(data.getAppUserDetail().getChildBirthdate()));
+                Formatter.formatLocalDate(data.getAppUserDetail().getParentBirthdate()));
+        dto.setEmail(data.getEmail().toLowerCase());
+        dto.setPhone(data.getAppUserDetail().getPhone());
+        dto.setMemberCin(data.getAppUserDetail().getMemberCin());
+        dto.setMemberCardNumber(data.getAppUserDetail().getMemberBankAccount());
+        dto.setType(data.getAppUserDetail().getType().toString());
+        dto.setMemberType(data.getAppUserDetail().getMemberType());
+        dto.setParentCin(data.getAppUserDetail().getParentCin());
+        dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
+        dto.setBranchCode(data.getAppUserDetail().getBranchCode());
+        dto.setPicName(data.getAppUserDetail().getPicName());
+
         dto.setOrders(data.getAppUserDetail().getId());
         dto.setStatus(data.getAppUserDetail().getStatus());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
+
         // return
         return dto;
     }

@@ -34,22 +34,22 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp {
     @Column(name = "member_bank_account")
     private String memberBankAccount;
 
-    @Column(name = "child_bank_account")
-    private String childBankAccount;
+    @Column(name = "parent_bank_account")
+    private String parentBankAccount;
 
     @Column(name = "member_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate memberBirthdate;
 
-    @Column(name = "child_birthdate")
+    @Column(name = "parent_birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate childBirthdate;
+    private LocalDate parentBirthdate;
 
     @Column(name = "member_cin")
     private String memberCin;
 
-    @Column(name = "child_cin")
-    private String childCin;
+    @Column(name = "parent_cin")
+    private String parentCin;
 
     @Column(name = "education")
     private String education;
@@ -82,5 +82,11 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp {
 
     @Column(name = "user_as")
     private String userAs;
+
+    @Column(name = "branch_code")
+    private String branchCode;
+
+    @Column(name = "pic_name")
+    private String picName;
 
 }

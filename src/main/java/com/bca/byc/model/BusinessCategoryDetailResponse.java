@@ -20,4 +20,19 @@ public class BusinessCategoryDetailResponse {
 
     private Set<BusinessCategoryDetailResponse> children = new HashSet<>();
 
+    public BusinessCategoryDetailResponse() {
+    }
+
+    public BusinessCategoryDetailResponse(Long id, String name, Long parentId) {
+        this.id = id;
+        this.name = name;
+        this.parentId = parentId;
+    }
+
+    public BusinessCategoryDetailResponse(Long id, String name, Boolean status, Set<BusinessCategoryDetailResponse> children) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.children = children;
+    }
 }
