@@ -32,12 +32,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final PostDTOConverter converter;
+
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
-    private final PostDTOConverter converter;
-    private final PostContentRepository postContentRepository;
     private final TagRepository tagRepository;
-    private final AppUserRepository userRepository;
+    private final PostContentRepository postContentRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostCategoryRepository postCategoryRepository;
 
@@ -47,6 +47,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
         Post data = new Post();
+
+        data.setDescription(dto.getDescription());
         data.setId(null);
         data.setUser(user);
 
@@ -82,6 +84,12 @@ public class PostServiceImpl implements PostService {
             postLocation = postLocationRepository.save(postLocation);
         }
         data.setPostLocation(postLocation);
+
+        // attribute
+        data.setIsPosted(dto.getIsPosted());
+        data.setIsCommentable(dto.getIsCommentable());
+        data.setIsShareable(dto.getIsShareable());
+        data.setIsShowLikes(dto.getIsShowLikes());
 
         data.setCreatedAt(LocalDateTime.now());
         Post savedPost = postRepository.save(data);
