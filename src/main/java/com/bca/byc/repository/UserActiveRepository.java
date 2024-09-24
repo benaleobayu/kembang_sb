@@ -63,23 +63,21 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT new com.bca.byc.model.data.ListTagUserResponse(" +
             "u.id, aud.avatar, aud.name, " +
-            "aud.name, aud.name, b.isPrimary " +
+            "bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary " + // Include business fields
             ") " +
             "FROM AppUser u " +
             "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "LEFT JOIN Business b ON b.user.id = u.id " +
+            "JOIN Business b ON b.user.id = u.id AND b.isPrimary = true " + // Filter for primary businesses
             "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
             "WHERE " +
-            "(LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(aud.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(aud.phone) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(aud.memberBankAccount) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
+            "(LOWER(aud.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
             "aud.status = 6 AND " +
             "aua.isSuspended = false AND " +
             "aua.isDeleted = false " +
-            "ORDER BY u.id DESC")
+            "GROUP BY u.id, aud.avatar, aud.name, bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary ")
     Page<ListTagUserResponse> findListTagUser(String keyword, Pageable pageable);
+
 }
 

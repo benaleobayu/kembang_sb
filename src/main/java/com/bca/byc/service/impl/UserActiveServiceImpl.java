@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserActiveDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
@@ -157,25 +158,15 @@ public class UserActiveServiceImpl implements UserActiveService {
             dto.setAvatar(avatar);
             dto.setId(data.getId());
             dto.setName(data.getName());
-            // Set other fields...
+            dto.setBusinessName(data.getBusinessName());
+            dto.setLineOfBusiness(data.getLineOfBusiness());
+            dto.setIsPrimary(data.getIsPrimary());
 
             return dto;
         }).collect(Collectors.toList());
 
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override

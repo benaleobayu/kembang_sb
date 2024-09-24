@@ -27,8 +27,8 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "LOWER(u.appUserDetail.memberBankAccount) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
             "(:locationId IS NULL OR loc.id = :locationId) AND " +
             "aud.status = 6 AND " +
-            "aua.isSuspended = false AND " +
-            "aua.isDeleted = false AND " +
+            "aua.isSuspended = true AND " +
+            "aua.isDeleted = true AND " +
             "u.createdAt BETWEEN :startDate AND :endDate " +
             "ORDER BY u.id DESC")
     Page<AppUser> findByKeywordAndStatusAndDeletedAndCreatedAt(@Param("keyword") String keyword,
