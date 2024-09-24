@@ -2,6 +2,8 @@ package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
+import com.bca.byc.enums.StatusType;
+import com.bca.byc.enums.UserType;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
@@ -82,7 +84,15 @@ public class UserManagementConverter {
         dto.setExpectCategory(expectCategories);
 
         dto.setOrders(data.getAppUserDetail().getId());
-        dto.setStatus(data.getAppUserDetail().getStatus());
+        dto.setStatus(
+                data.getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)
+                        ? data.getAppUserAttribute().getIsSuspended()
+                        ? data.getAppUserAttribute().getIsDeleted()
+                        ? "Deleted User"
+                        : "Suspended User"
+                        : "Active User"
+                        : "Inactive User"
+        );
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
     }

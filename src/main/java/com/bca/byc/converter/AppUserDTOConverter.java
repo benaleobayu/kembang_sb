@@ -144,7 +144,6 @@ public class AppUserDTOConverter {
         dto.setBirthDate(Formatter.formatLocalDate(birthdate));
 
         dto.setType(userType);
-        dto.setStatus(userDetail.getStatus());
 
         dto.setCreatedAt(Formatter.formatLocalDateTime(userDetail.getCreatedAt()));
 

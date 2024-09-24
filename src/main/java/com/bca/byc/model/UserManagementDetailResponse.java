@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
 
@@ -29,7 +28,7 @@ public class UserManagementDetailResponse {
     private List<ExpectCategoryList> expectCategory = new ArrayList<>();
 
     private Long orders;
-    private StatusType status;
+    private String status;
     private String createdAt;
     private String updatedAt;
 
