@@ -74,4 +74,7 @@ public class Post extends AbstractBaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeDislike> likeDislikes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostContent> postContents = new ArrayList<>();
+
 }
