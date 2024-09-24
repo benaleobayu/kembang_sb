@@ -1,6 +1,7 @@
 package com.bca.byc.validator;
 
 import com.bca.byc.repository.PreRegisterRepository;
+    import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.validator.annotation.UniqueEmailPreRegister;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,6 +12,9 @@ public class UniqueEmailPreRegisterValidator implements ConstraintValidator<Uniq
     @Autowired
     private PreRegisterRepository repository;
 
+    @Autowired
+    private AppUserRepository userRepository;
+
     @Override
     public void initialize(UniqueEmailPreRegister constraintAnnotation) {
     }
@@ -20,6 +24,6 @@ public class UniqueEmailPreRegisterValidator implements ConstraintValidator<Uniq
         if (email == null || email.isEmpty()) {
             return true; // @NotNull/@NotEmpty should handle this
         }
-        return !repository.existsByEmail(email);
+        return !repository.existsByEmail(email) && !userRepository.existsByEmail(email);
     }
 }
