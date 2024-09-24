@@ -57,8 +57,8 @@ public class AppUserDTOConverter {
         AppUserDetail appUserDetail = data.getAppUserDetail();
         dto.setStatus(appUserDetail.getStatus());
         dto.setType(appUserDetail.getType());
-        dto.setAvatar(appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
-        dto.setCover(appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
+        dto.setAvatar(appUserDetail.getAvatar() != null && appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
+        dto.setCover(appUserDetail.getCover() != null && appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
         dto.setBiodata(appUserDetail.getBiodata());
         dto.setCreatedAt(Formatter.formatDateTimeApps(appUserDetail.getCreatedAt()));
 
