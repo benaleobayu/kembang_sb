@@ -48,23 +48,5 @@ public class UserActiveDTOConverter {
         data.setUpdatedAt(LocalDateTime.now());
     }
 
-    public ListTagUserResponse convertToListTagUserRespose(AppUser data) {
-        ListTagUserResponse dto = modelMapper.map(data, ListTagUserResponse.class);
-
-        dto.setId(data.getId());
-        dto.setName(data.getAppUserDetail().getName());
-        String avatar;
-
-        if (data.getAppUserDetail().getAvatar() != null && data.getAppUserDetail().getAvatar().startsWith("/uploads")) {
-            avatar = baseUrl + data.getAppUserDetail().getAvatar();
-        } else {
-            avatar = data.getAppUserDetail().getAvatar();
-        }
-
-        dto.setAvatar(avatar);
-
-        // return
-        return dto;
-    }
 }
 

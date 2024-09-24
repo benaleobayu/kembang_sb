@@ -31,11 +31,11 @@ import static com.bca.byc.controller.PublicController.urlRoute;
 public class PublicController {
 
     static final String urlRoute = "/api/v1/public";
+
     private final SettingService settingsService;
     private final FaqCategoryService faqCategoryService;
     private final MsBusinessCategoryService businessCategoryService;
     private final MsLocationService locationService;
-    private final ExpectItemService expectItemService;
     private final ExpectCategoryService expectCategoryService;
     private final PreRegisterService preRegisterService;
 

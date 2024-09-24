@@ -90,11 +90,7 @@ public class UserActiveServiceImpl implements UserActiveService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
         AppUserAttribute attribute = data.getAppUserAttribute();
         // toggle
-        if (attribute.getIsSuspended().equals(true)) {
-            attribute.setIsSuspended(false);
-        } else {
-            attribute.setIsSuspended(true);
-        }
+        attribute.setIsSuspended(!attribute.getIsSuspended().equals(true));
         // save
         data.setAppUserAttribute(attribute);
         repository.save(data);

@@ -64,4 +64,9 @@ public class AppConfig {
         return baseUrl;
     }
 
+    @Bean
+    public Integer jwtExpirationMs() {
+        return jwtExpirationMs;
+    }
+
 }

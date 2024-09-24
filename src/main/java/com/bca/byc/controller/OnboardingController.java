@@ -6,9 +6,7 @@ import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.OnboardingService;
-import com.bca.byc.service.impl.AppUserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +17,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import static com.bca.byc.controller.OnboardingController.urlRoute;
+
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/onboarding")
+@RequestMapping(urlRoute)
 @Tag(name = "Apps Onboarding API")
 @AllArgsConstructor
 public class OnboardingController {
 
-    private final AppUserServiceImpl appUserService;
+    static final String urlRoute = "/api/v1/onboarding";
+
     private final OnboardingService service;
-    private final AppUserService userService;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping

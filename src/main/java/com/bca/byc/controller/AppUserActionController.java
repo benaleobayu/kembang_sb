@@ -27,7 +27,6 @@ public class AppUserActionController {
 
     static final String urlRoute = "/api/v1";
 
-    private final TokenBlacklistService tokenBlacklist;
     private UserActionService userActionService;
 
     @PostMapping("/users/{userId}/follow")

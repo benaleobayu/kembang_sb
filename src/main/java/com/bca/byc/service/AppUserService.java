@@ -13,10 +13,6 @@ public interface AppUserService extends UserDetailsService {
 
 	AppUser findByEmail(String email);
 
-	public UserDetailResponseDTO findUserDetail();
-
-	void createNewUser(@Valid LoginRequestDTO dto);
-
 	AppUser findByUsername(String subject);
 
 	UserInfoResponse getUserDetails(String name);
