@@ -21,7 +21,7 @@ import static com.bca.byc.controller.AppUserActionController.urlRoute;
 @RestController
 @RequestMapping(urlRoute)
 @AllArgsConstructor
-@Tag(name = "Apps")
+@Tag(name = "Apps Action")
 @SecurityRequirement(name = "Authorization")
 public class AppUserActionController {
 

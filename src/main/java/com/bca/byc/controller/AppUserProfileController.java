@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.IOFileUploadException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +23,10 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(ApiUserController.urlRoute)
+@RequestMapping(AppUserProfileController.urlRoute)
 @Tag(name = "Apps User API", description = "User API")
 @SecurityRequirement(name = "Authorization")
-public class ApiUserController {
+public class AppUserProfileController {
 
     static final String urlRoute = "/api/v1/users";
     private final AppUserService userService;
