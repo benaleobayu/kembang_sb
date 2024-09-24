@@ -39,20 +39,6 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public UserDetailResponseDTO findUserDetail() {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        UserDetailResponseDTO dto = new UserDetailResponseDTO();
-        String username = ctx.getAuthentication().getName();
-        dto.setUsername(username);
-        return dto;
-    }
-
-    @Override
-    public void createNewUser(LoginRequestDTO dto) {
-
-    }
-
-    @Override
     public AppUser findByUsername(String subject) {
         return appUserRepository.findByEmail(subject)
                 .orElseThrow(() -> new ResourceNotFoundException("invalid user email..."));
