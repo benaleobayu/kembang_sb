@@ -15,9 +15,6 @@ import java.util.List;
 
 public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
-
-    Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedFalse(String userName, StatusType statusType, Pageable pageable);
-
     @Query("SELECT u FROM AppUser u " +
             "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
@@ -68,7 +65,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "FROM AppUser u " +
             "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "JOIN Business b ON b.user.id = u.id AND b.isPrimary = true " + // Filter for primary businesses
+            "LEFT JOIN Business b ON b.user.id = u.id AND b.isPrimary = true " + // Filter for primary businesses
             "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
             "WHERE " +
