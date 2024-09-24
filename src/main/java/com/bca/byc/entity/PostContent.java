@@ -27,6 +27,9 @@ public class PostContent extends AbstractBaseEntityNoUUID {
     @Column(name = "original_name", columnDefinition = "text")
     private String originalName;
 
+    @Column(name = "thumbnail", columnDefinition = "text")
+    private String thumbnail;
+
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
