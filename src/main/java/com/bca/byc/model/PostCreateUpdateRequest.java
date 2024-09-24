@@ -13,7 +13,7 @@ public class PostCreateUpdateRequest {
 
     private PostLocationRequest postLocation;
 
-    private Long postCategoryId;
+    private Integer postCategoryId;
 
     private Boolean isCommentable;
 

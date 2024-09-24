@@ -66,18 +66,10 @@ public class PostDTOConverter {
             });
         }
         data.setTags(tags);
-        // set list of TagUsers
-//        Set<AppUser> tagUsers = new HashSet<>();
-//        for (Long TagUserIds : dto.getTagUserIds()) {
-//            Optional<AppUser> tagUser = userRepository.findById(TagUserIds);
-//            tagUser.ifPresent(tagUsers::add);
-//        }
-//        data.setTagUsers(tagUsers);
-//         set the post location
 
         // post category
         if (dto.getPostCategoryId() != null) {
-            PostCategory postCategory = postCategoryRepository.findById(dto.getPostCategoryId()).orElse(null);
+            PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
             data.setPostCategory(postCategory);
         }
         // post location
