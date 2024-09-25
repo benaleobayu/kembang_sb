@@ -7,6 +7,8 @@ import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppSearchService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/app-search")
+@RequestMapping("/api/v1/data/")
 @AllArgsConstructor
-@Tag(name = "App Search API")
+@Tag(name = "Apps Data API")
+@SecurityRequirement(name = "Authorization")
 public class AppSearchController {
 
     private final AppSearchService service;
 
+    @Operation(summary = "Get list result posts", description = "Get list result posts")
     @GetMapping("/result/post")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultPostResponse>>> listResultPosts(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -36,6 +40,7 @@ public class AppSearchController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, tag)));
     }
 
+    @Operation(summary = "Get list result tags", description = "Get list result tags")
     @GetMapping("/result/tag")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultTagResponse>>> listResultTags(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -49,6 +54,7 @@ public class AppSearchController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultTags(email, pages, limit, sortBy, direction, tag)));
     }
 
+    @Operation(summary = "Get list result accounts", description = "Get list result accounts")
     @GetMapping("/result/account")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultAccountResponse>>> listResultAccounts(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
