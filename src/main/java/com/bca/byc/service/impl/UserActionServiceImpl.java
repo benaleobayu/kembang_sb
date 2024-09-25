@@ -1,11 +1,9 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Post;
+import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.UserActionRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,10 @@ import org.springframework.stereotype.Service;
 public class UserActionServiceImpl implements UserActionService {
 
     private final UserActionRepository userActionRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final CommentReplyRepository commentReplyRepository;
 
     @Override
     public void followUser(Long userId, String email) {
@@ -45,12 +46,80 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void likeDislikePost(Long postId, String email) {
+    public void likeDislikePost(Long postId, String email, Boolean isLike) {
         Post post = postRepository.findById(postId)
                 .orElseThrow( () -> new ResourceNotFoundException("Post not found"));
 
         AppUser user = userActionRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
 
+        LikeDislike existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
+
+        if (existingLikeDislike != null) {
+            if (existingLikeDislike.getIsLike() == isLike) {
+                likeDislikeRepository.delete(existingLikeDislike);
+            } else {
+                existingLikeDislike.setIsLike(isLike);
+                likeDislikeRepository.save(existingLikeDislike);
+            }
+        } else {
+            LikeDislike newLikeDislike = new LikeDislike();
+            newLikeDislike.setIsLike(isLike);
+            newLikeDislike.setPost(post);
+            newLikeDislike.setUser(user);
+            likeDislikeRepository.save(newLikeDislike);
+        }
+    }
+
+    @Override
+    public void likeDislikeComment(Long id, String email, Boolean isLike) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow( () -> new ResourceNotFoundException("Post not found"));
+
+        AppUser user = userActionRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+
+        LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
+
+        if (existingLikeDislike != null) {
+            if (existingLikeDislike.getIsLike() == isLike) {
+                likeDislikeRepository.delete(existingLikeDislike);
+            } else {
+                existingLikeDislike.setIsLike(isLike);
+                likeDislikeRepository.save(existingLikeDislike);
+            }
+        } else {
+            LikeDislike newLikeDislike = new LikeDislike();
+            newLikeDislike.setIsLike(isLike);
+            newLikeDislike.setComment(comment);
+            newLikeDislike.setUser(user);
+            likeDislikeRepository.save(newLikeDislike);
+        }
+    }
+
+    @Override
+    public void likeDislikeCommentReply(Long id, String email, Boolean isLike) {
+        CommentReply comment = commentReplyRepository.findById(id)
+                .orElseThrow( () -> new ResourceNotFoundException("Post not found"));
+
+        AppUser user = userActionRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+
+        LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(comment, user);
+
+        if (existingLikeDislike != null) {
+            if (existingLikeDislike.getIsLike() == isLike) {
+                likeDislikeRepository.delete(existingLikeDislike);
+            } else {
+                existingLikeDislike.setIsLike(isLike);
+                likeDislikeRepository.save(existingLikeDislike);
+            }
+        } else {
+            LikeDislike newLikeDislike = new LikeDislike();
+            newLikeDislike.setIsLike(isLike);
+            newLikeDislike.setCommentReply(comment);
+            newLikeDislike.setUser(user);
+            likeDislikeRepository.save(newLikeDislike);
+        }
     }
 }
