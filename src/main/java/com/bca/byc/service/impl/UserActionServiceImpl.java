@@ -1,7 +1,10 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.exception.ResourceNotFoundException;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.UserActionRepository;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserActionServiceImpl implements UserActionService {
 
     private final UserActionRepository userActionRepository;
+    private final PostRepository postRepository;
 
     @Override
     public void followUser(Long userId, String email) {
@@ -41,7 +45,12 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void likeDislikePost(Long userId, String name) {
+    public void likeDislikePost(Long postId, String email) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow( () -> new ResourceNotFoundException("Post not found"));
+
+        AppUser user = userActionRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
 
     }
 }

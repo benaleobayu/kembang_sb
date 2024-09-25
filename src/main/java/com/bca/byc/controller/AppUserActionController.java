@@ -1,6 +1,7 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActionService;
 import com.bca.byc.service.util.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,9 +45,10 @@ public class AppUserActionController {
     }
 
     @PostMapping("/post/{postId}/like-post")
-    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("postId") Long postId, Principal principal) {
+    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("postId") Long postId) {
         log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", postId);
-        userActionService.likeDislikePost(postId, principal.getName());
+        String email = ContextPrincipal.getPrincipal();
+        userActionService.likeDislikePost(postId, email);
         return ResponseEntity.ok(new ApiResponse(true, "Post liked successfully"));
     }
 }

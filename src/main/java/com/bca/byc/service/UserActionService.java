@@ -6,6 +6,6 @@ public interface UserActionService {
 
     void unfollowUser(Long userId, String name);
 
-    void likeDislikePost(Long userId, String name);
+    void likeDislikePost(Long postId, String email);
 
 }

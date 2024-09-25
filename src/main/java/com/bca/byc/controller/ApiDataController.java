@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,7 @@ public class ApiDataController {
     private final UserActiveService tagUserService;
     private final PostCategoryService postCategoryService;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags", description = "Get all tags")
     @GetMapping("/tag")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
@@ -49,6 +51,7 @@ public class ApiDataController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags user", description = "Get all tags user")
     @GetMapping("/tag-user")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListTagUserResponse>>> listDataTagUser(
@@ -65,6 +68,7 @@ public class ApiDataController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all post categories", description = "Get all post categories")
     @GetMapping("/post-category")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostCategory>>> listData(
