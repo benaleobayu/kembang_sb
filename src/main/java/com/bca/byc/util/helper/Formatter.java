@@ -22,7 +22,7 @@ public class Formatter {
         return formatDate != null ? formatDate.format(formatterLocalDateTime) : null;
     }
 
-    private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static String formatLocalDate(LocalDate dateTime) {
         return dateTime != null ? dateTime.format(formatterLocalDate) : null;
