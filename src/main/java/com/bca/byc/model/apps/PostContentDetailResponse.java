@@ -8,11 +8,11 @@ import java.util.List;
 @Data
 public class PostContentDetailResponse {
 
-    private Long id;
+    private Long contentId;
     private String content;
-    private String type;
+    private String contentType;
     private String thumbnail;
 
-    private List<TagUserResponse> tagUser = new ArrayList<>();
+    private List<TagUserResponse> contentTagsUser = new ArrayList<>();
 
 }
