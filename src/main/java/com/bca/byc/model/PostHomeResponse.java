@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.model.apps.PostOwnerResponse;
 import lombok.Data;
 
 import java.util.List;
@@ -7,36 +8,24 @@ import java.util.List;
 @Data
 public class PostHomeResponse {
 
-    private Long id;
+    private Long postId;
 
-    private String description;
+    private String postDescription;
 
-    private List<PostContent> posts;
+    private List<PostContent> postContentList;
 
-    private List<TagResponse> tags;
+    private List<String> postTagsList;
 
-    private AppUserResponse appUser;
-
-    @Data
-    private static class AppUserResponse {
-        private String name;
-    }
+    private PostOwnerResponse postOwner;
 
     @Data
-    private static class TagResponse {
-        private String name;
-    }
+    public static class PostContent {
 
-    @Data
-    private static class PostContent {
-
-        private Long id;
+        private Long contentId;
 
         private String content;
 
         private String type;
-
-        private String description;
 
         private String thumbnail;
     }
