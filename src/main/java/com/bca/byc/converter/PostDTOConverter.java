@@ -4,8 +4,12 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.repository.*;
+import com.bca.byc.model.apps.TagUserResponse;
+import com.bca.byc.repository.PostCategoryRepository;
+import com.bca.byc.repository.PostLocationRepository;
+import com.bca.byc.repository.TagRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -33,18 +38,30 @@ public class PostDTOConverter {
     public PostHomeResponse convertToListResponse(Post data) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
+        UserManagementConverter converter = new UserManagementConverter(baseUrl);
 
         dto.setPostId(data.getId());
         dto.setPostDescription(data.getDescription());
 
         // set list of post content
-        List<PostHomeResponse.PostContent> posts = new ArrayList<>();
+        List<PostContentDetailResponse> posts = new ArrayList<>();
         for (PostContent postContent : data.getPostContents()) {
-            PostHomeResponse.PostContent post = new PostHomeResponse.PostContent();
-            post.setContent(postContent.getContent());
-            post.setType(postContent.getType());
+            PostContentDetailResponse post = new PostContentDetailResponse();
+            post.setContent(
+                    postContent.getContent() != null && postContent.getContent().startsWith("uploads/") ?
+                            baseUrl + "/" + postContent.getContent() : postContent.getContent()
+            );
+            post.setContentType(postContent.getType());
             post.setContentId(postContent.getId());
             post.setThumbnail(postContent.getThumbnail());
+            post.setContentTagsUser(postContent.getTagUsers().stream()
+                    .map(tag -> new TagUserResponse(
+                            tag.getId(),
+                            tag.getAppUserDetail().getName(),
+                            tag.getAppUserDetail().getAvatar() != null && tag.getAppUserDetail().getAvatar().startsWith("uploads/") ?
+                            baseUrl + "/" + tag.getAppUserDetail().getAvatar() : tag.getAppUserDetail().getAvatar()))
+                    .collect(Collectors.toList())
+            );
             posts.add(post);
         }
         dto.setPostContentList(posts);
@@ -56,13 +73,11 @@ public class PostDTOConverter {
         dto.setPostTagsList(tags);
 
         AppUser appUser = data.getUser();
-        UserManagementConverter converter = new UserManagementConverter();
         PostOwnerResponse owner = converter.PostOwnerResponse(
                 dto.getPostOwner() != null ? dto.getPostOwner() : new PostOwnerResponse(),
                 appUser.getId(),
                 appUser.getName(),
-                appUser.getAppUserDetail() != null && appUser.getAppUserDetail().getAvatar().startsWith("uploads/") ?
-                        baseUrl + "/" + appUser.getAppUserDetail().getAvatar() : null,
+                appUser.getAppUserDetail().getAvatar(),
                 appUser.getBusinesses().stream()
                         .filter(Business::getIsPrimary)
                         .findFirst()
