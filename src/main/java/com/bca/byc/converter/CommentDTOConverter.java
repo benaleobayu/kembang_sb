@@ -2,15 +2,16 @@ package com.bca.byc.converter;
 
 import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
-import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.CommentCreateRequest;
-
+import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
+import com.bca.byc.model.apps.OwnerDataResponse;
+import com.bca.byc.util.helper.Formatter;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
@@ -18,12 +19,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDTOConverter {
 
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     private ModelMapper modelMapper;
 
     // for get data
     public ListCommentResponse convertToPageListResponse(Comment data) {
         // mapping Entity with DTO Entity
         ListCommentResponse dto = modelMapper.map(data, ListCommentResponse.class);
+        dto.setComment(data.getContent());
+        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        OwnerDataResponse owner = converter.OwnerDataResponse(
+                new OwnerDataResponse(),
+                data.getUser().getId(),
+                data.getUser().getName(),
+                data.getUser().getAppUserDetail().getAvatar()
+        );
+        dto.setOwner(owner);
+        dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
         // return
         return dto;
     }
@@ -35,7 +49,6 @@ public class CommentDTOConverter {
         // return
         return dto;
     }
-
 
 
     // for create data

@@ -8,4 +8,6 @@ public class ListCommentResponse {
     private String comment;
 
     private OwnerDataResponse owner;
+
+    private String createdAt;
 }

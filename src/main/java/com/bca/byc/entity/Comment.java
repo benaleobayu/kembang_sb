@@ -32,6 +32,10 @@ public class Comment extends AbstractBaseEntityTimestamp {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
+
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReply> commentReply = new ArrayList<>();
 

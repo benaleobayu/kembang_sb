@@ -38,7 +38,7 @@ public class PostCommentController {
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListCommentResponse>>> listDataComment(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @PathVariable("postId") Long postId) {
@@ -46,7 +46,7 @@ public class PostCommentController {
         String email = ContextPrincipal.getPrincipal();
         log.info("GET " + urlRoute + " endpoint hit, email = {} ", email);
 
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list MODEL", service.listDataComment(pages, limit, sortBy, direction, keyword, postId)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list comment", service.listDataComment(pages, limit, sortBy, direction, keyword, postId)));
     }
 
     @GetMapping("/{postId}/comments/{id}")
