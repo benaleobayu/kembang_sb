@@ -3,15 +3,19 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.enums.StatusType;
-import com.bca.byc.enums.UserType;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserManagementConverter {
+
+    @Value("${app.base.url}")
+    private static String baseUrl;
 
     public void DetailResponse(
             AppUser data,
@@ -95,5 +99,25 @@ public class UserManagementConverter {
         );
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
+    }
+
+
+    public PostOwnerResponse PostOwnerResponse(
+            PostOwnerResponse dto,
+            Long id,
+            String name,
+            String avatar,
+            String businessName,
+            String lineOfBusiness,
+            Boolean isPrimary
+    ) {
+        dto.setId(id);
+        dto.setName(name);
+        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : null);
+        dto.setBusinessName(businessName);
+        dto.setLineOfBusiness(lineOfBusiness);
+        dto.setIsPrimary(isPrimary);
+
+        return dto;
     }
 }
