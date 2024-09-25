@@ -28,6 +28,9 @@ public class ChatRoom extends AbstractBaseEntity {
     @Column(nullable = false)
     private String roomName;
 
+    @Column(nullable = true, length = 1000)
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoomType type;
