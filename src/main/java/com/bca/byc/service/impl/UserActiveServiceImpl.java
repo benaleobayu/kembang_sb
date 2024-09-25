@@ -16,7 +16,6 @@ import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -118,7 +117,7 @@ public class UserActiveServiceImpl implements UserActiveService {
             return dto;
         }).collect(Collectors.toList());
 
-       return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override

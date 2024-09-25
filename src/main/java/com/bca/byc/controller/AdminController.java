@@ -1,6 +1,5 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;

@@ -6,15 +6,15 @@ import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
+import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.model.RoleCreateRequest;
 import com.bca.byc.service.RoleService;
-import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -126,7 +126,7 @@ public class RoleServiceImpl implements RoleService {
             return dto;
         }).collect(Collectors.toList());
 
-      return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override
