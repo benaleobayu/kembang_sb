@@ -1,7 +1,12 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.ChatMessage;
+import com.bca.byc.entity.ChatRoom;
+import com.bca.byc.enums.RoomType;
 import com.bca.byc.service.ChatService;
+
+import com.bca.byc.service.impl.AppUserServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,44 +15,120 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import com.bca.byc.response.ChatMessageDTO;
+import com.bca.byc.service.ChatRoomService;
+import com.bca.byc.response.ApiDataResponse;
+import java.util.HashMap;
+import java.util.Map;
+@Tag(name = "Chat API", description = "API for managing chat messages")
 @RestController
 @RequestMapping("/api/chat")
 @Slf4j
 public class ChatController {
+    @Autowired
+    private AppUserServiceImpl appUserService;
 
     @Autowired
     private ChatService chatService;
+
     @Autowired
-    private SimpMessagingTemplate messagingTemplate; 
+    private ChatRoomService chatRoomService;
+    
+    
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
-
-// Endpoint to save a message
+    @Operation(summary = "Send a chat message", description = "Send a message from one user to another using secure_id, creating a chat room if it doesn't exist")
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestBody ChatMessage chatMessage) {
-        log.info("POST /api/chat/send hit");
+    public ResponseEntity<?> sendMessage(@RequestBody ChatMessageDTO chatMessageDTO) {
         try {
-            ChatMessage savedMessage = chatService.saveMessage(chatMessage.getFromUser(), chatMessage.getToUser(), chatMessage.getMessage());
-          //  String channel = "/private/" + chatMessage.getFromUser() + "/" + chatMessage.getToUser() + "/queue/messages";
-            String channel2 = "/private/" + chatMessage.getToUser() + "/" + chatMessage.getFromUser() + "/queue/messages";
-           // messagingTemplate.convertAndSend(channel, savedMessage);
-            messagingTemplate.convertAndSend(channel2, savedMessage);
-            return ResponseEntity.ok(savedMessage);
-
+            // Fetch the sender (fromUser)
+            AppUser fromUser = appUserService.findBySecureId(chatMessageDTO.getFromUserSecureId());
+            if (fromUser == null) {
+                return ResponseEntity.status(404).body("Sender user not found");
+            }
+    
+            // Handle the message depending on room type
+            if (chatMessageDTO.getRoomType() == RoomType.PRIVATE) {
+                return handlePrivateMessage(chatMessageDTO, fromUser);
+            } else if (chatMessageDTO.getRoomType() == RoomType.CHANNEL) {
+                return handleChannelMessage(chatMessageDTO, fromUser);
+            } else {
+                return ResponseEntity.status(400).body("Invalid room type");
+            }
         } catch (Exception e) {
-            // Log the error
-            log.error("Error sending message from {} to {}: {}", chatMessage.getFromUser(), chatMessage.getToUser(), e.getMessage());
-
-            // Return error response
-            return ResponseEntity.status(500).body("Failed to send message");
+            log.error("Error sending message", e);
+            return ResponseEntity.status(500).body("An error occurred while sending the message");
         }
     }
-
-    // Endpoint to fetch chat history between two users
-    @GetMapping("/private/{fromUser}/{toUser}")
-    public List<ChatMessage> getPrivateChatHistory(@PathVariable String fromUser, @PathVariable String toUser) {
-        return chatService.getPrivateChatHistory(fromUser, toUser);
+    
+    private ResponseEntity<?> handlePrivateMessage(ChatMessageDTO chatMessageDTO, AppUser fromUser) {
+        // Ensure toUserSecureId is provided
+        if (chatMessageDTO.getToUserSecureId() == null) {
+            return ResponseEntity.status(400).body("toUserSecureId is required for private chat");
+        }
+    
+        // Fetch the receiver (toUser)
+        AppUser toUser = appUserService.findBySecureId(chatMessageDTO.getToUserSecureId());
+        if (toUser == null) {
+            return ResponseEntity.status(404).body("Recipient user not found");
+        }
+    
+        // Check if a chat room exists between these two users, or create one
+        ChatRoom chatRoom = chatRoomService.findRoomByParticipantTypes(fromUser.getSecureId(), toUser.getSecureId(),RoomType.PRIVATE)
+            .orElseGet(() -> createPrivateChatRoom(fromUser, toUser));
+    
+        // Save and send the message
+        ChatMessage savedMessage = chatService.saveMessage(fromUser, toUser, chatMessageDTO.getMessage(), chatRoom);
+        messagingTemplate.convertAndSend("/private/" + toUser.getSecureId() + "/queue/messages", savedMessage);
+        
+        Map<String, String> dataObject = new HashMap<>();
+        dataObject.put("chat_room_secure_id", chatRoom.getSecureId());
+        dataObject.put("message_secure_id", savedMessage.getSecureId());
+        return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully create private messages", dataObject));
     }
+    
+    private ResponseEntity<?> handleChannelMessage(ChatMessageDTO chatMessageDTO, AppUser fromUser) {
+        // Ensure chatRoomSecureId is provided
+        if (chatMessageDTO.getChatRoomSecureId() == null) {
+            return ResponseEntity.status(400).body("chatRoomSecureId is required for channel chat");
+        }
+    
+        // Fetch the chat room by secureId
+        ChatRoom chatRoom = chatRoomService.findBySecureId(chatMessageDTO.getChatRoomSecureId())
+            .orElseThrow(() -> new RuntimeException("Chat room not found"));
+    
+        // Save and send the message (no toUser for a channel)
+        ChatMessage savedMessage = chatService.saveMessage(fromUser, null, chatMessageDTO.getMessage(), chatRoom);
+        messagingTemplate.convertAndSend("/channel/" + chatRoom.getSecureId() + "/queue/messages", savedMessage);
+    
+        return ResponseEntity.ok(savedMessage);
+    }
+    
+    private ChatRoom createPrivateChatRoom(AppUser fromUser, AppUser toUser) {
+        // Create a new private chat room
+        List<AppUser> participants = List.of(fromUser, toUser);
+        List<String> participantSecureIds = participants.stream()
+                .map(AppUser::getSecureId)
+                .collect(Collectors.toList());
+    
+        ChatRoom newRoom = chatRoomService.createRoom("Private Chat", participantSecureIds, RoomType.PRIVATE, fromUser.getSecureId());
+        log.info("Created new private chat room: " + newRoom.getSecureId());
+        return newRoom;
+    }
+    
+    
+    
+    
 }

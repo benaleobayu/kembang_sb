@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -21,11 +20,15 @@ public class ChatMessage extends AbstractBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String fromUser;  // The user who sends the message
+    // Reference the AppUser entity for the sender, using secure_id as the foreign key
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_user_secure_id", referencedColumnName = "secure_id", nullable = false)
+    private AppUser fromUser;  // The user who sends the message
 
-    @Column(nullable = false)
-    private String toUser;    // The user who receives the message
+    // Reference the AppUser entity for the receiver, using secure_id as the foreign key, nullable
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_user_secure_id", referencedColumnName = "secure_id", nullable = true)
+    private AppUser toUser;    // The user who receives the message, nullable for room-based chats
 
     @Column(nullable = false)
     private String message;   // The message content
@@ -39,6 +42,7 @@ public class ChatMessage extends AbstractBaseEntity {
     @Column
     private LocalDateTime readAt;  // Time the message was read
 
-    @Column(nullable = false)
-    private String roomId;  // Unique room ID for private chat
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private ChatRoom chatRoom;  // The chat room this message belongs to
 }

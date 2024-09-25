@@ -1,6 +1,8 @@
 package com.bca.byc.service;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.ChatMessage;
+import com.bca.byc.entity.ChatRoom;
 import com.bca.byc.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +17,17 @@ public class ChatService {
     private ChatMessageRepository chatMessageRepository;
 
     // Save a new message
-    public ChatMessage saveMessage(String fromUser, String toUser, String message) {
-        String roomId = generatePrivateRoomId(fromUser, toUser);  // Generate roomId
-        ChatMessage chatMessage = new ChatMessage(null, fromUser, toUser, message, LocalDateTime.now(), null, null, roomId);
+    public ChatMessage saveMessage(AppUser fromUser, AppUser toUser, String message, ChatRoom room) {
+        // Create and populate the ChatMessage entity
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setFromUser(fromUser);         // Set the sender (fromUser)
+        chatMessage.setToUser(toUser);             // Set the receiver (toUser)
+        chatMessage.setMessage(message);           // Set the message content
+        chatMessage.setTimestamp(LocalDateTime.now()); // Set the current timestamp
+        chatMessage.setChatRoom(room);             // Set the room the message belongs to
+        
+        // Save and return the ChatMessage
         return chatMessageRepository.save(chatMessage);
-    }
-
-    // Fetch chat history between two users (private message)
-    public List<ChatMessage> getPrivateChatHistory(String fromUser, String toUser) {
-        String roomId = generatePrivateRoomId(fromUser, toUser);
-        return chatMessageRepository.findByRoomIdOrderByTimestamp(roomId);
     }
 
     // Utility method to generate a consistent room ID

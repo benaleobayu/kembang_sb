@@ -37,7 +37,14 @@ public class AppUserServiceImpl implements AppUserService {
         return appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("invalid user email"));
     }
+    @Override
 
+    public AppUser findBySecureId(String secureId) {
+        return appUserRepository.findBySecureId(secureId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with secure_id: " + secureId));
+    }
+
+    
     @Override
     public AppUser findByUsername(String subject) {
         return appUserRepository.findByEmail(subject)

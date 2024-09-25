@@ -14,6 +14,7 @@ public interface AppUserService extends UserDetailsService {
 	AppUser findByEmail(String email);
 
 	AppUser findByUsername(String subject);
+	AppUser findBySecureId(String secureId);
 
 	UserInfoResponse getUserDetails(String name);
 

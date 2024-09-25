@@ -8,12 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bca.byc.entity.AppUser;
-
+import java.util.List;
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
 	Optional<AppUser> findByEmail(String email);
 
     boolean existsByEmail(String email);
+    Optional<AppUser> findBySecureId(String secureId);
+
+    List<AppUser> findBySecureIdIn(List<String> secureIds); 
 
 //    @Query(value = "SELECT au, aud, aua FROM AppUser au " +
 //            "LEFT JOIN au.appUserDetail aud ON aud.id = au.appUserDetail.id " +
