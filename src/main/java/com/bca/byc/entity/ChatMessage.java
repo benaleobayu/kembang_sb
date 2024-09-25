@@ -43,6 +43,6 @@ public class ChatMessage extends AbstractBaseEntity {
     private LocalDateTime readAt;  // Time the message was read
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_secure_id", referencedColumnName = "secure_id", nullable = true)
     private ChatRoom chatRoom;  // The chat room this message belongs to
 }
