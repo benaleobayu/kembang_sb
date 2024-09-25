@@ -30,7 +30,10 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "status", columnDefinition = "boolean default true")
-    private boolean status = true;
+    private Boolean status = true;
+
+    @Column(name = "avatar")
+    private String avatar;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")

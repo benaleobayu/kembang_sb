@@ -1,19 +1,24 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AdminDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AdminService;
+import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -111,8 +116,17 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        return null;
+    public ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : (keyword + "%");
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<AppAdmin> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
+            AdminDetailResponse dto = converter.convertToListResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.PermissionResponse;
-import com.bca.byc.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,17 +18,19 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 @Component
 @AllArgsConstructor
 public class AdminDTOConverter {
 
-    private final RoleService roleService;
     private ModelMapper modelMapper;
 
     // for get data
     public AdminDetailResponse convertToListResponse(AppAdmin data) {
         // mapping Entity with DTO Entity
         AdminDetailResponse dto = modelMapper.map(data, AdminDetailResponse.class);
+        dto.setAvatar(data.getAvatar() != null && data.getAvatar().startsWith("uploads/") ? baseUrl + "/" + data.getAvatar() : data.getAvatar());
         // get role name
         dto.setRoleName(data.getRole().getName());
         // return
