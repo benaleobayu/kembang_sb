@@ -50,7 +50,7 @@ public class PostCommentController {
     }
 
     @GetMapping("/{postId}/comments/{id}")
-    public ResponseEntity<?> getById(@PathVariable("postId") Long postId,@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("postId") Long postId, @PathVariable("id") Long id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             CommentDetailResponse item = service.findDataById(postId, id);
@@ -74,9 +74,10 @@ public class PostCommentController {
 
     @PutMapping("/{postId}/comments/{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("postId") Long postId, @PathVariable("id") Long id, @Valid @RequestBody CommentCreateRequest item) {
+        String email = ContextPrincipal.getPrincipal();
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            service.updateData(postId, id, item);
+            service.updateData(postId, id, item, email);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post comments"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

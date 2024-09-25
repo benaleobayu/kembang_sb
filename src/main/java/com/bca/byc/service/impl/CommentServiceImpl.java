@@ -13,6 +13,7 @@ import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.CommentService;
 import com.bca.byc.util.PaginationUtil;
@@ -22,12 +23,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOwnership;
+import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
+import static com.bca.byc.repository.handler.HandlerRepository.getEntityByEmail;
+import static com.bca.byc.repository.handler.HandlerRepository.getEntityById;
 
 @Service
 @AllArgsConstructor
@@ -73,45 +82,35 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateData(Long postId, Long id, CommentCreateRequest dto) throws BadRequestException {
-        // check exist and get
-        Comment data = commentRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID Comment ID"));
+    public void updateData(Long postId, Long id, CommentCreateRequest dto, String email) throws BadRequestException {
+        Post post = getEntityById(postId, postRepository, "Post not found");
+        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        Comment comment = getEntityById(id, commentRepository, "Comment not found");
+        // check data
+        checkCommentOwnership(comment, post);
+        checkCommentUser(comment, user);
 
         // update
-        converter.convertToUpdateRequest(data, dto);
+        converter.convertToUpdateRequest(comment, dto);
 
         // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
 
         // save
-        commentRepository.save(data);
+        commentRepository.save(comment);
     }
 
     @Override
     public void deleteData(Long postId, Long id, String email) throws ResourceNotFoundException {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
-
-        // jika comment bukan milik post
-        if (!comment.getPost().getId().equals(post.getId())) {
-            throw new ResourceNotFoundException("Comment bukan milik post");
-        }
-
-        // jika comment bukan milik user
-        if (!comment.getPost().getUser().getId().equals(user.getId())) {
-            throw new ResourceNotFoundException("Comment bukan milik user");
-        }
+        Post post = getEntityById(postId, postRepository, "Post not found");
+        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        Comment comment = getEntityById(id, commentRepository, "Comment not found");
+        // check data
+        checkCommentOwnership(comment, post);
+        checkCommentUser(comment, user);
 
         // delete data
-        if (!commentRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Comment tidak ada");
-        } else {
-            commentRepository.deleteById(id);
-        }
+        commentRepository.deleteById(id);
     }
+
 }
