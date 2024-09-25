@@ -31,21 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (jwtToken != null) {
             try {
-                // Validasi token JWT
                 Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(jwtToken);
-                // Jika valid, Anda bisa menambahkan autentikasi ke SecurityContext
-                // SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (ExpiredJwtException ex) {
                 List<String> details = new ArrayList<>();
                 details.add("Token has expired. Please log in again.");
 
-                ErrorResponseDTO errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.TOKEN_EXPIRED, HttpStatus.FORBIDDEN);
+                ErrorResponseDTO errorResponse = null;
 
-                // Set response status and content type
-                response.setStatus(HttpServletResponse.SC_FOUND);
+                if (request.getRequestURI().contains("cms/")) {
+                    errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.REDIRECT, HttpStatus.FORBIDDEN);
+                    response.setStatus(HttpServletResponse.SC_FOUND); // 302
+                } else if (request.getRequestURI().contains("api/")) {
+                    errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+                }
                 response.setContentType("application/json");
 
-                // Write the ErrorResponseDTO to response as JSON
                 String jsonResponse = objectMapper.writeValueAsString(errorResponse);
                 response.getWriter().write(jsonResponse);
 
@@ -53,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // Lanjutkan filter chain jika tidak ada masalah dengan JWT
         filterChain.doFilter(request, response);
     }
 

@@ -16,7 +16,8 @@ public enum ErrorCode {
 	METHOD_NOT_ALLOWED(10),
 	NOT_ACCEPTABLE(11),
 	REQUEST_TIMEOUT(12),
-	TOKEN_EXPIRED(302);
+	TOKEN_EXPIRED(404),
+	REDIRECT(302),;
 
 	private int code;
 	ErrorCode(int code) {
