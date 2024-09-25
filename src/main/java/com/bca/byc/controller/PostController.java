@@ -6,7 +6,6 @@ import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
-import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;

@@ -2,14 +2,17 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.repository.*;
+import com.bca.byc.repository.PostContentRepository;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
@@ -23,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,7 +102,7 @@ public class PostServiceImpl implements PostService {
             return dto;
         }).collect(Collectors.toList());
 
-       return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
 }

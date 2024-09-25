@@ -6,7 +6,6 @@ import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,9 +24,7 @@ public class PostDTOConverter {
 
     private final ModelMapper modelMapper;
 
-    private final PostRepository postRepository;
     private final TagRepository tagRepository;
-    private final PostContentRepository postContentRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostCategoryRepository postCategoryRepository;
 
@@ -153,7 +150,6 @@ public class PostDTOConverter {
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
     }
-
 
 
 }
