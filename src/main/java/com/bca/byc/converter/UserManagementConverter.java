@@ -117,7 +117,7 @@ public class UserManagementConverter {
     ) {
         dto.setId(id);
         dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : null);
+        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
@@ -134,10 +134,22 @@ public class UserManagementConverter {
             List<TagUserResponse> tagsUser
     ) {
         dto.setContentId(contentId);
-        dto.setContent(content);
+        dto.setContent(content != null && content.startsWith("uploads/") ? baseUrl + "/" + content : content);
         dto.setContentType(contentType);
         dto.setThumbnail(thumbnail);
         dto.setContentTagsUser(tagsUser);
+        return dto;
+    }
+
+    public TagUserResponse TagUserResponse(
+            TagUserResponse dto,
+            Long id,
+            String name,
+            String avatar
+    ) {
+        dto.setId(id);
+        dto.setName(name);
+        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
         return dto;
     }
 }

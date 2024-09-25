@@ -46,23 +46,20 @@ public class PostDTOConverter {
         // set list of post content
         List<PostContentDetailResponse> posts = new ArrayList<>();
         for (PostContent postContent : data.getPostContents()) {
-            PostContentDetailResponse post = new PostContentDetailResponse();
-            post.setContent(
-                    postContent.getContent() != null && postContent.getContent().startsWith("uploads/") ?
-                            baseUrl + "/" + postContent.getContent() : postContent.getContent()
+            PostContentDetailResponse postContentDetailResponse = converter.PostContentDetailResponse(
+                    new PostContentDetailResponse(),
+                    postContent.getId(),
+                    postContent.getContent(),
+                    postContent.getType(),
+                    postContent.getThumbnail(),
+                    postContent.getTagUsers().stream().map(tagUser -> converter.TagUserResponse(
+                            new TagUserResponse(),
+                            tagUser.getId(),
+                            tagUser.getAppUserDetail().getName(),
+                            tagUser.getAppUserDetail().getAvatar()
+                    )).collect(Collectors.toList())
             );
-            post.setContentType(postContent.getType());
-            post.setContentId(postContent.getId());
-            post.setThumbnail(postContent.getThumbnail());
-            post.setContentTagsUser(postContent.getTagUsers().stream()
-                    .map(tag -> new TagUserResponse(
-                            tag.getId(),
-                            tag.getAppUserDetail().getName(),
-                            tag.getAppUserDetail().getAvatar() != null && tag.getAppUserDetail().getAvatar().startsWith("uploads/") ?
-                            baseUrl + "/" + tag.getAppUserDetail().getAvatar() : tag.getAppUserDetail().getAvatar()))
-                    .collect(Collectors.toList())
-            );
-            posts.add(post);
+            posts.add(postContentDetailResponse);
         }
         dto.setPostContentList(posts);
 
