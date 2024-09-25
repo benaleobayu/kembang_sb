@@ -35,7 +35,9 @@ public class DevApplication {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(
                 "https://admin-byc2024.kelolain.id",
-                "http://localhost:4200"
+                "http://localhost:4200",
+                "http://localhost"
+                
         ));
         corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));

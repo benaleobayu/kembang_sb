@@ -44,6 +44,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
             "/v3/api-docs/.*",
+            "/ws",
+            "/ws/.*",
+            "/api/chat/.*",
             "/v3/api-docs");
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
