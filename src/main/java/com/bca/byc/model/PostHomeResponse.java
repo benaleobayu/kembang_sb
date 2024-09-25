@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import lombok.Data;
 
@@ -12,22 +13,10 @@ public class PostHomeResponse {
 
     private String postDescription;
 
-    private List<PostContent> postContentList;
+    private List<PostContentDetailResponse> postContentList;
 
     private List<String> postTagsList;
 
     private PostOwnerResponse postOwner;
-
-    @Data
-    public static class PostContent {
-
-        private Long contentId;
-
-        private String content;
-
-        private String type;
-
-        private String thumbnail;
-    }
 
 }
