@@ -21,7 +21,7 @@ public class Comment extends AbstractBaseEntityTimestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", columnDefinition = "text")
+    @Column(name = "content", columnDefinition = "varchar(250)")
     private String content;
 
     @Column(name = "status", columnDefinition = "boolean default true")
@@ -35,7 +35,15 @@ public class Comment extends AbstractBaseEntityTimestamp {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReply> commentReply = new ArrayList<>();
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LikeDislike> likeDislikes = new ArrayList<>();
+    // stats
+
+    @Column(name = "likes_count")
+    private Long LikesCount = 0L;
+
+    @Column(name = "shares_count")
+    private Long SharesCount = 0L;
+
+    @Column(name = "comments_count")
+    private Long CommentsCount = 0L;
 
 }

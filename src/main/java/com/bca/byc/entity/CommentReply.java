@@ -35,4 +35,15 @@ public class CommentReply extends AbstractBaseEntityTimestamp {
     @OneToMany(mappedBy = "commentReply", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeDislike> likeDislikes = new ArrayList<>();
 
+    // stats
+
+    @Column(name = "likes_count")
+    private Long LikesCount = 0L;
+
+    @Column(name = "shares_count")
+    private Long SharesCount = 0L;
+
+    @Column(name = "comments_count")
+    private Long CommentsCount = 0L;
+
 }

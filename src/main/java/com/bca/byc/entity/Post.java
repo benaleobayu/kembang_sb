@@ -21,7 +21,7 @@ public class Post extends AbstractBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "description", columnDefinition = "text")
+    @Column(name = "description", columnDefinition = "varchar(1000)")
     private String description;
 
     @Column(name = "status", columnDefinition = "boolean default true")
@@ -58,12 +58,6 @@ public class Post extends AbstractBaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
-//    @ManyToMany
-//    @JoinTable(name = "post_has_tag_users",
-//            joinColumns = @JoinColumn(name = "post_id"),
-//            inverseJoinColumns = @JoinColumn(name = "user_id"))
-//    private Set<AppUser> tagUsers = new HashSet<>();
-
     @ManyToOne
     @JoinColumn(name = "post_location_id")
     private PostLocation postLocation;
@@ -76,5 +70,17 @@ public class Post extends AbstractBaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostContent> postContents = new ArrayList<>();
+
+
+    // stats
+
+    @Column(name = "likes_count")
+    private Long LikesCount = 0L;
+
+    @Column(name = "shares_count")
+    private Long SharesCount = 0L;
+
+    @Column(name = "comments_count")
+    private Long CommentsCount = 0L;
 
 }
