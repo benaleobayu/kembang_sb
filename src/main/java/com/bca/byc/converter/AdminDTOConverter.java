@@ -9,6 +9,7 @@ import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.PermissionResponse;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,8 @@ public class AdminDTOConverter {
         dto.setAvatar(data.getAvatar() != null && data.getAvatar().startsWith("uploads/") ? baseUrl + "/" + data.getAvatar() : data.getAvatar());
         // get role name
         dto.setRoleName(data.getRole().getName());
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
         // return
         return dto;
     }

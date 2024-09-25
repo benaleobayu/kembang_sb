@@ -16,13 +16,13 @@ public class Formatter {
     }
 
     // cms formatter
-    private static final DateTimeFormatter formatterLocalDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter formatterLocalDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static String formatLocalDateTime(LocalDateTime formatDate) {
         return formatDate != null ? formatDate.format(formatterLocalDateTime) : null;
     }
 
-    private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter formatterLocalDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static String formatLocalDate(LocalDate dateTime) {
         return dateTime != null ? dateTime.format(formatterLocalDate) : null;
