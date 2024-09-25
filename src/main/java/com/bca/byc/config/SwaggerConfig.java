@@ -4,15 +4,17 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static com.bca.byc.config.AppConfig.baseUrl;
 
 @Configuration
+@RequiredArgsConstructor
 @SecurityScheme(
         name = "Authorization",
         type = SecuritySchemeType.HTTP,
@@ -21,6 +23,10 @@ import static com.bca.byc.config.AppConfig.baseUrl;
         description = "JWT Authorization header using the Bearer scheme."
 )
 public class SwaggerConfig {
+
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     @Bean
     public OpenAPI myOpenAPI() {
