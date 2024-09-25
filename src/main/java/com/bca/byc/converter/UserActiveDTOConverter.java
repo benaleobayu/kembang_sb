@@ -25,7 +25,7 @@ public class UserActiveDTOConverter {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
-        UserManagementConverter converter = new UserManagementConverter();
+        UserManagementConverter converter = new UserManagementConverter(baseUrl);
         converter.DetailResponse(data, dto);
 
         // return

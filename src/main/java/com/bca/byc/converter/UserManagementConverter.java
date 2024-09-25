@@ -4,18 +4,22 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
+import com.bca.byc.model.apps.TagUserResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserManagementConverter {
 
-    @Value("${app.base.url}")
-    private static String baseUrl;
+    private final String baseUrl;
+
+    public UserManagementConverter(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     public void DetailResponse(
             AppUser data,
@@ -118,6 +122,22 @@ public class UserManagementConverter {
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
 
+        return dto;
+    }
+
+    public PostContentDetailResponse PostContentDetailResponse(
+            PostContentDetailResponse dto,
+            Long contentId,
+            String content,
+            String contentType,
+            String thumbnail,
+            List<TagUserResponse> tagsUser
+    ) {
+        dto.setContentId(contentId);
+        dto.setContent(content);
+        dto.setContentType(contentType);
+        dto.setThumbnail(thumbnail);
+        dto.setContentTagsUser(tagsUser);
         return dto;
     }
 }

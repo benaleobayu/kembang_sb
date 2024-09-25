@@ -22,7 +22,7 @@ public class UserDeletedDTOConverter {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
-        UserManagementConverter converter = new UserManagementConverter();
+        UserManagementConverter converter = new UserManagementConverter(null);
         converter.DetailResponse(data, dto);
 
         // return
