@@ -3,16 +3,16 @@ package com.bca.byc.model.apps;
 import lombok.Data;
 
 @Data
-public class TagUserResponse {
+public class OwnerDataResponse {
 
     private Long id;
     private String name;
     private String avatar;
 
-    public TagUserResponse() {
+    public OwnerDataResponse() {
     }
 
-    public TagUserResponse(Long id, String name, String avatar) {
+    public OwnerDataResponse(Long id, String name, String avatar) {
         this.id = id;
         this.name = name;
         this.avatar = avatar;

@@ -6,7 +6,7 @@ import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.model.apps.TagUserResponse;
+import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
@@ -131,7 +131,7 @@ public class UserManagementConverter {
             String content,
             String contentType,
             String thumbnail,
-            List<TagUserResponse> tagsUser
+            List<OwnerDataResponse> tagsUser
     ) {
         dto.setContentId(contentId);
         dto.setContent(content != null && content.startsWith("uploads/") ? baseUrl + "/" + content : content);
@@ -141,8 +141,8 @@ public class UserManagementConverter {
         return dto;
     }
 
-    public TagUserResponse TagUserResponse(
-            TagUserResponse dto,
+    public OwnerDataResponse TagUserResponse(
+            OwnerDataResponse dto,
             Long id,
             String name,
             String avatar

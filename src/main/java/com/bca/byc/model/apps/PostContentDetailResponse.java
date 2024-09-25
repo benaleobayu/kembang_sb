@@ -13,6 +13,6 @@ public class PostContentDetailResponse {
     private String contentType;
     private String thumbnail;
 
-    private List<TagUserResponse> contentTagsUser = new ArrayList<>();
+    private List<OwnerDataResponse> contentTagsUser = new ArrayList<>();
 
 }

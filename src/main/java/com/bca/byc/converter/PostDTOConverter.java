@@ -6,7 +6,7 @@ import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.model.apps.TagUserResponse;
+import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
@@ -51,7 +51,7 @@ public class PostDTOConverter {
                     postContent.getType(),
                     postContent.getThumbnail(),
                     postContent.getTagUsers().stream().map(tagUser -> converter.TagUserResponse(
-                            new TagUserResponse(),
+                            new OwnerDataResponse(),
                             tagUser.getId(),
                             tagUser.getAppUserDetail().getName(),
                             tagUser.getAppUserDetail().getAvatar()
