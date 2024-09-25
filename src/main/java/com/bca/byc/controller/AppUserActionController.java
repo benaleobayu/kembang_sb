@@ -3,7 +3,6 @@ package com.bca.byc.controller;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActionService;
-import com.bca.byc.service.util.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -44,11 +43,32 @@ public class AppUserActionController {
         return ResponseEntity.ok(new ApiResponse(true, "User unfollowed successfully"));
     }
 
-    @PostMapping("/post/{postId}/like-post")
-    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("postId") Long postId) {
-        log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", postId);
+    @PostMapping("/post/{id}/like-dislike")
+    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("id") Long id, @PathVariable("isLike") Boolean isLike) {
+        log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", id);
         String email = ContextPrincipal.getPrincipal();
-        userActionService.likeDislikePost(postId, email);
-        return ResponseEntity.ok(new ApiResponse(true, "Post liked successfully"));
+        userActionService.likeDislikePost(id, email, isLike);
+        String success = isLike ? "success like" : "success dislike";
+        return ResponseEntity.ok(new ApiResponse(true, "Liked " + success));
     }
+
+    @PostMapping("/comment/{id}/like-dislike")
+    public ResponseEntity<ApiResponse> likeDislikeComment(@PathVariable("id") Long id, @PathVariable("isLike") Boolean isLike) {
+        log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", id);
+        String email = ContextPrincipal.getPrincipal();
+        userActionService.likeDislikeComment(id, email, isLike);
+        String success = isLike ? "success like" : "success dislike";
+        return ResponseEntity.ok(new ApiResponse(true, "Liked " + success));
+    }
+
+    @PostMapping("/comment-reply/{id}/like-dislike")
+    public ResponseEntity<ApiResponse> likeDislikeCommentReply(@PathVariable("id") Long id, @PathVariable("isLike") Boolean isLike) {
+        log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", id);
+        String email = ContextPrincipal.getPrincipal();
+        userActionService.likeDislikeCommentReply(id, email, isLike);
+        String success = isLike ? "success like" : "success dislike";
+        return ResponseEntity.ok(new ApiResponse(true, "Liked " + success));
+    }
+
+
 }
