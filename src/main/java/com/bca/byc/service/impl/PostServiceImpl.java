@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeException;
@@ -36,62 +37,14 @@ public class PostServiceImpl implements PostService {
 
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
-    private final TagRepository tagRepository;
     private final PostContentRepository postContentRepository;
-    private final PostLocationRepository postLocationRepository;
-    private final PostCategoryRepository postCategoryRepository;
 
     @Override
     public void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
-        Post data = new Post();
-
-        data.setDescription(dto.getDescription());
-        data.setId(null);
-        data.setUser(user);
-
-        // Set list of Tags
-        Set<Tag> tags = new HashSet<>();
-        if (dto.getTagName() != null) {
-            for (String tagName : dto.getTagName()) {
-                Optional<Tag> tag = tagRepository.findByName(tagName);
-                tag.ifPresentOrElse(tags::add, () -> {
-                    Tag newTag = new Tag();
-                    newTag.setName(tagName);
-                    tags.add(tagRepository.save(newTag));
-                });
-            }
-        }
-        data.setTags(tags);
-
-        // Post category
-        if (dto.getPostCategoryId() != null) {
-            PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
-            data.setPostCategory(postCategory);
-        }
-
-        // Post location
-        PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
-        if (postLocation == null) {
-            postLocation = new PostLocation();
-            postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
-            postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
-            postLocation.setDescription(dto.getPostLocation().getDescription());
-            postLocation.setLatitude(dto.getPostLocation().getLatitude());
-            postLocation.setLongitude(dto.getPostLocation().getLongitude());
-            postLocation = postLocationRepository.save(postLocation);
-        }
-        data.setPostLocation(postLocation);
-
-        // attribute
-        data.setIsPosted(dto.getIsPosted());
-        data.setIsCommentable(dto.getIsCommentable());
-        data.setIsShareable(dto.getIsShareable());
-        data.setIsShowLikes(dto.getIsShowLikes());
-
-        data.setCreatedAt(LocalDateTime.now());
+        Post data = converter.convertToCreateRequest(user, dto);
         Post savedPost = postRepository.save(data);
 
         for (PostContent postContent : contentList) {
@@ -149,19 +102,7 @@ public class PostServiceImpl implements PostService {
             return dto;
         }).collect(Collectors.toList());
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+       return PageCreateReturn.create(pageResult, dtos);
     }
 
 }
