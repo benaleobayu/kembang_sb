@@ -1,10 +1,14 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
+import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
+import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
@@ -32,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,8 +46,11 @@ import java.util.Set;
 public class PostController {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     private final PostService postService;
+
     private final AppUserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
@@ -158,9 +166,15 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Long id) {
         try {
-            PostDetailResponse post = postService.findById(id);
+            Post post = postRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+            String email = ContextPrincipal.getPrincipal();
+            // if user id is not same with user_id user posted
+            if (!post.getUser().getEmail().equals(email)) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "You are not authorized to delete this post"));
+            }
 
-            String content = post.getContent();
+            String content = post.getPostContents().stream().map(PostContent::getContent).collect(Collectors.joining(","));
             if (content != null && !content.isEmpty()) {
                 String[] filePaths = content.split(",");
                 for (String filePath : filePaths) {
