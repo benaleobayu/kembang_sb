@@ -2,22 +2,21 @@ package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 
 @Component
 @AllArgsConstructor
 public class UserActiveDTOConverter {
 
-    @Value("${app.base.url}")
-    static String baseUrl;
     private ModelMapper modelMapper;
 
     // for get data

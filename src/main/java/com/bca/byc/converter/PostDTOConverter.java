@@ -20,12 +20,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 @Component
 @RequiredArgsConstructor
 public class PostDTOConverter {
-
-    @Value("${app.base.url}")
-    private final String baseUrl;
 
     private final ModelMapper modelMapper;
 

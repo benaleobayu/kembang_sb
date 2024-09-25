@@ -22,7 +22,7 @@ public interface RoleService {
 
     void deleteData(Long id) throws BadRequestException;
 
-    ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     List<String> getAdminRoles();
 }

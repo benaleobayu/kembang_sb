@@ -28,12 +28,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 @Service
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
-
-    @Value("${app.base.url}")
-    private String baseUrl;
 
     private UserActiveRepository repository;
     private UserActiveElasticRepository elasticRepository;

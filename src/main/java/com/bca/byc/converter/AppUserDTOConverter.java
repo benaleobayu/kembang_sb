@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -33,10 +35,6 @@ public class AppUserDTOConverter {
     private final UserHasExpectRepository userHasExpectRepository;
     private final LocationRepository locationRepository;
     private ModelMapper modelMapper;
-
-    @Value("${app.base.url}")
-    private String baseUrl;
-
 
     // for create data
     public AppUser convertToCreateRequest(@Valid AppRegisterRequest dto) {

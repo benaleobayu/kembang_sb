@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+import static com.bca.byc.config.AppConfig.baseUrl;
+
 @Configuration
 @SecurityScheme(
         name = "Authorization",
@@ -20,9 +22,6 @@ import java.util.List;
         description = "JWT Authorization header using the Bearer scheme."
 )
 public class SwaggerConfig {
-
-    @Value("${app.base.url}")
-    private String baseUrl;
 
     @Bean
     public OpenAPI myOpenAPI() {
