@@ -16,6 +16,7 @@ import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +28,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.config.AppConfig.baseUrl;
-
 @Service
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     private UserActiveRepository repository;
     private UserActiveElasticRepository elasticRepository;

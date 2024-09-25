@@ -4,9 +4,9 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
@@ -141,7 +141,7 @@ public class UserManagementConverter {
         return dto;
     }
 
-    public OwnerDataResponse TagUserResponse(
+    public OwnerDataResponse OwnerDataResponse(
             OwnerDataResponse dto,
             Long id,
             String name,

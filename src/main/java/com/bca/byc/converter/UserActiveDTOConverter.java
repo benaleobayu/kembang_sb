@@ -6,18 +6,19 @@ import com.bca.byc.service.UserActiveUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-
-import static com.bca.byc.config.AppConfig.baseUrl;
-
 
 @Component
 @AllArgsConstructor
 public class UserActiveDTOConverter {
 
     private ModelMapper modelMapper;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     // for get data
     public UserManagementDetailResponse convertToListResponse(AppUser data) {

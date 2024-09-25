@@ -17,18 +17,21 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.config.AppConfig.baseUrl;
-
 @Slf4j
 @Component
 @AllArgsConstructor
 public class AppUserDTOConverter {
+
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     private final ExpectCategoryRepository expectCategoryRepository;
     private final ExpectItemRepository expectItemRepository;
     private final UserHasExpectRepository userHasExpectRepository;

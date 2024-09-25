@@ -4,33 +4,31 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.model.apps.OwnerDataResponse;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.config.AppConfig.baseUrl;
-
 @Component
 @RequiredArgsConstructor
 public class PostDTOConverter {
-
     private final ModelMapper modelMapper;
-
     private final TagRepository tagRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostCategoryRepository postCategoryRepository;
-
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     // for get data
     public PostHomeResponse convertToListResponse(Post data) {
@@ -50,7 +48,7 @@ public class PostDTOConverter {
                     postContent.getContent(),
                     postContent.getType(),
                     postContent.getThumbnail(),
-                    postContent.getTagUsers().stream().map(tagUser -> converter.TagUserResponse(
+                    postContent.getTagUsers().stream().map(tagUser -> converter.OwnerDataResponse(
                             new OwnerDataResponse(),
                             tagUser.getId(),
                             tagUser.getAppUserDetail().getName(),

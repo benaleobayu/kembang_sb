@@ -6,6 +6,7 @@ import com.bca.byc.service.UserActiveUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -15,13 +16,16 @@ import java.time.LocalDateTime;
 public class UserDeletedDTOConverter {
 
     private ModelMapper modelMapper;
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     // for get data
     public UserManagementDetailResponse convertToListResponse(AppUser data) {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
-        UserManagementConverter converter = new UserManagementConverter(null);
+        UserManagementConverter converter =
+                new UserManagementConverter(baseUrl);
         converter.DetailResponse(data, dto);
 
         // return

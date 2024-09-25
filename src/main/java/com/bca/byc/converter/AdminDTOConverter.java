@@ -13,17 +13,20 @@ import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.config.AppConfig.baseUrl;
 
 @Component
 @AllArgsConstructor
 public class AdminDTOConverter {
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     private ModelMapper modelMapper;
 

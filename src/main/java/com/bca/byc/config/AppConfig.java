@@ -27,7 +27,7 @@ public class AppConfig {
     private int jwtExpirationMs;
 
     @Value("${app.base.url}")
-    public static String baseUrl;
+    public String baseUrl;
 
     @Autowired
     private AppAdminService adminService;
