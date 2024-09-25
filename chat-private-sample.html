@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- Input fields for From User and To User -->
+    <div>
+        <input type="text" id="fromUser" placeholder="From User">
+        <input type="text" id="toUser" placeholder="To User">
+        <button onclick="connect()">Connect</button>
+    </div>
+
+    <!-- Chat message section -->
+    <div>
+        <textarea id="messageInput" placeholder="Enter your message"></textarea>
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <div id="chatMessages"></div>
+
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var fromUser = document.getElementById('fromUser').value;
+            var toUser = document.getElementById('toUser').value;
+
+            if (!fromUser || !toUser) {
+                alert('Please enter both From User and To User!');
+                return;
+            }
+            getPrivateChatHistory();
+
+            var socket = new SockJS('http://localhost:8090/ws');
+            stompClient = Stomp.over(socket);
+            // Establish WebSocket connection
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+
+                // Subscribe to the dynamic channel based on both users
+                var channel = "/private/" + fromUser + "/" + toUser + "/queue/messages";
+
+                // Listen for messages on this unique channel
+                stompClient.subscribe(channel, function(messageOutput) {
+                    // Show the message output on the client side
+                    showMessageOutput(JSON.parse(messageOutput.body));
+                });
+                stompClient.subscribe('/topic/hore', function (messageOutput) {
+                    showMessageOutput(JSON.parse(messageOutput.body));
+                });
+            });
+
+        }
+        function getPrivateChatHistory() {
+            var fromUser = document.getElementById('fromUser').value;
+            var toUser = document.getElementById('toUser').value;
+
+            $.ajax({
+                url: `http://localhost:8090/api/chat/private/${fromUser}/${toUser}`, // Template literals for dynamic URL
+                type: 'GET', // Use GET for fetching data
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log('Chat history retrieved successfully', data);
+                    // Loop through each message in 'data'
+                    data.forEach(function(loopingData) {
+                        // Parse each message and display it using 'showMessageOutput'
+                        showMessageOutput(loopingData);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error retrieving chat history: ' + error);
+                }
+            });
+        }
+
+        function sendMessage() {
+            var messageContent = document.getElementById('messageInput').value;
+            var fromUser = document.getElementById('fromUser').value;
+            var toUser = document.getElementById('toUser').value;
+
+            if (!messageContent) {
+                alert('Please enter a message!');
+                return;
+            }
+
+            // Show the message immediately in the chat window
+            showMessageOutput({ fromUser: fromUser, message: messageContent });
+
+            // Send the message via AJAX to the API
+            $.ajax({
+                url: 'http://localhost:8090/api/chat/send',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'fromUser': fromUser,
+                    'toUser': toUser,
+                    'message': messageContent
+                }),
+                success: function (data) {
+                    console.log('Message sent to API successfully', data);
+
+                    // Optionally: Also send the message via WebSocket
+                    stompClient.send("/app/chat", {}, JSON.stringify({
+                        'fromUser': fromUser,
+                        'toUser': toUser,
+                        'message': messageContent
+                    }));
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error sending message to API: ' + error);
+                }
+            });
+
+            // Clear the message input after sending
+            document.getElementById('messageInput').value = '';
+        }
+
+        function showMessageOutput(message) {
+            var chatMessages = document.getElementById('chatMessages');
+            var messageElement = document.createElement('div');
+            messageElement.innerHTML = `<strong>${message.fromUser}:</strong> ${message.message}`;
+            chatMessages.appendChild(messageElement);
+
+            // Scroll to the bottom of the chat window for the latest message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
