@@ -64,6 +64,7 @@ public class AppUserDTOConverter {
         dto.setAvatar(appUserDetail.getAvatar() != null && appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
         dto.setCover(appUserDetail.getCover() != null && appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
         dto.setBiodata(appUserDetail.getBiodata());
+        dto.setPhone(appUserDetail.getPhone());
         dto.setCreatedAt(Formatter.formatDateTimeApps(appUserDetail.getCreatedAt()));
 
         // List of businesses
