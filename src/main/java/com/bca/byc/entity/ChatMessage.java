@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
+import com.bca.byc.enums.ChatType;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -45,4 +45,12 @@ public class ChatMessage extends AbstractBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_secure_id", referencedColumnName = "secure_id", nullable = true)
     private ChatRoom chatRoom;  // The chat room this message belongs to
+
+    @Column(nullable = true)
+    private String filePath;   // Optional file path for images or videos, nullable
+
+    // Enum for chatType with default value as "TEXT"
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChatType chatType = ChatType.TEXT;  // Type of message: TEXT, IMAGE, or VIDEO
 }
