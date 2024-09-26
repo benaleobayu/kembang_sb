@@ -17,11 +17,16 @@ import java.util.Set;
 @Table(name = "post", indexes = {
     @Index(name = "idx_secure_id", columnList = "secure_id")
 })
-public class Post extends AbstractBaseEntity {
+public class Post extends AbstractBaseEntity implements SecureIdentifiable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "description", columnDefinition = "varchar(1000)")
     private String description;

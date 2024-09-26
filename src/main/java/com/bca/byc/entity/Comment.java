@@ -15,11 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Comment extends AbstractBaseEntity {
+public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "content", columnDefinition = "varchar(250)")
     private String content;
