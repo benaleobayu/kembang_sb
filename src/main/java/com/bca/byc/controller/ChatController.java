@@ -261,7 +261,9 @@ public class ChatController {
 
             // Log and return the newly created chat room
             log.info("Created new Channel chat room: " + newRoom.getSecureId());
-            return ResponseEntity.ok(newRoom);
+            Map<String, String> dataObject = new HashMap<>();
+            dataObject.put("chat_room_secure_id", newRoom.getSecureId());
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully create Channel", dataObject));
 
         } catch (Exception e) {
             log.error("Error creating channel chat room", e);

@@ -58,6 +58,7 @@ public class ChatRoomService {
             chatRoomUser.setChatRoom(savedChatRoom);
             chatRoomUser.setAppUser(user);
             chatRoomUser.setCreator(user.getSecureId().equals(creatorSecureId));  // Mark the creator
+            chatRoomUser.setAdmin(user.getSecureId().equals(creatorSecureId));  // Mark the creator
             chatRoomUsers.add(chatRoomUser);
         }
 
