@@ -57,7 +57,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             AppUserDetail userDetail = new AppUserDetail();
 
-            userDetail.setPhone(dto.phone());
+            userDetail.setPhone("+62" + dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
             userDetail.setParentBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());

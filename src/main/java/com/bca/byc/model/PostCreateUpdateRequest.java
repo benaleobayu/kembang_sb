@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -9,10 +10,12 @@ public class PostCreateUpdateRequest {
 
     private String description;
 
+    @NotNull(message = "Content tag is required")
     private List<String> tagName; // tag _id
 
     private PostLocationRequest postLocation;
 
+    @NotNull(message = "Post category is required")
     private Integer postCategoryId;
 
     private Boolean isCommentable;
