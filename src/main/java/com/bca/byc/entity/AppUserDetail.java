@@ -28,6 +28,9 @@ public class AppUserDetail extends AbstractBaseEntityTimestamp {
     @Column(name = "name", columnDefinition = "varchar(255) default ''")
     private String name = "";
 
+    @Column(name = "country_code")
+    private String countryCode;
+
     @Column(name = "phone")
     private String phone;
 

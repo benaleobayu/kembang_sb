@@ -38,6 +38,7 @@ public class UserJob {
         AppUserDetail userDetail = new AppUserDetail(
                 null,
                 faker.name().fullName(),
+                "+62",
                 faker.phoneNumber().phoneNumber(),
                 cardNumber.toString(),
                 cardNumber.toString(),
