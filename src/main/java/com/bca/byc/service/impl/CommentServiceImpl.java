@@ -58,8 +58,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDetailResponse findDataById(String postId, Long id) throws BadRequestException {
-        Comment data = commentRepository.findById(id)
+    public CommentDetailResponse findDataById(String postId, String commentId) throws BadRequestException {
+        Comment data = commentRepository.findBySecureId(commentId)
                 .orElseThrow(() -> new BadRequestException("Comment not found"));
 
         return converter.convertToListResponse(data);
@@ -77,10 +77,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateData(String postId, Long id, CommentCreateRequest dto, String email) throws BadRequestException {
+    public void updateData(String postId, String commentId, CommentCreateRequest dto, String email) throws BadRequestException {
         Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
-        Comment comment = getEntityById(id, commentRepository, "Comment not found");
+        Comment comment = getEntityCommentBySecureId(commentId, commentRepository, "Comment not found");
         // check data
         checkCommentOwnership(comment, post);
         checkCommentUser(comment, user);
@@ -96,16 +96,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteData(String postId, Long id, String email) throws ResourceNotFoundException {
-        Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
+    public void deleteData(String postId, String commentId, String email) throws ResourceNotFoundException {
+        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
-        Comment comment = getEntityById(id, commentRepository, "Comment not found");
+        Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
         // check data
         checkCommentOwnership(comment, post);
         checkCommentUser(comment, user);
 
         // delete data
-        commentRepository.deleteById(id);
+        commentRepository.deleteById(comment.getId());
     }
 
 }

@@ -50,10 +50,10 @@ public class PostCommentController {
     }
 
     @GetMapping("/{postId}/comments/{id}")
-    public ResponseEntity<?> getById(@PathVariable("postId") String postId, @PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("postId") String postId, @PathVariable("id") String commentId) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
-            CommentDetailResponse item = service.findDataById(postId, id);
+            CommentDetailResponse item = service.findDataById(postId, commentId);
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully found post comments", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -74,11 +74,11 @@ public class PostCommentController {
     }
 
     @PutMapping("/{postId}/comments/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") Long id, @Valid @RequestBody CommentCreateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") String commentId, @Valid @RequestBody CommentCreateRequest item) {
         String email = ContextPrincipal.getPrincipal();
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            service.updateData(postId, id, item, email);
+            service.updateData(postId, commentId, item, email);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post comments"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -87,11 +87,11 @@ public class PostCommentController {
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{postId}/comments/{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("postId") String postId, @PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable("postId") String postId, @PathVariable("id") String commentId) {
         String email = ContextPrincipal.getPrincipal();
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
         try {
-            service.deleteData(postId, id, email);
+            service.deleteData(postId, commentId, email);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted post comments"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
