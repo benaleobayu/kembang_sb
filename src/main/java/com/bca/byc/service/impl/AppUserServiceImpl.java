@@ -1,11 +1,13 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppUserDTOConverter;
+import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.AppUserService;
 import lombok.AllArgsConstructor;
@@ -21,8 +23,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository appUserRepository;
     private final AppUserDTOConverter converter;
-
-    private final AppUserDTOConverter userConverter;
+    private final PostDTOConverter postConverter;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -77,8 +78,17 @@ public class AppUserServiceImpl implements AppUserService {
 
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
-        userConverter.convertToUpdateProfile(user, dto);
+        converter.convertToUpdateProfile(user, dto);
         appUserRepository.save(user);
+    }
+
+    @Override
+    public ProfilePostResponse getUserPosts(String userId) {
+        AppUser user = appUserRepository.findBySecureId(userId)
+                .orElseThrow(() -> new BadRequestException("User not found in secureId: " + userId));
+
+
+        return postConverter.convertToProfilePostResponse(user);
     }
 
 }

@@ -77,7 +77,6 @@ public class PostDTOConverter {
         return dto;
     }
 
-
     // for create data
     public Post convertToCreateRequest(AppUser user, @Valid PostCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
@@ -140,7 +139,6 @@ public class PostDTOConverter {
         return data;
     }
 
-
     // for update data
     public void convertToUpdateRequest(Post data, @Valid PostCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
@@ -202,8 +200,6 @@ public class PostDTOConverter {
         );
     }
 
-
-
     private List<ListCommentResponse> convertComments(List<Comment> comments, UserManagementConverter converter) {
         return comments.stream().map(comment -> {
             List<ListCommentReplyResponse> replies = comment.getCommentReply().stream()
@@ -234,5 +230,14 @@ public class PostDTOConverter {
         }).collect(Collectors.toList());
     }
 
+    public ProfilePostResponse convertToProfilePostResponse(AppUser data) {
+        ProfilePostResponse dto = modelMapper.map(data, ProfilePostResponse.class);
+        dto.setId(data.getSecureId());
+        dto.setContent(data.getPosts().stream()
+                .map(p -> p.getPostContents().stream().findFirst().map(PostContent::getContent).orElse(""))
+                .findFirst().orElse(null)
+        );
+        return dto;
 
+    }
 }

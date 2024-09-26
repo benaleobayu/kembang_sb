@@ -7,6 +7,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class AppUserProfileController {
     private final AppUserService userService;
     private final AppUserProfileService profileService;
 
+    @Operation(summary = "Get user detail", description = "Get user detail")
     @GetMapping("/info")
     public ResponseEntity<?> getUserDetail(Principal principal) {
         log.info("GET " + urlRoute + "/info endpoint hit");
@@ -45,6 +47,7 @@ public class AppUserProfileController {
         }
     }
 
+    @Operation(summary = "Update user avatar", description = "Update user avatar")
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserAvatar(
             @RequestPart("avatar") MultipartFile avatar,
@@ -64,6 +67,7 @@ public class AppUserProfileController {
         }
     }
 
+    @Operation(summary = "Update user cover", description = "Update user cover")
     @PostMapping(value = "/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserCover(
             @RequestPart("cover") MultipartFile cover,
@@ -83,6 +87,7 @@ public class AppUserProfileController {
         }
     }
 
+    @Operation(summary = "Update user profile", description = "Update user profile")
     @PutMapping("/profile")
     public ResponseEntity<?> updateUserData(@RequestBody AppUserProfileRequest dto, Principal principal) {
         log.info("PUT " + urlRoute + "/profile endpoint hit");
@@ -94,6 +99,12 @@ public class AppUserProfileController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @GetMapping("/{userId}/posts")
+    public ResponseEntity<?> getUserPosts(@PathVariable String userId) {
+        log.info("GET " + urlRoute + "/{userId}/posts endpoint hit");
+        return ResponseEntity.ok(new ApiDataResponse<>(true, "Posts found", userService.getUserPosts(userId)));
     }
 
 

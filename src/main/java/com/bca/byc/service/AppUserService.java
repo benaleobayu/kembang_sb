@@ -4,6 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
+import com.bca.byc.model.apps.ProfilePostResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -20,4 +21,5 @@ public interface AppUserService extends UserDetailsService {
 
 	void updateUserData(String email, AppUserProfileRequest dto);
 
+    ProfilePostResponse getUserPosts(String userId);
 }

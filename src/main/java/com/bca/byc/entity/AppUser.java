@@ -51,10 +51,12 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
     // relation
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Business> businesses = new ArrayList<>();
-    //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<UserHasFeedback> feedbacks = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserHasExpect> userHasExpects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
 
     // many to one
     @ManyToOne
