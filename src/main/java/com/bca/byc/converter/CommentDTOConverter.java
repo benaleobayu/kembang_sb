@@ -1,11 +1,14 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
 import com.bca.byc.model.apps.CommentCreateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.apps.OwnerDataResponse;
+import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,8 @@ public class CommentDTOConverter {
 
     private ModelMapper modelMapper;
 
+    private final AppUserRepository userRepository;
+
     // for get data
     public ListCommentResponse convertToPageListResponse(Comment data) {
         // mapping Entity with DTO Entity
@@ -32,7 +37,7 @@ public class CommentDTOConverter {
         UserManagementConverter converter = new UserManagementConverter(baseUrl);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
-                data.getUser().getId(),
+                data.getUser().getSecureId(),
                 data.getUser().getName(),
                 data.getUser().getAppUserDetail().getAvatar()
         );
@@ -52,9 +57,11 @@ public class CommentDTOConverter {
 
 
     // for create data
-    public Comment convertToCreateRequest(Post postData, @Valid CommentCreateRequest dto) {
+    public Comment convertToCreateRequest(Post postData, @Valid CommentCreateRequest dto, String email) {
         // mapping DTO Entity with Entity
         Comment data = modelMapper.map(dto, Comment.class);
+        AppUser user = HandlerRepository.getEntityByEmail(email, userRepository, "User not found");
+        data.setUser(user);
         data.setPost(postData);
         // return
         return data;

@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CommentReply extends AbstractBaseEntityTimestamp {
+public class CommentReply extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,10 @@ public class CommentReply extends AbstractBaseEntityTimestamp {
     @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     @OneToMany(mappedBy = "commentReply", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeDislike> likeDislikes = new ArrayList<>();

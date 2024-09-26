@@ -12,7 +12,7 @@ public interface CommentService {
 
     CommentDetailResponse findDataById(String postId, Long id) throws BadRequestException;
 
-    void saveData(String postId, @Valid CommentCreateRequest dto) throws BadRequestException;
+    void saveData(String postId, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
 
     void updateData(String postId, Long id, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
 

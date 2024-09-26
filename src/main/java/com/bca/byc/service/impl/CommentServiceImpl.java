@@ -66,12 +66,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveData(String postId, @Valid CommentCreateRequest dto) throws BadRequestException {
+    public void saveData(String postId, @Valid CommentCreateRequest dto, String email) throws BadRequestException {
         Post post = postRepository.findBySecureId(postId)
                 .orElseThrow(() -> new BadRequestException("Post not found"));
 
         // set entity to add with model mapper
-        Comment data = converter.convertToCreateRequest(post, dto);
+        Comment data = converter.convertToCreateRequest(post, dto, email);
         // save data
         commentRepository.save(data);
     }
