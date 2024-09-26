@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class PostContentDetailResponse {
 
-    private Long contentId;
+    private String contentId;
     private String content;
     private String contentType;
     private String thumbnail;

@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class PostOwnerResponse {
 
-    private Long id;
+    private String id;
     private String avatar;
     private String name;
 

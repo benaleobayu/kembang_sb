@@ -107,9 +107,6 @@ public class PostController {
                 PostContent postContent = processFile(file, contentRequest, i);
                 contentList.add(postContent);
             }
-            // log debug TODO deleted after test
-            System.out.println("Post String: " + postString);
-            System.out.println("Content String: " + contentString);
 
             // Save post and its content
             postService.save(email, dto, contentList);
@@ -193,7 +190,7 @@ public class PostController {
     // ----------------------------------------- method ---------------------------------------------
     private PostContent processFile(MultipartFile file, PostContentRequest contentRequest, int index) throws IOException {
         // Simpan file ke direktori tertentu
-        String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
+        String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR + "/post/");
         String contentType = file.getContentType();
         String fileType = null;
 

@@ -63,8 +63,9 @@ public class PostCommentController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
+        String email = ContextPrincipal.getPrincipal();
         try {
-            service.saveData(postId, item);
+            service.saveData(postId, item, email);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post comments"));
         } catch (BadRequestException e) {

@@ -14,8 +14,10 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "post_content")
-public class PostContent extends AbstractBaseEntityNoUUID {
+@Table(name = "post_content", indexes = {
+    @Index(name = "idx_post_content_id", columnList = "secure_id")
+})
+public class PostContent extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

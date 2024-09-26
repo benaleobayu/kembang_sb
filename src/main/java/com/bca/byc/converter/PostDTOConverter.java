@@ -4,9 +4,7 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.apps.OwnerDataResponse;
-import com.bca.byc.model.apps.PostContentDetailResponse;
-import com.bca.byc.model.apps.PostOwnerResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
@@ -39,60 +37,15 @@ public class PostDTOConverter {
 
         dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());
-
-        // set list of post content
-        List<PostContentDetailResponse> posts = new ArrayList<>();
-        for (PostContent postContent : data.getPostContents()) {
-            PostContentDetailResponse postContentDetailResponse = converter.PostContentDetailResponse(
-                    new PostContentDetailResponse(),
-                    postContent.getId(),
-                    postContent.getContent(),
-                    postContent.getType(),
-                    postContent.getThumbnail(),
-                    postContent.getTagUsers().stream().map(tagUser -> converter.OwnerDataResponse(
-                            new OwnerDataResponse(),
-                            tagUser.getId(),
-                            tagUser.getAppUserDetail().getName(),
-                            tagUser.getAppUserDetail().getAvatar()
-                    )).collect(Collectors.toList())
-            );
-            posts.add(postContentDetailResponse);
-        }
-        dto.setPostContentList(posts);
-
-        List<String> tags = new ArrayList<>();
-        for (Tag tag : data.getTags()) {
-            tags.add(tag.getName());
-        }
-        dto.setPostTagsList(tags);
-
-        AppUser appUser = data.getUser();
-        PostOwnerResponse owner = converter.PostOwnerResponse(
-                dto.getPostOwner() != null ? dto.getPostOwner() : new PostOwnerResponse(),
-                appUser.getId(),
-                appUser.getName(),
-                appUser.getAppUserDetail().getAvatar(),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .findFirst()
-                        .map(Business::getName).orElse(null),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .findFirst()
-                        .map(business -> business.getBusinessCategories().stream()
-                                .findFirst()
-                                .get().getBusinessCategoryParent().getName()).orElse(null),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .findFirst()
-                        .map(Business::getIsPrimary).isPresent());
-        dto.setPostOwner(owner);
         dto.setIsCommentable(data.getIsCommentable());
         dto.setIsShareable(data.getIsShareable());
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
-        dto.setPostAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
-        // check on LikeDislikeRepository about post and user
+        AppUser appUser = data.getUser();
+
+        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+
         dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
         // return
         return dto;
@@ -104,36 +57,22 @@ public class PostDTOConverter {
         UserManagementConverter converter = new UserManagementConverter(baseUrl);
 
         dto.setId(data.getSecureId());
+        dto.setDescription(data.getDescription());
+        dto.setIsCommentable(data.getIsCommentable());
+        dto.setIsShareable(data.getIsShareable());
+        dto.setIsShowLikes(data.getIsShowLikes());
+        dto.setIsPosted(data.getIsPosted());
+
         AppUser appUser = data.getUser();
 
-        List<PostContentDetailResponse> posts = new ArrayList<>();
-        for (PostContent postContent : data.getPostContents()) {
-            PostContentDetailResponse postContentDetailResponse = converter.PostContentDetailResponse(
-                    new PostContentDetailResponse(),
-                    postContent.getId(),
-                    postContent.getContent(),
-                    postContent.getType(),
-                    postContent.getThumbnail(),
-                    postContent.getTagUsers().stream().map(tagUser -> converter.OwnerDataResponse(
-                            new OwnerDataResponse(),
-                            tagUser.getId(),
-                            tagUser.getAppUserDetail().getName(),
-                            tagUser.getAppUserDetail().getAvatar()
-                    )).collect(Collectors.toList())
-            );
-            posts.add(postContentDetailResponse);
-        }
-        dto.setContentList(posts);
+        dto.setContentList(convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(convertOwnerData(converter, appUser));
 
-        OwnerDataResponse owner = converter.OwnerDataResponse(
-                dto.getPostOwner() != null ? dto.getPostOwner() : new OwnerDataResponse(),
-                appUser.getId(),
-                appUser.getName(),
-                appUser.getAppUserDetail().getAvatar());
-        dto.setPostOwner(owner);
-
-
+        dto.setCommentList(convertComments(data.getComments(), converter));
         dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
+
+
+
         // return
         return dto;
     }
@@ -208,6 +147,91 @@ public class PostDTOConverter {
         modelMapper.map(dto, data);
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
+    }
+
+    // -----------------
+    private List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, UserManagementConverter converter) {
+        return postContentList.stream().map(postContent -> {
+            List<OwnerDataResponse> tagUsers = postContent.getTagUsers().stream()
+                    .map(tagUser -> converter.OwnerDataResponse(
+                            new OwnerDataResponse(),
+                            tagUser.getSecureId(),
+                            tagUser.getName(),
+                            tagUser.getAppUserDetail().getAvatar()
+                    )).collect(Collectors.toList());
+            return converter.PostContentDetailResponse(
+                    new PostContentDetailResponse(),
+                    postContent.getSecureId(),
+                    postContent.getContent(),
+                    postContent.getType(),
+                    postContent.getThumbnail(),
+                    tagUsers
+            );
+        }).collect(Collectors.toList());
+    }
+
+    private OwnerDataResponse convertOwnerData(UserManagementConverter converter, AppUser appUser) {
+        return converter.OwnerDataResponse(
+                new OwnerDataResponse(),
+                appUser.getSecureId(),
+                appUser.getName(),
+                appUser.getAppUserDetail().getAvatar()
+        );
+    }
+
+    private PostOwnerResponse convertOwnerDataWithBusiness(UserManagementConverter converter, AppUser appUser) {
+        return converter.PostOwnerResponse(
+                new PostOwnerResponse(),
+                appUser.getSecureId(),
+                appUser.getName(),
+                appUser.getAppUserDetail().getAvatar(),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(Business::getName)
+                        .findFirst().orElse(null),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(b -> b.getBusinessCategories().stream()
+                                .map(bc -> bc.getBusinessCategoryParent().getName())
+                                .findFirst().orElse(""))
+                        .findFirst().orElse(null),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(business -> true)
+                        .findFirst().orElse(false)
+        );
+    }
+
+
+
+    private List<ListCommentResponse> convertComments(List<Comment> comments, UserManagementConverter converter) {
+        return comments.stream().map(comment -> {
+            List<ListCommentReplyResponse> replies = comment.getCommentReply().stream()
+                    .map(reply -> converter.convertToListCommentReplyResponse(
+                            new ListCommentReplyResponse(),
+                            reply.getSecureId(),
+                            reply.getContent(),
+                            converter.OwnerDataResponse(
+                                    new OwnerDataResponse(),
+                                    reply.getUser().getSecureId(),
+                                    reply.getUser().getName(),
+                                    reply.getUser().getAppUserDetail().getAvatar()
+                            ),
+                            Formatter.formatDateTimeApps(reply.getCreatedAt())
+                    )).collect(Collectors.toList());
+            return new ListCommentResponse(
+                    comment.getSecureId(),
+                    comment.getContent(),
+                    replies,
+                    converter.OwnerDataResponse(
+                            new OwnerDataResponse(),
+                            comment.getUser().getSecureId(),
+                            comment.getUser().getName(),
+                            comment.getUser().getAppUserDetail().getAvatar()
+                    ),
+                    Formatter.formatDateTimeApps(comment.getCreatedAt())
+            );
+        }).collect(Collectors.toList());
     }
 
 
