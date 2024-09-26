@@ -75,7 +75,7 @@ public class AppUserProfileController {
 
         try {
             profileService.updateUserCover(email, cover);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetails(principal.getName())));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Cover updated successfully", userService.getUserDetails(principal.getName())));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package com.bca.byc.util;
 
 import com.bca.byc.exception.InvalidFileTypeException;
+import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -46,11 +47,20 @@ public class FileUploadHelper {
         }
     }
 
-    public static void validateFileTypeImage(MultipartFile file) throws InvalidFileTypeException {
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+    public static void validateFileTypeImage(MultipartFile file) throws InvalidFileTypeException, IOException {
+        // Create a Tika instance
+        Tika tika = new Tika();
+
+        // Detect the MIME type of the uploaded file
+        String mimeType = tika.detect(file.getInputStream());
+
+        System.out.println("Detected MIME type: " + mimeType);
+
+        // Validate the MIME type
+        if (!mimeType.startsWith("image/")) {
             throw new InvalidFileTypeException("Only image files are allowed.");
         }
     }
+
 
 }

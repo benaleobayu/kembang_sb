@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class AttributeResponse<S> {
 
-    private Integer id;
+    private Long id;
     private String value;
     private String name;
 

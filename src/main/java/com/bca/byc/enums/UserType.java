@@ -1,7 +1,7 @@
 package com.bca.byc.enums;
 
 public enum UserType {
-    MEMBER,
-    NOT_MEMBER,
-    NOT_CUSTOMER
+    MEMBER_SOLITAIRE,
+    MEMBER_PRIORITY,
+    NOT_MEMBER
 }

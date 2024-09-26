@@ -30,7 +30,7 @@ public class UserJob {
     public void saveDataInDb() {
         Faker faker = new Faker();
         String[] memberType = {"Solitaire", "Priority"};
-        UserType[] userType = {UserType.MEMBER, UserType.NOT_MEMBER};
+        UserType[] userType = {UserType.MEMBER_SOLITAIRE, UserType.MEMBER_PRIORITY};
         StatusType[] statusTypes = {StatusType.REJECTED, StatusType.PRE_ACTIVATED, StatusType.ACTIVATED};
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);

@@ -30,6 +30,5 @@ public interface PreRegisterService {
 
     void rejectData(Long id, RejectRequest reason, String email) throws BadRequestException;
 
-    List<Map<String, List<?>>> listStatus();
 }
 

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -29,27 +30,39 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeException {
         FileUploadHelper.validateFileTypeImage(avatar);
 
-        String avatarPath = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/avatar");
-
         AppUser appUser = userRepository.findByEmail(email)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+
         AppUserDetail userDetail = appUser.getAppUserDetail();
+        String oldAvatar = userDetail.getAvatar();
+        String avatarPath = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/avatar");
+
         userDetail.setAvatar(avatarPath.replace("src/main/resources/static/", "/"));
         userDetailRepository.save(userDetail);
         userRepository.save(appUser);
+
+        if (oldAvatar != null && !oldAvatar.isEmpty()) {
+            FileUploadHelper.deleteFile(oldAvatar);
+        }
     }
 
     @Override
     public void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeException {
         FileUploadHelper.validateFileTypeImage(cover);
 
-        String coverPath = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/cover");
-
         AppUser appUser = userRepository.findByEmail(email)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+
         AppUserDetail userDetail = appUser.getAppUserDetail();
+        String oldCover = userDetail.getCover();
+        String coverPath = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/cover");
+
         userDetail.setCover(coverPath.replace("src/main/resources/static/", "/"));
         userDetailRepository.save(userDetail);
         userRepository.save(appUser);
+
+        if (oldCover != null && !oldCover.isEmpty()) {
+            FileUploadHelper.deleteFile(oldCover);
+        }
     }
 }

@@ -24,7 +24,7 @@ public class PreRegisterJob {
         Faker faker = new Faker();
 
         String[] memberType = {"SOLITAIRE", "PRIORITY", "NOT_MEMBER"};
-        UserType[] userType = {UserType.MEMBER, UserType.NOT_MEMBER};
+        UserType[] userType = {UserType.MEMBER_SOLITAIRE, UserType.MEMBER_PRIORITY};
         AdminApprovalStatus[] approval = {AdminApprovalStatus.PENDING, AdminApprovalStatus.APPROVED, AdminApprovalStatus.OPT_APPROVED, AdminApprovalStatus.SPV_APPROVED};
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);

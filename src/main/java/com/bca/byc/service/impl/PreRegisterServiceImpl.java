@@ -168,27 +168,6 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         repository.save(data);
     }
 
-    @Override
-    public List<Map<String, List<?>>> listStatus() {
-        List<String> statuses = Arrays.stream(AdminApprovalStatus.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
-        List<AttributeResponse> listStatusResponse = statuses.stream()
-                .map((c) -> {
-                    AttributeResponse response = new AttributeResponse<>();
-                    response.setId(statuses.indexOf(c));
-                    response.setName(c);
-                    return response;
-                })
-                .collect(Collectors.toList());
 
-        List<Map<String, List<?>>> attributes = new ArrayList<>();
-
-        Map<String, List<?>> listStatus = new HashMap<>();
-        listStatus.put("status", listStatusResponse);
-        attributes.add(listStatus);
-
-        return attributes;
-    }
 }
 

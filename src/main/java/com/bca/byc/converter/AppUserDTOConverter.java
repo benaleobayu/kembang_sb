@@ -192,10 +192,10 @@ public class AppUserDTOConverter {
 
         String userType;
         LocalDate birthdate;
-        if (data.getAppUserDetail().getType() == UserType.MEMBER) {
+        if (data.getAppUserDetail().getType() == UserType.MEMBER_SOLITAIRE) {
             userType = "Parent Solitaire / Prioritas";
             birthdate = userDetail.getMemberBirthdate();
-        } else if (data.getAppUserDetail().getType() == UserType.NOT_MEMBER) {
+        } else if (data.getAppUserDetail().getType() == UserType.MEMBER_PRIORITY) {
             userType = "Child Solitaire / Prioritas";
             birthdate = userDetail.getParentBirthdate();
         } else {

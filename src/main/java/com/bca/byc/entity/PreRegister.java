@@ -39,7 +39,7 @@ public class PreRegister extends AbstractBaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private UserType type = UserType.MEMBER;
+    private UserType type = UserType.MEMBER_SOLITAIRE;
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
