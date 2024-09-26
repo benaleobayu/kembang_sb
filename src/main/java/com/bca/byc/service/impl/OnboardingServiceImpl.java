@@ -54,11 +54,20 @@ public class OnboardingServiceImpl implements OnboardingService {
                     .orElseThrow(() -> new BadRequestException("User not found"));
 
             // Create Businesses
+            boolean isFirstBusiness = true;
             for (OnboardingCreateRequest.OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
                 Business business = new Business();
                 business.setName(businessDto.getBusinessName());
                 business.setAddress(businessDto.getBusinessAddress());
                 business.setUser(user);
+
+                if (isFirstBusiness) {
+                    business.setIsPrimary(true);
+                    isFirstBusiness = false;
+                } else {
+                    business.setIsPrimary(false);
+                }
+
                 business = businessRepository.save(business);
 
                 // Handle Business Categories via categoryItemIds
