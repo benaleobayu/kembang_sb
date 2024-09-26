@@ -106,7 +106,7 @@ public class UserManagementConverter {
 
     public PostOwnerResponse PostOwnerResponse(
             PostOwnerResponse dto,
-            Long id,
+            String id,
             String name,
             String avatar,
             String businessName,
@@ -132,7 +132,9 @@ public class UserManagementConverter {
             List<OwnerDataResponse> tagsUser
     ) {
         dto.setContentId(contentId);
-        dto.setContent(content != null && content.startsWith("uploads/") ? baseUrl + "/" + content : content);
+        dto.setContent(content != null && (content.startsWith("uploads/") || content.startsWith("/uploads/"))
+                ? baseUrl + content.replaceFirst("^/", "/")
+                : content);
         dto.setContentType(contentType);
         dto.setThumbnail(thumbnail);
         dto.setContentTagsUser(tagsUser);
