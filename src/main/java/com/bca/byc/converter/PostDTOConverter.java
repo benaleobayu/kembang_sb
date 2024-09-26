@@ -168,18 +168,26 @@ public class PostDTOConverter {
         }
 
         // Post location
-        if (dto.getPostLocation() != null && dto.getPostLocation().getPlaceName() != null) {
-            PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
-            if (postLocation == null) {
-                postLocation = new PostLocation();
-                postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
-                postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
-                postLocation.setDescription(dto.getPostLocation().getDescription());
-                postLocation.setLatitude(dto.getPostLocation().getLatitude());
-                postLocation.setLongitude(dto.getPostLocation().getLongitude());
-                postLocation = postLocationRepository.save(postLocation);
+        if (dto.getPostLocation() != null) {
+            String placeName = dto.getPostLocation().getPlaceName();
+            if (placeName != null && !placeName.isEmpty()) {
+                PostLocation postLocation = postLocationRepository.findByPlaceName(placeName);
+                if (postLocation == null) {
+                    postLocation = new PostLocation();
+                    postLocation.setPlaceName(placeName);
+                    postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
+                    postLocation.setDescription(dto.getPostLocation().getDescription());
+                    postLocation.setLatitude(dto.getPostLocation().getLatitude());
+                    postLocation.setLongitude(dto.getPostLocation().getLongitude());
+                    postLocation = postLocationRepository.save(postLocation);
+                }
+                data.setPostLocation(postLocation);
+            } else {
+                // Handle empty placeName if necessary
+                data.setPostLocation(null); // or skip setting it
             }
-            data.setPostLocation(postLocation);
+        } else {
+            data.setPostLocation(null); // Explicitly set to null if no location provided
         }
 
         // attribute
