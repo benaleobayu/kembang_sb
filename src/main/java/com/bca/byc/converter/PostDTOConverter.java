@@ -10,6 +10,7 @@ import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
+import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,7 +37,7 @@ public class PostDTOConverter {
         PostHomeResponse dto = new PostHomeResponse();
         UserManagementConverter converter = new UserManagementConverter(baseUrl);
 
-        dto.setPostId(data.getId());
+        dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());
 
         // set list of post content
@@ -86,6 +87,13 @@ public class PostDTOConverter {
                         .findFirst()
                         .map(Business::getIsPrimary).isPresent());
         dto.setPostOwner(owner);
+        dto.setIsCommentable(data.getIsCommentable());
+        dto.setIsShareable(data.getIsShareable());
+        dto.setIsShowLikes(data.getIsShowLikes());
+        dto.setIsPosted(data.getIsPosted());
+        dto.setPostAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
+        // check on LikeDislikeRepository about post and user
+        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
         // return
         return dto;
     }
@@ -93,6 +101,39 @@ public class PostDTOConverter {
     public PostDetailResponse convertToDetailResponse(Post data) {
         // mapping Entity with DTO Entity
         PostDetailResponse dto = modelMapper.map(data, PostDetailResponse.class);
+        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+
+        dto.setId(data.getSecureId());
+        AppUser appUser = data.getUser();
+
+        List<PostContentDetailResponse> posts = new ArrayList<>();
+        for (PostContent postContent : data.getPostContents()) {
+            PostContentDetailResponse postContentDetailResponse = converter.PostContentDetailResponse(
+                    new PostContentDetailResponse(),
+                    postContent.getId(),
+                    postContent.getContent(),
+                    postContent.getType(),
+                    postContent.getThumbnail(),
+                    postContent.getTagUsers().stream().map(tagUser -> converter.OwnerDataResponse(
+                            new OwnerDataResponse(),
+                            tagUser.getId(),
+                            tagUser.getAppUserDetail().getName(),
+                            tagUser.getAppUserDetail().getAvatar()
+                    )).collect(Collectors.toList())
+            );
+            posts.add(postContentDetailResponse);
+        }
+        dto.setContentList(posts);
+
+        OwnerDataResponse owner = converter.OwnerDataResponse(
+                dto.getPostOwner() != null ? dto.getPostOwner() : new OwnerDataResponse(),
+                appUser.getId(),
+                appUser.getName(),
+                appUser.getAppUserDetail().getAvatar());
+        dto.setPostOwner(owner);
+
+
+        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
         // return
         return dto;
     }

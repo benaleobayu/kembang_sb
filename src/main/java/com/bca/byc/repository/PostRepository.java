@@ -27,4 +27,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "(SELECT u.id FROM AppUser u JOIN u.follows f WHERE :userId = f.id)" +
             "AND LOWER (p.description) LIKE LOWER(:tag) ")
     Page<Post> findLatestPostsFromFollowingUsers(@Param("userId") Long userId, @Param("tag") String tag, Pageable pageable);
+
+
+
+    Optional<Post> findBySecureId(String secureId);
+
+    boolean existsBySecureId(String secureId);
+
+    void deleteBySecureId(String secureId);
 }

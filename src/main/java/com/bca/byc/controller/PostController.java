@@ -124,10 +124,10 @@ public class PostController {
 
     // READ (Get a post by ID)
     @Operation(summary = "Get a post by ID", description = "Get a post by ID")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPost(@PathVariable Long id) {
+    @GetMapping("/{secureId}")
+    public ResponseEntity<?> getPost(@PathVariable String secureId) {
         try {
-            PostDetailResponse item = postService.findById(id);
+            PostDetailResponse item = postService.findBySecureId(secureId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post", item));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -136,9 +136,9 @@ public class PostController {
 
     // UPDATE Post
     @Operation(summary = "Update post", description = "Update post")
-    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/{secureId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiResponse> updatePost(
-            @PathVariable Long id,
+            @PathVariable String secureId,
             @RequestPart(value = "post") PostCreateUpdateRequest post,
             @RequestPart(value = "content", required = false) PostContentRequest content,
             @RequestPart("files") List<MultipartFile> files) throws Exception {
@@ -155,17 +155,17 @@ public class PostController {
         }
 
         content.setContent(String.join(",", filePaths));
-        postService.update(id, post);
+        postService.update(secureId, post);
 
         return ResponseEntity.ok(new ApiResponse(true, "Post updated successfully"));
     }
 
     // DELETE Post
     @Operation(summary = "Delete post", description = "Delete post")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deletePost(@PathVariable Long id) {
+    @DeleteMapping("/{secureId}")
+    public ResponseEntity<ApiResponse> deletePost(@PathVariable String secureId) {
         try {
-            Post post = postRepository.findById(id)
+            Post post = postRepository.findBySecureId(secureId)
                     .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
             String email = ContextPrincipal.getPrincipal();
             // if user id is not same with user_id user posted
@@ -182,7 +182,7 @@ public class PostController {
                 }
             }
 
-            postService.deleteData(id);
+            postService.deleteData(secureId);
             return ResponseEntity.ok(new ApiResponse(true, "Post deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

@@ -11,13 +11,15 @@ import java.util.List;
 
 public interface PostService {
 
-    PostDetailResponse findById(Long id) throws Exception;
+//    PostDetailResponse findById(Long id) throws Exception;
+
+    PostDetailResponse findBySecureId(String secureId);
 
     void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException;
 
-    void update(Long id, PostCreateUpdateRequest post) throws Exception;
+    void update(String secureId, PostCreateUpdateRequest post) throws Exception;
 
-    void deleteData(Long id) throws Exception;
+    void deleteData(String secureId) throws Exception;
 
     ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

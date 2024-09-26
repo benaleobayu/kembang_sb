@@ -14,7 +14,9 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "post")
+@Table(name = "post", indexes = {
+    @Index(name = "idx_secure_id", columnList = "secure_id")
+})
 public class Post extends AbstractBaseEntity {
 
     @Id
