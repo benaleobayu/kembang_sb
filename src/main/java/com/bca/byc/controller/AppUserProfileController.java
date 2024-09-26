@@ -46,8 +46,9 @@ public class AppUserProfileController {
     }
 
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> updateUserAvatar(
-            @RequestPart("avatar") MultipartFile avatar
+    public ResponseEntity<?> updateUserAvatar(
+            @RequestPart("avatar") MultipartFile avatar,
+            Principal principal
     ) {
         log.info("POST " + urlRoute + "/avatar endpoint hit");
 
@@ -55,7 +56,7 @@ public class AppUserProfileController {
 
         try {
             profileService.updateUserAvatar(email, avatar);
-            return ResponseEntity.ok(new ApiResponse(true, "Avatar updated successfully"));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetails(principal.getName())));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -64,8 +65,9 @@ public class AppUserProfileController {
     }
 
     @PostMapping(value = "/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> updateUserCover(
-            @RequestPart("cover") MultipartFile cover
+    public ResponseEntity<?> updateUserCover(
+            @RequestPart("cover") MultipartFile cover,
+            Principal principal
     ) {
         log.info("POST " + urlRoute + "/cover endpoint hit");
 
@@ -73,7 +75,7 @@ public class AppUserProfileController {
 
         try {
             profileService.updateUserCover(email, cover);
-            return ResponseEntity.ok(new ApiResponse(true, "Avatar updated successfully"));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetails(principal.getName())));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -82,13 +84,13 @@ public class AppUserProfileController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<ApiResponse> updateUserData(@RequestBody AppUserProfileRequest dto) {
+    public ResponseEntity<?> updateUserData(@RequestBody AppUserProfileRequest dto, Principal principal) {
         log.info("PUT " + urlRoute + "/profile endpoint hit");
 
         String email = ContextPrincipal.getPrincipal();
         try {
             userService.updateUserData(email, dto);
-            return ResponseEntity.ok(new ApiResponse(true, "Profile updated successfully"));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile updated successfully",userService.getUserDetails(principal.getName() )));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

@@ -1,6 +1,8 @@
 package com.bca.byc;
 
 import com.bca.byc.util.SshTunnelUtil;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -22,12 +24,26 @@ import java.util.Collections;
 @EntityScan(basePackages = "com.bca.byc.entity")
 //@EnableScheduling
 public class DevApplication {
+
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
+
+    @Value("${spring.servlet.multipart.max-request-size}")
+    private String maxRequestSize;
+
+
     public static void main(String[] args) throws Exception {
 
 //        SshTunnelUtil.setupSshTunnel("root", "45.32.122.20", 22, "8kF*b*6jDH3buK69", "localhost", 5432, 5432);
 //        SshTunnelUtil.setupSshTunnel("root", "45.32.122.20", 22, "8kF*b*6jDH3buK69", "localhost", 9200, 9200);
 
         SpringApplication.run(DevApplication.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("spring.servlet.multipart.max-file-size: " + maxFileSize);
+        System.out.println("spring.servlet.multipart.max-request-size: " + maxRequestSize);
     }
 
     @Bean
