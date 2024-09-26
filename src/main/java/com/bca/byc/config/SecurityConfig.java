@@ -69,7 +69,7 @@ public class SecurityConfig {
             "/swagger-ui/swagger-initializer.js",
             "/v3/api-docs/swagger-config",
             "/v3/api-docs/**",
-            "/api/chat/**",
+        //    "/api/chat/**",
             "/ws",
             "/ws/**",
             "/v3/api-docs"
@@ -144,7 +144,7 @@ public class SecurityConfig {
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
-                .requestMatchers("/api/chat/**").permitAll()
+               // .requestMatchers("/api/chat/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
 
         http.formLogin(formLogin -> formLogin

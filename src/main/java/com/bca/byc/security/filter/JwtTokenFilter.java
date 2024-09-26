@@ -46,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             "/v3/api-docs/.*",
             "/ws",
             "/ws/.*",
-            "/api/chat/.*",
+        //   "/api/chat/.*",
             "/v3/api-docs");
     @Autowired
     private TokenBlacklistService tokenBlacklistService;

@@ -19,4 +19,17 @@ public class ContextPrincipal {
 
         return email;
     }
+    public static String getSecureUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String secureId = null;
+        if (principal instanceof AppUser) {
+            secureId =  ((AppUser)principal).getSecureId();
+        } else if (principal instanceof UserDetails) {
+            secureId = ((UserDetails) principal).getUsername();
+        }
+
+        return secureId;
+    }
+
 }
