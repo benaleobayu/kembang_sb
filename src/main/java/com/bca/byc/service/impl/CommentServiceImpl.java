@@ -7,7 +7,7 @@ import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.apps.CommentCreateRequest;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.repository.CommentRepository;
@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveData(String postId, @Valid CommentCreateRequest dto, String email) throws BadRequestException {
+    public void saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = postRepository.findBySecureId(postId)
                 .orElseThrow(() -> new BadRequestException("Post not found"));
 
@@ -76,7 +76,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateData(String postId, String commentId, CommentCreateRequest dto, String email) throws BadRequestException {
+    public void updateData(String postId, String commentId, CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
         Comment comment = getEntityCommentBySecureId(commentId, commentRepository, "Comment not found");

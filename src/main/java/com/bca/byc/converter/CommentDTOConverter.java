@@ -3,7 +3,7 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
-import com.bca.byc.model.apps.CommentCreateRequest;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.apps.OwnerDataResponse;
@@ -67,7 +67,7 @@ public class CommentDTOConverter {
 
 
     // for create data
-    public Comment convertToCreateRequest(Post postData, @Valid CommentCreateRequest dto, String email) {
+    public Comment convertToCreateRequest(Post postData, @Valid CommentCreateUpdateRequest dto, String email) {
         // mapping DTO Entity with Entity
         Comment data = modelMapper.map(dto, Comment.class);
         AppUser user = HandlerRepository.getEntityByEmail(email, userRepository, "User not found");
@@ -78,9 +78,10 @@ public class CommentDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Comment data, @Valid CommentCreateRequest dto) {
+    public void convertToUpdateRequest(Comment data, @Valid CommentCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
+        data.setComment(dto.getComment());
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
     }

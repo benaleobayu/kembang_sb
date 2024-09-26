@@ -2,7 +2,7 @@ package com.bca.byc.controller;
 
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.apps.CommentCreateRequest;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.response.ApiDataResponse;
@@ -61,7 +61,7 @@ public class PostCommentController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateUpdateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         String email = ContextPrincipal.getPrincipal();
         try {
@@ -74,7 +74,7 @@ public class PostCommentController {
     }
 
     @PutMapping("/{postId}/comments/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") String commentId, @Valid @RequestBody CommentCreateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") String commentId, @Valid @RequestBody CommentCreateUpdateRequest item) {
         String email = ContextPrincipal.getPrincipal();
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {

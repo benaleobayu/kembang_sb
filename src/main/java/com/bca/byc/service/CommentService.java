@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.apps.CommentCreateRequest;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import jakarta.validation.Valid;
 import com.bca.byc.exception.BadRequestException;
@@ -12,9 +12,9 @@ public interface CommentService {
 
     CommentDetailResponse findDataById(String postId, String commentId) throws BadRequestException;
 
-    void saveData(String postId, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
+    void saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException;
 
-    void updateData(String postId, String commentId, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
+    void updateData(String postId, String commentId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException;
 
     void deleteData(String postId, String commentId, String email) throws ResourceNotFoundException;
 }
