@@ -61,7 +61,7 @@ public class Post extends AbstractBaseEntity {
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "post_location_id")
+    @JoinColumn(name = "post_location_id", nullable = true)
     private PostLocation postLocation;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -168,17 +168,19 @@ public class PostDTOConverter {
         }
 
         // Post location
-        PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
-        if (postLocation == null) {
-            postLocation = new PostLocation();
-            postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
-            postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
-            postLocation.setDescription(dto.getPostLocation().getDescription());
-            postLocation.setLatitude(dto.getPostLocation().getLatitude());
-            postLocation.setLongitude(dto.getPostLocation().getLongitude());
-            postLocation = postLocationRepository.save(postLocation);
+        if (dto.getPostLocation() != null && dto.getPostLocation().getPlaceName() != null) {
+            PostLocation postLocation = postLocationRepository.findByPlaceName(dto.getPostLocation().getPlaceName());
+            if (postLocation == null) {
+                postLocation = new PostLocation();
+                postLocation.setPlaceName(dto.getPostLocation().getPlaceName());
+                postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
+                postLocation.setDescription(dto.getPostLocation().getDescription());
+                postLocation.setLatitude(dto.getPostLocation().getLatitude());
+                postLocation.setLongitude(dto.getPostLocation().getLongitude());
+                postLocation = postLocationRepository.save(postLocation);
+            }
+            data.setPostLocation(postLocation);
         }
-        data.setPostLocation(postLocation);
 
         // attribute
         data.setIsPosted(dto.getIsPosted());
