@@ -46,11 +46,10 @@ public class FileUploadHelper {
         }
     }
 
-    public static void validateFileType(MultipartFile file) throws InvalidFileTypeException {
+    public static void validateFileTypeImage(MultipartFile file) throws InvalidFileTypeException {
         String contentType = file.getContentType();
-        if (contentType == null ||
-                (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-            throw new InvalidFileTypeException("Only JPEG and PNG images are allowed.");
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new InvalidFileTypeException("Only image files are allowed.");
         }
     }
 
