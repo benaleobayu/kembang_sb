@@ -19,6 +19,7 @@ public class UserInfoResponse {
     private String avatar; // photo
     private String cover; // photo cover profile
     private String biodata;
+    private String phone;
     private String createdAt;
 
     private LocationListResponse location; // TODO: location
