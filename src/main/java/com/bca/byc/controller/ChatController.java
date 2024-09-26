@@ -26,7 +26,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.bca.byc.response.ChatMessageDTO;
+import com.bca.byc.response.ChatMessageResponse;
 import com.bca.byc.service.ChatRoomService;
+import com.bca.byc.service.ChatMessageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.bca.byc.response.ApiDataResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +47,11 @@ public class ChatController {
 
     @Autowired
     private ChatRoomService chatRoomService;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
+
+
     
     
     @Autowired
@@ -72,6 +81,32 @@ public class ChatController {
             return ResponseEntity.status(500).body("An error occurred while sending the message");
         }
     }
+
+
+     // API to get chat messages between two users in a private room
+     @GetMapping("/private/messages")
+     public ResponseEntity<Page<ChatMessageResponse>> getPrivateMessages(
+             @RequestParam String fromUserSecureId,
+             @RequestParam String toUserSecureId,
+             Pageable pageable) {
+     
+         // Fetch paginated ChatMessages
+         Page<ChatMessage> messages = chatMessageService.getMessagesForPrivateRoom(fromUserSecureId, toUserSecureId, pageable);
+        // Mark messages as read in the database
+        chatMessageService.markMessagesAsRead(fromUserSecureId, toUserSecureId);
+         // Map ChatMessage to ChatMessageResponse
+         Page<ChatMessageResponse> responseMessages = messages.map(message -> new ChatMessageResponse(
+                 message.getId(),
+                 message.getMessage(),
+                 message.getTimestamp(),
+                 message.getFromUser().getUsername(),
+                 message.getToUser() != null ? message.getToUser().getName() : null,
+                 message.getCreatedAt(),
+                 message.getReadAt()
+         ));
+     
+         return ResponseEntity.ok(responseMessages);
+     }
     
     private ResponseEntity<?> handlePrivateMessage(ChatMessageDTO chatMessageDTO, AppUser fromUser) {
         // Ensure toUserSecureId is provided
