@@ -15,7 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c " +
             "WHERE c.content LIKE %:keyword% AND " +
-            "c.post.id = :postId")
+            "c.post.secureId = :postId")
     Page<Comment> findListDataComment(@Param("postId") String postId, @Param("keyword") String keyword, Pageable pageable);
 
     Boolean existsByPostAndPostUser(Post post, AppUser user);

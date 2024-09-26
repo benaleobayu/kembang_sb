@@ -10,11 +10,11 @@ public interface CommentService {
 
     Object listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId);
 
-    CommentDetailResponse findDataById(String postId, Long id) throws BadRequestException;
+    CommentDetailResponse findDataById(String postId, String commentId) throws BadRequestException;
 
     void saveData(String postId, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
 
-    void updateData(String postId, Long id, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
+    void updateData(String postId, String commentId, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
 
-    void deleteData(String postId, Long id, String email) throws ResourceNotFoundException;
+    void deleteData(String postId, String commentId, String email) throws ResourceNotFoundException;
 }
