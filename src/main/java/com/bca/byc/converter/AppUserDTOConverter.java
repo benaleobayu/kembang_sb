@@ -215,59 +215,65 @@ public class AppUserDTOConverter {
 
 
     public void convertToUpdateProfile(AppUser data, AppUserProfileRequest dto) {
-        modelMapper.map(dto, data);
-
-        Location location = locationRepository.findById(dto.getLocation())
-                .orElseThrow(() -> new BadRequestException("Location not found"));
-
-        data.setLocation(location);
-
-        AppUserDetail appUserDetail = data.getAppUserDetail();
-        appUserDetail.setBiodata(dto.getBiography());
-
-        List<String> education = dto.getEducation();
-        if (education != null) {
-            appUserDetail.setEducation(String.join(", ", education));
-        } else {
-            appUserDetail.setEducation(null);
+        // Update biography if present
+        if (dto.getBiography() != null) {
+            data.getAppUserDetail().setBiodata(dto.getBiography());
         }
 
-        for (AppUserProfileRequest.ProfileExpectCategoryResponse expectDto : dto.getUserHasExpects()) {
-            ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
-                    .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+        // Update location if present
+        if (dto.getLocation() != null) {
+            Location location = locationRepository.findById(dto.getLocation())
+                    .orElseThrow(() -> new BadRequestException("Location not found"));
+            data.setLocation(location);
+        }
 
-            if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
-                for (Long expectItemId : expectDto.getItems().getIds()) {
-                    ExpectItem expectItem = expectItemRepository.findById(expectItemId)
-                            .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+        // Update education if present
+        if (dto.getEducation() != null) {
+            data.getAppUserDetail().setEducation(String.join(", ", dto.getEducation()));
+        }
 
-                    UserHasExpectId userHasExpectId = new UserHasExpectId();
-                    userHasExpectId.setUserId(data.getId());
-                    userHasExpectId.setExpectCategoryId(expectCategory.getId());
-                    userHasExpectId.setExpectItemId(expectItem.getId());
+        // Handle userHasExpects if present
+        if (dto.getUserHasExpects() != null) {
+            // Ensure the list is not null
+            List<UserHasExpect> userHasExpects = data.getUserHasExpects();
+            if (userHasExpects == null) {
+                userHasExpects = new ArrayList<>();
+                data.setUserHasExpects(userHasExpects);
+            }
 
+            for (AppUserProfileRequest.ProfileExpectCategoryResponse expectDto : dto.getUserHasExpects()) {
+                // Your existing logic to process userHasExpects
+                ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
+                        .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+
+                if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
+                    for (Long expectItemId : expectDto.getItems().getIds()) {
+                        ExpectItem expectItem = expectItemRepository.findById(expectItemId)
+                                .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+
+                        UserHasExpect userHasExpect = new UserHasExpect();
+                        UserHasExpectId userHasExpectId = new UserHasExpectId(data.getId(), expectCategory.getId(), expectItem.getId());
+                        userHasExpect.setId(userHasExpectId);
+                        userHasExpect.setUser(data);
+                        userHasExpect.setExpectCategory(expectCategory);
+                        userHasExpect.setExpectItem(expectItem);
+                        userHasExpect.setOtherExpect(expectDto.getOtherExpect());
+                        userHasExpect.setOtherExpectItem(expectDto.getItems().getOtherExpectItem());
+
+                        userHasExpects.add(userHasExpect); // Add to the list
+                    }
+                } else if (expectDto.getExpectCategoryId() == 5) {
                     UserHasExpect userHasExpect = new UserHasExpect();
-                    userHasExpect.setId(userHasExpectId);
+                    ExpectItem expectItem = expectItemRepository.findById(5L)
+                            .orElseThrow(() -> new BadRequestException("Expect Item not found"));
                     userHasExpect.setUser(data);
                     userHasExpect.setExpectCategory(expectCategory);
                     userHasExpect.setExpectItem(expectItem);
                     userHasExpect.setOtherExpect(expectDto.getOtherExpect());
-                    userHasExpect.setOtherExpectItem(expectDto.getItems().getOtherExpectItem());
-
-                    userHasExpectRepository.save(userHasExpect);
+                    userHasExpects.add(userHasExpect); // Add to the list
                 }
-            } else if (expectDto.getExpectCategoryId() == 5) {
-                UserHasExpect userHasExpect = new UserHasExpect();
-                ExpectItem expectItem = expectItemRepository.findById(5L)
-                        .orElseThrow(() -> new BadRequestException("Expect Item not found"));
-                userHasExpect.setUser(data);
-                userHasExpect.setExpectCategory(expectCategory);
-                userHasExpect.setExpectItem(expectItem);
-                userHasExpect.setOtherExpect(expectDto.getOtherExpect());
-                userHasExpectRepository.save(userHasExpect);
             }
         }
-
-
     }
+
 }
