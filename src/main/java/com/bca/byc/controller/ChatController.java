@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.bca.byc.response.ChatMessageDTO;
 import com.bca.byc.response.ChatMessageResponse;
+import com.bca.byc.response.CreateChatRoomChannelRequest;
 import com.bca.byc.service.ChatRoomService;
 import com.bca.byc.service.ChatMessageService;
 import org.springframework.data.domain.Page;
@@ -230,6 +231,44 @@ public class ChatController {
         return newRoom;
     }
     
+
+
+    @PostMapping("/channel-room/create")
+    public ResponseEntity<?> createChannelRoom(@RequestBody CreateChatRoomChannelRequest request) {
+        try {
+            // Fetch participants based on secure_ids from request
+            List<AppUser> participants = appUserService.findUsersBySecureIds(request.getParticipantSecureIds());
+            AppUser fromUser = appUserService.findBySecureId(request.getFromUserSecureId());
+            // Add fromUser to the participants list if they are not already in it
+            if (!participants.contains(fromUser)) {
+                participants.add(fromUser);
+            }
+            if (participants.isEmpty()) {
+                return ResponseEntity.badRequest().body("Participants not found.");
+            }
+
+            // Extract secure_ids from the participant list
+            List<String> participantSecureIds = participants.stream()
+                    .map(AppUser::getSecureId)
+                    .collect(Collectors.toList());
+
+            ChatRoom newRoom = chatRoomService.createRoom(
+                    request.getChannelName(), 
+                    participantSecureIds, 
+                    RoomType.CHANNEL, 
+                    request.getFromUserSecureId()
+            );
+
+            // Log and return the newly created chat room
+            log.info("Created new Channel chat room: " + newRoom.getSecureId());
+            return ResponseEntity.ok(newRoom);
+
+        } catch (Exception e) {
+            log.error("Error creating channel chat room", e);
+            return ResponseEntity.status(500).body("Error creating chat room.");
+        }
+    }
+
     
     
     

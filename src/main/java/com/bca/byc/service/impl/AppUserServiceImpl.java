@@ -16,7 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
+import java.util.Optional;
 @AllArgsConstructor
 @Service
 public class AppUserServiceImpl implements AppUserService {
@@ -44,6 +45,17 @@ public class AppUserServiceImpl implements AppUserService {
             .orElseThrow(() -> new UsernameNotFoundException("User not found with secure_id: " + secureId));
     }
 
+    /**
+     * Find users by a list of secure IDs.
+     * 
+     * @param secureIds List of secure IDs to search for.
+     * @return List of found users.
+     */
+    public List<AppUser> findUsersBySecureIds(List<String> secureIds) {
+        // Use repository to find users by secure ID list
+        return appUserRepository.findBySecureIdIn(secureIds);
+    }
+    
     
     @Override
     public AppUser findByUsername(String subject) {
