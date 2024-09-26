@@ -19,6 +19,7 @@ public class UserInfoResponse {
     private String avatar; // photo
     private String cover; // photo cover profile
     private String biodata;
+    private String countryCode;
     private String phone;
     private String createdAt;
 
