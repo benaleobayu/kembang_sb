@@ -7,6 +7,8 @@ import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.apps.ExpectCategoryList;
+import com.bca.byc.model.apps.SubExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
@@ -21,7 +23,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,13 +34,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AppUserDTOConverter {
 
-    @Value("${app.base.url}")
-    private String baseUrl;
-
     private final ExpectCategoryRepository expectCategoryRepository;
     private final ExpectItemRepository expectItemRepository;
     private final UserHasExpectRepository userHasExpectRepository;
     private final LocationRepository locationRepository;
+    @Value("${app.base.url}")
+    private String baseUrl;
     private ModelMapper modelMapper;
 
     // for create data
@@ -92,7 +96,57 @@ public class AppUserDTOConverter {
         } else {
             log.warn("Businesses list is empty or null for user: {}", data.getId());
         }
+        // List of expect categories
+        Map<Long, ExpectCategoryList> expectCategoryListMap = new HashMap<>();
 
+        for (UserHasExpect ec : data.getUserHasExpects()) {
+            Long categoryId = ec.getExpectCategory().getId();
+            String categoryName = ec.getExpectCategory().getName();
+
+            // check if the category already exists in the map
+            ExpectCategoryList ecList = expectCategoryListMap.get(categoryId);
+            if (ecList == null) {
+                ecList = new ExpectCategoryList();
+                ecList.setId(categoryId);
+                ecList.setName(categoryName);
+                expectCategoryListMap.put(categoryId, ecList);
+
+                if (categoryName.equals("Other")) {
+                    List<String> otherValue = new ArrayList<>();
+                    otherValue.add(ec.getOtherExpect());
+                    ecList.setOtherValue(otherValue);
+                    ecList.setSubCategories(new ArrayList<>());
+
+                } else {
+                    ecList.setOtherValue(null);
+                }
+                expectCategoryListMap.put(categoryId, ecList);
+            }
+
+            // add sub-category if present
+            for (UserHasExpect subEc : ec.getExpectItem().getUserHasExpects()) {
+                Long subCategoryId = subEc.getExpectItem().getId();
+                String subCategoryName = subEc.getExpectItem().getName();
+
+                SubExpectCategoryList subEcList = new SubExpectCategoryList();
+                subEcList.setId(subCategoryId);
+                subEcList.setName(subCategoryName);
+
+                if (subCategoryName.equals("Other")) {
+                    List<String> otherValue = new ArrayList<>();
+                    otherValue.add(subEc.getOtherExpectItem());
+                    subEcList.setOtherValue(otherValue);
+                } else {
+                    subEcList.setOtherValue(null);
+
+                }
+                if (!ecList.getSubCategories().stream().anyMatch(sub -> sub.getId().equals(subCategoryId))) {
+                    ecList.getSubCategories().add(subEcList);
+                }
+            }
+        }
+        List<ExpectCategoryList> expectCategoryLists = new ArrayList<>(expectCategoryListMap.values());
+        dto.setExpectCategory(expectCategoryLists);
         // Other attributes
         if (data.getLocation() != null) {
             UserInfoResponse.LocationListResponse locationResponse = new UserInfoResponse.LocationListResponse();

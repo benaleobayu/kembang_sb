@@ -4,9 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.apps.OwnerDataResponse;
-import com.bca.byc.model.apps.PostContentDetailResponse;
-import com.bca.byc.model.apps.PostOwnerResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
@@ -71,16 +69,16 @@ public class UserManagementConverter {
             return businessResponse;
         }).collect(Collectors.toList()));
 
-        List<UserManagementDetailResponse.ExpectCategoryList> expectCategories = data.getUserHasExpects().stream()
+        List<ExpectCategoryList> expectCategories = data.getUserHasExpects().stream()
                 .filter(ue -> ue.getExpectItem() != null)
                 .map(ue -> {
-                    UserManagementDetailResponse.ExpectCategoryList expectCategoryDetailResponse = new UserManagementDetailResponse.ExpectCategoryList();
+                    ExpectCategoryList expectCategoryDetailResponse = new ExpectCategoryList();
                     expectCategoryDetailResponse.setId(ue.getExpectCategory().getId());
                     expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
                     expectCategoryDetailResponse.setSubCategories(ue.getExpectCategory().getExpectItems().stream()
                             .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))
                             .map(ei -> {
-                                        UserManagementDetailResponse.SubExpectCategoryList expectItem = new UserManagementDetailResponse.SubExpectCategoryList();
+                                        SubExpectCategoryList expectItem = new SubExpectCategoryList();
                                         expectItem.setId(ei.getId());
                                         expectItem.setName(ei.getName());
                                         return expectItem;

@@ -27,7 +27,7 @@ public class UserHasExpect {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("expectItemId")
-    @JoinColumn(name = "expect_item_id")
+    @JoinColumn(name = "expect_item_id", nullable = true)
     private ExpectItem expectItem;
 
     @Column(name = "other_expect")
