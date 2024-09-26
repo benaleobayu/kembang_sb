@@ -125,7 +125,7 @@ public class UserManagementConverter {
 
     public PostContentDetailResponse PostContentDetailResponse(
             PostContentDetailResponse dto,
-            Long contentId,
+            String contentId,
             String content,
             String contentType,
             String thumbnail,
@@ -141,7 +141,7 @@ public class UserManagementConverter {
 
     public OwnerDataResponse OwnerDataResponse(
             OwnerDataResponse dto,
-            Long id,
+            String id,
             String name,
             String avatar
     ) {
@@ -150,4 +150,37 @@ public class UserManagementConverter {
         dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
         return dto;
     }
+
+    public ListCommentResponse convertToListCommentResponse(
+            ListCommentResponse dto,
+            String secureId,
+            String comment,
+            List<ListCommentReplyResponse> commentReply,
+            OwnerDataResponse owner,
+            String createdAt
+
+    ) {
+        dto.setId(secureId);
+        dto.setComment(comment);
+        dto.setCommentReply(commentReply);
+        dto.setOwner(owner);
+        dto.setCreatedAt(createdAt);
+        return dto;
+    }
+
+    public ListCommentReplyResponse convertToListCommentReplyResponse(
+            ListCommentReplyResponse dto,
+            String secureId,
+            String comment,
+            OwnerDataResponse owner,
+            String createdAt
+
+    ) {
+        dto.setId(secureId);
+        dto.setComment(comment);
+        dto.setOwner(owner);
+        dto.setCreatedAt(createdAt);
+        return dto;
+    }
+
 }
