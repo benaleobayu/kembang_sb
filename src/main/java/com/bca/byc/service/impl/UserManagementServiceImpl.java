@@ -27,9 +27,8 @@ public class UserManagementServiceImpl implements UserManagementService {
                 .collect(Collectors.toList());
         List<AttributeResponse> listStatusResponse = statuses.stream()
                 .map((c) -> {
-                    AttributeResponse response = new AttributeResponse<>();
-                    response.setId((long) statuses.indexOf(c));
-                    response.setValue(c);
+                    AttributeResponse<Integer> response = new AttributeResponse<>();
+                    response.setId( statuses.indexOf(c));
                     response.setName(c);
                     return response;
                 })
@@ -50,10 +49,10 @@ public class UserManagementServiceImpl implements UserManagementService {
 
 
         // Data UserTypes
-        List<AttributeResponse<String>> listUserTypes = Arrays.asList(
-                new AttributeResponse<>((long) UserType.MEMBER_SOLITAIRE.ordinal(), UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
-                new AttributeResponse<>((long) UserType.MEMBER_PRIORITY.ordinal(), UserType.MEMBER_PRIORITY.name(), "Priority"),
-                new AttributeResponse<>((long) UserType.NOT_MEMBER.ordinal(), UserType.NOT_MEMBER.name(), "Non Member")
+        List<AttributeResponse<Integer>> listUserTypes = Arrays.asList(
+                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.ordinal(), "Solitaire"),
+                new AttributeResponse<>( UserType.MEMBER_PRIORITY.ordinal(),  "Priority"),
+                new AttributeResponse<>( UserType.NOT_MEMBER.ordinal(), "Non Member")
         );
         Map<String, List<?>> userTypeMap = new HashMap<>();
         userTypeMap.put("segmentation", listUserTypes);
@@ -76,7 +75,6 @@ public class UserManagementServiceImpl implements UserManagementService {
                 .map((c) -> {
                     AttributeResponse response = new AttributeResponse<>();
                     response.setId(c.getId());
-                    response.setValue(c.getName());
                     response.setName(c.getName());
                     return response;
                 })
