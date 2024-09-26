@@ -8,13 +8,13 @@ import com.bca.byc.exception.BadRequestException;
 
 public interface CommentService {
 
-    Object listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long postId);
+    Object listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId);
 
-    CommentDetailResponse findDataById(Long postId, Long id) throws BadRequestException;
+    CommentDetailResponse findDataById(String postId, Long id) throws BadRequestException;
 
-    void saveData(Long postId, @Valid CommentCreateRequest dto) throws BadRequestException;
+    void saveData(String postId, @Valid CommentCreateRequest dto) throws BadRequestException;
 
-    void updateData(Long postId, Long id, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
+    void updateData(String postId, Long id, @Valid CommentCreateRequest dto, String email) throws BadRequestException;
 
-    void deleteData(Long postId, Long id, String email) throws ResourceNotFoundException;
+    void deleteData(String postId, Long id, String email) throws ResourceNotFoundException;
 }

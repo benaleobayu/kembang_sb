@@ -41,7 +41,7 @@ public class PostCommentController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @PathVariable("postId") Long postId) {
+            @PathVariable("postId") String postId) {
         // response true
         String email = ContextPrincipal.getPrincipal();
         log.info("GET " + urlRoute + " endpoint hit, email = {} ", email);
@@ -50,7 +50,7 @@ public class PostCommentController {
     }
 
     @GetMapping("/{postId}/comments/{id}")
-    public ResponseEntity<?> getById(@PathVariable("postId") Long postId, @PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("postId") String postId, @PathVariable("id") Long id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             CommentDetailResponse item = service.findDataById(postId, id);
@@ -61,7 +61,7 @@ public class PostCommentController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<ApiResponse> create(@PathVariable("postId") Long postId, @Valid @RequestBody CommentCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
             service.saveData(postId, item);
@@ -73,7 +73,7 @@ public class PostCommentController {
     }
 
     @PutMapping("/{postId}/comments/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("postId") Long postId, @PathVariable("id") Long id, @Valid @RequestBody CommentCreateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") Long id, @Valid @RequestBody CommentCreateRequest item) {
         String email = ContextPrincipal.getPrincipal();
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
@@ -86,7 +86,7 @@ public class PostCommentController {
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{postId}/comments/{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("postId") Long postId, @PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable("postId") String postId, @PathVariable("id") Long id) {
         String email = ContextPrincipal.getPrincipal();
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
         try {

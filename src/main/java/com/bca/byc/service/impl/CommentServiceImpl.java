@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
 
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOwnership;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
-import static com.bca.byc.repository.handler.HandlerRepository.getEntityByEmail;
-import static com.bca.byc.repository.handler.HandlerRepository.getEntityById;
+import static com.bca.byc.repository.handler.HandlerRepository.*;
 
 @Service
 @AllArgsConstructor
@@ -45,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
     private CommentDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<ListCommentResponse> listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long postId) {
+    public ResultPageResponseDTO<ListCommentResponse> listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -59,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDetailResponse findDataById(Long postId, Long id) throws BadRequestException {
+    public CommentDetailResponse findDataById(String postId, Long id) throws BadRequestException {
         Comment data = commentRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Comment not found"));
 
@@ -67,8 +66,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveData(Long postId, @Valid CommentCreateRequest dto) throws BadRequestException {
-        Post post = postRepository.findById(postId)
+    public void saveData(String postId, @Valid CommentCreateRequest dto) throws BadRequestException {
+        Post post = postRepository.findBySecureId(postId)
                 .orElseThrow(() -> new BadRequestException("Post not found"));
 
         // set entity to add with model mapper
@@ -78,8 +77,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateData(Long postId, Long id, CommentCreateRequest dto, String email) throws BadRequestException {
-        Post post = getEntityById(postId, postRepository, "Post not found");
+    public void updateData(String postId, Long id, CommentCreateRequest dto, String email) throws BadRequestException {
+        Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
         Comment comment = getEntityById(id, commentRepository, "Comment not found");
         // check data
@@ -97,8 +96,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteData(Long postId, Long id, String email) throws ResourceNotFoundException {
-        Post post = getEntityById(postId, postRepository, "Post not found");
+    public void deleteData(String postId, Long id, String email) throws ResourceNotFoundException {
+        Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
         Comment comment = getEntityById(id, commentRepository, "Comment not found");
         // check data
