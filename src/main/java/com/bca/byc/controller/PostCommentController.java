@@ -31,7 +31,7 @@ import java.net.URI;
 @PreAuthorize("isAuthenticated()")
 public class PostCommentController {
 
-    static final String urlRoute = "/api/v1/post/";
+    static final String urlRoute = "/api/v1/post";
     private CommentService service;
 
     @GetMapping("/{postId}/comments")

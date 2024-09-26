@@ -206,7 +206,7 @@ public class PostDTOConverter {
                     .map(reply -> converter.convertToListCommentReplyResponse(
                             new ListCommentReplyResponse(),
                             reply.getSecureId(),
-                            reply.getContent(),
+                            reply.getComment(),
                             converter.OwnerDataResponse(
                                     new OwnerDataResponse(),
                                     reply.getUser().getSecureId(),
@@ -217,7 +217,7 @@ public class PostDTOConverter {
                     )).collect(Collectors.toList());
             return new ListCommentResponse(
                     comment.getSecureId(),
-                    comment.getContent(),
+                    comment.getComment(),
                     replies,
                     converter.OwnerDataResponse(
                             new OwnerDataResponse(),

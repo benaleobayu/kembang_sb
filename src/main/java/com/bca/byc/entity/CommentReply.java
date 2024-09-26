@@ -21,8 +21,8 @@ public class CommentReply extends AbstractBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", columnDefinition = "text")
-    private String content;
+    @Column(name = "comment", columnDefinition = "varchar(250)")
+    private String comment;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
@@ -30,7 +30,7 @@ public class CommentReply extends AbstractBaseEntity {
     // relations
     @ManyToOne
     @JoinColumn(name = "comment_id")
-    private Comment comment;
+    private Comment parentComment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

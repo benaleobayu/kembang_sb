@@ -5,18 +5,20 @@ import lombok.Data;
 @Data
 public class CommentDetailResponse {
 
-    private Long id;
+    private String id;
 
-    private String content;
+    private String comment;
 
     private Boolean status;
 
-    private PostOwnerResponse owner;
+    private OwnerDataResponse owner;
+
+    private String createdAt;
 
     private Long likesCount;
 
     private Long sharesCount;
 
-    private Long commentsCount;
+    private Long commentRepliesCount;
 
 }

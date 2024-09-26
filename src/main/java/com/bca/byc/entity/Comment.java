@@ -26,8 +26,8 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
         return super.getSecureId();
     }
 
-    @Column(name = "content", columnDefinition = "varchar(250)")
-    private String content;
+    @Column(name = "comment", columnDefinition = "varchar(250)")
+    private String comment;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;

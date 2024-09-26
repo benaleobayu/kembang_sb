@@ -59,8 +59,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDetailResponse findDataById(String postId, String commentId) throws BadRequestException {
-        Comment data = commentRepository.findBySecureId(commentId)
-                .orElseThrow(() -> new BadRequestException("Comment not found"));
+        Comment data = getEntityBySecureId(commentId, commentRepository, "Comment not found");
 
         return converter.convertToListResponse(data);
     }

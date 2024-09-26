@@ -33,7 +33,7 @@ public class CommentDTOConverter {
     public ListCommentResponse convertToPageListResponse(Comment data) {
         // mapping Entity with DTO Entity
         ListCommentResponse dto = modelMapper.map(data, ListCommentResponse.class);
-        dto.setComment(data.getContent());
+        dto.setComment(data.getComment());
         UserManagementConverter converter = new UserManagementConverter(baseUrl);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
@@ -51,6 +51,16 @@ public class CommentDTOConverter {
     public CommentDetailResponse convertToListResponse(Comment data) {
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
+        dto.setComment(data.getComment());
+        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        OwnerDataResponse owner = converter.OwnerDataResponse(
+                new OwnerDataResponse(),
+                data.getUser().getSecureId(),
+                data.getUser().getName(),
+                data.getUser().getAppUserDetail().getAvatar()
+        );
+        dto.setOwner(owner);
+        dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
         // return
         return dto;
     }
