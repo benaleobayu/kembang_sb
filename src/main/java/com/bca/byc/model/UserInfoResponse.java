@@ -2,6 +2,7 @@ package com.bca.byc.model;
 
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
+import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
 
@@ -23,6 +24,8 @@ public class UserInfoResponse {
     private LocationListResponse location; // TODO: location
 
     private List<BusinessListResponse> businesses; // <business>
+
+    private List<ExpectCategoryList> expectCategory; // <category>
 
     private Integer totalFollowers;
     private Integer totalFollowing;

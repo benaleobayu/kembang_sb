@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
 
@@ -32,18 +33,5 @@ public class UserManagementDetailResponse {
     private String createdAt;
     private String updatedAt;
 
-    // inner
-    @Data
-    public static class ExpectCategoryList {
-        private Long id;
-        private String name;
-        private List<SubExpectCategoryList> subCategories = new ArrayList<>();
-    }
-
-    @Data
-    public static class SubExpectCategoryList {
-        private Long id;
-        private String name;
-    }
-
 }
+
