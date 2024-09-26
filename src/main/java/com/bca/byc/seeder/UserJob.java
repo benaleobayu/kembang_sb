@@ -46,7 +46,7 @@ public class UserJob {
                 LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35)),
                 cinNumber.toString(),
                 cinNumber.toString(),
-                faker.educator().campus(),
+                null,
                 faker.lorem().characters(120),
                 statusTypes[faker.number().numberBetween(0, 3)],
                 userType[faker.number().numberBetween(0, 2)],

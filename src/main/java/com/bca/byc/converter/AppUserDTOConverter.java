@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -66,7 +63,12 @@ public class AppUserDTOConverter {
         dto.setBiodata(appUserDetail.getBiodata());
         dto.setCountryCode(appUserDetail.getCountryCode());
         dto.setPhone(appUserDetail.getPhone());
-        dto.setEducation(appUserDetail.getEducation());
+        List<String> educations = new ArrayList<>();
+        String[] eduArray = data.getAppUserDetail().getEducation().split(",");
+        for (String edu : eduArray) {
+            educations.add(edu.trim());
+        }
+        dto.setEducation(educations);
         dto.setCreatedAt(Formatter.formatDateTimeApps(appUserDetail.getCreatedAt()));
 
         // List of businesses

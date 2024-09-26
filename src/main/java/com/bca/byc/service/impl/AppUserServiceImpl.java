@@ -6,18 +6,15 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.model.LoginRequestDTO;
-import com.bca.byc.model.UserDetailResponseDTO;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.AppUserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
+
 @AllArgsConstructor
 @Service
 public class AppUserServiceImpl implements AppUserService {
@@ -38,16 +35,17 @@ public class AppUserServiceImpl implements AppUserService {
         return appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("invalid user email"));
     }
+
     @Override
 
     public AppUser findBySecureId(String secureId) {
         return appUserRepository.findBySecureId(secureId)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with secure_id: " + secureId));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with secure_id: " + secureId));
     }
 
     /**
      * Find users by a list of secure IDs.
-     * 
+     *
      * @param secureIds List of secure IDs to search for.
      * @return List of found users.
      */
@@ -55,8 +53,8 @@ public class AppUserServiceImpl implements AppUserService {
         // Use repository to find users by secure ID list
         return appUserRepository.findBySecureIdIn(secureIds);
     }
-    
-    
+
+
     @Override
     public AppUser findByUsername(String subject) {
         return appUserRepository.findByEmail(subject)
