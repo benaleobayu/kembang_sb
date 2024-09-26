@@ -39,9 +39,21 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     int updateReadAtForMessages(@Param("fromSecureId") String fromSecureId,
                                 @Param("toUserSecureId") String toUserSecureId,
                                 @Param("readAt") LocalDateTime readAt);
+
+        // Find all messages for a specific channel using room_secure_id
+        @Query("SELECT m FROM ChatMessage m WHERE m.chatRoom.secureId = :roomSecureId")
+        Page<ChatMessage> findByRoomSecureId(@Param("roomSecureId") String roomSecureId, Pageable pageable);
                                 
 
-
+        @Modifying
+        @Transactional
+        @Query("UPDATE ChatMessage m SET m.readAt = :readAt " +
+                "WHERE m.chatRoom.secureId = :channelSecureId AND m.readAt IS NULL " +
+                "AND m.toUser.secureId = :fromSecureId")
+        int updateReadAtForChannelMessages(
+                                            @Param("fromSecureId") String fromSecureId,
+                                            @Param("channelSecureId") String channelSecureId,
+                                            @Param("readAt") LocalDateTime readAt);
     // Query messages by chatRoom's secureId and order by timestamp
    // List<ChatMessage> findByChatRoomSecureIdOrderByTimestamp(String secureId);
 }

@@ -12,6 +12,7 @@ import com.bca.byc.service.impl.AppUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -130,6 +131,49 @@ public class ChatController {
      
          return ResponseEntity.ok(responseMessages);
      }
+     @GetMapping("/channel/{channelSecureId}/messages")
+     public ResponseEntity<?> getChannelMessages(
+             @PathVariable String channelSecureId,
+             @RequestParam String fromUserSecureId,
+             Pageable pageable) {
+ 
+         // Check if the chat room exists
+        ChatRoom chatRoom = chatRoomService.findBySecureId(channelSecureId)
+        .orElseThrow(() -> new RuntimeException("Chat room not found"));
+         if (chatRoom == null) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Channel not found.");
+         }
+ 
+         // Ensure that the requesting user is part of the chat room participants
+         boolean isParticipant = chatRoom.getParticipants().stream()
+                 .anyMatch(participant -> participant.getSecureId().equals(fromUserSecureId));
+ 
+         if (!isParticipant) {
+             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not a participant of this channel.");
+         }
+ 
+         // Fetch paginated chat messages for the channel
+         Page<ChatMessage> messages = chatMessageService.getMessagesForChannel(chatRoom.getSecureId(), pageable);
+ 
+         // Mark messages as read for the user in this channel
+         chatMessageService.markMessagesAsReadForChannel(fromUserSecureId,chatRoom.getSecureId());
+ 
+         // Map ChatMessage to ChatMessageResponse
+         Page<ChatMessageResponse> responseMessages = messages.map(message -> new ChatMessageResponse(
+                 message.getId(),
+                 message.getMessage(),
+                 message.getTimestamp(),
+                 message.getFromUser().getUsername(),
+                 message.getToUser() != null ? message.getToUser().getName() : null,
+                 message.getCreatedAt(),
+                 message.getReadAt(),
+                 message.getFilePath(),
+                 message.getChatType()
+         ));
+ 
+         return ResponseEntity.ok(responseMessages);
+     }
+
     
     private ResponseEntity<?> handlePrivateMessage(ChatMessageDTO chatMessageDTO, AppUser fromUser){
         // Ensure toUserSecureId is provided
@@ -184,10 +228,17 @@ public class ChatController {
         if (chatMessageDTO.getChatRoomSecureId() == null) {
             return ResponseEntity.status(400).body("chatRoomSecureId is required for channel chat");
         }
+        
     
         // Fetch the chat room by secureId
         ChatRoom chatRoom = chatRoomService.findBySecureId(chatMessageDTO.getChatRoomSecureId())
             .orElseThrow(() -> new RuntimeException("Chat room not found"));
+              // Ensure that the requesting user is part of the chat room participants
+            boolean isParticipant = chatRoom.getParticipants().stream()
+            .anyMatch(participant -> participant.getSecureId().equals(chatMessageDTO.getFromUserSecureId()));
+            if (!isParticipant) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not a participant of this channel.");
+            }
 
           // Save and send the message
           MultipartFile file = chatMessageDTO.getFile();
@@ -216,7 +267,10 @@ public class ChatController {
         ChatMessage savedMessage = chatService.saveMessage(fromUser, null, chatMessageDTO.getMessage(),chatRoom,filePath,fileType );
         messagingTemplate.convertAndSend("/channel/" + chatRoom.getSecureId() + "/queue/messages", savedMessage);
     
-        return ResponseEntity.ok(savedMessage);
+        Map<String, String> dataObject = new HashMap<>();
+        dataObject.put("chat_room_secure_id", chatRoom.getSecureId());
+        dataObject.put("message_secure_id", savedMessage.getSecureId());
+        return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully create channels messages", dataObject));
     }
     
     private ChatRoom createPrivateChatRoom(AppUser fromUser, AppUser toUser) {
