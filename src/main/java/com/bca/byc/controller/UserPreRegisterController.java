@@ -67,10 +67,10 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.read')")
     @Operation(summary = "Get detail Pre-Register User by id", description = "Get detail Pre-Register User by id")
     @GetMapping("{id}")
-    public ResponseEntity<ApiWithAttributeResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiWithAttributeResponse> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
-            PreRegisterDetailResponse item = service.findDataById(id);
+            PreRegisterDetailResponse item = service.findDataBySecureId(id);
             return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, userManagementService.listAttributeCreateUpdatePreRegister()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiWithAttributeResponse(false, e.getMessage(), null));
@@ -107,7 +107,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Update Pre-Register User", description = "Update Pre-Register User")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody PreRegisterCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody PreRegisterCreateUpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -134,7 +134,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Approve Pre-Register User", description = "Approve Pre-Register User")
     @PatchMapping("{id}/approve")
-    public ResponseEntity<ApiResponse> approve(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ApiResponse> approve(@PathVariable("id") String id, @AuthenticationPrincipal UserDetails userDetails) {
         log.info("PATCH " + urlRoute + "/{id}/approve endpoint hit");
         try {
             String email = userDetails.getUsername();
@@ -150,7 +150,7 @@ public class UserPreRegisterController {
     @Operation(summary = "Reject Pre-Register User", description = "Reject Pre-Register User")
     @PatchMapping("{id}/reject")
     public ResponseEntity<ApiResponse> reject(
-            @PathVariable("id") Long id,
+            @PathVariable("id") String id,
             @RequestBody RejectRequest reason,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.info("PATCH " + urlRoute + "/{id}/reject endpoint hit");

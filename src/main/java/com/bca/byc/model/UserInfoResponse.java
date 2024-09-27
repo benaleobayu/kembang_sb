@@ -2,7 +2,6 @@ package com.bca.byc.model;
 
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
-import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.apps.ExpectCategoryUserInfoResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
