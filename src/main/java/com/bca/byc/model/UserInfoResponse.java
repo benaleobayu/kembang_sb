@@ -3,6 +3,7 @@ package com.bca.byc.model;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.apps.ExpectCategoryList;
+import com.bca.byc.model.apps.ExpectCategoryUserInfoResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
 
@@ -29,12 +30,12 @@ public class UserInfoResponse {
 
     private List<BusinessListResponse> businesses; // <business>
 
-    private List<ExpectCategoryList> expectCategory; // <category>
+    private List<ExpectCategoryUserInfoResponse> expectCategory; // <category>
 
-    private Integer totalFollowers;
-    private Integer totalFollowing;
-    private Integer totalPosts;
-    private Integer totalEvents;
+//    private Integer totalFollowers;
+//    private Integer totalFollowing;
+//    private Integer totalPosts;
+//    private Integer totalEvents;
 
     @Data
     public static class LocationListResponse {
