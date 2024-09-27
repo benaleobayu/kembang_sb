@@ -30,7 +30,15 @@ public class PreRegisterDTOConverter {
     // for get data
     public PreRegisterDetailResponse convertToListResponse(PreRegister data) {
         // mapping Entity with DTO Entity
-        PreRegisterDetailResponse dto = modelMapper.map(data, PreRegisterDetailResponse.class);
+        PreRegisterDetailResponse dto = new PreRegisterDetailResponse();
+        dto.setId(data.getSecureId());
+        dto.setName(data.getName());
+        dto.setEmail(data.getEmail());
+        dto.setPhone(data.getPhone());
+        dto.setMemberBankAccount(data.getMemberBankAccount());
+        dto.setParentBankAccount(data.getParentBankAccount());
+        dto.setMemberCin(data.getMemberCin());
+        dto.setParentCin(data.getParentCin());
 
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));
