@@ -137,7 +137,7 @@ public class ChatController {
         chatMessageService.markMessagesAsRead(fromUserSecureId, toUserSecureId);
          // Map ChatMessage to ChatMessageResponse
          Page<ChatMessageResponse> responseMessages = messages.map(message -> new ChatMessageResponse(
-                 message.getId(),
+                 message.getSecureId(),
                  message.getMessage(),
                  message.getTimestamp(),
                  message.getFromUser().getUsername(),
@@ -184,7 +184,7 @@ public class ChatController {
  
          // Map ChatMessage to ChatMessageResponse
          Page<ChatMessageResponse> responseMessages = messages.map(message -> new ChatMessageResponse(
-                 message.getId(),
+                 message.getSecureId(),
                  message.getMessage(),
                  message.getTimestamp(),
                  message.getFromUser().getUsername(),
@@ -239,11 +239,27 @@ public class ChatController {
             }
         }
         ChatMessage savedMessage = chatService.saveMessage(fromUser, toUser, chatMessageDTO.getMessage(),chatRoom,filePath,fileType );
-        messagingTemplate.convertAndSend("/private/" + toUser.getSecureId() + "/queue/messages", savedMessage);
+        
+        ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
+            savedMessage.getSecureId(),
+            savedMessage.getMessage(),
+            savedMessage.getTimestamp(),
+            savedMessage.getFromUser().getUsername(),
+            savedMessage.getToUser() != null ? savedMessage.getToUser().getName() : null,
+            savedMessage.getCreatedAt(),
+            savedMessage.getReadAt(),
+            savedMessage.getFilePath(),
+            savedMessage.getChatType()
+        );
+         
+        String channel = "/private/" + toUser.getSecureId() +'/'+ fromUser.getSecureId()+  "/queue/messages";
+        messagingTemplate.convertAndSend(channel, chatMessageResponse);
         
         Map<String, String> dataObject = new HashMap<>();
         dataObject.put("chat_room_secure_id", chatRoom.getSecureId());
         dataObject.put("message_secure_id", savedMessage.getSecureId());
+        dataObject.put("channel", channel);
+        
         return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully create private messages", dataObject));
     }
     
@@ -289,8 +305,21 @@ public class ChatController {
         }
         // Save and send the message (no toUser for a channel)
         ChatMessage savedMessage = chatService.saveMessage(fromUser, null, chatMessageDTO.getMessage(),chatRoom,filePath,fileType );
-        messagingTemplate.convertAndSend("/channel/" + chatRoom.getSecureId() + "/queue/messages", savedMessage);
-    
+
+        ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
+            savedMessage.getSecureId(),
+            savedMessage.getMessage(),
+            savedMessage.getTimestamp(),
+            savedMessage.getFromUser().getUsername(),
+            savedMessage.getToUser() != null ? savedMessage.getToUser().getName() : null,
+            savedMessage.getCreatedAt(),
+            savedMessage.getReadAt(),
+            savedMessage.getFilePath(),
+            savedMessage.getChatType()
+        );
+         
+        String channel = "/channel/" + chatRoom.getSecureId() + "/queue/messages";
+        messagingTemplate.convertAndSend(channel, chatMessageResponse);    
         Map<String, String> dataObject = new HashMap<>();
         dataObject.put("chat_room_secure_id", chatRoom.getSecureId());
         dataObject.put("message_secure_id", savedMessage.getSecureId());
