@@ -6,15 +6,15 @@ import com.bca.byc.entity.Post;
 
 public class MessageExceptionHandler {
 
-    public static void checkCommentOwnership(Comment comment, Post post) {
+    public static void checkCommentOnPost(Comment comment, Post post, String message) {
         if (!comment.getPost().getId().equals(post.getId())) {
-            throw new ResourceNotFoundException("Failed delete comment, comment is not from correct post");
+            throw new ResourceNotFoundException("Failed " + message + " comment, comment is not from correct post");
         }
     }
 
-    public static void checkCommentUser(Comment comment, AppUser user) {
+    public static void checkCommentUser(Comment comment, AppUser user, String message) {
         if (!comment.getPost().getUser().getId().equals(user.getId())) {
-            throw new ResourceNotFoundException("Failed delete comment, comment is not from correct user");
+            throw new ResourceNotFoundException("Failed " + message + " comment, comment is not from correct user");
         }
     }
 

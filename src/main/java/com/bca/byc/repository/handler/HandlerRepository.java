@@ -24,18 +24,6 @@ public class HandlerRepository {
     }
 
 
-    public static <SecureId extends String> Post getEntityPostBySecureId(String secureId, PostRepository repository, String notFoundMessage) {
-        return repository.findBySecureId(secureId)
-                .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
-    }
-
-    public static <SecureId extends String> Comment getEntityCommentBySecureId(String secureId, CommentRepository repository, String notFoundMessage) {
-        return repository.findBySecureId(secureId)
-                .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
-    }
-
-
-
     public static <T extends SecureIdentifiable> T getEntityBySecureId(String secureId, JpaRepository<T, Long> repository, String notFoundMessage) {
         return repository.findAll()
                 .stream()
