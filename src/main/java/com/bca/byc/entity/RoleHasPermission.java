@@ -23,14 +23,10 @@ public class RoleHasPermission {
         this.id = new RoleHasPermissionId();
     }
 
-    public RoleHasPermission(Role data, Permission permission) {
-    }
-
-    @Override
-    public String toString() {
-        return "RoleHasPermission{" +
-                "id=" + id +
-                ", permission=" + permission.getName() +  // Just get the permission name to avoid recursive loop
-                '}';
+    public RoleHasPermission(Role role, Permission permission) {
+        this.role = role;
+        this.permission = permission;
+        this.id = new RoleHasPermissionId(role.getId(), permission.getId()); // Correctly initialize composite key
     }
 }
+

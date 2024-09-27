@@ -1,10 +1,9 @@
 package com.bca.byc.controller;
 
 
-import com.bca.byc.model.RoleCreateRequest;
+import com.bca.byc.model.RoleCreateUpdateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
-import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
@@ -65,7 +64,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody RoleCreateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody RoleCreateUpdateRequest item) {
         log.info("POST /cms/v1/am/role endpoint hit");
         try {
             service.saveData(item);
@@ -77,7 +76,7 @@ public class RoleController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody RoleUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody RoleCreateUpdateRequest item) {
         log.info("PUT /cms/v1/am/role/{id} endpoint hit");
         try {
             service.updateData(id, item);

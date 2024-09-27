@@ -3,10 +3,9 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
-import com.bca.byc.model.RoleCreateRequest;
+import com.bca.byc.model.RoleCreateUpdateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
-import com.bca.byc.model.RoleUpdateRequest;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
@@ -111,39 +110,31 @@ public class RoleDTOConverter {
     }
 
     // for create data
-    public Role convertToCreateRequest(@Valid RoleCreateRequest dto) {
+    public Role convertToCreateRequest(@Valid RoleCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         Role data = modelMapper.map(dto, Role.class);
+
         // return
         return data;
     }
 
     // for update data
-    public void convertToUpdateRequest(Role data, @Valid RoleUpdateRequest dto) {
+    public void convertToUpdateRequest(Role data, @Valid RoleCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
 
         // Manually add new permissions to the role
-        if (dto.getAddPermissionIds() != null) {
-            for (Long permissionId : dto.getAddPermissionIds()) {
-                Permission permission = permissionRepository.findById(permissionId)
-                        .orElseThrow(() -> new RuntimeException("Permission not found"));
-                RoleHasPermission roleHasPermission = new RoleHasPermission(data, permission);
-                if (!roleHasPermissionRepository.existsByRoleAndPermission(data, permission)) {
-                    roleHasPermissionRepository.save(roleHasPermission);
-                }
-            }
-        }
+//        if (dto.getPermissions() != null) {
+//            for (Long permissionId : dto.getPermissions()) {
+//                Permission permission = permissionRepository.findById(permissionId)
+//                        .orElseThrow(() -> new RuntimeException("Permission not found"));
+//                RoleHasPermission roleHasPermission = new RoleHasPermission(data, permission);
+//                if (!roleHasPermissionRepository.existsByRoleAndPermission(data, permission)) {
+//                    roleHasPermissionRepository.save(roleHasPermission);
+//                }
+//            }
+//        }
 
-        // Manually remove permissions from the role
-        if (dto.getRemovePermissionIds() != null) {
-            for (Long permissionId : dto.getRemovePermissionIds()) {
-                RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleIdAndPermissionId(data.getId(), permissionId);
-                if (roleHasPermission != null) {
-                    roleHasPermissionRepository.delete(roleHasPermission);
-                }
-            }
-        }
 
         // Update other fields like the role name if necessary
         if (dto.getName() != null) {

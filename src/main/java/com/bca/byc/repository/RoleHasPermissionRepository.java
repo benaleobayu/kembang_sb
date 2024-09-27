@@ -5,6 +5,8 @@ import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface RoleHasPermissionRepository extends JpaRepository<RoleHasPermission, Long> {
 
     void deleteByRoleIdAndPermissionId(Long roleId, Long permissionId);
@@ -13,4 +15,7 @@ public interface RoleHasPermissionRepository extends JpaRepository<RoleHasPermis
 
     RoleHasPermission findByRoleIdAndPermissionId(Long roleId, Long permissionId);
 
+    RoleHasPermission findByRoleAndPermission(Role role, Permission permission);
+
+    List<RoleHasPermission> findByRole(Role role);
 }
