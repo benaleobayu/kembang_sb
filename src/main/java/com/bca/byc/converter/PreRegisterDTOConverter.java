@@ -39,6 +39,10 @@ public class PreRegisterDTOConverter {
         dto.setParentBankAccount(data.getParentBankAccount());
         dto.setMemberCin(data.getMemberCin());
         dto.setParentCin(data.getParentCin());
+        dto.setType(data.getType() != null ? data.getType().toString() : null);
+        dto.setMemberType(data.getMemberType());
+        dto.setOrders(data.getOrders());
+        dto.setApprovalStatus(data.getStatusApproval());
 
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));

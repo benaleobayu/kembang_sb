@@ -23,7 +23,7 @@ public class PreRegisterDetailResponse {
 
 //    private String birthDate;
 
-    private String orders;
+    private Integer orders;
     private AdminApprovalStatus approvalStatus;
     private String createdAt;
     private String updatedAt;

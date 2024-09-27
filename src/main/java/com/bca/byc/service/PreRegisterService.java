@@ -10,25 +10,25 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface PreRegisterService {
 
     PreRegisterDetailResponse findDataById(Long id) throws BadRequestException;
 
+    PreRegisterDetailResponse findDataBySecureId(String id);
+
     List<PreRegisterDetailResponse> findAllData();
 
     void saveData(@Valid PreRegisterCreateUpdateRequest dto, String email) throws BadRequestException;
 
-    void updateData(Long id, @Valid PreRegisterCreateUpdateRequest dto) throws BadRequestException;
+    void updateData(String id, @Valid PreRegisterCreateUpdateRequest dto) throws BadRequestException;
 
     void deleteData(List<Long> id) throws BadRequestException;
 
     ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate);
 
-    void approveData(Long id, String email) throws BadRequestException;
+    void approveData(String id, String email) throws BadRequestException;
 
-    void rejectData(Long id, RejectRequest reason, String email) throws BadRequestException;
-
+    void rejectData(String id, RejectRequest reason, String email) throws BadRequestException;
 }
 

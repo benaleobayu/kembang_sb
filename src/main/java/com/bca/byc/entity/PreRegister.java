@@ -18,11 +18,16 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "pre_registration")
-public class PreRegister extends AbstractBaseEntity {
+public class PreRegister extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "name")
     private String name;
