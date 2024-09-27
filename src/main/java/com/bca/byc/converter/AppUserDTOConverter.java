@@ -7,8 +7,7 @@ import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.apps.ExpectCategoryList;
-import com.bca.byc.model.apps.SubExpectCategoryList;
+import com.bca.byc.model.apps.ExpectCategoryUserInfoResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
@@ -63,7 +62,7 @@ public class AppUserDTOConverter {
                 appUserDetail.getType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
         dto.setAvatar(appUserDetail.getAvatar() != null && appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
         dto.setCover(appUserDetail.getCover() != null && appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
-        dto.setBiodata(appUserDetail.getBiodata());
+        dto.setBiodata(Objects.equals(appUserDetail.getBiodata(), "") ? null : appUserDetail.getBiodata());
         dto.setCountryCode(appUserDetail.getCountryCode());
         dto.setPhone(appUserDetail.getPhone());
         List<String> educations = new ArrayList<>();
@@ -104,57 +103,37 @@ public class AppUserDTOConverter {
         } else {
             log.warn("Businesses list is empty or null for user: {}", data.getId());
         }
-        // List of expect categories
-        Map<Long, ExpectCategoryList> expectCategoryListMap = new HashMap<>();
+        // Update expect categories to new schema
+        List<ExpectCategoryUserInfoResponse> expectCategoryResponses = new ArrayList<>();
+
+        Map<String, ExpectCategoryUserInfoResponse> expectCategoryMap = new HashMap<>();
 
         for (UserHasExpect ec : data.getUserHasExpects()) {
-            Long categoryId = ec.getExpectCategory().getId();
-            String categoryName = ec.getExpectCategory().getName();
+            String categoryId = ec.getExpectCategory().getSecureId();
 
-            // check if the category already exists in the map
-            ExpectCategoryList ecList = expectCategoryListMap.get(categoryId);
-            if (ecList == null) {
-                ecList = new ExpectCategoryList();
-                ecList.setId(categoryId);
-                ecList.setName(categoryName);
-                expectCategoryListMap.put(categoryId, ecList);
-
-                if (categoryName.equals("Other")) {
-                    List<String> otherValue = new ArrayList<>();
-                    otherValue.add(ec.getOtherExpect());
-                    ecList.setOtherValue(otherValue);
-                    ecList.setSubCategories(new ArrayList<>());
-
-                } else {
-                    ecList.setOtherValue(null);
-                }
-                expectCategoryListMap.put(categoryId, ecList);
+            // Create or retrieve the category response
+            ExpectCategoryUserInfoResponse categoryResponse = expectCategoryMap.get(categoryId);
+            if (categoryResponse == null) {
+                categoryResponse = new ExpectCategoryUserInfoResponse();
+                categoryResponse.setCategoryId(String.valueOf(categoryId));
+                categoryResponse.setOtherExpect(ec.getOtherExpect());
+                categoryResponse.setItems(new ExpectCategoryUserInfoResponse.ExpectItemUserInfoResponse());
+                categoryResponse.getItems().setIds(new ArrayList<>());
+                expectCategoryMap.put(categoryId, categoryResponse);
             }
 
-            // add sub-category if present
-            for (UserHasExpect subEc : ec.getExpectItem().getUserHasExpects()) {
-                Long subCategoryId = subEc.getExpectItem().getId();
-                String subCategoryName = subEc.getExpectItem().getName();
+            // Add sub-category ID
+            categoryResponse.getItems().getIds().add(ec.getExpectItem().getSecureId());
 
-                SubExpectCategoryList subEcList = new SubExpectCategoryList();
-                subEcList.setId(subCategoryId);
-                subEcList.setName(subCategoryName);
-
-                if (subCategoryName.equals("Other")) {
-                    List<String> otherValue = new ArrayList<>();
-                    otherValue.add(subEc.getOtherExpectItem());
-                    subEcList.setOtherValue(otherValue);
-                } else {
-                    subEcList.setOtherValue(null);
-
-                }
-                if (!ecList.getSubCategories().stream().anyMatch(sub -> sub.getId().equals(subCategoryId))) {
-                    ecList.getSubCategories().add(subEcList);
-                }
+            // Set otherExpectItem if necessary
+            if (ec.getExpectItem().getName().equals("Other")) {
+                categoryResponse.getItems().setOtherExpectItem(ec.getOtherExpectItem());
             }
         }
-        List<ExpectCategoryList> expectCategoryLists = new ArrayList<>(expectCategoryListMap.values());
-        dto.setExpectCategory(expectCategoryLists);
+
+        expectCategoryResponses.addAll(expectCategoryMap.values());
+        dto.setExpectCategory(expectCategoryResponses);
+
         // Other attributes
         if (data.getLocation() != null) {
             UserInfoResponse.LocationListResponse locationResponse = new UserInfoResponse.LocationListResponse();
@@ -166,10 +145,10 @@ public class AppUserDTOConverter {
         }
 
         // Count followers, following, posts, events
-        dto.setTotalFollowers(data.getFollowers() != null ? data.getFollowers().size() : 0);
-        dto.setTotalFollowing(data.getFollows() != null ? data.getFollows().size() : 0);
-        dto.setTotalPosts(0);  // Placeholder, update as needed
-        dto.setTotalEvents(0);  // Placeholder, update as needed
+//        dto.setTotalFollowers(data.getFollowers() != null ? data.getFollowers().size() : 0);
+//        dto.setTotalFollowing(data.getFollows() != null ? data.getFollows().size() : 0);
+//        dto.setTotalPosts(0);  // Placeholder, update as needed
+//        dto.setTotalEvents(0);  // Placeholder, update as needed
 
         return dto;
     }
