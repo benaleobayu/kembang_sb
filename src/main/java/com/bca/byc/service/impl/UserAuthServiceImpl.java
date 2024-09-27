@@ -14,6 +14,7 @@ import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (existingUserOptional.isEmpty()) {
             // Create a new user if not existing
             user = new AppUser();
-            user.setEmail(dto.email());
+            user.setEmail(StringUtils.lowerCase(dto.email()));
             Role role = roleRepository.findByName("USER").orElseThrow(
                     () -> new BadRequestException("Role not found")
             );
