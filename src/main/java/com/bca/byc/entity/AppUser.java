@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "app_user", indexes = {@Index(name = "uk_email", columnList = "email")})
-public class AppUser extends AbstractBaseEntity implements UserDetails {
+public class AppUser extends AbstractBaseEntity implements UserDetails , SecureIdentifiable {
 
     /**
      *
@@ -27,6 +27,11 @@ public class AppUser extends AbstractBaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "name", columnDefinition = "varchar(255) default ''")
     private String name = "";

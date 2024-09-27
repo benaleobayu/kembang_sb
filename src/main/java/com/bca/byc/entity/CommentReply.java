@@ -11,15 +11,22 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "comment_reply")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CommentReply extends AbstractBaseEntity {
+@Table(name = "comment_reply", indexes = {
+    @Index(name = "comment_reply_secure_id", columnList = "secure_id")
+})
+public class CommentReply extends AbstractBaseEntity implements SecureIdentifiable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "comment", columnDefinition = "varchar(250)")
     private String comment;

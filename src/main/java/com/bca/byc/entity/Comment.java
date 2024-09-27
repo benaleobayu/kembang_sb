@@ -11,10 +11,12 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "comments")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table(name = "comments" ,indexes = {
+    @Index(name = "comments_secure_id", columnList = "secure_id")
+})
 public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
 
     @Id

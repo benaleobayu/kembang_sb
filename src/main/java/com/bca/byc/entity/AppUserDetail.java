@@ -19,12 +19,19 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "app_user_detail")
-public class AppUserDetail extends AbstractBaseEntityTimestamp {
+@Table(name = "app_user_detail", indexes = {
+    @Index(name = "aud_secure_id", columnList = "secure_id"),
+})
+public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "name", columnDefinition = "varchar(255) default ''")
     private String name = "";
