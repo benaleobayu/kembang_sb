@@ -67,7 +67,7 @@ public class AppUserDTOConverter {
         dto.setCountryCode(appUserDetail.getCountryCode());
         dto.setPhone(appUserDetail.getPhone());
         List<String> educations = new ArrayList<>();
-        String[] eduArray = data.getAppUserDetail().getEducation().split(",");
+        String[] eduArray = data.getAppUserDetail().getEducation() != null ? data.getAppUserDetail().getEducation().split(",") : new String[0];
         for (String edu : eduArray) {
             educations.add(edu.trim());
         }
