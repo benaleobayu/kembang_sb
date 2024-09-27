@@ -14,11 +14,19 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class ExpectItem extends AbstractBaseEntityNoUUID {
+@Table(name = "expect_item", indexes = {
+    @Index(name = "expect_item_secure_id", columnList = "secure_id")
+})
+public class ExpectItem extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;

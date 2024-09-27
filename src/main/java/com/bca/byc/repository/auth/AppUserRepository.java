@@ -8,13 +8,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bca.byc.entity.AppUser;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
-	Optional<AppUser> findByEmail(String email);
-
     boolean existsByEmail(String email);
-    Optional<AppUser> findBySecureId(String secureId);
+
+    @Query("SELECT u  FROM AppUser u WHERE u.email = :email")
+	Optional<AppUser> findByEmail(@Param("email") String email);
+
+    @Query("SELECT u FROM AppUser u WHERE u.secureId = :userId")
+    Optional<AppUser> findBySecureId(@Param("userId") String secureId);
 
     List<AppUser> findBySecureIdIn(List<String> secureIds); 
 
@@ -27,3 +33,4 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Page<AppUser> findByNameLikeIgnoreCase(String name, Pageable pageable);
 
 }
+
