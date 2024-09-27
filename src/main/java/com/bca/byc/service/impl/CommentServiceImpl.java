@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOwnership;
+import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOnPost;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
 import static com.bca.byc.repository.handler.HandlerRepository.*;
 
@@ -66,8 +66,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException {
-        Post post = postRepository.findBySecureId(postId)
-                .orElseThrow(() -> new BadRequestException("Post not found"));
+        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
 
         // set entity to add with model mapper
         Comment data = converter.convertToCreateRequest(post, dto, email);
@@ -77,12 +76,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateData(String postId, String commentId, CommentCreateUpdateRequest dto, String email) throws BadRequestException {
-        Post post = getEntityPostBySecureId(postId, postRepository, "Post not found");
+        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
-        Comment comment = getEntityCommentBySecureId(commentId, commentRepository, "Comment not found");
+        Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
         // check data
-        checkCommentOwnership(comment, post);
-        checkCommentUser(comment, user);
+        checkCommentOnPost(comment, post, "update");
+        checkCommentUser(comment, user, "update");
 
         // update
         converter.convertToUpdateRequest(comment, dto);
@@ -100,8 +99,8 @@ public class CommentServiceImpl implements CommentService {
         AppUser user = getEntityByEmail(email, userRepository, "User not found");
         Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
         // check data
-        checkCommentOwnership(comment, post);
-        checkCommentUser(comment, user);
+        checkCommentOnPost(comment, post, "delete");
+        checkCommentUser(comment, user, "delete");
 
         // delete data
         commentRepository.deleteById(comment.getId());

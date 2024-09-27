@@ -14,6 +14,7 @@ import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.PaginationUtil;
@@ -55,8 +56,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDetailResponse findBySecureId(String secureId) {
-        Post data = postRepository.findBySecureId(secureId)
-                .orElseThrow(() -> new BadRequestException("Post not found"));
+        Post data = HandlerRepository.getEntityBySecureId(secureId, postRepository, "Post not found");
 
         return converter.convertToDetailResponse(data);
     }
