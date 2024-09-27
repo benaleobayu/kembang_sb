@@ -64,7 +64,7 @@ public class UserActiveController {
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         // response true
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate), userManagementService.listAttributeUserActive()));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate), userManagementService.listAttributeUserManagement()));
     }
 
 

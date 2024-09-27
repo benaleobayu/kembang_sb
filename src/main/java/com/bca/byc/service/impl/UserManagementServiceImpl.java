@@ -62,7 +62,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public List<Map<String, List<?>>> listAttributeUserActive() {
+    public List<Map<String, List<?>>> listAttributeUserManagement() {
         List<Location> locations = locationRepository.findAll().stream()
                 .map(l -> {
                     Location location = new Location();

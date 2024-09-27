@@ -8,6 +8,6 @@ public interface UserManagementService {
 
     List<Map<String, List<?>>> listAttributeCreateUpdatePreRegister();
 
-    List<Map<String, List<?>>> listAttributeUserActive();
+    List<Map<String, List<?>>> listAttributeUserManagement();
 
 }

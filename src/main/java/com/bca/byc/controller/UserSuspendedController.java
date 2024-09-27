@@ -4,11 +4,9 @@ package com.bca.byc.controller;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.response.ApiDataResponse;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.PaginationAppsResponse;
-import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.response.*;
 import com.bca.byc.service.UserManagementExportService;
+import com.bca.byc.service.UserManagementService;
 import com.bca.byc.service.UserSuspendedService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,12 +32,13 @@ import static com.bca.byc.controller.UserSuspendedController.urlRoute;
 public class UserSuspendedController {
 
     static final String urlRoute = "/cms/v1/um/suspended";
-    private UserSuspendedService service;
-    private UserManagementExportService exportService;
+    private final UserSuspendedService service;
+    private final UserManagementService userManagementService;
+    private final UserManagementExportService exportService;
 
     @Operation(summary = "Get list user suspended", description = "Get list user suspended")
     @GetMapping
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -50,7 +49,10 @@ public class UserSuspendedController {
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         // response true
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate)));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true,
+                "Success get list user",
+                service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate),
+                userManagementService.listAttributeUserManagement()));
     }
 
     @Operation(summary = "Get user suspended by id", description = "Get user suspended by id")
