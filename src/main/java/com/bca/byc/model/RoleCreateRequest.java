@@ -8,6 +8,8 @@ public record RoleCreateRequest(
 
         String name,
 
+        Boolean status,
+
         List<Permission> permissions
 
 ) {

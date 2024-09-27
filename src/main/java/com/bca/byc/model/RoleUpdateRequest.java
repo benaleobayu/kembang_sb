@@ -12,6 +12,8 @@ public class RoleUpdateRequest{
     @NotBlank(message = "Name is required")
     private String name;
 
+    private Boolean status;
+
     private List<Long> addPermissionIds;
 
     private List<Long> removePermissionIds;
