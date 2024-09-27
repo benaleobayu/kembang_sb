@@ -13,6 +13,8 @@ public interface UserAuthService {
 
     void resendOtp(String identity, String email) throws MessagingException;
 
+    void sendRegistrationOtp(String identity, String email) throws MessagingException;
+
 
     // generate
     void generateAndSendOtp(String identity, AppUser user) throws MessagingException;

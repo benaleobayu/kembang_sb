@@ -112,10 +112,9 @@ public class UserAuthServiceImpl implements UserAuthService {
             userAttribute.setIsApproved(true);
             user.setAppUserAttribute(userAttribute);
 
-            userRepository.save(user);
-            preRegisterRepository.delete(dataCheck); // will be uncomment after testing
+            AppUser savedUser = userRepository.save(user);
             String identity = "get"; // identity send registration otp
-            resendOtp(identity, dto.email());
+            sendRegistrationOtp(identity, savedUser.getEmail());
         } else {
             userDetail.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1; // increment reject count
@@ -176,8 +175,19 @@ public class UserAuthServiceImpl implements UserAuthService {
             // Generate and send new OTP
             generateAndSendOtp(identity, user);
         } else {
-            throw new MessagingException("User not found with email: " + email);
+            throw new MessagingException("User not found");
         }
+    }
+
+    @Override
+    public void sendRegistrationOtp(String identity, String email) throws MessagingException {
+        Optional<AppUser> userOptional = userRepository.findByEmail(email);
+        AppUser user = userOptional.get();
+        // Invalidate previous OTPs
+        otpRepository.invalidateOtpsForUser(user);
+
+        // Generate and send new OTP
+        generateAndSendOtp(identity, user);
     }
 
     @Override
