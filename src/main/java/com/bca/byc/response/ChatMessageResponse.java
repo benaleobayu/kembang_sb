@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class ChatMessageResponse {
-    private Long id;
+    private String id;
     private String message;
     private LocalDateTime timestamp;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -18,7 +18,7 @@ public class ChatMessageResponse {
     private String filePath;
     private ChatType chatType;
 
-    public ChatMessageResponse(Long id, String message, LocalDateTime timestamp, String fromName, String toName,LocalDateTime createdAt,LocalDateTime readAt, String filePath, ChatType chatType) {
+    public ChatMessageResponse(String id, String message, LocalDateTime timestamp, String fromName, String toName,LocalDateTime createdAt,LocalDateTime readAt, String filePath, ChatType chatType) {
         this.id = id;
         this.message = message;
         this.timestamp = timestamp;
