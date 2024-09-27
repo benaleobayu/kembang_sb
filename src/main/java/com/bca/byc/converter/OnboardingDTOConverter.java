@@ -50,6 +50,7 @@ public class OnboardingDTOConverter {
     public OnboardingListUserResponse convertToListOnboardingResponse(AppUser data) {
         // Mapping Entity with DTO Entity
         OnboardingListUserResponse dto = modelMapper.map(data, OnboardingListUserResponse.class);
+        dto.setId(data.getSecureId());
         dto.setName(data.getName());
         dto.setEmail(data.getEmail());
         AppUserDetail appUserDetail = data.getAppUserDetail();

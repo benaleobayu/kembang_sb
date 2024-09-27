@@ -7,6 +7,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.OnboardingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import static com.bca.byc.controller.OnboardingController.urlRoute;
 @RequestMapping(urlRoute)
 @Tag(name = "Apps Onboarding API")
 @AllArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class OnboardingController {
 
     static final String urlRoute = "/api/v1/onboarding";

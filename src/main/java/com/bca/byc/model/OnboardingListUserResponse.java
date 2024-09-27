@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class OnboardingListUserResponse {
-    private Long id;
+    private String id;
     private String name;
     private String email;
     private StatusType status;
