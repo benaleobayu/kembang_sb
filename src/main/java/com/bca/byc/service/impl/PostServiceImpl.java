@@ -30,6 +30,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
+
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -56,7 +58,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDetailResponse findBySecureId(String secureId) {
-        Post data = HandlerRepository.getEntityBySecureId(secureId, postRepository, "Post not found");
+        Post data = getEntityBySecureId(secureId, postRepository, "Post not found");
 
         return converter.convertToDetailResponse(data);
     }

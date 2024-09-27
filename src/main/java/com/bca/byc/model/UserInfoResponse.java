@@ -16,6 +16,7 @@ public class UserInfoResponse {
     private String email;
     private StatusType status;
     private UserType type;
+    private String typeName;
     private String avatar; // photo
     private String cover; // photo cover profile
     private String biodata;

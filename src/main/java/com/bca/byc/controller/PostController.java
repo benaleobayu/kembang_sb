@@ -124,8 +124,7 @@ public class PostController {
     @GetMapping("/{secureId}")
     public ResponseEntity<?> getPost(@PathVariable String secureId) {
         try {
-            PostDetailResponse item = postService.findBySecureId(secureId);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post", item));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found post", postService.findBySecureId(secureId)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+
 @Component
 @RequiredArgsConstructor
 public class PostDTOConverter {
@@ -68,10 +70,8 @@ public class PostDTOConverter {
         dto.setContentList(convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(convertOwnerData(converter, appUser));
 
-        dto.setCommentList(convertComments(data.getComments(), converter));
+//        dto.setCommentList(convertComments(data.getComments(), converter));
         dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
-
-
 
         // return
         return dto;
@@ -239,5 +239,24 @@ public class PostDTOConverter {
         );
         return dto;
 
+    }
+
+    // Helper method to convert comment replies
+    private List<ListCommentReplyResponse> convertCommentReplies(UserManagementConverter converter, List<CommentReply> commentReplies) {
+        List<ListCommentReplyResponse> replyResponses = new ArrayList<>();
+        for (CommentReply reply : commentReplies) {
+            ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
+            replyResponse.setId(reply.getSecureId());
+            replyResponse.setComment(reply.getComment());
+            replyResponse.setOwner(converter.OwnerDataResponse(
+                    new OwnerDataResponse(),
+                    reply.getUser().getSecureId(),
+                    reply.getUser().getName(),
+                    reply.getUser().getAppUserDetail().getAvatar()
+            )); // Ensure correct conversion of the owner
+            replyResponse.setCreatedAt(reply.getCreatedAt().toString()); // Convert LocalDateTime to String if needed
+            replyResponses.add(replyResponse);
+        }
+        return replyResponses;
     }
 }
