@@ -9,6 +9,7 @@ import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.service.UserAuthService;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
@@ -82,11 +83,6 @@ public class UserAuthServiceImpl implements UserAuthService {
             user.setAppUserDetail(userDetail);
         }
 
-//        // Check if the user type is not customer
-//        if (dto.type().equals(UserType.NOT_CUSTOMER)) {
-//            throw new BadRequestException("Please register as BCA member first. You can provide us with your bank account details. Please contact customer service.");
-//        }
-
         // Check the PreRegister data
         PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
         boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.member_bank_account());
@@ -94,7 +90,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        if (dto.parent_bank_account() == null  && member ||
+        if (dto.parent_bank_account() == null && member ||
                 dto.parent_bank_account().isEmpty() && member ||
                 child) {
             userDetail.setStatus(StatusType.APPROVED);
@@ -171,7 +167,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public void resendOtp(String identity, String email) throws MessagingException {
         Optional<AppUser> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
+        if (userOptional.isPresent() && userOptional.get().getAppUserDetail().getStatus().equals(StatusType.PRE_ACTIVATED) ||
+                userOptional.isPresent() && userOptional.get().getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)) {
             AppUser user = userOptional.get();
             // Invalidate previous OTPs
             otpRepository.invalidateOtpsForUser(user);
@@ -199,8 +196,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public void setNewPassword(String email, UserSetPasswordRequest dto) {
-        AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("invalid.email"));
+        AppUser user = HandlerRepository.getEntityByEmail(email, userRepository, "User not found in email: " + email);
 
         if (!dto.isSetPasswordMatch()) {
             throw new BadRequestException("Password does not match");
@@ -217,6 +213,12 @@ public class UserAuthServiceImpl implements UserAuthService {
         user.setAppUserDetail(userDetail);
 
         // save
-        userRepository.save(user);
+        AppUser savedUser = userRepository.save(user);
+
+        PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(savedUser.getAppUserDetail().getMemberBankAccount(), AdminApprovalStatus.APPROVED);
+
+        if (dataCheck != null) {
+            testAutocheckRepository.delete(dataCheck);
+        }
     }
 }
