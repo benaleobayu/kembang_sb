@@ -1,0 +1,52 @@
+package com.bca.byc.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "branch", uniqueConstraints = {
+    @UniqueConstraint(name = "uk_branch_seq_id", columnNames = "secure_id")
+})
+public class Branch extends AbstractBaseEntity implements SecureIdentifiable{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "code", nullable = false)
+    private String code;
+
+    @Column(name = "name", nullable = false)
+    private String name = "";
+
+    @Column(name = "address")
+    private String address = "";
+
+    @Column(name = "phone")
+    private String phone = "";
+
+    // relation
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @ManyToOne
+    @JoinColumn(name = "kanwil_id")
+    private Kanwil kanwil;
+
+    // by ?
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private AppAdmin updatedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private AppAdmin createdBy;
+}
