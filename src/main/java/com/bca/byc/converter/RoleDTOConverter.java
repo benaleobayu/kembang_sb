@@ -32,14 +32,14 @@ public class RoleDTOConverter {
 
     // for get data
     public RoleListResponse convertToListResponse(Role data) {
+        GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
-        RoleListResponse dto = modelMapper.map(data, RoleListResponse.class);
+        RoleListResponse dto = new RoleListResponse();
+        dto.setName(data.getName());
+        dto.setStatus(data.getIsActive());
+        dto.setOrders(data.getOrders());
+        converter.CmsIDTimeStampResponse(dto, data);
 
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-
-        dto.setCreatedBy(data.getCreatedBy() == null ? null : data.getCreatedBy().getName());
-        dto.setUpdatedBy( data.getUpdatedBy() == null ? null : data.getUpdatedBy().getName());
         // return the DTO
         return dto;
     }

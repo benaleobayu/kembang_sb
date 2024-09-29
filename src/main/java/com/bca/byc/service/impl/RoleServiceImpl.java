@@ -86,7 +86,7 @@ public class RoleServiceImpl implements RoleService {
 
         // Update status if provided
         if (dto.getStatus() != null) {
-            role.setStatus(dto.getStatus());
+            role.setIsActive(dto.getStatus());
         }
 
         // Retrieve existing permissions for the role

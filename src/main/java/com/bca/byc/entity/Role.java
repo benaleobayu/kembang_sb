@@ -1,6 +1,5 @@
 package com.bca.byc.entity;
 
-import com.github.javafaker.Bool;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 @Data
 @Table(name = "role")
 @Entity
-public class Role extends AbstractBaseEntityNoUUID implements Serializable {
+public class Role extends AbstractBaseEntityCms implements Serializable, SecureIdentifiable {
 
     /**
      *
@@ -32,9 +31,6 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoleHasPermission> permissions;
@@ -53,4 +49,13 @@ public class Role extends AbstractBaseEntityNoUUID implements Serializable {
         this.permissions = roleHasPermissions;
     }
 
+    @Override
+    public Boolean getActive() {
+        return super.getIsActive();
+    }
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 }

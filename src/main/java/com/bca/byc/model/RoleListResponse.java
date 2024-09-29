@@ -1,15 +1,12 @@
 package com.bca.byc.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleListResponse {
-    private Long id;
+public class RoleListResponse extends AdminModelBaseDTOResponse {
     private String name;
     private Boolean status;
-    private Boolean orders;
-    private String createdAt;
-    private String createdBy;
-    private String updatedAt;
-    private String updatedBy;
+    private Integer orders;
 }
