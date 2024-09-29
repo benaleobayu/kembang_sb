@@ -3,11 +3,12 @@ package com.bca.byc.model;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.StatusType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class PreRegisterDetailResponse {
+public class PreRegisterDetailResponse extends AdminModelBaseDTOResponse {
 
-    private String id;
     private String name;
     private String email;
     private String phone;
@@ -25,10 +26,5 @@ public class PreRegisterDetailResponse {
 
     private Integer orders;
     private AdminApprovalStatus approvalStatus;
-    private String createdAt;
-    private String updatedAt;
-
-    private String createdBy;
-    private String updatedBy;
 
 }

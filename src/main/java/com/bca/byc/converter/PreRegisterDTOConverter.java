@@ -29,6 +29,7 @@ public class PreRegisterDTOConverter {
 
     // for get data
     public PreRegisterDetailResponse convertToListResponse(PreRegister data) {
+        GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
         PreRegisterDetailResponse dto = new PreRegisterDetailResponse();
         dto.setId(data.getSecureId());
@@ -47,15 +48,7 @@ public class PreRegisterDTOConverter {
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));
         // Use DataFormatter here
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-
-        // created & updated by
-        dto.setCreatedBy(data.getCreatedBy().getUsername());
-        if (data.getUpdatedBy() != null) {
-            dto.setUpdatedBy(data.getUpdatedBy().getUsername());
-        }
-
+        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
         // return
         return dto;
     }
