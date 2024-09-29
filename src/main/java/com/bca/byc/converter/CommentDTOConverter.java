@@ -34,7 +34,7 @@ public class CommentDTOConverter {
         // mapping Entity with DTO Entity
         ListCommentResponse dto = modelMapper.map(data, ListCommentResponse.class);
         dto.setComment(data.getComment());
-        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 data.getUser().getSecureId(),
@@ -52,7 +52,7 @@ public class CommentDTOConverter {
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
-        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 data.getUser().getSecureId(),
@@ -70,7 +70,7 @@ public class CommentDTOConverter {
     public Comment convertToCreateRequest(Post postData, @Valid CommentCreateUpdateRequest dto, String email) {
         // mapping DTO Entity with Entity
         Comment data = modelMapper.map(dto, Comment.class);
-        AppUser user = HandlerRepository.getEntityByEmail(email, userRepository, "User not found");
+        AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
         data.setUser(user);
         data.setPost(postData);
         // return

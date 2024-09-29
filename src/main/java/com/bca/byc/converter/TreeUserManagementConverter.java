@@ -1,30 +1,22 @@
 package com.bca.byc.converter;
 
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Business;
-import com.bca.byc.entity.CommentReply;
+import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserManagementConverter {
-
-    private final String baseUrl;
-
-    public UserManagementConverter(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
+public class TreeUserManagementConverter {
 
     public void DetailResponse(
             AppUser data,
             UserManagementDetailResponse dto
     ) {
+        dto.setId(data.getSecureId());
         dto.setName(data.getAppUserDetail().getName());
         dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
                 Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
@@ -37,7 +29,7 @@ public class UserManagementConverter {
         dto.setMemberType(data.getAppUserDetail().getMemberType());
         dto.setParentCin(data.getAppUserDetail().getParentCin());
         dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
-        dto.setBranchCode(data.getAppUserDetail().getBranchCode());
+        dto.setBranchCode(data.getAppUserDetail().getBranchCode().getCode());
         dto.setPicName(data.getAppUserDetail().getPicName());
 
         List<Business> businesses = data.getBusinesses();
@@ -91,7 +83,7 @@ public class UserManagementConverter {
 
         dto.setExpectCategory(expectCategories);
 
-        dto.setOrders(data.getAppUserDetail().getId());
+        dto.setOrders(data.getAppUserDetail().getOrders());
         dto.setStatus(
                 data.getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)
                         ? data.getAppUserAttribute().getIsSuspended()
@@ -104,87 +96,5 @@ public class UserManagementConverter {
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
     }
-
-
-    public PostOwnerResponse PostOwnerResponse(
-            PostOwnerResponse dto,
-            String id,
-            String name,
-            String avatar,
-            String businessName,
-            String lineOfBusiness,
-            Boolean isPrimary
-    ) {
-        dto.setId(id);
-        dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
-        dto.setBusinessName(businessName);
-        dto.setLineOfBusiness(lineOfBusiness);
-        dto.setIsPrimary(isPrimary);
-
-        return dto;
-    }
-
-    public PostContentDetailResponse PostContentDetailResponse(
-            PostContentDetailResponse dto,
-            String contentId,
-            String content,
-            String contentType,
-            String thumbnail,
-            List<OwnerDataResponse> tagsUser
-    ) {
-        dto.setContentId(contentId);
-        dto.setContent(content != null && (content.startsWith("uploads/") || content.startsWith("/uploads/"))
-                ? baseUrl + content.replaceFirst("^/", "/")
-                : content);
-        dto.setContentType(contentType);
-        dto.setThumbnail(thumbnail);
-        dto.setContentTagsUser(tagsUser);
-        return dto;
-    }
-
-    public OwnerDataResponse OwnerDataResponse(
-            OwnerDataResponse dto,
-            String id,
-            String name,
-            String avatar
-    ) {
-        dto.setId(id);
-        dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
-        return dto;
-    }
-
-    public ListCommentResponse convertToListCommentResponse(
-            ListCommentResponse dto,
-            String secureId,
-            String comment,
-            List<ListCommentReplyResponse> commentReply,
-            OwnerDataResponse owner,
-            String createdAt
-
-    ) {
-        dto.setId(secureId);
-        dto.setComment(comment);
-        dto.setCommentReply(commentReply);
-        dto.setOwner(owner);
-        dto.setCreatedAt(createdAt);
-        return dto;
-    }
-
-    public ListCommentReplyResponse convertToListCommentReplyResponse(
-            ListCommentReplyResponse dto,
-            String secureId,
-            String comment,
-            OwnerDataResponse owner,
-            String createdAt
-
-    ) {
-        dto.setId(secureId);
-        dto.setComment(comment);
-        dto.setOwner(owner);
-        dto.setCreatedAt(createdAt);
-        return dto;
-    }
-
 }
+

@@ -24,8 +24,8 @@ public class UserDeletedDTOConverter {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
-        UserManagementConverter converter =
-                new UserManagementConverter(baseUrl);
+        TreeUserManagementConverter converter =
+                new TreeUserManagementConverter();
         converter.DetailResponse(data, dto);
 
         // return

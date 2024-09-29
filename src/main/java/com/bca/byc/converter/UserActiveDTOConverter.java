@@ -1,6 +1,7 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.AppUserDetail;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class UserActiveDTOConverter {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
-        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        TreeUserManagementConverter converter = new TreeUserManagementConverter();
         converter.DetailResponse(data, dto);
 
         // return
@@ -44,6 +45,17 @@ public class UserActiveDTOConverter {
     public void convertToUpdateRequest(AppUser data, @Valid UserActiveUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
+        AppUserDetail userDetail = data.getAppUserDetail();
+        userDetail.setName(dto.getName());
+        userDetail.setMemberBirthdate(dto.getBirthDate());
+        userDetail.setPhone(dto.getPhone());
+        userDetail.setMemberCin(dto.getMemberCin());
+        userDetail.setParentCin(dto.getParentCin());
+        userDetail.setMemberBankAccount(dto.getMemberBankAccount());
+        userDetail.setParentBankAccount(dto.getParentBankAccount());
+        userDetail.setBranchCode(dto.getBranchCode());
+        userDetail.setPicName(dto.getPicName());
+
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
     }

@@ -35,7 +35,7 @@ public class PostDTOConverter {
     public PostHomeResponse convertToListResponse(Post data) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
-        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
 
         dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());
@@ -56,7 +56,7 @@ public class PostDTOConverter {
     public PostDetailResponse convertToDetailResponse(Post data) {
         // mapping Entity with DTO Entity
         PostDetailResponse dto = modelMapper.map(data, PostDetailResponse.class);
-        UserManagementConverter converter = new UserManagementConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
 
         dto.setId(data.getSecureId());
         dto.setDescription(data.getDescription());
@@ -148,7 +148,7 @@ public class PostDTOConverter {
     }
 
     // -----------------
-    private List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, UserManagementConverter converter) {
+    private List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter) {
         return postContentList.stream().map(postContent -> {
             List<OwnerDataResponse> tagUsers = postContent.getTagUsers().stream()
                     .map(tagUser -> converter.OwnerDataResponse(
@@ -168,7 +168,7 @@ public class PostDTOConverter {
         }).collect(Collectors.toList());
     }
 
-    private OwnerDataResponse convertOwnerData(UserManagementConverter converter, AppUser appUser) {
+    private OwnerDataResponse convertOwnerData(TreePostConverter converter, AppUser appUser) {
         return converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 appUser.getSecureId(),
@@ -177,7 +177,7 @@ public class PostDTOConverter {
         );
     }
 
-    private PostOwnerResponse convertOwnerDataWithBusiness(UserManagementConverter converter, AppUser appUser) {
+    private PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser) {
         return converter.PostOwnerResponse(
                 new PostOwnerResponse(),
                 appUser.getSecureId(),
@@ -200,7 +200,7 @@ public class PostDTOConverter {
         );
     }
 
-    private List<ListCommentResponse> convertComments(List<Comment> comments, UserManagementConverter converter) {
+    private List<ListCommentResponse> convertComments(List<Comment> comments, TreePostConverter converter) {
         return comments.stream().map(comment -> {
             List<ListCommentReplyResponse> replies = comment.getCommentReply().stream()
                     .map(reply -> converter.convertToListCommentReplyResponse(
@@ -242,7 +242,7 @@ public class PostDTOConverter {
     }
 
     // Helper method to convert comment replies
-    private List<ListCommentReplyResponse> convertCommentReplies(UserManagementConverter converter, List<CommentReply> commentReplies) {
+    private List<ListCommentReplyResponse> convertCommentReplies(TreePostConverter converter, List<CommentReply> commentReplies) {
         List<ListCommentReplyResponse> replyResponses = new ArrayList<>();
         for (CommentReply reply : commentReplies) {
             ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();

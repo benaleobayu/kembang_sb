@@ -99,7 +99,7 @@ public class PreRegisterDTOConverter {
                 break;
         }
 
-        data.setStatus(true);
+        data.setActive(true);
 
         // return
         return data;
