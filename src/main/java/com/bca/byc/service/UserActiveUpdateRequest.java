@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.entity.Branch;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,10 +16,14 @@ public class UserActiveUpdateRequest {
 
     private String memberCin;
 
-    private String childCin;
+    private String parentCin;
 
     private String memberBankAccount;
 
-    private String childBankAccount;
+    private String parentBankAccount;
+
+    private Branch branchCode;
+
+    private String picName;
 
 }

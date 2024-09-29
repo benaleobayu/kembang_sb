@@ -3,14 +3,15 @@ package com.bca.byc.model;
 import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserManagementDetailResponse {
+public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
 
-    private Long id;
     private String name;
     private String birthDate;
     private String phone;
@@ -28,10 +29,8 @@ public class UserManagementDetailResponse {
 
     private List<ExpectCategoryList> expectCategory = new ArrayList<>();
 
-    private Long orders;
+    private Integer orders;
     private String status;
-    private String createdAt;
-    private String updatedAt;
 
 }
 

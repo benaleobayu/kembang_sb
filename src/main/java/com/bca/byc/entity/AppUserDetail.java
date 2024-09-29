@@ -24,14 +24,19 @@ import java.util.List;
 })
 public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifiable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Override
     public String getSecureId() {
         return super.getSecureId();
     }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", columnDefinition = "varchar(255) default ''")
     private String name = "";
@@ -92,12 +97,16 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     private String cover;
 
     @Column(name = "user_as")
-    private String userAs;
+    private String userAs; // TODO want to remove ?
 
-    @Column(name = "branch_code")
-    private String branchCode;
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branchCode;
 
     @Column(name = "pic_name")
     private String picName;
+
+    @Column(name = "orders")
+    private Integer orders;
 
 }

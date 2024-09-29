@@ -1,7 +1,6 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import org.springframework.data.domain.Page;
@@ -12,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
@@ -76,5 +76,8 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "GROUP BY u.id, aud.avatar, aud.name, bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary ")
     Page<ListTagUserResponse> findListTagUser(String keyword, Pageable pageable);
 
+    Optional<AppUser> findBySecureId(String id);
+
+    boolean existsBySecureId(String id);
 }
 

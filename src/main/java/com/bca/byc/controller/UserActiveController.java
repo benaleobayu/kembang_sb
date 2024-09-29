@@ -53,7 +53,7 @@ public class UserActiveController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listActiveUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -79,10 +79,10 @@ public class UserActiveController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiDataResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiDataResponse> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
-            UserManagementDetailResponse item = service.findDataById(id);
+            UserManagementDetailResponse item = service.findBySecureId(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found user active", item));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
@@ -90,7 +90,7 @@ public class UserActiveController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody UserActiveUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody UserActiveUpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -101,7 +101,7 @@ public class UserActiveController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
         try {
             service.deleteData(id);
@@ -112,7 +112,7 @@ public class UserActiveController {
     }
 
     @PatchMapping("{id}/suspend")
-    public ResponseEntity<ApiResponse> suspend(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> suspend(@PathVariable("id") String id) {
         log.info("PATCH " + urlRoute + "/{id}/suspend endpoint hit");
         try {
             service.suspendData(id);
