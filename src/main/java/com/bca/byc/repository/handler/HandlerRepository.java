@@ -1,10 +1,12 @@
 package com.bca.byc.repository.handler;
 
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.SecureIdentifiable;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.projection.FollowsUserProjection;
 import com.bca.byc.repository.AppUserProjectionRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,10 +18,18 @@ public class HandlerRepository {
     }
 
     // get user by email
-    public static <Email extends String> AppUser getEntityByEmail(Email email, AppUserRepository repository, String notFoundMessage) {
+    public static <Email extends String> AppUser getUserByEmail(Email email, AppUserRepository repository, String notFoundMessage) {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
     }
+
+    // get admin by email
+    public static <Email extends String> AppAdmin getAdminByEmail(Email email, AppAdminRepository repository, String notFoundMessage) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
+    }
+
+
 
     // get user by email
     public static <Email extends String> FollowsUserProjection getUserProjectionByEmail(Email email, AppUserProjectionRepository repository, String notFoundMessage) {
