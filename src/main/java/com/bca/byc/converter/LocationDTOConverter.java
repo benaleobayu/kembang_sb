@@ -20,13 +20,17 @@ public class LocationDTOConverter {
 
     // for get data
     public LocationDetailResponse convertToListResponse(Location data) {
+        GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
-        LocationDetailResponse dto = modelMapper.map(data, LocationDetailResponse.class);
+        LocationDetailResponse dto = new LocationDetailResponse();
+        dto.setName(data.getName());
+        dto.setAddress(data.getAddress());
+        dto.setDescription(data.getDescription());
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.isActive());
+        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-
         // return
         return dto;
     }
