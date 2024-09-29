@@ -56,8 +56,9 @@ public class UserJob {
                 faker.avatar().image(),
                 faker.avatar().image(),
                 memberAs[faker.number().numberBetween(0, 2)],
-                faker.code().asin(),
-                faker.name().firstName()
+                null,
+                faker.name().firstName(),
+                faker.number().randomDigit()
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
 

@@ -16,36 +16,48 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-//@Order(1)
+@Order(1)
 @AllArgsConstructor
-//public class RoleSeeder implements CommandLineRunner {
-public class RoleSeeder  {
+public class RoleSeeder implements CommandLineRunner {
+//public class RoleSeeder  {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
 
 
-//    @Override
+    @Override
     public void run(String... args) {
-        Map<String, List<String>> actionByResource = new HashMap<>();
+        Map<String, List<String>> actionByResource = new LinkedHashMap<>();
         actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("user", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
+        // user management
         actionByResource.put("pre-registration", List.of("view", "create", "read", "update", "delete", "export"));
         actionByResource.put("user-inquiry", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-active", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-suspended", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-deleted", List.of("view", "read", "update", "delete", "export"));
+
+        // master data
+        actionByResource.put("faq", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("business_category", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("expect_item", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("location", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("branch", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("kanwil", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("setting", List.of("view", "create", "read", "update", "delete"));
+
 
         List<Permission> allPermissions = new ArrayList<>();
 
-        actionByResource.forEach((resource, actions) -> {
-            actions.forEach(action -> {
+        for (String resource : actionByResource.keySet()) {
+            List<String> actions = actionByResource.get(resource);
+            for (String action : actions) {
                 String permissionName = resource + "." + action;
                 Optional<Permission> existingPermission = permissionRepository.findByName(permissionName);
+
                 if (existingPermission.isEmpty()) {
                     Permission permission = new Permission();
                     permission.setName(permissionName);
@@ -54,8 +66,10 @@ public class RoleSeeder  {
                 } else {
                     allPermissions.add(existingPermission.get());
                 }
-            });
-        });
+            }
+        }
+
+        allPermissions.forEach(permission -> System.out.println(permission.getName()));
 
         // check role exist
         Role adminRole = roleRepository.findByName("SUPERADMIN")
