@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.Location;
 import lombok.Data;
 
 @Data
@@ -13,16 +14,8 @@ public class BranchCreateUpdateRequest {
 
     private String phone;
 
-    private String location;
+    private Long location;
 
-    private String createdAt;
-
-    private String updatedBy;
-
-    private String updatedAt;
-
-    private String createdBy;
-
-    private String status;
+    private Boolean status;
 
 }

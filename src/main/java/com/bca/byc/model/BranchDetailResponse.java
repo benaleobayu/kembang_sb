@@ -3,9 +3,7 @@ package com.bca.byc.model;
 import lombok.Data;
 
 @Data
-public class BranchDetailResponse {
-
-    private String id;
+public class BranchDetailResponse extends AdminModelBaseDTOResponse{
 
     private String code;
 
@@ -17,13 +15,7 @@ public class BranchDetailResponse {
 
     private String location;
 
-    private String createdAt;
+    private String kanwil;
 
-    private String updatedBy;
-
-    private String updatedAt;
-
-    private String createdBy;
-
-    private String status;
+    private Boolean status;
 }

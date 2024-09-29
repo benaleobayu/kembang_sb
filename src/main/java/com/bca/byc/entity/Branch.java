@@ -14,16 +14,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "branch", uniqueConstraints = {
     @UniqueConstraint(name = "uk_branch_seq_id", columnNames = "secure_id")
 })
-public class Branch extends AbstractBaseEntity implements SecureIdentifiable{
+public class Branch extends AbstractBaseEntityCms implements SecureIdentifiable{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
-    @Column(name = "code", nullable = false)
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+
+    @Column(name = "code")
     private String code;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name = "";
 
     @Column(name = "address")

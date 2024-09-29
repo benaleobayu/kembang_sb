@@ -1,14 +1,16 @@
 package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.BranchDTOConverter;
-import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Branch;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BranchCreateUpdateRequest;
 import com.bca.byc.model.BranchDetailResponse;
 import com.bca.byc.repository.BranchRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.cms.BranchService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
@@ -28,9 +30,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BranchServiceImpl implements BranchService {
 
-    static String notFound = "Branch not found";
-    private BranchRepository repository;
-    private BranchDTOConverter converter;
+    static String notFound = "not found";
+    private final AppAdminRepository adminRepository;
+    private final BranchRepository repository;
+    private final BranchDTOConverter converter;
 
     @Override
     public ResultPageResponseDTO<BranchDetailResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -61,29 +64,29 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public BranchDetailResponse findDataBySecureId(String id) throws BadRequestException {
-        Branch data = HandlerRepository.getEntityBySecureId(id, repository, notFound);
+        Branch data = HandlerRepository.getEntityBySecureId(id, repository, "Branch" + notFound);
 
         return converter.convertToListResponse(data);
     }
 
     @Override
     public void saveData(@Valid BranchCreateUpdateRequest dto) throws BadRequestException {
+        String email = ContextPrincipal.getSecureUserId();
+        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin" + notFound);
         // set entity to add with model mapper
-        Branch data = converter.convertToCreateRequest(dto);
+        Branch data = converter.convertToCreateRequest(dto, admin);
         // save data
         repository.save(data);
     }
 
     @Override
     public void updateData(String id, BranchCreateUpdateRequest dto) throws BadRequestException {
-        // check exist and get
-        Branch data = HandlerRepository.getEntityBySecureId(id, repository, notFound);
+        String email = ContextPrincipal.getSecureUserId();
+        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin" + notFound);
+        Branch data = HandlerRepository.getEntityBySecureId(id, repository, "Branch" + notFound);
 
         // update
-        converter.convertToUpdateRequest(data, dto);
-
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        converter.convertToUpdateRequest(data, dto, admin);
 
         // save
         repository.save(data);
@@ -91,7 +94,7 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public void deleteData(String id) throws BadRequestException {
-        Branch user = HandlerRepository.getEntityBySecureId(id, repository, notFound);
+        Branch user = HandlerRepository.getEntityBySecureId(id, repository, "Branch" + notFound);
         Long dataId = user.getId();
         // delete data
         if (!repository.existsById(dataId)) {
