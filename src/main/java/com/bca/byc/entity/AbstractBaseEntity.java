@@ -19,7 +19,7 @@ public abstract class AbstractBaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -2119574796403647424L;
 
-    @Column(name = "secure_id", nullable = false, unique = true)
+    @Column(name = "secure_id", nullable = false, unique = true, columnDefinition = "char(36) default gen_random_uuid()")
     private String secureId = UUID.randomUUID().toString();
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
