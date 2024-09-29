@@ -28,7 +28,7 @@ public class BusinessCategoryDTOConverter {
         dto.setName(data.getName());
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setOrders(data.getOrders());
-        dto.setStatus(data.isActive());
+        dto.setStatus(data.getIsActive());
         dto.setParentId(data.getParentId() != null ? data.getParentId().getId() : null);
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
 
@@ -38,7 +38,7 @@ public class BusinessCategoryDTOConverter {
             child.setName(businessCategory.getName());
             child.setDescription(Formatter.formatDescription(businessCategory.getDescription()));
             child.setOrders(businessCategory.getOrders());
-            child.setStatus(businessCategory.isActive());
+            child.setStatus(businessCategory.getIsActive());
             child.setParentId(businessCategory.getParentId() != null ? businessCategory.getParentId().getId() : null);
             converter.CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
             listBusiness.add(child);

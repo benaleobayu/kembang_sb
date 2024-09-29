@@ -31,7 +31,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Id

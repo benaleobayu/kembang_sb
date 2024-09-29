@@ -27,7 +27,7 @@ public class LocationDTOConverter {
         dto.setAddress(data.getAddress());
         dto.setDescription(data.getDescription());
         dto.setOrders(data.getOrders());
-        dto.setStatus(data.isActive());
+        dto.setStatus(data.getIsActive());
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
         // Use DataFormatter here
         dto.setDescription(Formatter.formatDescription(data.getDescription()));

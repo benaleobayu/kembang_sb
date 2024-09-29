@@ -79,7 +79,7 @@ public class KanwilDTOConverter {
             listDto.setAddress(data.getAddress());
             listDto.setPhone(data.getPhone());
             listDto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
-            listDto.setStatus(data.isActive());
+            listDto.setStatus(data.getIsActive());
         } else if (dto instanceof KanwilDetailResponse) {
             KanwilDetailResponse detailDto = (KanwilDetailResponse) dto;
             detailDto.setCode(data.getCode());
@@ -87,7 +87,7 @@ public class KanwilDTOConverter {
             detailDto.setAddress(data.getAddress());
             detailDto.setPhone(data.getPhone());
             detailDto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
-            detailDto.setStatus(data.isActive());
+            detailDto.setStatus(data.getIsActive());
         }
     }
 

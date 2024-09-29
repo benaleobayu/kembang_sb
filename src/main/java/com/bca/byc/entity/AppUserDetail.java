@@ -31,7 +31,7 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Id

@@ -23,7 +23,7 @@ public class Branch extends AbstractBaseEntityCms implements SecureIdentifiable{
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
 

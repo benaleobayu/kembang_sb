@@ -71,6 +71,6 @@ public class Business extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 }

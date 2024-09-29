@@ -27,7 +27,7 @@ public class ExpectCategory extends AbstractBaseEntityCms implements SecureIdent
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Column(name = "name", nullable = false, length = 50)

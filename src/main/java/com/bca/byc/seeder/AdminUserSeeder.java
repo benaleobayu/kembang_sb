@@ -30,7 +30,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             admin.setName("admin");
             admin.setEmail("admin@unictive.net");
             admin.setPassword(passwordEncoder.encode("password"));
-            admin.setActive(true);
+            admin.setIsActive(true);
             admin.setCreatedAt(LocalDateTime.now());
             admin.setUpdatedAt(LocalDateTime.now());
 
@@ -54,7 +54,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             adminOperator.setName("admin-operator");
             adminOperator.setEmail("admin-opt@unictive.net");
             adminOperator.setPassword(passwordEncoder.encode("password"));
-            adminOperator.setActive(true);
+            adminOperator.setIsActive(true);
             adminOperator.setCreatedAt(LocalDateTime.now());
             adminOperator.setUpdatedAt(LocalDateTime.now());
 
@@ -77,7 +77,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             adminSPV.setName("admin-spv");
             adminSPV.setEmail("admin-spv@unictive.net");
             adminSPV.setPassword(passwordEncoder.encode("password"));
-            adminSPV.setActive(true);
+            adminSPV.setIsActive(true);
             adminSPV.setCreatedAt(LocalDateTime.now());
             adminSPV.setUpdatedAt(LocalDateTime.now());
 
@@ -100,7 +100,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             adminManager.setName("admin-manager");
             adminManager.setEmail("admin-mgr@unictive.net");
             adminManager.setPassword(passwordEncoder.encode("password"));
-            adminManager.setActive(true);
+            adminManager.setIsActive(true);
             adminManager.setCreatedAt(LocalDateTime.now());
             adminManager.setUpdatedAt(LocalDateTime.now());
 

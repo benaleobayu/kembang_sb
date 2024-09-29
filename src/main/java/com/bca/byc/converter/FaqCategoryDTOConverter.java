@@ -29,7 +29,7 @@ public class FaqCategoryDTOConverter {
         dto.setName(data.getName());
         dto.setDescription(data.getDescription());
         dto.setOrders(data.getOrders());
-        dto.setStatus(data.isActive());
+        dto.setStatus(data.getIsActive());
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
 
         List<FaqDetailResponse> listFaq = new ArrayList<>();
@@ -39,7 +39,7 @@ public class FaqCategoryDTOConverter {
             faqDetailResponse.setAnswer(faq.getAnswer());
             faqDetailResponse.setDescription(faq.getDescription());
             faqDetailResponse.setOrders(faq.getOrders());
-            faqDetailResponse.setStatus(faq.isActive());
+            faqDetailResponse.setStatus(faq.getIsActive());
             converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
             listFaq.add(faqDetailResponse);
         }

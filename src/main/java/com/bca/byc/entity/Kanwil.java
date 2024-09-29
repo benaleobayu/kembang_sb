@@ -23,7 +23,7 @@ public class Kanwil extends AbstractBaseEntityCms implements SecureIdentifiable 
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Column(name = "code")

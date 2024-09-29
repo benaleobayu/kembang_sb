@@ -92,7 +92,7 @@ public class PreRegisterDTOConverter {
                 break;
         }
 
-        data.setActive(true);
+        data.setIsActive(true);
 
         // return
         return data;
@@ -158,7 +158,7 @@ public class PreRegisterDTOConverter {
         log.setUpdatedBy(admin.getName());
         logRepository.save(log);
 
-        data.setDeleted(true);
+        data.setIsDeleted(true);
         data.setEmail(data.getEmail().concat("_rejected"));
         data.setStatusApproval(AdminApprovalStatus.REJECTED);
 

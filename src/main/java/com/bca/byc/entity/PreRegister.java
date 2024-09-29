@@ -29,7 +29,7 @@ public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifi
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Column(name = "name")

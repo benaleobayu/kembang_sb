@@ -28,7 +28,7 @@ public class BranchDTOConverter {
         dto.setName(data.getName());
         dto.setAddress(data.getAddress());
         dto.setPhone(data.getPhone());
-        dto.setStatus(data.isActive());
+        dto.setStatus(data.getIsActive());
 
         dto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
         dto.setKanwil(data.getKanwil() != null ? data.getKanwil().getName() : null);
@@ -56,7 +56,7 @@ public class BranchDTOConverter {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
 
-        data.setActive(dto.getStatus());
+        data.setIsActive(dto.getStatus());
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
         data.setUpdatedBy(admin);

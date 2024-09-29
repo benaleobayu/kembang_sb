@@ -30,7 +30,7 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable{
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
     @Column(name = "description", columnDefinition = "varchar(1000)")

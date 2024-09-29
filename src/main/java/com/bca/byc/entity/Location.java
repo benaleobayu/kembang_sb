@@ -39,7 +39,7 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
 }

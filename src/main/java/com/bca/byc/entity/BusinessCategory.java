@@ -44,7 +44,7 @@ public class BusinessCategory extends AbstractBaseEntityCms implements SecureIde
 
     @Override
     public Boolean getActive() {
-        return super.isActive();
+        return super.getIsActive();
     }
 
 }

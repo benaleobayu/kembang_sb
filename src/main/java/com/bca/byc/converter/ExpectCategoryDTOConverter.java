@@ -30,7 +30,7 @@ public class ExpectCategoryDTOConverter {
         dto.setDescription(data.getDescription());
         dto.setOrders(data.getOrders());
         dto.setIsOther(data.getIsOther());
-        dto.setStatus(data.isActive());
+        dto.setStatus(data.getIsActive());
 
         List<ExpectItemDetailResponse> listExpectItem = new ArrayList<>();
         for (ExpectItem expectItem : data.getExpectItems()) {
@@ -38,7 +38,7 @@ public class ExpectCategoryDTOConverter {
             expectItemDetailResponse.setName(expectItem.getName());
             expectItemDetailResponse.setDescription(expectItem.getDescription());
             expectItemDetailResponse.setOrders(expectItem.getOrders());
-            expectItemDetailResponse.setStatus(expectItem.isActive());
+            expectItemDetailResponse.setStatus(expectItem.getIsActive());
             converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
             listExpectItem.add(expectItemDetailResponse);
         }
