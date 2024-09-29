@@ -1,15 +1,19 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.entity.Faq;
 import com.bca.byc.entity.FaqCategory;
 import com.bca.byc.model.FaqCategoryCreateRequest;
 import com.bca.byc.model.FaqCategoryDetailResponse;
 import com.bca.byc.model.FaqCategoryUpdateRequest;
+import com.bca.byc.model.FaqDetailResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -19,8 +23,27 @@ public class FaqCategoryDTOConverter {
 
     // for get data
     public FaqCategoryDetailResponse convertToListResponse(FaqCategory data) {
+        GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
-        FaqCategoryDetailResponse dto = modelMapper.map(data, FaqCategoryDetailResponse.class);
+        FaqCategoryDetailResponse dto = new FaqCategoryDetailResponse();
+        dto.setName(data.getName());
+        dto.setDescription(data.getDescription());
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.isActive());
+        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+
+        List<FaqDetailResponse> listFaq = new ArrayList<>();
+        for (Faq faq : data.getFaqs()) {
+            FaqDetailResponse faqDetailResponse = new FaqDetailResponse();
+            faqDetailResponse.setQuestion(faq.getQuestion());
+            faqDetailResponse.setAnswer(faq.getAnswer());
+            faqDetailResponse.setDescription(faq.getDescription());
+            faqDetailResponse.setOrders(faq.getOrders());
+            faqDetailResponse.setStatus(faq.isActive());
+            converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+            listFaq.add(faqDetailResponse);
+        }
+        dto.setFaqs(listFaq);
         // return
         return dto;
     }

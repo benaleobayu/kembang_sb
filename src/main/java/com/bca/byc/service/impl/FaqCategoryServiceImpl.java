@@ -1,12 +1,16 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.FaqCategoryDTOConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.FaqCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.FaqCategoryCreateRequest;
 import com.bca.byc.model.FaqCategoryDetailResponse;
 import com.bca.byc.model.FaqCategoryUpdateRequest;
 import com.bca.byc.repository.FaqCategoryRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.FaqCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,13 +24,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class FaqCategoryServiceImpl implements FaqCategoryService {
 
-    private FaqCategoryRepository repository;
-    private FaqCategoryDTOConverter converter;
+    private final AppAdminRepository adminRepository;
+
+    private final FaqCategoryRepository repository;
+    private final FaqCategoryDTOConverter converter;
+
+    private final String notFoundMessage = " not found";
 
     @Override
     public FaqCategoryDetailResponse findDataById(Long id) throws BadRequestException {
-        FaqCategory data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("FaqCategory not found"));
+        FaqCategory data = HandlerRepository.getEntityById(id, repository, "Faq Category" + notFoundMessage);
 
         return converter.convertToListResponse(data);
     }
@@ -44,6 +51,8 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
 
     @Override
     public void saveData(@Valid FaqCategoryCreateRequest dto) throws BadRequestException {
+        String email = ContextPrincipal.getSecureUserId();
+        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "user" + notFoundMessage);
         // set entity to add with model mapper
         FaqCategory data = converter.convertToCreateRequest(dto);
         // save data
@@ -53,8 +62,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     @Override
     public void updateData(Long id, FaqCategoryUpdateRequest dto) throws BadRequestException {
         // check exist and get
-        FaqCategory data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID FaqCategory ID"));
+        FaqCategory data = HandlerRepository.getEntityById(id, repository, "Faq Category" + notFoundMessage);
 
         // update
         converter.convertToUpdateRequest(data, dto);
@@ -70,7 +78,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     public void deleteData(Long id) throws BadRequestException {
         // delete data
         if (!repository.existsById(id)) {
-            throw new BadRequestException("FaqCategory not found");
+            throw new BadRequestException("Faq Category" + notFoundMessage);
         } else {
             repository.deleteById(id);
         }
