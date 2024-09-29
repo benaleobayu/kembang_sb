@@ -15,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "app_user", indexes = {@Index(name = "uk_email", columnList = "email")})
+@Table(name = "app_user", indexes = {@Index(name = "uk_app_user_secure_id", columnList = "secure_id", unique = true)})
 public class AppUser extends AbstractBaseEntity implements UserDetails , SecureIdentifiable {
 
     /**
@@ -24,14 +24,19 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     @Serial
     private static final long serialVersionUID = 3423593371835697230L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Override
     public String getSecureId() {
         return super.getSecureId();
     }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", columnDefinition = "varchar(255) default ''")
     private String name = "";

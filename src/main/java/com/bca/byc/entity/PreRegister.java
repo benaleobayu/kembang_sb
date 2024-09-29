@@ -17,16 +17,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "pre_registration")
-public class PreRegister extends AbstractBaseEntity implements SecureIdentifiable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "pre_registration", indexes = {
+    @Index(name = "idx_pre_registration_secure_id", columnList = "secure_id", unique = true),
+})
+public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Override
     public String getSecureId() {
         return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
     }
 
     @Column(name = "name")
@@ -83,17 +86,6 @@ public class PreRegister extends AbstractBaseEntity implements SecureIdentifiabl
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
-
-    @ManyToOne
-    @JoinColumn(name = "created_by")
-    private AppAdmin createdBy;
-
-    @ManyToOne
-    @JoinColumn(name = "updated_by")
-    private AppAdmin updatedBy;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status_approval")

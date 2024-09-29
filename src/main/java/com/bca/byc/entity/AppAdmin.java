@@ -13,8 +13,10 @@ import java.util.Collection;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name = "app_admin")
-public class AppAdmin extends AbstractBaseEntity implements UserDetails {
+@Table(name = "app_admin", indexes = {
+    @Index(name = "idx_app_admin_secure_id", columnList = "secure_id", unique = true)
+})
+public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,7 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -78,5 +80,10 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails {
     public boolean isEnabled() {
         // TODO Auto-generated method stub
         return true;
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
     }
 }

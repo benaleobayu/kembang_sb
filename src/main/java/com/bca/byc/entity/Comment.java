@@ -15,18 +15,23 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Table(name = "comments" ,indexes = {
-    @Index(name = "comments_secure_id", columnList = "secure_id")
+    @Index(name = "idx_comments_secure_id", columnList = "secure_id", unique = true)
 })
 public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Override
     public String getSecureId() {
         return super.getSecureId();
     }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "comment", columnDefinition = "varchar(250)")
     private String comment;

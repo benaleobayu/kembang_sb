@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "post", indexes = {
-    @Index(name = "idx_secure_id", columnList = "secure_id")
+    @Index(name = "idx_secure_id", columnList = "secure_id", unique = true)
 })
 public class Post extends AbstractBaseEntity implements SecureIdentifiable{
 
@@ -26,6 +26,11 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable{
     @Override
     public String getSecureId() {
         return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
     }
 
     @Column(name = "description", columnDefinition = "varchar(1000)")

@@ -16,17 +16,18 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "expect_category", indexes = {
-    @Index(name = "expect_category_secure_id", columnList = "secure_id")
+    @Index(name = "expect_category_secure_id", columnList = "secure_id", unique = true)
 })
-public class ExpectCategory extends AbstractBaseEntity implements SecureIdentifiable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ExpectCategory extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Override
     public String getSecureId() {
         return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
     }
 
     @Column(name = "name", nullable = false, length = 50)
@@ -40,9 +41,6 @@ public class ExpectCategory extends AbstractBaseEntity implements SecureIdentifi
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
 
     // relations
     @OneToMany(mappedBy = "expectCategory")
