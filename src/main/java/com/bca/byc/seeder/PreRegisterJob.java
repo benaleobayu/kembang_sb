@@ -33,26 +33,22 @@ public class PreRegisterJob {
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         PreRegister data = new PreRegister(
-                null,
-                faker.name().fullName(),
-                faker.internet().emailAddress(),
-                faker.phoneNumber().phoneNumber().toString(),
-                memberType[faker.number().numberBetween(0, 3)],
-                userType[faker.number().numberBetween(0, 2)],
-                faker.lorem().characters(120),
-                cardNumber.toString(),
-                cinNumber.toString(),
-                LocalDate.now().minusDays(faker.number().numberBetween(365 * 10, 365 * 45)),
-                cardNumber.toString(),
-                cinNumber.toString(),
-                LocalDate.now().minusDays(faker.number().numberBetween(365 * 10, 365 * 45)),
-                faker.nation().language().toUpperCase(),
-                faker.name().firstName(),
-                1,
-                true,
-                createAdmin,
-                createAdmin,
-                approval[faker.number().numberBetween(0, 4)]
+                faker.name().fullName(), // name
+                faker.internet().emailAddress(), // email
+                faker.phoneNumber().phoneNumber().toString(), // phone
+                memberType[faker.number().numberBetween(0, 3)], // member
+                userType[faker.number().numberBetween(0, 2)], // type
+                faker.lorem().characters(120), // description
+                cardNumber.toString(), // card number
+                cinNumber.toString(), // cin number
+                LocalDate.now().minusDays(faker.number().numberBetween(365 * 10, 365 * 45)), // date of birth
+                cardNumber.toString(), // card number
+                cinNumber.toString(), // cin number
+                LocalDate.now().minusDays(faker.number().numberBetween(365 * 10, 365 * 45)), // date of birth
+                faker.nation().language().toUpperCase(), // branchCode
+                faker.name().firstName(), // picName
+                1, // orders
+                approval[faker.number().numberBetween(0, 4)] // status approval
         );
 
         repository.save(data);
