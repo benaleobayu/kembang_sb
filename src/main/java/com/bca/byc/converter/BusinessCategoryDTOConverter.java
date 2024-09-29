@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import co.elastic.clients.elasticsearch.license.LicenseStatus;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.BusinessCategoryCreateRequest;
 import com.bca.byc.model.BusinessCategoryDetailResponse;
@@ -11,6 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -20,18 +23,29 @@ public class BusinessCategoryDTOConverter {
 
     // for get data
     public BusinessCategoryDetailResponse convertToListResponse(BusinessCategory data) {
-        if (data == null) {
-            return null;
-        } else {
-            // mapping Entity with DTO Entity
-            BusinessCategoryDetailResponse dto = modelMapper.map(data, BusinessCategoryDetailResponse.class);
-            // Use DataFormatter here
-            dto.setDescription(Formatter.formatDescription(data.getDescription()));
-            dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-            dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-            // return
-            return dto;
+        GlobalConverter converter = new GlobalConverter();
+        BusinessCategoryDetailResponse dto = new BusinessCategoryDetailResponse();
+        dto.setName(data.getName());
+        dto.setDescription(Formatter.formatDescription(data.getDescription()));
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.isActive());
+        dto.setParentId(data.getParentId() != null ? data.getParentId().getId() : null);
+        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+
+        List<BusinessCategoryDetailResponse> listBusiness = new ArrayList<>();
+        for (BusinessCategory businessCategory : data.getChildren()) {
+            BusinessCategoryDetailResponse child = new BusinessCategoryDetailResponse();
+            child.setName(businessCategory.getName());
+            child.setDescription(Formatter.formatDescription(businessCategory.getDescription()));
+            child.setOrders(businessCategory.getOrders());
+            child.setStatus(businessCategory.isActive());
+            child.setParentId(businessCategory.getParentId() != null ? businessCategory.getParentId().getId() : null);
+            converter.CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
+            listBusiness.add(child);
         }
+        dto.setChildren(listBusiness);
+        // return
+        return dto;
     }
 
     // for create data

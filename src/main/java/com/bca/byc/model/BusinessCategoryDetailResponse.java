@@ -1,38 +1,22 @@
 package com.bca.byc.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class BusinessCategoryDetailResponse {
+public class BusinessCategoryDetailResponse extends AdminModelBaseDTOResponse {
 
-    private Long id;
     private String name;
     private String description;
     private Integer orders;
     private Boolean status;
-    private String createdAt;
-    private String updatedAt;
 
     private Long parentId;
 
-    private Set<BusinessCategoryDetailResponse> children = new HashSet<>();
+    private List<BusinessCategoryDetailResponse> children = new ArrayList<>();
 
-    public BusinessCategoryDetailResponse() {
-    }
-
-    public BusinessCategoryDetailResponse(Long id, String name, Long parentId) {
-        this.id = id;
-        this.name = name;
-        this.parentId = parentId;
-    }
-
-    public BusinessCategoryDetailResponse(Long id, String name, Boolean status, Set<BusinessCategoryDetailResponse> children) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.children = children;
-    }
 }
