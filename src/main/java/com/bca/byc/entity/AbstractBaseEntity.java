@@ -23,10 +23,10 @@ public abstract class AbstractBaseEntity implements Serializable {
     private String secureId = UUID.randomUUID().toString();
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
-    private boolean isActive = true;
+    private Boolean isActive = true;
 
     @Column(name = "is_deleted", columnDefinition = "boolean default false")
-    private boolean isDeleted = false;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
