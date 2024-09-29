@@ -10,6 +10,7 @@ import com.bca.byc.repository.AppUserDetailRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class UserJob {
 
     private final PasswordEncoder passwordEncoder;
 
-    //    @Scheduled(fixedDelay = 50)
+//    @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
         String[] memberType = {"Solitaire", "Priority"};
