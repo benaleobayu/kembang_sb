@@ -93,7 +93,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(data.getId());
+            dataRow.createCell(0).setCellValue(dataRowIndex++);
             dataRow.createCell(1).setCellValue(data.getBranchCode());
             dataRow.createCell(2).setCellValue(data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));

@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void updateData(String postId, String commentId, CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
         Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
         // check data
         checkCommentOnPost(comment, post, "update");
@@ -96,7 +96,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteData(String postId, String commentId, String email) throws ResourceNotFoundException {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
         Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
         // check data
         checkCommentOnPost(comment, post, "delete");

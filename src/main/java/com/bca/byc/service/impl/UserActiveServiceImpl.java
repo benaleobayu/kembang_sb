@@ -10,10 +10,12 @@ import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.UserActiveRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
+
 @Service
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
@@ -40,8 +44,8 @@ public class UserActiveServiceImpl implements UserActiveService {
     private UserActiveDTOConverter converter;
 
     @Override
-    public UserManagementDetailResponse findDataById(Long id) throws BadRequestException {
-        AppUser data = repository.findById(id)
+    public UserManagementDetailResponse findBySecureId(String id) throws BadRequestException {
+        AppUser data = repository.findBySecureId(id)
                 .orElseThrow(() -> new BadRequestException("UserActive not found"));
 
         return converter.convertToListResponse(data);
@@ -59,10 +63,10 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public void updateData(Long id, UserActiveUpdateRequest dto) throws BadRequestException {
+    @Transactional
+    public void updateData(String id, UserActiveUpdateRequest dto) throws BadRequestException {
         // check exist and get
-        AppUser data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID UserActive ID"));
+        AppUser data = getEntityBySecureId(id, repository, "user not found");
 
         // update
         converter.convertToUpdateRequest(data, dto);
@@ -75,19 +79,21 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public void deleteData(Long id) throws BadRequestException {
+    @Transactional
+    public void deleteData(String id) throws BadRequestException {
+        AppUser appUser = getEntityBySecureId(id, repository, "user not found");
         // delete data
-        if (!repository.existsById(id)) {
-            throw new BadRequestException("UserActive not found");
+        if (!repository.existsBySecureId(id)) {
+            throw new BadRequestException("user not found");
         } else {
-            repository.deleteById(id);
+            repository.deleteById(appUser.getId());
         }
     }
 
     @Override
-    public void suspendData(Long id) throws BadRequestException {
-        AppUser data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+    @Transactional
+    public void suspendData(String id) throws BadRequestException {
+        AppUser data = getEntityBySecureId(id, repository, "user not found");
         AppUserAttribute attribute = data.getAppUserAttribute();
         // toggle
         attribute.setIsSuspended(!attribute.getIsSuspended().equals(true));

@@ -14,6 +14,7 @@ import com.bca.byc.service.UserAuthService;
 import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.OtpUtil;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -205,8 +206,9 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
+    @Transactional
     public void setNewPassword(String email, UserSetPasswordRequest dto) {
-        AppUser user = HandlerRepository.getEntityByEmail(email, userRepository, "User not found in email: " + email);
+        AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found in email: " + email);
 
         if (!dto.isSetPasswordMatch()) {
             throw new BadRequestException("Password does not match");

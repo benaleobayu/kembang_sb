@@ -13,15 +13,15 @@ import java.util.List;
 
 public interface UserActiveService {
 
-    UserManagementDetailResponse findDataById(Long id) throws BadRequestException;
+    UserManagementDetailResponse findBySecureId(String id) throws BadRequestException;
 
     List<UserManagementDetailResponse> findAllData();
 
-    void updateData(Long id, @Valid UserActiveUpdateRequest dto) throws BadRequestException;
+    void updateData(String id, @Valid UserActiveUpdateRequest dto) throws BadRequestException;
 
-    void deleteData(Long id) throws BadRequestException;
+    void deleteData(String id) throws BadRequestException;
 
-    void suspendData(Long id) throws BadRequestException;
+    void suspendData(String id) throws BadRequestException;
 
     ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate);
 

@@ -1,17 +1,14 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.*;
-import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import static com.bca.byc.repository.handler.HandlerRepository.getEntityByEmail;
+import static com.bca.byc.repository.handler.HandlerRepository.getUserByEmail;
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
 
 @Service
@@ -27,7 +24,7 @@ public class UserActionServiceImpl implements UserActionService {
 
     @Override
     public void followUser(String userId, String email) {
-        AppUser user = getEntityByEmail(email, userRepository, "User not found in email: " + email);
+        AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
         AppUser userToFollow = getEntityBySecureId(userId, userRepository, "User not found");
 
         if (!user.getFollows().contains(userToFollow)) {
@@ -39,7 +36,7 @@ public class UserActionServiceImpl implements UserActionService {
 
     @Override
     public void unfollowUser(String userId, String email) {
-        AppUser user = getEntityByEmail(email, userRepository, "User not found in email: " + email);
+        AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
         AppUser userToUnfollow = getEntityBySecureId(userId, userRepository, "User not found");
 
         if (user.getFollows().contains(userToUnfollow)) {
@@ -51,7 +48,7 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void likeDislikePost(@PathVariable("commentId") String postId, String email,@PathVariable("isLike") Boolean isLike) {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        AppUser user = getEntityByEmail(email, userRepository, "User not found in email: " + email);
+        AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
 
         LikeDislike existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
 
@@ -74,7 +71,7 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void likeDislikeComment(@PathVariable("commentId") String commentId, String email,@PathVariable("isLike") Boolean isLike) {
         Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
-        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
 
         LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
 
@@ -97,7 +94,7 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void likeDislikeCommentReply(@PathVariable("commentId") String commentId, String email,@PathVariable("isLike") Boolean isLike) {
         CommentReply comment = getEntityBySecureId(commentId, commentReplyRepository, "Comment not found");
-        AppUser user = getEntityByEmail(email, userRepository, "User not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
 
         LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(comment, user);
 
