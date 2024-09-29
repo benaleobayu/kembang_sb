@@ -11,11 +11,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "locations")
-public class Location extends AbstractBaseEntityNoUUID {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Location extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -35,5 +31,15 @@ public class Location extends AbstractBaseEntityNoUUID {
     // relations
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
 
 }

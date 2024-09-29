@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class FaqCategory extends AbstractBaseEntityNoUUID {
+@Table(name = "faq_category", indexes = {@Index(name = "idx_faq_category_secure_id", columnList = "secure_id", unique = true)})
+public class FaqCategory extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +35,13 @@ public class FaqCategory extends AbstractBaseEntityNoUUID {
     @OneToMany(mappedBy = "faqCategoryId")
     private List<Faq> faqs;
 
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 }

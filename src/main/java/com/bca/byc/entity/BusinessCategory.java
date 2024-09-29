@@ -14,12 +14,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "business_categories")
-public class BusinessCategory extends AbstractBaseEntityNoUUID {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "business_categories", indexes = {
+        @Index(name = "idx_business_category_secure_id", columnList = "secure_id", unique = true)
+})
+public class BusinessCategory extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
@@ -28,10 +26,7 @@ public class BusinessCategory extends AbstractBaseEntityNoUUID {
     private String description;
 
     @Column(name = "orders", columnDefinition = "int default 1")
-    private Integer orders;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
+    private Integer orders = 1;
 
     // make parent in this entity
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,5 +36,15 @@ public class BusinessCategory extends AbstractBaseEntityNoUUID {
     // show data as child in this entity
     @OneToMany(mappedBy = "parentId", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<BusinessCategory> children = new ArrayList<>();
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
 
 }

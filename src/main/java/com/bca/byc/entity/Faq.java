@@ -11,11 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
-public class Faq extends AbstractBaseEntityNoUUID {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "faq", indexes = {@Index(name = "idx_faq_secure_id", columnList = "secure_id", unique = true)})
+public class Faq extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Column(name = "question", nullable = false)
     private String question;
@@ -29,10 +26,17 @@ public class Faq extends AbstractBaseEntityNoUUID {
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;
 
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
-
     @ManyToOne
     @JoinColumn(name = "faq_category_id", nullable = false)
     private FaqCategory faqCategoryId;
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 }

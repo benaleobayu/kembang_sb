@@ -14,8 +14,10 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "business")
-public class Business extends AbstractBaseEntityNoUUID {
+@Table(name = "business", indexes = {
+    @Index(name = "idx_business_secure_id", columnList = "secure_id", unique = true)
+})
+public class Business extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +64,13 @@ public class Business extends AbstractBaseEntityNoUUID {
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
 
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.isActive();
+    }
 }
