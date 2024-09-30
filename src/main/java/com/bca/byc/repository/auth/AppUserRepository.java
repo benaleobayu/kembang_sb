@@ -2,7 +2,7 @@ package com.bca.byc.repository.auth;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
-import com.bca.byc.model.projection.UserActionFollowProjection;
+import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +23,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findBySecureId(@Param("userId") String secureId);
 
     @Query("SELECT u FROM AppUser u WHERE u.secureId = :id")
-    Optional<UserActionFollowProjection> findUserBySecureId(@Param("id") String id);
+    Optional<IdSecureIdProjection> findUserBySecureId(@Param("id") String id);
 
 
     List<AppUser> findBySecureIdIn(List<String> secureIds);
