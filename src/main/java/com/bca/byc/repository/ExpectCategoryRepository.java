@@ -1,7 +1,6 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.ExpectCategory;
-import com.bca.byc.model.projection.ExpectCategoryProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

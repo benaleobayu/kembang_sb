@@ -6,7 +6,6 @@ import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.model.*;
 import com.bca.byc.response.AdminPermissionResponse;
-import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,8 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component

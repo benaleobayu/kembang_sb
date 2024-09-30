@@ -34,14 +34,6 @@ public class HandlerRepository {
     }
 
 
-
-    // get user by email
-    public static <Email extends String> FollowsUserProjection getUserProjectionByEmail(Email email, AppUserProjectionRepository repository, String notFoundMessage) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
-    }
-
-
     public static <T extends SecureIdentifiable> T getEntityBySecureId(String secureId, JpaRepository<T, Long> repository, String notFoundMessage) {
         return repository.findAll()
                 .stream()
