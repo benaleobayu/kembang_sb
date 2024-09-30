@@ -5,6 +5,8 @@ import com.bca.byc.entity.ChatMessage;
 import com.bca.byc.entity.ChatRoom;
 import com.bca.byc.enums.ChatType;
 import com.bca.byc.enums.RoomType;
+import com.bca.byc.exception.ResourceNotFoundException;
+import com.bca.byc.exception.UnauthorizedException;
 import com.bca.byc.service.ChatService;
 
 import com.bca.byc.service.impl.AppUserServiceImpl;
@@ -43,6 +45,9 @@ import org.springframework.data.domain.Pageable;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.util.FileUploadHelper;
 import java.util.Map;
+import com.bca.byc.repository.ChatMessageRepository;
+import java.util.Collections;
+
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -65,6 +70,9 @@ public class ChatController {
     @Autowired
     private ChatMessageService chatMessageService;
 
+    @Autowired
+    ChatMessageRepository chatMessageRepository;
+
 
     
     
@@ -81,7 +89,8 @@ public class ChatController {
         @Parameter(description = "The actual message content") @RequestPart("message") String message,
         @Parameter(description = "Chat room secure ID (required if roomType is CHANNEL)", required = false) @RequestPart(value = "chatRoomSecureId", required = false) String chatRoomSecureId,
         @Parameter(description = "Optional file upload", content = @Content(mediaType = "multipart/form-data"))
-        @RequestPart(value = "file", required = false) MultipartFile file) {
+        @RequestPart(value = "file", required = false) MultipartFile file,
+        @Parameter(description = "Optional parent message secure ID for replies", required = false) @RequestPart(value = "chatMessageParentSecureId", required = false) String chatMessageParentSecureId) {
             
         String tokenSecureId  = ContextPrincipal.getSecureUserId();
         if(tokenSecureId != null && !tokenSecureId.equals(fromUserSecureId)){
@@ -95,6 +104,11 @@ public class ChatController {
             chatMessageDTO.setMessage(message);
             chatMessageDTO.setChatRoomSecureId(chatRoomSecureId);
             chatMessageDTO.setFile(file);  // Optional file
+              // Skip validation of parent message, directly assign if provided
+            if (chatMessageParentSecureId != null && !chatMessageParentSecureId.isEmpty()) {
+                chatMessageDTO.setParentMessageSecureId(chatMessageParentSecureId);
+            }
+
 
             // Fetch the sender (fromUser)
             AppUser fromUser = appUserService.findBySecureId(chatMessageDTO.getFromUserSecureId());
@@ -115,6 +129,54 @@ public class ChatController {
             return ResponseEntity.status(500).body("An error occurred while sending the message");
         }
     }
+
+
+    @DeleteMapping("/chat/delete/{secureId}")
+    public ResponseEntity<?> deleteData(@PathVariable String secureId) throws Exception {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+
+        // Example logic for checking and deleting chat messages
+        ChatMessage chatMessage = chatMessageRepository.findBySecureId(secureId);
+        if (chatMessage == null) {
+            throw new ResourceNotFoundException("Chat Message not found");
+        }
+
+        if (!chatMessage.getFromUser().getSecureId().equals(tokenSecureId)) {
+            throw new UnauthorizedException("You are not authorized to delete this message");
+        }
+
+        chatMessageRepository.deleteBySecureId(secureId);
+
+        // Returning success response as JSON using Collections.singletonMap
+        return ResponseEntity.ok(Collections.singletonMap("message", "Chat message successfully deleted"));
+    }
+
+    @PutMapping("/chat/edit/{secureId}")
+    public ResponseEntity<?> editData(@PathVariable String secureId, @RequestBody String newMessageContent) throws Exception {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+
+        // Find the chat message by secureId
+        ChatMessage chatMessage = chatMessageRepository.findBySecureId(secureId);
+        if (chatMessage == null) {
+            throw new ResourceNotFoundException("Chat Message not found");
+        }
+
+        // Ensure the user editing the message is the sender of the message
+        if (!chatMessage.getFromUser().getSecureId().equals(tokenSecureId)) {
+            throw new UnauthorizedException("You are not authorized to edit this message");
+        }
+
+        // Update the message content
+        chatMessage.setMessage(newMessageContent);
+        chatMessageRepository.save(chatMessage); // Persist the changes
+
+        // Returning success response as JSON using Collections.singletonMap
+        return ResponseEntity.ok(Collections.singletonMap("message", "Chat message successfully updated"));
+    }
+
+
+
+    
 
 
      // API to get chat messages between two users in a private room
@@ -145,7 +207,8 @@ public class ChatController {
                  message.getCreatedAt(),
                  message.getReadAt(),
                  message.getFilePath(),
-                 message.getChatType()
+                 message.getChatType(),
+                 message.getParentMessage()
          ));
      
          return ResponseEntity.ok(responseMessages);
@@ -192,7 +255,8 @@ public class ChatController {
                  message.getCreatedAt(),
                  message.getReadAt(),
                  message.getFilePath(),
-                 message.getChatType()
+                 message.getChatType(),
+                 message.getParentMessage()
          ));
  
          return ResponseEntity.ok(responseMessages);
@@ -238,7 +302,12 @@ public class ChatController {
                 throw new RuntimeException("An error occurred while uploading the file. Please try again.");
             }
         }
-        ChatMessage savedMessage = chatService.saveMessage(fromUser, toUser, chatMessageDTO.getMessage(),chatRoom,filePath,fileType );
+        ChatMessage parentMessage = null;
+        if (chatMessageDTO.getParentMessageSecureId() != null && !chatMessageDTO.getParentMessageSecureId().isEmpty()) {
+            parentMessage = chatMessageRepository.findBySecureId(chatMessageDTO.getParentMessageSecureId());
+        }
+
+        ChatMessage savedMessage = chatService.saveMessage(fromUser, toUser, chatMessageDTO.getMessage(),chatRoom,filePath,fileType,parentMessage  );
         
         ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
             savedMessage.getSecureId(),
@@ -249,7 +318,8 @@ public class ChatController {
             savedMessage.getCreatedAt(),
             savedMessage.getReadAt(),
             savedMessage.getFilePath(),
-            savedMessage.getChatType()
+            savedMessage.getChatType(),
+            savedMessage.getParentMessage()
         );
          
         String channel = "/private/" + toUser.getSecureId() +'/'+ fromUser.getSecureId()+  "/queue/messages";
@@ -284,6 +354,12 @@ public class ChatController {
           MultipartFile file = chatMessageDTO.getFile();
           String filePath = null;
           ChatType fileType = ChatType.TEXT;
+          ChatMessage parentMessage = null;
+          if (chatMessageDTO.getParentMessageSecureId() != null && !chatMessageDTO.getParentMessageSecureId().isEmpty()) {
+              parentMessage = chatMessageRepository.findBySecureId(chatMessageDTO.getParentMessageSecureId());
+          }
+
+
           if (file != null && !file.isEmpty()) {
             try {
                 String UPLOAD_DIR = "chats/";
@@ -304,7 +380,7 @@ public class ChatController {
             }
         }
         // Save and send the message (no toUser for a channel)
-        ChatMessage savedMessage = chatService.saveMessage(fromUser, null, chatMessageDTO.getMessage(),chatRoom,filePath,fileType );
+        ChatMessage savedMessage = chatService.saveMessage(fromUser, null, chatMessageDTO.getMessage(),chatRoom,filePath,fileType,parentMessage );
 
         ChatMessageResponse chatMessageResponse = new ChatMessageResponse(
             savedMessage.getSecureId(),
@@ -315,7 +391,8 @@ public class ChatController {
             savedMessage.getCreatedAt(),
             savedMessage.getReadAt(),
             savedMessage.getFilePath(),
-            savedMessage.getChatType()
+            savedMessage.getChatType(),
+            savedMessage.getParentMessage()
         );
          
         String channel = "/channel/" + chatRoom.getSecureId() + "/queue/messages";

@@ -1,4 +1,5 @@
 package com.bca.byc.response;
+import com.bca.byc.entity.ChatMessage;
 import com.bca.byc.enums.ChatType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
@@ -17,16 +18,36 @@ public class ChatMessageResponse {
     private String toName;
     private String filePath;
     private ChatType chatType;
+    private ChatMessageParentResponse parentMessage; 
 
-    public ChatMessageResponse(String id, String message, LocalDateTime timestamp, String fromName, String toName,LocalDateTime createdAt,LocalDateTime readAt, String filePath, ChatType chatType) {
+   public ChatMessageResponse(String id, String message, LocalDateTime timestamp, String fromName, String toName,
+                               LocalDateTime createdAt, LocalDateTime readAt, String filePath, ChatType chatType,
+                               ChatMessage parentMessage) {
         this.id = id;
         this.message = message;
         this.timestamp = timestamp;
-        this.createdAt = createdAt;
         this.fromName = fromName;
         this.toName = toName;
+        this.createdAt = createdAt;
         this.readAt = readAt;
         this.filePath = filePath;
         this.chatType = chatType;
+        // Set the secure ID of the parent message, if it exists
+       // Set the parentMessage if it exists
+        // Set the parentMessage if it exists and map it to ChatMessageParentResponse
+        if (parentMessage != null) {
+            this.parentMessage = new ChatMessageParentResponse(
+                parentMessage.getId().toString(),
+                parentMessage.getMessage(),
+                parentMessage.getTimestamp(),
+                parentMessage.getFromUser().getName(),
+                parentMessage.getToUser() != null ? parentMessage.getToUser().getName() : null,
+                parentMessage.getCreatedAt(),
+                parentMessage.getReadAt(),
+                parentMessage.getFilePath(),
+                parentMessage.getChatType()
+            );
+        }
+     
     }
 }

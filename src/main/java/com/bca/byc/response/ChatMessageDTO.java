@@ -26,5 +26,10 @@ public class ChatMessageDTO {
     @Schema(description = "Optional file upload", required = false)
     private MultipartFile file; // Optional file upload
     
+
+    @Schema(description = "secure_id of the receiver", required = false)
+    private String parentMessageSecureId;
+
+    
     // Getters and Setters
 }
