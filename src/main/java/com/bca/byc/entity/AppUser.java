@@ -55,6 +55,12 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     @JoinColumn(name = "app_user_attribute_id", referencedColumnName = "id")
     private AppUserAttribute appUserAttribute;
 
+    // Relasi OneToOne dengan AppUserNotification
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "app_user_id", referencedColumnName = "id")
+    private AppUserNotification appUserNotification;
+
+
     @Column(name = "count_reject", columnDefinition = "int default 0")
     private Integer countReject = 0;
 

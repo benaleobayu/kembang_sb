@@ -5,6 +5,9 @@ import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.apps.ProfilePostResponse;
+import com.bca.byc.response.NotificationSettingsRequest;
+import com.bca.byc.response.NotificationSettingsResponse;
+
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -24,5 +27,8 @@ public interface AppUserService extends UserDetailsService {
     ProfilePostResponse getUserPosts(String userId);
 
 	void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception;
+	void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto);
+	NotificationSettingsResponse getNotificationSettings(String userSecureId);
+	
 	
 }

@@ -3,12 +3,16 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.AppUserNotification;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
+import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.response.NotificationSettingsRequest;
+import com.bca.byc.response.NotificationSettingsResponse;
 import com.bca.byc.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +21,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.Session;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class AppUserServiceImpl implements AppUserService {
@@ -25,9 +38,14 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserRepository appUserRepository;
     private final AppUserDTOConverter converter;
     private final PostDTOConverter postConverter;
-
+    @Autowired
+    private final ObjectMapper objectMapper;
+    @Autowired
+    private AppUserNotificationRepository appUserNotificationRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @PersistenceContext
+    private EntityManager entityManager;
     
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -94,6 +112,7 @@ public class AppUserServiceImpl implements AppUserService {
 
         return postConverter.convertToProfilePostResponse(user);
     }
+    
     public void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception {
         // Fetch user by secure ID and handle missing user using Optional
         AppUser user = appUserRepository.findBySecureId(userSecureId)
@@ -111,4 +130,53 @@ public class AppUserServiceImpl implements AppUserService {
         appUserRepository.save(user);
     }
     
+    @Override
+    public void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto) {
+        // Ambil userId berdasarkan userSecureId
+        Long userId = this.findBySecureId(userSecureId).getId();
+        
+        // Cek apakah pengaturan notifikasi untuk userId sudah ada
+        Optional<AppUserNotification> existingNotification = appUserNotificationRepository.findByAppUserId(userId);
+        
+        // Buat atau update pengaturan notifikasi
+        AppUserNotification notification = existingNotification.orElseGet(() -> {
+            AppUserNotification newNotification = new AppUserNotification();
+            newNotification.setAppUserId(userId);
+            return newNotification;
+        });
+        // Set pengaturan notifikasi dari DTO
+        notification.setMessages(dto.isMessages());
+        notification.setFollowingFollowers(dto.isFollowingFollowers());
+        notification.setPosts(dto.isPosts());
+        notification.setEvents(dto.isEvents());
+        notification.setLevelLoyaltyProgram(dto.isLevelLoyaltyProgram());
+        notification.setNetwork(dto.isNetwork());
+        notification.setPromotions(dto.isPromotions());
+        notification.setNews(dto.isNews());
+
+        // Simpan pengaturan notifikasi
+        appUserNotificationRepository.save(notification);
+    }
+    @Override
+    public NotificationSettingsResponse getNotificationSettings(String userSecureId) {
+        // Fetch user by secure ID
+        AppUser user = appUserRepository.findBySecureId(userSecureId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    
+        // Fetch notification by appUserId from the repository
+        AppUserNotification notification = appUserNotificationRepository.findByAppUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Notification settings not found"));
+    
+        // Return the response DTO with notification settings
+        return new NotificationSettingsResponse(notification);
+    }
+    
+
+    
+
+
+    
+
+    
+        
 }

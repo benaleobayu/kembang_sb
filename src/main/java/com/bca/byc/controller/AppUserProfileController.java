@@ -9,6 +9,9 @@ import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
 
 import com.bca.byc.response.ChangePasswordRequest;
+import com.bca.byc.response.NotificationSettingsRequest;
+import com.bca.byc.response.NotificationSettingsResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -130,4 +133,37 @@ public class AppUserProfileController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+
+    @Operation(summary = "Update user notification settings", description = "Update notification preferences for the user")
+    @PutMapping("/settings/notification")
+    public ResponseEntity<?> updateNotificationSettings(@RequestBody NotificationSettingsRequest dto, Principal principal) {
+        String userSecureId = ContextPrincipal.getSecureUserId();
+        try {
+            // Call service to save notification settings
+            userService.saveNotificationSettings(userSecureId, dto);
+            // Return success response
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Notification settings updated successfully", dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "Get user notification settings", description = "Retrieve the notification preferences for the user")
+    @GetMapping("/settings/notification")
+    public ResponseEntity<?> getNotificationSettings(Principal principal) {
+        String userSecureId = ContextPrincipal.getSecureUserId();
+        try {
+            // Fetch notification settings for the user
+            NotificationSettingsResponse notificationSettings = userService.getNotificationSettings(userSecureId);
+            
+            // Return success response
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Notification settings retrieved successfully", notificationSettings));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+
+
 }
