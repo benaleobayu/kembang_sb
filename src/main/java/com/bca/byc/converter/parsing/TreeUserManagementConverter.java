@@ -1,4 +1,4 @@
-package com.bca.byc.converter;
+package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
