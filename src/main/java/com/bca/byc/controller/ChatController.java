@@ -152,7 +152,7 @@ public class ChatController {
     }
 
     @PutMapping("/chat/edit/{secureId}")
-    public ResponseEntity<?> editData(@PathVariable String secureId, @RequestBody String newMessageContent) throws Exception {
+    public ResponseEntity<?> editData(@PathVariable String secureId, @RequestBody String message) throws Exception {
         String tokenSecureId = ContextPrincipal.getSecureUserId();
 
         // Find the chat message by secureId
@@ -167,7 +167,7 @@ public class ChatController {
         }
 
         // Update the message content
-        chatMessage.setMessage(newMessageContent);
+        chatMessage.setMessage(message);
         chatMessageRepository.save(chatMessage); // Persist the changes
 
         // Returning success response as JSON using Collections.singletonMap

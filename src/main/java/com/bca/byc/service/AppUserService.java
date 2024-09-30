@@ -22,4 +22,7 @@ public interface AppUserService extends UserDetailsService {
 	void updateUserData(String email, AppUserProfileRequest dto);
 
     ProfilePostResponse getUserPosts(String userId);
+
+	void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception;
+	
 }

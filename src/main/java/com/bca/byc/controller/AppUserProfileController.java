@@ -7,6 +7,8 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
+
+import com.bca.byc.response.ChangePasswordRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -90,7 +92,6 @@ public class AppUserProfileController {
     @Operation(summary = "Update user profile", description = "Update user profile")
     @PutMapping("/profile")
     public ResponseEntity<?> updateUserData(@RequestBody AppUserProfileRequest dto, Principal principal) {
-        log.info("PUT " + urlRoute + "/profile endpoint hit");
 
         String email = ContextPrincipal.getPrincipal();
         try {
@@ -107,6 +108,26 @@ public class AppUserProfileController {
         return ResponseEntity.ok(new ApiDataResponse<>(true, "Posts found", userService.getUserPosts(userId)));
     }
 
+    @Operation(summary = "Change user password", description = "Change user password")
+    @PutMapping("/profile/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest dto, Principal principal) {
 
-
+        String userSecureId = ContextPrincipal.getSecureUserId();
+        try {
+            // Check if newPassword and confirmNewPassword match
+            if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "New password and confirmation password do not match"));
+            }
+    
+            // Call a service method to change the password
+            userService.changePassword(userSecureId, dto.getCurrentPassword(), dto.getNewPassword());
+    
+            // Return success response
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Password updated successfully", null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Invalid current password"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
 }

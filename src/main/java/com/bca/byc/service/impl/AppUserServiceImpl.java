@@ -14,7 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,6 +26,9 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserDTOConverter converter;
     private final PostDTOConverter postConverter;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return appUserRepository.findByEmail(email)
@@ -90,5 +94,21 @@ public class AppUserServiceImpl implements AppUserService {
 
         return postConverter.convertToProfilePostResponse(user);
     }
-
+    public void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception {
+        // Fetch user by secure ID and handle missing user using Optional
+        AppUser user = appUserRepository.findBySecureId(userSecureId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    
+        // Check if the current password matches the user's existing password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid current password");
+        }
+    
+        // Encrypt and set the new password
+        user.setPassword(passwordEncoder.encode(newPassword));
+    
+        // Save the updated user
+        appUserRepository.save(user);
+    }
+    
 }
