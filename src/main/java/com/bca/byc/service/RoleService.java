@@ -11,15 +11,13 @@ import java.util.List;
 
 public interface RoleService {
 
-    RoleDetailResponse findDataById(Long id) throws BadRequestException;
-
-    List<RoleListResponse> findAllData();
+    RoleDetailResponse findDataBySecureId(String id) throws BadRequestException;
 
     void saveData(@Valid RoleCreateUpdateRequest dto) throws BadRequestException;
 
-    void updateData(Long roleId, @Valid RoleCreateUpdateRequest dto) throws BadRequestException;
+    void updateData(String roleId, @Valid RoleCreateUpdateRequest dto) throws BadRequestException;
 
-    void deleteData(Long id) throws BadRequestException;
+    void deleteData(String id) throws BadRequestException;
 
     ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

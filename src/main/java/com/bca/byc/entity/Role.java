@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table(name = "role")
+@Table(name = "role" , indexes = @Index(name = "idx_role_secure_id", columnList = "secure_id", unique = true))
 @Entity
 public class Role extends AbstractBaseEntityCms implements Serializable, SecureIdentifiable {
 
@@ -21,10 +21,6 @@ public class Role extends AbstractBaseEntityCms implements Serializable, SecureI
      */
     @Serial
     private static final long serialVersionUID = -3535157084126830747L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;

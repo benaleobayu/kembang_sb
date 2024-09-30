@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
+    Optional<Role> findBySecureId(String id);
+
     Optional<Role> findByName(String name);
 
     Page<Role> findByNameLikeIgnoreCase(String userName, Pageable pageable);

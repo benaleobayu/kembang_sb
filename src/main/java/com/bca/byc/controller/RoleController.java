@@ -51,10 +51,10 @@ public class RoleController {
     @PreAuthorize("hasAuthority('role.read')")
     @Operation(summary = "Get detail Role", description = "Get detail Role")
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET /cms/v1/am/role/{id} endpoint hit");
         try {
-            RoleDetailResponse item = service.findDataById(id);
+            RoleDetailResponse item = service.findDataBySecureId(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found role", item));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -78,7 +78,7 @@ public class RoleController {
     @PreAuthorize("hasAuthority('role.update')")
     @Operation(summary = "Update Role", description = "Update Role")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody RoleCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody RoleCreateUpdateRequest item) {
         log.info("PUT /cms/v1/am/role/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -91,7 +91,7 @@ public class RoleController {
     @PreAuthorize("hasAuthority('role.delete')")
     @Operation(summary = "Delete Role", description = "Delete Role")
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
         log.info("DELETE /cms/v1/am/role/{id} endpoint hit");
         try {
             service.deleteData(id);

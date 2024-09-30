@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.RoleDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
@@ -13,8 +14,10 @@ import com.bca.byc.model.RoleListResponse;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.RoleService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.persistence.EntityManager;
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
+    private final AppAdminRepository adminRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
@@ -46,107 +50,58 @@ public class RoleServiceImpl implements RoleService {
     private final RoleDTOConverter converter;
     private final EntityManager entityManager;
 
+    private final String notFoundMessage = " not found.";
+
     @Override
-    public RoleDetailResponse findDataById(Long id) throws BadRequestException {
-        Role data = roleRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Role not found"));
+    public RoleDetailResponse findDataBySecureId(String id) throws BadRequestException {
+        Role data = HandlerRepository.getEntityBySecureId(id, roleRepository, "Role " + notFoundMessage);
 
         return converter.convertToDetailResponse(data);
     }
 
     @Override
-    public List<RoleListResponse> findAllData() {
-        // Get the list
-        List<Role> datas = roleRepository.findAll();
-
-        // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
+    @Transactional
     public void saveData(@Valid RoleCreateUpdateRequest dto) throws BadRequestException {
+        String email = ContextPrincipal.getSecureUserId();
+        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "user" + notFoundMessage);
         // set entity to add with model mapper
-        Role data = converter.convertToCreateRequest(dto);
+        Role data = converter.convertToCreateRequest(dto, admin);
         // save data
         roleRepository.save(data);
     }
 
     @Override
     @Transactional
-    public void updateData(Long roleId, RoleCreateUpdateRequest dto) throws BadRequestException {
+    public void updateData(String roleId, RoleCreateUpdateRequest dto) throws BadRequestException {
+        String email = ContextPrincipal.getSecureUserId();
+        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "user" + notFoundMessage);
         // Check if the role exists and get it
-        Role role = HandlerRepository.getEntityById(roleId, roleRepository, "Role not found");
+        Role role = HandlerRepository.getEntityBySecureId(roleId, roleRepository, "Role " + notFoundMessage);
 
-        // Update name if provided
-        if (dto.getName() != null) {
-            role.setName(dto.getName().toUpperCase());
-        }
+        converter.convertToUpdateRequest(role, dto, admin);
 
-        // Update status if provided
-        if (dto.getStatus() != null) {
-            role.setIsActive(dto.getStatus());
-        }
-
-        // Retrieve existing permissions for the role
-        List<RoleHasPermission> existingPermissions = roleHasPermissionRepository.findByRole(role);
-        Set<Long> existingPermissionIds = existingPermissions.stream()
-                .map(rhp -> rhp.getPermission().getId())
-                .collect(Collectors.toSet());
-
-        // Step 1: Remove permissions that are inactive
-        if (dto.getPermissions() != null) {
-            for (PrivilegeRoleCreateUpdateRequest permissionDto : dto.getPermissions()) {
-                Long permissionId = permissionDto.getPermissionId();
-
-                if (permissionId != null && !permissionDto.isActive() && existingPermissionIds.contains(permissionId)) {
-                    Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
-
-                    RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleAndPermission(role, permission);
-                    if (roleHasPermission != null) {
-                        // Log the deletion
-                        log.info("Deleting RoleHasPermission: roleId={}, permissionId={}", role.getId(), permissionId);
-                        roleHasPermissionRepository.delete(roleHasPermission);
-                    } else {
-                        log.warn("RoleHasPermission not found for roleId: {} and permissionId: {}", role.getId(), permissionId);
-                    }
-                }
-            }
-        }
-
-        // Flush and clear the session to apply deletions
-        entityManager.flush();
-        entityManager.clear();
-
-        // Step 2: Add permissions that are active and not already present
-        if (dto.getPermissions() != null) {
-            for (PrivilegeRoleCreateUpdateRequest permissionDto : dto.getPermissions()) {
-                Long permissionId = permissionDto.getPermissionId();
-
-                if (permissionId != null && permissionDto.isActive() && !existingPermissionIds.contains(permissionId)) {
-                    Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
-
-                    RoleHasPermission roleHasPermission = new RoleHasPermission(role, permission);
-                    roleHasPermissionRepository.save(roleHasPermission);
-                }
-            }
-        }
-
-        role.setUpdatedAt(LocalDateTime.now());
         roleRepository.save(role);
     }
 
 
     @Override
-    public void deleteData(Long id) throws BadRequestException {
-        // delete data
-        if (!roleRepository.existsById(id)) {
+    @Transactional
+    public void deleteData(String id) throws BadRequestException {
+        Role role = HandlerRepository.getEntityBySecureId(id, roleRepository, "Role " + notFoundMessage);
+        Long roleId = role.getId();
+
+        if (roleId == 1 || roleId == 2 || roleId == 3 || roleId == 4) {
+            throw new BadRequestException("Role " + role.getName() + " cannot be deleted.");
+        }
+
+        // Delete data
+        if (!roleRepository.existsById(roleId)) {
             throw new BadRequestException("Role not found");
         } else {
-            roleRepository.deleteById(id);
+            roleRepository.deleteById(roleId);
         }
     }
+
 
     @Override
     public ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
