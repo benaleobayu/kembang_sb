@@ -13,6 +13,7 @@ import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.UserHasExpectRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -209,8 +210,12 @@ public class AppUserDTOConverter {
 
         // Update location if present
         if (dto.getLocation() != null) {
-            Location location = locationRepository.findById(dto.getLocation())
-                    .orElseThrow(() -> new BadRequestException("Location not found"));
+            Location location = HandlerRepository.getIdBySecureId(
+                    dto.getLocation(),
+                    locationRepository::findBySecureId,
+                    projection -> locationRepository.findById(projection.getId()),
+                    "Location not found"
+            );
             data.setLocation(location);
         }
 
@@ -221,22 +226,34 @@ public class AppUserDTOConverter {
 
         // Handle userHasExpects if present
         if (dto.getUserHasExpects() != null) {
-            // Ensure the list is not null
             List<UserHasExpect> userHasExpects = data.getUserHasExpects();
             if (userHasExpects == null) {
                 userHasExpects = new ArrayList<>();
                 data.setUserHasExpects(userHasExpects);
             }
 
+            // Retrieve the secure ID for expect category with ID 5
+            ExpectCategory specialExpectCategory = expectCategoryRepository.findById(5L)
+                    .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+
+            String expectCategoryIdForSpecialCase = specialExpectCategory.getSecureId();
+
             for (AppUserProfileRequest.ProfileExpectCategoryResponse expectDto : dto.getUserHasExpects()) {
                 // Your existing logic to process userHasExpects
-                ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
-                        .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+                ExpectCategory expectCategory = HandlerRepository.getIdBySecureId(
+                        expectDto.getExpectCategoryId(),
+                        expectCategoryRepository::findBySecureId,
+                        projection -> expectCategoryRepository.findById(projection.getId()),
+                        "Expect Category not found");
 
                 if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
-                    for (Long expectItemId : expectDto.getItems().getIds()) {
-                        ExpectItem expectItem = expectItemRepository.findById(expectItemId)
-                                .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+                    for (String secureId : expectDto.getItems().getIds()) {
+                        ExpectItem expectItem = HandlerRepository.getIdBySecureId(
+                                secureId,
+                                expectItemRepository::findBySecureId,
+                                projection -> expectItemRepository.findById(projection.getId()),
+                                "Expect Item not found"
+                        );
 
                         UserHasExpect userHasExpect = new UserHasExpect();
                         UserHasExpectId userHasExpectId = new UserHasExpectId(data.getId(), expectCategory.getId(), expectItem.getId());
@@ -249,9 +266,9 @@ public class AppUserDTOConverter {
 
                         userHasExpects.add(userHasExpect); // Add to the list
                     }
-                } else if (expectDto.getExpectCategoryId() == 5) {
+                } else if (expectDto.getExpectCategoryId().equals(expectCategoryIdForSpecialCase)) {
                     UserHasExpect userHasExpect = new UserHasExpect();
-                    ExpectItem expectItem = expectItemRepository.findById(5L)
+                    ExpectItem expectItem = expectItemRepository.findById(5L) // Adjust if you need secure ID logic
                             .orElseThrow(() -> new BadRequestException("Expect Item not found"));
                     userHasExpect.setUser(data);
                     userHasExpect.setExpectCategory(expectCategory);
@@ -262,5 +279,6 @@ public class AppUserDTOConverter {
             }
         }
     }
+
 
 }

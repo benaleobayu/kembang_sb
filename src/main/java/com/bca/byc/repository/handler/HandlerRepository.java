@@ -11,6 +11,9 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 public class HandlerRepository {
 
     public static <T, ID extends Long> T getEntityById(ID id, JpaRepository<T, ID> repository, String notFoundMessage) {
@@ -31,14 +34,6 @@ public class HandlerRepository {
     }
 
 
-
-    // get user by email
-    public static <Email extends String> FollowsUserProjection getUserProjectionByEmail(Email email, AppUserProjectionRepository repository, String notFoundMessage) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
-    }
-
-
     public static <T extends SecureIdentifiable> T getEntityBySecureId(String secureId, JpaRepository<T, Long> repository, String notFoundMessage) {
         return repository.findAll()
                 .stream()
@@ -54,7 +49,17 @@ public class HandlerRepository {
                 .orElseThrow(() -> new EntityNotFoundException(errorMessage));
     }
 
+    public static <T, U> U getIdBySecureId(
+            String secureId,
+            Function<String, Optional<T>> findBySecureIdFunction,
+            Function<T, Optional<U>> findByIdFunction,
+            String errorMessage) {
 
+        return findBySecureIdFunction.apply(secureId)
+                .map(projection -> findByIdFunction.apply(projection)
+                        .orElseThrow(() -> new EntityNotFoundException(errorMessage)))
+                .orElseThrow(() -> new EntityNotFoundException(errorMessage));
+    }
 
 
 }

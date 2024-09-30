@@ -11,7 +11,6 @@ import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
-import com.bca.byc.response.PermissionResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

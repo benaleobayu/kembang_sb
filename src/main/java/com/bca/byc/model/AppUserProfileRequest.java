@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +9,7 @@ public class AppUserProfileRequest {
 
     private String biography;
 
-    private Long location;
+    private String location;
 
     private List<String> education;
 
@@ -18,8 +17,8 @@ public class AppUserProfileRequest {
 
     @Data
     public static class ProfileExpectCategoryResponse {
-        @NotBlank(message = "Expect Category is required")
-        private Long expectCategoryId;
+
+        private String expectCategoryId;
 
         private String otherExpect;
 
@@ -27,7 +26,7 @@ public class AppUserProfileRequest {
 
         @Data
         public static class Items {
-            private List<Long> ids;
+            private List<String> ids;
             private String otherExpectItem;
         }
     }

@@ -39,8 +39,8 @@ public class OnboardingCreateRequest {
 
     @Data
     public static class OnboardingExpectCategoryResponse {
-        @NotBlank(message = "Expect Category is required")
-        private Long expectCategoryId;
+
+        private String expectCategoryId;
 
         private String otherExpect;
 
@@ -48,7 +48,7 @@ public class OnboardingCreateRequest {
 
         @Data
         public static class Items {
-            private List<Long> ids;
+            private List<String> ids;
             private String otherExpectItem;
         }
     }

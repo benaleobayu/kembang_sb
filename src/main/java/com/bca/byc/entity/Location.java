@@ -33,6 +33,11 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
     @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
     public String getSecureId() {
         return super.getSecureId();
     }

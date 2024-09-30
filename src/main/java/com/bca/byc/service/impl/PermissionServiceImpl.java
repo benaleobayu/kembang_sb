@@ -2,14 +2,16 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.Permission;
 import com.bca.byc.model.PermissionListResponse;
-import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.service.PermissionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
