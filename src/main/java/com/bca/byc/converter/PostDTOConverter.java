@@ -9,6 +9,7 @@ import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -102,7 +103,12 @@ public class PostDTOConverter {
 
         // Post category
         if (dto.getPostCategoryId() != null) {
-            PostCategory postCategory = postCategoryRepository.findById(Long.valueOf(dto.getPostCategoryId())).orElse(null);
+            PostCategory postCategory = HandlerRepository.getIdBySecureId(
+                    dto.getPostCategoryId(),
+                    postCategoryRepository::findBySecureId,
+                    projection -> postCategoryRepository.findById(projection.getId()),
+                    "Post category not found"
+            );
             data.setPostCategory(postCategory);
         }
 

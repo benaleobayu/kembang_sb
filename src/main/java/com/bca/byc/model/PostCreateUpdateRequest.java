@@ -16,7 +16,7 @@ public class PostCreateUpdateRequest {
     private PostLocationRequest postLocation;
 
     @NotNull(message = "Post category is required")
-    private Integer postCategoryId;
+    private String postCategoryId;
 
     private Boolean isCommentable;
 

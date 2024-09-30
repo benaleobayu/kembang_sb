@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "post_category")
+@Table(name = "post_category", indexes = {@Index(name = "idx_post_category_secure_id", columnList = "secure_id")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCategory extends AbstractBaseEntityNoUUID {
+public class PostCategory extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +35,13 @@ public class PostCategory extends AbstractBaseEntityNoUUID {
     @JoinColumn(name = "updated_by")
     private AppAdmin updatedBy;
 
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.getIsActive();
+    }
 }

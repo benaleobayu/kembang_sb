@@ -34,7 +34,7 @@ public class PublicController {
 
     private final SettingService settingsService;
     private final FaqCategoryService faqCategoryService;
-    private final MsBusinessCategoryService businessCategoryService;
+    private final BusinessCategoryService businessCategoryService;
     private final MsLocationService locationService;
     private final ExpectCategoryService expectCategoryService;
     private final PreRegisterService preRegisterService;
