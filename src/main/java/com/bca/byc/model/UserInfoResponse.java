@@ -32,7 +32,7 @@ public class UserInfoResponse {
     private List<ExpectCategoryUserInfoResponse> expectCategory; // <category>
 
 //    private Integer totalFollowers;
-//    private Integer totalFollowing;
+    private Integer totalFollowing;
 //    private Integer totalPosts;
 //    private Integer totalEvents;
 
