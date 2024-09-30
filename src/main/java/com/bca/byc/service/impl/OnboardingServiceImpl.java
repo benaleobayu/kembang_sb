@@ -8,6 +8,7 @@ import com.bca.byc.model.OnboardingCreateRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.OnboardingService;
 import com.bca.byc.util.PaginationUtil;
@@ -107,15 +108,29 @@ public class OnboardingServiceImpl implements OnboardingService {
                 }
             }
 
+            // Retrieve the secure ID for expect category with ID 5
+            ExpectCategory specialExpectCategory = expectCategoryRepository.findById(5L)
+                    .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+
+            String expectCategoryIdForSpecialCase = specialExpectCategory.getSecureId();
+
             // Create Expect Categories
             for (OnboardingCreateRequest.OnboardingExpectCategoryResponse expectDto : dto.getExpectCategories()) {
-                ExpectCategory expectCategory = expectCategoryRepository.findById(expectDto.getExpectCategoryId())
-                        .orElseThrow(() -> new BadRequestException("Expect Category not found"));
+                ExpectCategory expectCategory = HandlerRepository.getIdBySecureId(
+                        expectDto.getExpectCategoryId(),
+                        expectCategoryRepository::findBySecureId,
+                        projection -> expectCategoryRepository.findById(projection.getId()),
+                        "Expect Category not found"
+                );
 
                 if (expectDto.getItems() != null && expectDto.getItems().getIds() != null && !expectDto.getItems().getIds().isEmpty()) {
-                    for (Long expectItemId : expectDto.getItems().getIds()) {
-                        ExpectItem expectItem = expectItemRepository.findById(expectItemId)
-                                .orElseThrow(() -> new BadRequestException("Expect Item not found"));
+                    for (String expectItemId : expectDto.getItems().getIds()) {
+                        ExpectItem expectItem = HandlerRepository.getIdBySecureId(
+                                expectItemId,
+                                expectItemRepository::findBySecureId,
+                                projection -> expectItemRepository.findById(projection.getId()),
+                                "Expect Item not found"
+                        );
 
                         UserHasExpectId userHasExpectId = new UserHasExpectId();
                         userHasExpectId.setUserId(user.getId());
@@ -132,7 +147,7 @@ public class OnboardingServiceImpl implements OnboardingService {
 
                         userHasExpectRepository.save(userHasExpect);
                     }
-                } else if (expectDto.getExpectCategoryId() == 5) {
+                } else if (expectDto.getExpectCategoryId().equals(expectCategoryIdForSpecialCase)) {
                     UserHasExpect userHasExpect = new UserHasExpect();
                     ExpectItem expectItem = expectItemRepository.findById(5L)
                             .orElseThrow(() -> new BadRequestException("Expect Item not found"));
