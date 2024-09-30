@@ -29,7 +29,7 @@ public class TreeUserManagementConverter {
         dto.setMemberType(data.getAppUserDetail().getMemberType());
         dto.setParentCin(data.getAppUserDetail().getParentCin());
         dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
-        dto.setBranchCode(data.getAppUserDetail().getBranchCode().getCode());
+        dto.setBranchCode(data.getAppUserDetail().getBranchCode() != null ? data.getAppUserDetail().getBranchCode().getCode() : null);
         dto.setPicName(data.getAppUserDetail().getPicName());
 
         List<Business> businesses = data.getBusinesses();
