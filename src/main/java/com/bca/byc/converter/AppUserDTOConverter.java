@@ -77,14 +77,17 @@ public class AppUserDTOConverter {
         if (data.getBusinesses() != null && !data.getBusinesses().isEmpty()) {
             List<BusinessListResponse> businesses = data.getBusinesses().stream().map(b -> {
                 BusinessListResponse business = new BusinessListResponse();
-                business.setId(b.getId());
+                business.setId(b.getSecureId());
+                business.setIndex(b.getId());
                 business.setName(b.getName());
                 business.setIsPrimary(b.getIsPrimary());
 
+                int businessChildIdx = 1;
                 List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
                         .map(bc -> {
                             BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
-                            businessCategoryResponse.setId(bc.getBusinessCategoryParent().getId());
+                            businessCategoryResponse.setId(bc.getBusinessCategoryParent().getSecureId());
+                            businessCategoryResponse.setIndex(bc.getBusinessCategoryParent().getId());
                             businessCategoryResponse.setName(bc.getBusinessCategoryParent().getName());
                             return businessCategoryResponse;
                         }).collect(Collectors.toList());
@@ -146,7 +149,7 @@ public class AppUserDTOConverter {
 
         // Count followers, following, posts, events
 //        dto.setTotalFollowers(data.getFollowers() != null ? data.getFollowers().size() : 0);
-//        dto.setTotalFollowing(data.getFollows() != null ? data.getFollows().size() : 0);
+        dto.setTotalFollowing(data.getFollows() != null ? data.getFollows().size() : 0);
 //        dto.setTotalPosts(0);  // Placeholder, update as needed
 //        dto.setTotalEvents(0);  // Placeholder, update as needed
 
