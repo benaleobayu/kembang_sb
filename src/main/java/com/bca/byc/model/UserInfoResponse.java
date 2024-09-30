@@ -38,7 +38,7 @@ public class UserInfoResponse {
 
     @Data
     public static class LocationListResponse {
-        private Long id;
+        private String id;
         private String name;
     }
 

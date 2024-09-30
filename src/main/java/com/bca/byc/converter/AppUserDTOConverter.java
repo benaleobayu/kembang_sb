@@ -141,7 +141,7 @@ public class AppUserDTOConverter {
         // Other attributes
         if (data.getLocation() != null) {
             UserInfoResponse.LocationListResponse locationResponse = new UserInfoResponse.LocationListResponse();
-            locationResponse.setId(data.getLocation().getId());
+            locationResponse.setId(data.getLocation().getSecureId());
             locationResponse.setName(data.getLocation().getName());
             dto.setLocation(locationResponse);
         } else {
