@@ -2,9 +2,7 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.model.BusinessCategoryCreateRequest;
-import com.bca.byc.model.BusinessCategoryDetailResponse;
-import com.bca.byc.model.BusinessCategoryUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,36 +20,57 @@ public class BusinessCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public BusinessCategoryDetailResponse convertToListResponse(BusinessCategory data) {
+    public BusinessCategoryListResponse convertToListResponse(BusinessCategory data) {
         GlobalConverter converter = new GlobalConverter();
-        BusinessCategoryDetailResponse dto = new BusinessCategoryDetailResponse();
+        BusinessCategoryListResponse dto = new BusinessCategoryListResponse();
         dto.setName(data.getName());
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        dto.setParentId(data.getParentId() != null ? data.getParentId().getId() : null);
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
 
-        List<BusinessCategoryDetailResponse> listBusiness = new ArrayList<>();
+        List<BusinessCategoryItemListResponse> listBusiness = new ArrayList<>();
         for (BusinessCategory businessCategory : data.getChildren()) {
-            BusinessCategoryDetailResponse child = new BusinessCategoryDetailResponse();
+            BusinessCategoryItemListResponse child = new BusinessCategoryItemListResponse();
             child.setName(businessCategory.getName());
             child.setDescription(Formatter.formatDescription(businessCategory.getDescription()));
             child.setOrders(businessCategory.getOrders());
             child.setStatus(businessCategory.getIsActive());
-            child.setParentId(businessCategory.getParentId() != null ? businessCategory.getParentId().getId() : null);
+            child.setParentId(businessCategory.getParentId() != null ? businessCategory.getParentId().getSecureId() : null);
             converter.CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
             listBusiness.add(child);
         }
-        dto.setChildren(listBusiness);
+        dto.setSubCategories(listBusiness);
         // return
         return dto;
     }
 
-    // for create data
-    public BusinessCategory convertToCreateRequest(@Valid BusinessCategoryCreateRequest dto) {
+    public BusinessCategoryItemListResponse convertToListItemResponse(BusinessCategory data) {
+        GlobalConverter converter = new GlobalConverter();
+        BusinessCategoryItemListResponse dto = new BusinessCategoryItemListResponse();
+        dto.setName(data.getName());
+        dto.setDescription(Formatter.formatDescription(data.getDescription()));
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.getIsActive());
+        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        return dto;
+    }
+
+    // for create data parent
+    public BusinessCategory convertToCreateParentRequest(@Valid BusinessCategoryParentCreateRequest dto) {
         // mapping DTO Entity with Entity
         BusinessCategory data = modelMapper.map(dto, BusinessCategory.class);
+
+        data.setIsParent(true);
+        // return
+        return data;
+    }
+
+    // for create data child
+    public BusinessCategory convertToCreateChildRequest(@Valid BusinessCategoryItemCreateRequest dto) {
+        // mapping DTO Entity with Entity
+        BusinessCategory data = new BusinessCategory();
+
         // return
         return data;
     }
@@ -63,4 +82,7 @@ public class BusinessCategoryDTOConverter {
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
     }
+
+
+
 }

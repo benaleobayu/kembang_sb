@@ -28,6 +28,9 @@ public class BusinessCategory extends AbstractBaseEntityCms implements SecureIde
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
 
+    @Column(name = "is_parent", columnDefinition = "boolean default false")
+    private Boolean isParent = false;
+
     // make parent in this entity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
