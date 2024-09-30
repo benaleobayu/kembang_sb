@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.Permission;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
