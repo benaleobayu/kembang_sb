@@ -3,10 +3,7 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.PermissionResponse;
 import com.bca.byc.util.helper.Formatter;
@@ -67,9 +64,6 @@ public class AdminDTOConverter {
         Role role = data.getRole();
         List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete");
 
-        // Define a map to hold grouped permissions
-        Map<String, List<PermissionResponse>> permissionGroups = new HashMap<>();
-
         // Get role's permissions
         List<RoleHasPermission> roleHasPermissionList = role.getRolePermission();
 
@@ -81,14 +75,13 @@ public class AdminDTOConverter {
                     return parts.length > 1 ? parts[0] : "other"; // default to "other" if no category
                 }));
 
-        List<AdminCmsDetailResponse.MenuName> menuNames = new ArrayList<>();
-
+        List<PermissionListResponse> menuNames = new ArrayList<>();
         // Iterate over each category (e.g., role, admin, user)
         for (Map.Entry<String, List<RoleHasPermission>> entry : permissionsByCategory.entrySet()) {
             String category = entry.getKey();
             List<RoleHasPermission> permissions = entry.getValue();
 
-            AdminCmsDetailResponse.MenuName menuName = new AdminCmsDetailResponse.MenuName();
+            PermissionListResponse menuName = new PermissionListResponse();
             menuName.setMenuName(category);
 
             // Create a list of PermissionResponse for each category

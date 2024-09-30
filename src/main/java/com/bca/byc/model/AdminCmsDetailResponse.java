@@ -11,12 +11,8 @@ public class AdminCmsDetailResponse {
     private String name;
     private String email;
     private String roleName;
-    private List<MenuName> permissions; // Map<permission, List<SimpleGrantedAuthority>>
+    private List<PermissionListResponse> permissions; // Map<permission, List<SimpleGrantedAuthority>>
 
 
-    @Data
-    public static class MenuName {
-        private String menuName;
-        private List<PermissionResponse> permissions;
-    }
+
 }

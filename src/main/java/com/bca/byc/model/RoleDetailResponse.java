@@ -9,9 +9,10 @@ import java.util.Map;
 @Data
 public class RoleDetailResponse {
 
-    private Integer id;
+    private String id;
+    private Long index;
     private String name;
-    private Map<String, List<PermissionResponse>> permissions; // Map<permission, List<SimpleGrantedAuthority>>
+    private List<PermissionListResponse> permissions; // Map<permission, List<SimpleGrantedAuthority>>
     private Boolean status;
 
 

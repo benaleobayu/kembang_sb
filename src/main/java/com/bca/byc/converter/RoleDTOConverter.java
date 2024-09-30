@@ -4,10 +4,7 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
-import com.bca.byc.model.PrivilegeRoleCreateUpdateRequest;
-import com.bca.byc.model.RoleCreateUpdateRequest;
-import com.bca.byc.model.RoleDetailResponse;
-import com.bca.byc.model.RoleListResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
@@ -52,13 +49,13 @@ public class RoleDTOConverter {
 
     public RoleDetailResponse convertToDetailResponse(Role data) {
         // mapping Entity with DTO Entity
-        RoleDetailResponse dto = modelMapper.map(data, RoleDetailResponse.class);
+        RoleDetailResponse dto = new RoleDetailResponse();
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setName(data.getName());
 
         // Define the default permissions (view, create, read, update, delete)
         List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete");
-
-        // Define a map to hold grouped permissions
-        Map<String, List<PermissionResponse>> permissionGroups = new HashMap<>();
 
         // Get role's permissions
         List<RoleHasPermission> roleHasPermissionList = data.getRolePermission();
@@ -71,17 +68,21 @@ public class RoleDTOConverter {
                     return parts.length > 1 ? parts[0] : "other"; // default to "other" if no category
                 }));
 
+        List<PermissionListResponse> menuNames = new ArrayList<>();
         // Iterate over each category (e.g., role, admin, user)
         for (Map.Entry<String, List<RoleHasPermission>> entry : permissionsByCategory.entrySet()) {
             String category = entry.getKey();
             List<RoleHasPermission> permissions = entry.getValue();
+
+            PermissionListResponse menuName = new PermissionListResponse();
+            menuName.setMenuName(category);
 
             // Create a list of PermissionResponse for each category
             List<PermissionResponse> permissionDetails = new ArrayList<>();
 
             // Iterate over default permissions (view, create, read, update, delete)
             for (String defaultPermission : defaultPermissions) {
-                // Check if the role has the current permission (e.g., data.view)
+                // Check if the role has the current permission (e.g., role.view)
                 Optional<RoleHasPermission> matchingPermission = permissions.stream()
                         .filter(roleHasPermission -> roleHasPermission.getPermission().getName().equals(category + "." + defaultPermission))
                         .findFirst();
@@ -105,11 +106,13 @@ public class RoleDTOConverter {
             }
 
             // Add the permissionDetails to the permissionGroups map
-            permissionGroups.put(category, permissionDetails);
+            menuName.setPermissions(permissionDetails);
+
+            menuNames.add(menuName);
         }
 
         // Set the grouped permissions to the DTO
-        dto.setPermissions(permissionGroups);
+        dto.setPermissions(menuNames);
 
         // return the DTO
         return dto;
@@ -215,11 +218,17 @@ public class RoleDTOConverter {
         }
 
         // Step 1: Remove inactive permissions
+//        for (Long permissionId : removePermissionIds) {
+//            Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
+//            RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleAndPermission(data, permission);
+//            if (roleHasPermission != null) {
+//                log.info("Deleting RoleHasPermission: roleId={}, permissionId={}", data.getId(), permissionId);
+//                roleHasPermissionRepository.delete(roleHasPermission);
+//            }
+//        }
         for (Long permissionId : removePermissionIds) {
-            Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
-            RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleAndPermission(data, permission);
+            RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleIdAndPermissionId(data.getId(), permissionId);
             if (roleHasPermission != null) {
-                log.info("Deleting RoleHasPermission: roleId={}, permissionId={}", data.getId(), permissionId);
                 roleHasPermissionRepository.delete(roleHasPermission);
             }
         }
