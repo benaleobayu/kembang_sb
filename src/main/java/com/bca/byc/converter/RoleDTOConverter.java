@@ -1,5 +1,7 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeRolePermissionConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
@@ -18,7 +20,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,12 +30,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RoleDTOConverter {
 
-    private ModelMapper modelMapper;
-    private EntityManager entityManager;
-
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
+    private ModelMapper modelMapper;
+    private EntityManager entityManager;
 
     // for get data
     public RoleListResponse convertToListResponse(Role data) {
@@ -54,62 +57,9 @@ public class RoleDTOConverter {
         dto.setIndex(data.getId());
         dto.setName(data.getName());
 
-        // Define the default permissions (view, create, read, update, delete)
-        List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete");
-
-        // Get role's permissions
         List<RoleHasPermission> roleHasPermissionList = data.getRolePermission();
-
-        // Group permissions by the prefix (category) before the dot (e.g., role, admin, user)
-        Map<String, List<RoleHasPermission>> permissionsByCategory = roleHasPermissionList.stream()
-                .collect(Collectors.groupingBy(roleHasPermission -> {
-                    // Extract category by splitting the permission name at the dot
-                    String[] parts = roleHasPermission.getPermission().getName().split("\\.");
-                    return parts.length > 1 ? parts[0] : "other"; // default to "other" if no category
-                }));
-
-        List<PermissionListResponse> menuNames = new ArrayList<>();
-        // Iterate over each category (e.g., role, admin, user)
-        for (Map.Entry<String, List<RoleHasPermission>> entry : permissionsByCategory.entrySet()) {
-            String category = entry.getKey();
-            List<RoleHasPermission> permissions = entry.getValue();
-
-            PermissionListResponse menuName = new PermissionListResponse();
-            menuName.setMenuName(category);
-
-            // Create a list of PermissionResponse for each category
-            List<PermissionResponse> permissionDetails = new ArrayList<>();
-
-            // Iterate over default permissions (view, create, read, update, delete)
-            for (String defaultPermission : defaultPermissions) {
-                // Check if the role has the current permission (e.g., role.view)
-                Optional<RoleHasPermission> matchingPermission = permissions.stream()
-                        .filter(roleHasPermission -> roleHasPermission.getPermission().getName().equals(category + "." + defaultPermission))
-                        .findFirst();
-
-                // Create a new PermissionResponse
-                PermissionResponse permissionDetail = new PermissionResponse();
-
-                // If the permission exists in the role, set its details
-                if (matchingPermission.isPresent()) {
-                    permissionDetail.setPermissionId(matchingPermission.get().getPermission().getId());
-                    permissionDetail.setPermissionName(defaultPermission);
-                    permissionDetail.setDisabled(false); // permission exists, not disabled
-                } else {
-                    // If the permission does not exist, set disabled to true
-                    permissionDetail.setPermissionId(null); // no ID because it doesn't exist
-                    permissionDetail.setPermissionName(defaultPermission);
-                    permissionDetail.setDisabled(true); // permission doesn't exist, disabled
-                }
-
-                permissionDetails.add(permissionDetail);
-            }
-
-            // Add the permissionDetails to the permissionGroups map
-            menuName.setPermissions(permissionDetails);
-
-            menuNames.add(menuName);
-        }
+        TreeRolePermissionConverter converter = new TreeRolePermissionConverter();
+        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList);
 
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
@@ -243,8 +193,8 @@ public class RoleDTOConverter {
             RoleHasPermission roleHasPermission = new RoleHasPermission(data, permission);
             roleHasPermissionRepository.save(roleHasPermission);
         }
-        log.info("addList : {}", addPermissionIds );
-        log.info("removeList : {}", addPermissionIds );
+        log.info("addList : {}", addPermissionIds);
+        log.info("removeList : {}", addPermissionIds);
 
         // Set updated metadata
         data.setUpdatedBy(admin);

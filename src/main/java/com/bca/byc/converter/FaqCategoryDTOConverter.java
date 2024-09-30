@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.entity.FaqCategory;
 import com.bca.byc.model.FaqCategoryCreateRequest;

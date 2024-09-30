@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.model.ExpectCategoryCreateRequest;
@@ -39,6 +40,7 @@ public class ExpectCategoryDTOConverter {
             expectItemDetailResponse.setName(expectItem.getName());
             expectItemDetailResponse.setDescription(expectItem.getDescription());
             expectItemDetailResponse.setOrders(expectItem.getOrders());
+            expectItemDetailResponse.setIsOther(expectItem.getIsOther());
             expectItemDetailResponse.setStatus(expectItem.getIsActive());
             converter.CmsIDTimeStampResponse(expectItemDetailResponse, expectItem); // timestamp and id
             listExpectItem.add(expectItemDetailResponse);

@@ -1,11 +1,10 @@
 package com.bca.byc.service;
 
-import com.bca.byc.response.PermissionResponse;
+import com.bca.byc.model.PermissionListResponse;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PermissionService {
 
-    Map<String, List<PermissionResponse>> findAllData();
+    List<PermissionListResponse> findAllData();
 }

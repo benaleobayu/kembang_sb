@@ -120,7 +120,7 @@ public class AdminController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Get Admin Detail", description = "Get Admin Detail")
+    @Operation(summary = "Get Admin Detail", description = "Get Admin Detail", hidden = true)
     @GetMapping("/detail")
     public ResponseEntity<AdminPermissionResponse> getAdminDetail(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {

@@ -1,6 +1,6 @@
 package com.bca.byc.converter;
 
-import co.elastic.clients.elasticsearch.license.LicenseStatus;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.BusinessCategoryCreateRequest;
 import com.bca.byc.model.BusinessCategoryDetailResponse;

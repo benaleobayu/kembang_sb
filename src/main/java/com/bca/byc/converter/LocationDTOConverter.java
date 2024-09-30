@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Location;
 import com.bca.byc.model.LocationCreateRequest;
 import com.bca.byc.model.LocationDetailResponse;

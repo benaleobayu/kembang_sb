@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.Permission;
+import com.bca.byc.model.PermissionListResponse;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.PermissionResponse;
@@ -18,12 +19,12 @@ public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
 
     @Override
-    public Map<String, List<PermissionResponse>> findAllData() {
+    public List<PermissionListResponse> findAllData() {
         // Fetch all permissions
         List<Permission> allPermissions = permissionRepository.findAll();
 
         // Define (view, create, read, update, delete)
-        List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete");
+        List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete", "export");
 
         // Group all permissions by category
         Map<String, List<Permission>> permissionsByCategory = allPermissions.stream()
@@ -32,41 +33,33 @@ public class PermissionServiceImpl implements PermissionService {
                     return parts.length > 1 ? parts[0] : "other"; // default to "other" if no category
                 }));
 
-        // Initialize
-        Map<String, List<PermissionResponse>> permissionGroups = new HashMap<>();
+        // Initialize the response list
+        List<PermissionListResponse> responseList = new ArrayList<>();
 
         // For each category
         for (Map.Entry<String, List<Permission>> entry : permissionsByCategory.entrySet()) {
             String category = entry.getKey();
             List<Permission> permissionsInCategory = entry.getValue();
 
-            List<PermissionResponse> permissionResponses = new ArrayList<>();
+            List<PermissionResponse> permissionResponses = defaultPermissions.stream()
+                    .map(defaultPermission -> {
+                        // Check if the current permission exists in the category
+                        return permissionsInCategory.stream()
+                                .filter(permission -> permission.getName().equals(category + "." + defaultPermission))
+                                .findFirst()
+                                .map(matchingPermission -> new PermissionResponse(
+                                        matchingPermission.getId(),
+                                        defaultPermission,
+                                        false
+                                ))
+                                .orElse(new PermissionResponse(null, defaultPermission, true));
+                    })
+                    .collect(Collectors.toList());
 
-            for (String defaultPermission : defaultPermissions) {
-                // Check if the current permission exists in the category
-                Optional<Permission> matchingPermission = permissionsInCategory.stream()
-                        .filter(permission -> permission.getName().equals(category + "." + defaultPermission))
-                        .findFirst();
-
-                // Create a new PermissionResponse
-                PermissionResponse permissionResponse = new PermissionResponse();
-
-                if (matchingPermission.isPresent()) {
-                    permissionResponse.setPermissionId(matchingPermission.get().getId());
-                    permissionResponse.setPermissionName(defaultPermission);
-                    permissionResponse.setDisabled(false);
-                } else {
-                    permissionResponse.setPermissionId(null);
-                    permissionResponse.setPermissionName(defaultPermission);
-                    permissionResponse.setDisabled(true);
-                }
-
-                permissionResponses.add(permissionResponse);
-            }
-
-            permissionGroups.put(category, permissionResponses);
+            // Create and add the new PermissionListResponse to the list
+            responseList.add(new PermissionListResponse(category, permissionResponses));
         }
 
-        return permissionGroups;
+        return responseList;
     }
 }
