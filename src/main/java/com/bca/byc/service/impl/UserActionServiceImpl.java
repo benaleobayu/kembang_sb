@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import static com.bca.byc.repository.handler.HandlerRepository.getUserByEmail;
-import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
+import static com.bca.byc.repository.handler.HandlerRepository.*;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +24,7 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void followUser(String userId, String email) {
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
-        AppUser userToFollow = getEntityBySecureId(userId, userRepository, "User not found");
+        AppUser userToFollow = getEntityUserBySecureId(userId, userRepository, "User not found");
 
         if (!user.getFollows().contains(userToFollow)) {
             user.getFollows().add(userToFollow);
@@ -37,7 +36,7 @@ public class UserActionServiceImpl implements UserActionService {
     @Override
     public void unfollowUser(String userId, String email) {
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
-        AppUser userToUnfollow = getEntityBySecureId(userId, userRepository, "User not found");
+        AppUser userToUnfollow = getEntityUserBySecureId(userId, userRepository, "User not found");
 
         if (user.getFollows().contains(userToUnfollow)) {
             user.getFollows().remove(userToUnfollow);
