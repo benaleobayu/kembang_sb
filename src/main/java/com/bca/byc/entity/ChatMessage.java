@@ -53,4 +53,9 @@ public class ChatMessage extends AbstractBaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ChatType chatType = ChatType.TEXT;  // Type of message: TEXT, IMAGE, or VIDEO
+
+    // Self-referencing ManyToOne for parent message (nullable for top-level messages)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_message_parent_secure_id", referencedColumnName = "secure_id", nullable = true)
+    private ChatMessage parentMessage;  // Reference to the parent message (for replies), nullable
 }

@@ -18,7 +18,7 @@ public class ChatService {
     private ChatMessageRepository chatMessageRepository;
 
     // Save a new message
-    public ChatMessage saveMessage(AppUser fromUser, AppUser toUser, String message, ChatRoom room,String filePath, ChatType chatType) {
+    public ChatMessage saveMessage(AppUser fromUser, AppUser toUser, String message, ChatRoom room,String filePath, ChatType chatType, ChatMessage parentMessage) {
         // Create and populate the ChatMessage entity
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setFromUser(fromUser);         // Set the sender (fromUser)
@@ -28,6 +28,10 @@ public class ChatService {
         chatMessage.setChatRoom(room);             // Set the room the message belongs to
         chatMessage.setFilePath(filePath);          
         chatMessage.setChatType(chatType);         // Set the chat type
+            // Set the parent message if provided (nullable)
+        if (parentMessage != null) {
+            chatMessage.setParentMessage(parentMessage);  // Set the parent message if this is a reply
+        }
         
         // Save and return the ChatMessage
         return chatMessageRepository.save(chatMessage);

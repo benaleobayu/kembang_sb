@@ -56,4 +56,8 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
                                             @Param("readAt") LocalDateTime readAt);
     // Query messages by chatRoom's secureId and order by timestamp
    // List<ChatMessage> findByChatRoomSecureIdOrderByTimestamp(String secureId);
+
+   ChatMessage findBySecureId(String secureId);
+   boolean existsBySecureId(String secureId);
+   void deleteBySecureId(String secureId);
 }
