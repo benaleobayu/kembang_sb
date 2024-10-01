@@ -2,6 +2,9 @@ package com.bca.byc.repository.auth;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
+import com.bca.byc.model.ProfileActivityCounts;
+import com.bca.byc.model.ProfileActivityPostResponse;
+import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,20 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsRecommendedTrue(String userName, StatusType statusType, Pageable pageable);
 
     Page<AppUser> findByNameLikeIgnoreCase(String name, Pageable pageable);
+
+    @Query("SELECT u FROM AppUser u " + "JOIN u.savedPosts us " + "JOIN us.post p " + "WHERE u.secureId = :userId " + "GROUP BY u")
+    Page<AppUser> showProfileActivity(String userId, Pageable pageable);
+
+
+    @Query("SELECT COUNT(p) AS totalPosts, " +
+            "COUNT(f) AS totalFollowing, " +
+            "COUNT(fw) AS totalFollowers " +
+            "FROM AppUser u " +
+            "LEFT JOIN u.posts p " +
+            "LEFT JOIN u.follows f " +
+            "LEFT JOIN u.followers fw " +
+            "WHERE u.secureId = :secureId")
+    UserActivityCounts getActivityCounts(@Param("secureId") String secureId);
 
 }
 

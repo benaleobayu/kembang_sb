@@ -91,6 +91,10 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     @ManyToMany(mappedBy = "follows")
     private List<AppUser> followers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserHasSavedPost> savedPosts = new ArrayList<>();
+
 
     /////////////////
 //

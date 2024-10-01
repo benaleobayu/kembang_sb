@@ -1,23 +1,14 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.entity.AppUserRequestContact;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.ProfileActivityCounts;
+import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.response.ApiDataResponse;
-import com.bca.byc.response.ApiResponse;
-import com.bca.byc.response.AppUserRequestContactRequest;
-import com.bca.byc.response.AppUserRequestContactResponse;
+import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
-
-import com.bca.byc.response.ChangePasswordRequest;
-import com.bca.byc.response.NotificationSettingsRequest;
-import com.bca.byc.response.NotificationSettingsResponse;
-
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -100,11 +91,10 @@ public class AppUserProfileController {
     @Operation(summary = "Update user profile", description = "Update user profile")
     @PutMapping("/profile")
     public ResponseEntity<?> updateUserData(@RequestBody AppUserProfileRequest dto, Principal principal) {
-
         String email = ContextPrincipal.getPrincipal();
         try {
             userService.updateUserData(email, dto);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile updated successfully",userService.getUserDetails(principal.getName() )));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile updated successfully", userService.getUserDetails(principal.getName())));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
@@ -126,10 +116,10 @@ public class AppUserProfileController {
             if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "New password and confirmation password do not match"));
             }
-    
+
             // Call a service method to change the password
             userService.changePassword(userSecureId, dto.getCurrentPassword(), dto.getNewPassword());
-    
+
             // Return success response
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Password updated successfully", null));
         } catch (IllegalArgumentException e) {
@@ -161,7 +151,7 @@ public class AppUserProfileController {
         try {
             // Fetch notification settings for the user
             NotificationSettingsResponse notificationSettings = userService.getNotificationSettings(userSecureId);
-            
+
             // Return success response
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Notification settings retrieved successfully", notificationSettings));
         } catch (Exception e) {
@@ -183,6 +173,7 @@ public class AppUserProfileController {
         }
     }
 
+    @Operation(summary = "Get user activity counts", description = "Get user activity counts")
     @GetMapping("/activity-counts")
     public ResponseEntity<?> getActivityCounts() {
         try {
@@ -195,6 +186,18 @@ public class AppUserProfileController {
         }
     }
 
+    @Operation(summary = "Get list PostActivity", description = "Get list PostActivity")
+    @GetMapping("/post-activity")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostActivity(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + " endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileActivity(pages, limit, sortBy, direction, keyword)));
+    }
 
 
 }

@@ -9,6 +9,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.ProfileActivityCounts;
+import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.repository.AppUserNotificationRepository;
@@ -200,16 +201,18 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ProfileActivityCounts getActivityCounts() {
-        String email = ContextPrincipal.getSecureUserId();
-        AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
+        String uuid = ContextPrincipal.getSecureUserId();
+
+        UserActivityCounts counts = appUserRepository.getActivityCounts(uuid);
 
         ProfileActivityCounts dto = new ProfileActivityCounts();
-        dto.setTotalPosts(user.getPosts().size());
-        dto.setTotalFollowing(user.getFollows().size());
-        dto.setTotalFollowers(user.getFollowers().size());
+        dto.setTotalPosts(counts.getTotalPosts() != null ? counts.getTotalPosts() : 0);
+        dto.setTotalFollowing(counts.getTotalFollowing() != null ? counts.getTotalFollowing() : 0);
+        dto.setTotalFollowers(counts.getTotalFollowers() != null ? counts.getTotalFollowers() : 0);
         dto.setTotalEvents(0); // TODO: get total events
         return dto;
     }
+
 
 
 }

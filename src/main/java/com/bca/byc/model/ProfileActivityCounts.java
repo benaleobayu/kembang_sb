@@ -9,3 +9,4 @@ public class ProfileActivityCounts {
     private Integer totalFollowing;
     private Integer totalEvents;
 }
+
