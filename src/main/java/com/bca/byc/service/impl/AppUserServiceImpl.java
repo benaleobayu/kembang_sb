@@ -192,7 +192,7 @@ public class AppUserServiceImpl implements AppUserService {
         AppUserRequestContact savedContact = appUserRequestContactRepository.save(requestContact);
     
         // Buat response dari entity yang baru disimpan
-        return new AppUserRequestContactResponse(savedContact.getId(), savedContact.getAppUserId(), savedContact.getMessages());
+        return new AppUserRequestContactResponse(savedContact.getId(), savedContact.getMessages());
     }
     
 
