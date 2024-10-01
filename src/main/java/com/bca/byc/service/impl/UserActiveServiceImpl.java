@@ -7,10 +7,10 @@ import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.UserActiveRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
@@ -48,18 +48,47 @@ public class UserActiveServiceImpl implements UserActiveService {
         AppUser data = repository.findBySecureId(id)
                 .orElseThrow(() -> new BadRequestException("UserActive not found"));
 
-        return converter.convertToListResponse(data);
+        return converter.convertToDetailResponse(data);
     }
 
     @Override
-    public List<UserManagementDetailResponse> findAllData() {
-        // Get the list
-        List<AppUser> datas = repository.findAll();
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
+                                                                      Integer limit,
+                                                                      String sortBy,
+                                                                      String direction,
+                                                                      String keyword,
+                                                                      Long locationId,
+                                                                      LocalDate startDate,
+                                                                      LocalDate endDate) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
 
-        // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
+        // Set date
+        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
+        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+
+        // Fetch data from repository
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
+
+        // Convert AppUser entities to UserManagementListResponse DTOs
+        List<UserManagementListResponse> dtos = pageResult.stream()
+                .map(converter::convertToListResponse) // Ensure this method is called
                 .collect(Collectors.toList());
+
+        int currentPage = pageResult.getNumber() + 1;
+        int totalPages = pageResult.getTotalPages();
+
+        return PaginationUtil.createResultPageDTO(
+                pageResult.getTotalElements(), // Total items
+                dtos, // DTOs to return
+                currentPage, // Current page
+                currentPage > 1 ? currentPage - 1 : 1, // Previous page
+                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // Next page
+                1, // First page
+                totalPages - 1, // Last page
+                pageResult.getSize() // Per page
+        );
     }
 
     @Override
@@ -100,32 +129,6 @@ public class UserActiveServiceImpl implements UserActiveService {
         // save
         data.setAppUserAttribute(attribute);
         repository.save(data);
-    }
-
-    @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
-                                                                        Integer limit,
-                                                                        String sortBy,
-                                                                        String direction,
-                                                                        String keyword,
-                                                                        Long locationId,
-                                                                        LocalDate startDate,
-                                                                        LocalDate endDate) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-
-        // set date
-        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
-        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
-
-        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
-        List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
-            UserManagementDetailResponse dto = converter.convertToListResponse(c);
-            return dto;
-        }).collect(Collectors.toList());
-
-        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override

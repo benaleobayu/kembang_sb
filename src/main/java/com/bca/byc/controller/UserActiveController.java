@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
@@ -53,7 +54,7 @@ public class UserActiveController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listActiveUser(
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementListResponse>>> listActiveUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -63,20 +64,9 @@ public class UserActiveController {
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        // response true
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate), userManagementService.listAttributeUserManagement()));
     }
 
-
-    @GetMapping("/all")
-    public ResponseEntity<ApiDataResponse> getAll() {
-        log.info("GET " + urlRoute + "/all endpoint hit");
-        try {
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found user active", service.findAllData()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
-        }
-    }
 
     @GetMapping("{id}")
     public ResponseEntity<ApiDataResponse> getById(@PathVariable("id") String id) {

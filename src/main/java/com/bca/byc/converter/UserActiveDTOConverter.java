@@ -4,6 +4,7 @@ import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserDetail;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
+import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
 
 @Component
 @AllArgsConstructor
@@ -23,7 +26,17 @@ public class UserActiveDTOConverter {
     private String baseUrl;
 
     // for get data
-    public UserManagementDetailResponse convertToListResponse(AppUser data) {
+    public UserManagementListResponse convertToListResponse(AppUser data) {
+        // mapping Entity with DTO Entity
+        UserManagementListResponse dto = new UserManagementListResponse();
+        IndexResponse(data, dto);
+
+        // return
+        return dto;
+    }
+
+     // for get data
+    public UserManagementDetailResponse convertToDetailResponse(AppUser data) {
         // mapping Entity with DTO Entity
         UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
@@ -33,6 +46,8 @@ public class UserActiveDTOConverter {
         // return
         return dto;
     }
+
+
 
     // for create data
     public AppUser convertToCreateRequest(@Valid UserActiveUpdateRequest dto) {
