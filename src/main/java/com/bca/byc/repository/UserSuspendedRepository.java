@@ -3,6 +3,8 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.export.UserActiveExportResponse;
+import com.bca.byc.model.projection.CMSBulkDeleteProjection;
+import com.bca.byc.model.projection.CMSBulkSuspendProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +19,20 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
     Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedTrueAndAppUserAttributeIsDeletedFalse(String userName, StatusType statusType, Pageable pageable);
 
     Set<AppUser> findByIdIn(Set<Long> ids);
+
+    @Query("SELECT u " +
+            "FROM AppUser u " +
+            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "WHERE u.secureId IN :ids")
+    Set<CMSBulkDeleteProjection> findToDeleteBySecureIdIn(@Param("ids") Set<String> ids);
+
+    @Query("SELECT u " +
+            "FROM AppUser u " +
+            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "WHERE u.secureId IN :ids")
+    Set<CMSBulkSuspendProjection> findToSuspendBySecureIdIn(@Param("ids") Set<String> ids);
+
+
 
     @Query("SELECT u FROM AppUser u " +
             "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
@@ -33,7 +49,7 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
             "aua.isDeleted = false AND " +
-            "u.createdAt BETWEEN :startDate AND :endDate " +
+            "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate " +
             "ORDER BY u.createdAt DESC")
     Page<AppUser> findByKeywordAndStatusAndSuspendedAndCreatedAt(@Param("keyword") String keyword,
                                                                  @Param("locationId") Long locationId,

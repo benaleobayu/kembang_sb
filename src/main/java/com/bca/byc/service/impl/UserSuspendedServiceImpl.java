@@ -5,10 +5,15 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
+import com.bca.byc.model.projection.CMSBulkDeleteProjection;
+import com.bca.byc.model.projection.CMSBulkSuspendProjection;
 import com.bca.byc.repository.UserSuspendedRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -23,6 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
+
 
 @Service
 @AllArgsConstructor
@@ -33,14 +40,14 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     private final UserSuspendedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
-                                                                        Integer limit,
-                                                                        String sortBy,
-                                                                        String direction,
-                                                                        String keyword,
-                                                                        Long locationId,
-                                                                        LocalDate startDate,
-                                                                        LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
+                                                                      Integer limit,
+                                                                      String sortBy,
+                                                                      String direction,
+                                                                      String keyword,
+                                                                      Long locationId,
+                                                                      LocalDate startDate,
+                                                                      LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -50,8 +57,9 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
         Page<AppUser> pageResult = repository.findByKeywordAndStatusAndSuspendedAndCreatedAt(keyword, locationId, start, end, pageable);
-        List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
-            UserManagementDetailResponse dto = converter.convertToListResponse(c);
+        List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
+            UserManagementListResponse dto = new UserManagementListResponse();
+            IndexResponse(c,dto);
             return dto;
         }).collect(Collectors.toList());
 
@@ -71,17 +79,15 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public UserManagementDetailResponse findDataById(Long id) throws BadRequestException {
-        AppUser data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("user not found"));
+    public UserManagementDetailResponse findDataBySecureId(String id) throws BadRequestException {
+        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
 
         return converter.convertToListResponse(data);
     }
 
     @Override
-    public void makeUserIsDeletedTrue(Long id) {
-        AppUser user = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+    public void makeUserIsDeletedTrue(String id) {
+        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = user.getAppUserAttribute();
         userAttribute.setIsDeleted(true);
         user.setAppUserAttribute(userAttribute);
@@ -89,9 +95,8 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserIsSuspendedFalse(Long id) {
-        AppUser user = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+    public void makeUserIsSuspendedFalse(String id) {
+        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = user.getAppUserAttribute();
         userAttribute.setIsSuspended(false);
         user.setAppUserAttribute(userAttribute);
@@ -99,8 +104,12 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserBulkDeleteTrue(Set<Long> ids) {
-        repository.findByIdIn(ids).forEach(user -> {
+    public void makeUserBulkDeleteTrue(Set<String> ids) {
+        Set<CMSBulkDeleteProjection> userProjections = repository.findToDeleteBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser user = repository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             AppUserAttribute userAttribute = user.getAppUserAttribute();
             userAttribute.setIsDeleted(true);
             user.setAppUserAttribute(userAttribute);
@@ -109,8 +118,12 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserBulkRestoreTrue(Set<Long> ids) {
-        repository.findByIdIn(ids).forEach(user -> {
+    public void makeUserBulkSuspendedFalse(Set<String> ids) {
+        Set<CMSBulkSuspendProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser user = repository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             AppUserAttribute userAttribute = user.getAppUserAttribute();
             userAttribute.setIsSuspended(false);
             user.setAppUserAttribute(userAttribute);

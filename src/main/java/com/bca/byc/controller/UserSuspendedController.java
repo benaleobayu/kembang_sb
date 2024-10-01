@@ -57,10 +57,10 @@ public class UserSuspendedController {
 
     @Operation(summary = "Get user suspended by id", description = "Get user suspended by id")
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET" + urlRoute + "/{id} endpoint hit");
         try {
-            UserManagementDetailResponse item = service.findDataById(id);
+            UserManagementDetailResponse item = service.findDataBySecureId(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found user", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -69,7 +69,7 @@ public class UserSuspendedController {
 
     @Operation(summary = "Delete user suspended by id", description = "Delete user suspended by id")
     @PatchMapping("/{id}/delete")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") String id) {
         log.info("PATCH " + urlRoute + "/{id}/delete endpoint hit");
         try {
             service.makeUserIsDeletedTrue(id);
@@ -93,7 +93,7 @@ public class UserSuspendedController {
 
     @Operation(summary = "Restore user suspended by id", description = "Restore user suspended by id")
     @PatchMapping("/{id}/restore")
-    public ResponseEntity<?> restore(@PathVariable("id") Long id) {
+    public ResponseEntity<?> restore(@PathVariable("id") String id) {
         log.info("PATCH " + urlRoute + "/{id}/restore endpoint hit");
         try {
             service.makeUserIsSuspendedFalse(id);
@@ -108,7 +108,7 @@ public class UserSuspendedController {
     public ResponseEntity<?> restore(@RequestBody BulkByIdRequest dto) {
         log.info("POST " + urlRoute + "/restore endpoint hit");
         try {
-            service.makeUserBulkRestoreTrue(dto.getIds());
+            service.makeUserBulkSuspendedFalse(dto.getIds());
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully restored user", null));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
