@@ -10,4 +10,5 @@ public interface UserManagementService {
 
     List<Map<String, List<?>>> listAttributeUserManagement();
 
+    List<Map<String, List<?>>> listAttributeSubBusinessCategory();
 }

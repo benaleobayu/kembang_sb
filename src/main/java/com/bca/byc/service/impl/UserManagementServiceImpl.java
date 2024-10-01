@@ -1,9 +1,11 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.Location;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.attribute.AttributeResponse;
+import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserManagementServiceImpl implements UserManagementService {
 
     private final LocationRepository locationRepository;
+    private final BusinessCategoryRepository businessCategoryRepository;
 
 
     @Override
@@ -84,6 +87,34 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         Map<String, List<?>> listStatus = new HashMap<>();
         listStatus.put("status", listStatusResponse);
+        attributes.add(listStatus);
+
+        return attributes;
+    }
+
+    @Override
+    public List<Map<String, List<?>>> listAttributeSubBusinessCategory() {
+        List<BusinessCategory> subCategory = new ArrayList<>();
+        for (BusinessCategory category : businessCategoryRepository.findAll()) {
+            BusinessCategory businessCategory = new BusinessCategory();
+            businessCategory.setId(category.getId());
+            businessCategory.setName(category.getName());
+            subCategory.add(businessCategory);
+        }
+
+        List<AttributeResponse> listSubCategory = subCategory.stream()
+                .map((c) -> {
+                    AttributeResponse<Long> response = new AttributeResponse<>();
+                    response.setId(c.getId());
+                    response.setName(c.getName());
+                    return response;
+                })
+                .collect(Collectors.toList());
+
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+
+        Map<String, List<?>> listStatus = new HashMap<>();
+        listStatus.put("subCategory", listSubCategory);
         attributes.add(listStatus);
 
         return attributes;
