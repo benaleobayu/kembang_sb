@@ -1,9 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.model.AppUserProfileRequest;
-import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.model.LoginRequestDTO;
+import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
@@ -12,8 +10,6 @@ import com.bca.byc.response.AppUserRequestContactResponse;
 
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
-import com.bca.byc.model.UserDetailResponseDTO;
 
 public interface AppUserService extends UserDetailsService {
 
@@ -32,6 +28,7 @@ public interface AppUserService extends UserDetailsService {
 	void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto);
 	NotificationSettingsResponse getNotificationSettings(String userSecureId);
 	AppUserRequestContactResponse  createRequestContact(String userSecureId, String messageString);
-	
-	
+
+
+    ProfileActivityCounts getActivityCounts();
 }

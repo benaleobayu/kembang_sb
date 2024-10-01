@@ -8,14 +8,17 @@ import com.bca.byc.entity.AppUserRequestContact;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
+import com.bca.byc.model.ProfileActivityCounts;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -194,11 +197,19 @@ public class AppUserServiceImpl implements AppUserService {
         // Buat response dari entity yang baru disimpan
         return new AppUserRequestContactResponse(savedContact.getId(), savedContact.getMessages());
     }
-    
+
+    @Override
+    public ProfileActivityCounts getActivityCounts() {
+        String email = ContextPrincipal.getSecureUserId();
+        AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
+
+        ProfileActivityCounts dto = new ProfileActivityCounts();
+        dto.setTotalPosts(user.getPosts().size());
+        dto.setTotalFollowing(user.getFollows().size());
+        dto.setTotalFollowers(user.getFollowers().size());
+        dto.setTotalEvents(0); // TODO: get total events
+        return dto;
+    }
 
 
-    
-
-    
-        
 }
