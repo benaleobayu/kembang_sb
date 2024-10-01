@@ -1,10 +1,12 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ExpectItem;
-import com.bca.byc.model.*;
+import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
+import com.bca.byc.model.ExpectCategoryIndexResponse;
+import com.bca.byc.model.PublicExpectCategoryDetailResponse;
+import com.bca.byc.model.PublicExpectItemDetailResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,7 +30,7 @@ public class ExpectCategoryDTOConverter {
         dto.setOrders(data.getOrders());
         List<String> subCategories = new ArrayList<>();
         for (ExpectItem expectItem : data.getExpectItems()) {
-            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")){
+            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
                 subCategories.add(expectItem.getName());
             }
         }
@@ -36,17 +38,27 @@ public class ExpectCategoryDTOConverter {
         converter.CmsIDTimeStampResponse(dto, data);
         return dto;
     }
-    // for get data
 
-    public ExpectCategoryIndexResponse convertToListResponse(ExpectCategory data) {
+    // for get data public on app
+    public PublicExpectCategoryDetailResponse convertToListResponse(ExpectCategory data) {
         GlobalConverter converter = new GlobalConverter();
-        // mapping Entity with DTO Entity
-        ExpectCategoryIndexResponse dto = new ExpectCategoryIndexResponse();
+        PublicExpectCategoryDetailResponse dto = new PublicExpectCategoryDetailResponse();
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
         dto.setName(data.getName());
-        dto.setOrders(data.getOrders());
-        dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponse(dto, data);
-        // return
+        dto.setIsOther(data.getIsOther());
+        List<PublicExpectItemDetailResponse> subCategories = new ArrayList<>();
+        for (ExpectItem expectItem : data.getExpectItems()) {
+            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
+                PublicExpectItemDetailResponse sub = new PublicExpectItemDetailResponse();
+                sub.setId(expectItem.getSecureId());
+                sub.setIndex(expectItem.getId());
+                sub.setName(expectItem.getName());
+                sub.setIsOther(expectItem.getIsOther());
+                subCategories.add(sub);
+            }
+        }
+        dto.setExpectItems(subCategories);
         return dto;
     }
 
@@ -58,7 +70,7 @@ public class ExpectCategoryDTOConverter {
         dto.setOrders(data.getOrders());
         List<String> subCategories = new ArrayList<>();
         for (ExpectItem expectItem : data.getExpectItems()) {
-            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")){
+            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
                 subCategories.add(expectItem.getName());
             }
         }

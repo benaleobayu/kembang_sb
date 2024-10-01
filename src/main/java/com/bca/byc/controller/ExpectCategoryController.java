@@ -3,7 +3,6 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
-import com.bca.byc.model.ExpectCategoryDetailResponse;
 import com.bca.byc.model.ExpectCategoryIndexResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;

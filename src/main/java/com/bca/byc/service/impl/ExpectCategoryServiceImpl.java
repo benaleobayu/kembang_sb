@@ -8,6 +8,7 @@ import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
 import com.bca.byc.model.ExpectCategoryIndexResponse;
+import com.bca.byc.model.PublicExpectCategoryDetailResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -16,6 +17,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.ExpectCategoryService;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,7 +64,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
-    public List<ExpectCategoryIndexResponse> findAllData() {
+    public List<PublicExpectCategoryDetailResponse> findAllData() {
         // Get the list
         List<ExpectCategory> datas = repository.findAll();
 
@@ -73,6 +75,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
+    @Transactional
     public void saveData(@Valid ExpectCategoryCreateUpdateRequest dto) throws BadRequestException {
         String email = ContextPrincipal.getSecureUserId();
         AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
@@ -92,6 +95,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
+    @Transactional
     public void updateData(String id, @Valid ExpectCategoryCreateUpdateRequest dto) throws BadRequestException {
         String email = ContextPrincipal.getSecureUserId();
         AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
@@ -143,6 +147,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteData(String id) throws BadRequestException {
         ExpectCategory data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         Long expectId = data.getId();
@@ -150,9 +155,9 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
         if (!repository.existsById(expectId)) {
             throw new BadRequestException("ExpectCategory not found");
         }
-        if (!data.getUserHasExpects().isEmpty()){
+        if (!data.getUserHasExpects().isEmpty()) {
             throw new BadRequestException("Cannot delete Expect category because it is used in user");
         }
-            repository.deleteById(expectId);
+        repository.deleteById(expectId);
     }
 }

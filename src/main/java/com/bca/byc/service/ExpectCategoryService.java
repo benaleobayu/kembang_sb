@@ -3,6 +3,7 @@ package com.bca.byc.service;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
 import com.bca.byc.model.ExpectCategoryIndexResponse;
+import com.bca.byc.model.PublicExpectCategoryDetailResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
@@ -14,7 +15,7 @@ public interface ExpectCategoryService {
 
     ExpectCategoryIndexResponse findDataBySecureId(String id) throws BadRequestException;
 
-    List<ExpectCategoryIndexResponse> findAllData();
+    List<PublicExpectCategoryDetailResponse> findAllData();
 
     void saveData(@Valid ExpectCategoryCreateUpdateRequest dto) throws BadRequestException;
 
