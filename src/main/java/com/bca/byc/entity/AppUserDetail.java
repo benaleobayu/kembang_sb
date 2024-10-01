@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -85,10 +84,10 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     private String memberType;
 
     @Column(name = "approved_by")
-    private String ApprovedBy;
+    private String approvedBy;
 
     @Column(name = "approved_at")
-    private LocalDateTime ApprovedAt;
+    private LocalDateTime approvedAt;
 
     @Column(name = "avatar", columnDefinition = "text")
     private String avatar;
@@ -97,7 +96,7 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     private String cover;
 
     @Column(name = "user_as")
-    private String userAs; // TODO want to remove ?
+    private String userAs;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")

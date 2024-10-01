@@ -3,6 +3,7 @@ package com.bca.byc.converter.parsing;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
@@ -12,11 +13,34 @@ import java.util.stream.Collectors;
 
 public class TreeUserManagementConverter {
 
+    public static void IndexResponse(
+            AppUser data,
+            UserManagementListResponse dto
+    ){
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setBranchCode(data.getAppUserDetail().getBranchCode() != null ? data.getAppUserDetail().getBranchCode().getCode() : null);
+        dto.setName(data.getAppUserDetail().getName());
+        dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
+                Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
+                Formatter.formatLocalDate(data.getAppUserDetail().getParentBirthdate()));
+        dto.setEmail(data.getEmail().toLowerCase());
+        dto.setPhone(data.getAppUserDetail().getPhone());
+        dto.setMemberCin(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
+                data.getAppUserDetail().getMemberCin() :
+                data.getAppUserDetail().getParentCin());
+        dto.setCreatedAt(data.getAppUserDetail().getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()) : null);
+        dto.setUpdatedAt(data.getAppUserDetail().getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()) : null);
+        dto.setApproveAt(data.getAppUserDetail().getApprovedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getApprovedAt()) : null);
+        dto.setApproveBy(data.getAppUserDetail().getApprovedBy() != null ? data.getAppUserDetail().getApprovedBy() : null);
+    }
+
     public void DetailResponse(
             AppUser data,
             UserManagementDetailResponse dto
     ) {
         dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
         dto.setName(data.getAppUserDetail().getName());
         dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
                 Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
