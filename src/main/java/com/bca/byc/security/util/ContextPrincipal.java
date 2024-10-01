@@ -32,4 +32,17 @@ public class ContextPrincipal {
         return secureId;
     }
 
+    public static Long getId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long id = null;
+        if (principal instanceof AppUser) {
+            id =  ((AppUser)principal).getId();
+        } else if (principal instanceof UserDetails) {
+            id = Long.parseLong(((UserDetails) principal).getUsername());
+        }
+
+        return id;
+    }
+
 }
