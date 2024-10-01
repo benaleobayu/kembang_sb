@@ -1,7 +1,9 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
+import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +16,16 @@ import java.util.Set;
 
 public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
 
-    @Query("SELECT u FROM AppUser u " +
+    Set<AppUser> findByIdIn(Set<Long> ids);
+
+    @Query("SELECT u " +
+            "FROM AppUser u " +
+            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "WHERE u.secureId IN :ids")
+    Set<CMSBulkDeleteProjection> findBySecureIdIn(@Param("ids") Set<String> ids);
+
+    @Query("SELECT u " +
+            "FROM AppUser u " +
             "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
             "LEFT JOIN Business b ON b.user.id = u.id " +
@@ -29,15 +40,12 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
             "aua.isDeleted = true AND " +
-            "u.createdAt BETWEEN :startDate AND :endDate " +
-            "ORDER BY u.id DESC")
+            "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
     Page<AppUser> findByKeywordAndStatusAndDeletedAndCreatedAt(@Param("keyword") String keyword,
-                                                     @Param("locationId") Long locationId,
-                                                     @Param("startDate") LocalDateTime start,
-                                                     @Param("endDate") LocalDateTime end,
-                                                     Pageable pageable);
-
-    Set<AppUser> findByIdIn(Set<Long> ids);
+                                                                                  @Param("locationId") Long locationId,
+                                                                                  @Param("startDate") LocalDateTime start,
+                                                                                  @Param("endDate") LocalDateTime end,
+                                                                                  Pageable pageable);
 
     @Query("SELECT new com.bca.byc.model.export.UserActiveExportResponse(" +
             "u.id, loc.name, aud.name, " +

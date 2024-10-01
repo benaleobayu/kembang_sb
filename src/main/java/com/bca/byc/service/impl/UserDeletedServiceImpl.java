@@ -5,10 +5,13 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
+import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.repository.UserDeletedRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -23,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
+
 @Service
 @RequiredArgsConstructor
 public class UserDeletedServiceImpl implements UserDeletedService {
@@ -32,14 +37,14 @@ public class UserDeletedServiceImpl implements UserDeletedService {
     private final UserDeletedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages,
-                                                                        Integer limit,
-                                                                        String sortBy,
-                                                                        String direction,
-                                                                        String keyword,
-                                                                        Long locationId,
-                                                                        LocalDate startDate,
-                                                                        LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
+                                                                      Integer limit,
+                                                                      String sortBy,
+                                                                      String direction,
+                                                                      String keyword,
+                                                                      Long locationId,
+                                                                      LocalDate startDate,
+                                                                      LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -49,8 +54,9 @@ public class UserDeletedServiceImpl implements UserDeletedService {
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
         Page<AppUser> pageResult = repository.findByKeywordAndStatusAndDeletedAndCreatedAt(keyword, locationId, start, end, pageable);
-        List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
-            UserManagementDetailResponse dto = converter.convertToListResponse(c);
+        List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
+            UserManagementListResponse dto = new UserManagementListResponse();
+            IndexResponse(c,dto);
             return dto;
         }).collect(Collectors.toList());
 
@@ -88,12 +94,17 @@ public class UserDeletedServiceImpl implements UserDeletedService {
     }
 
     @Override
-    public void makeUserBulkRestoreTrue(Set<Long> ids) {
-        repository.findByIdIn(ids).forEach(user -> {
+    public void makeUserBulkRestoreTrue(Set<String> ids) {
+        Set<CMSBulkDeleteProjection> userProjections = repository.findBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser user = repository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             AppUserAttribute userAttribute = user.getAppUserAttribute();
             userAttribute.setIsDeleted(false);
             user.setAppUserAttribute(userAttribute);
             repository.save(user);
         });
     }
+
 }
