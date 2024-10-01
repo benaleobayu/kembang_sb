@@ -34,7 +34,7 @@ public class BusinessCategoryItemController {
     private BusinessCategoryItemService service;
 
     @PreAuthorize("hasAuthority('business_category_item.view')")
-    @Operation(summary = "Get list Business Category item", description = "Get list Business Category")
+    @Operation(summary = "Get list Business Category item", description = "Get list Business Category", hidden = true)
     @GetMapping("/{parentId}/items")
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<BusinessCategoryItemListResponse>>> listDataBusinessCategoryItem(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -48,7 +48,7 @@ public class BusinessCategoryItemController {
     }
 
     @PreAuthorize("hasAuthority('business_category_item.read')")
-    @Operation(summary = "Get Business Category item", description = "Get Business Category")
+    @Operation(summary = "Get Business Category item", description = "Get Business Category", hidden = true)
     @GetMapping("/{parentId}/items/{id}")
     public ResponseEntity<?> getById(
             @PathVariable("parentId") String parentId,
@@ -63,7 +63,7 @@ public class BusinessCategoryItemController {
     }
 
     @PreAuthorize("hasAuthority('business_category_item.create')")
-    @Operation(summary = "Create new Business Category item", description = "Create new Business Category")
+    @Operation(summary = "Create new Business Category item", description = "Create new Business Category", hidden = true)
     @PostMapping("/{parentId}/items")
     public ResponseEntity<ApiResponse> create(
             @PathVariable("parentId") String parentid,
@@ -79,7 +79,7 @@ public class BusinessCategoryItemController {
     }
 
     @PreAuthorize("hasAuthority('business_category_item.update')")
-    @Operation(summary = "Update Business Category item", description = "Update Business Category")
+    @Operation(summary = "Update Business Category item", description = "Update Business Category", hidden = true)
     @PutMapping("/{parentId}/items/{id}")
     public ResponseEntity<ApiResponse> update(
             @PathVariable("parentId") String parentId,
@@ -95,7 +95,7 @@ public class BusinessCategoryItemController {
     }
 
     @PreAuthorize("hasAuthority('business_category_item.delete')")
-    @Operation(summary = "Delete Business Category item", description = "Delete Business Category")
+    @Operation(summary = "Delete Business Category item", description = "Delete Business Category", hidden = true)
     @DeleteMapping("/{parentId}/items/{id}")
     public ResponseEntity<ApiResponse> delete(
             @PathVariable("parentId") String parentId,

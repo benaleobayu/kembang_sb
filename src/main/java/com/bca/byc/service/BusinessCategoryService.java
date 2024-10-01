@@ -1,6 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.BusinessCategoryIndexResponse;
 import com.bca.byc.model.BusinessCategoryListResponse;
 import com.bca.byc.model.BusinessCategoryParentCreateRequest;
 import com.bca.byc.model.BusinessCategoryUpdateRequest;
@@ -18,7 +19,7 @@ public interface BusinessCategoryService {
 
     // category
 
-    ResultPageResponseDTO<BusinessCategoryListResponse> listDataBusinessCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<BusinessCategoryIndexResponse> listDataBusinessCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     void saveData(@Valid BusinessCategoryParentCreateRequest dto) throws BadRequestException;
 
@@ -26,5 +27,5 @@ public interface BusinessCategoryService {
 
     void deleteData(String id) throws BadRequestException;
 
-    BusinessCategoryListResponse findDataBySecureId(String id);
+    BusinessCategoryIndexResponse findDataBySecureId(String id);
 }

@@ -1,5 +1,7 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.model.attribute.AttrIdentificable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,9 +19,9 @@ import java.util.List;
 @Table(name = "business_categories", indexes = {
         @Index(name = "idx_business_category_secure_id", columnList = "secure_id", unique = true)
 })
-public class BusinessCategory extends AbstractBaseEntityCms implements SecureIdentifiable {
+public class BusinessCategory extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", columnDefinition = "text")
@@ -38,6 +40,7 @@ public class BusinessCategory extends AbstractBaseEntityCms implements SecureIde
 
     // show data as child in this entity
     @OneToMany(mappedBy = "parentId", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonIgnore
     private List<BusinessCategory> children = new ArrayList<>();
 
     @Override
@@ -48,6 +51,12 @@ public class BusinessCategory extends AbstractBaseEntityCms implements SecureIde
     @Override
     public Boolean getActive() {
         return super.getIsActive();
+    }
+
+
+    @Override
+    public String getName() {
+        return name; // or another relevant field
     }
 
 }

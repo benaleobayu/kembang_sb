@@ -20,6 +20,23 @@ public class BusinessCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
+    public BusinessCategoryIndexResponse convertToIndexResponse(BusinessCategory data) {
+        GlobalConverter converter = new GlobalConverter();
+        BusinessCategoryIndexResponse dto = new BusinessCategoryIndexResponse();
+        dto.setName(data.getName());
+        dto.setStatus(data.getIsActive());
+        dto.setOrders(data.getOrders());
+        List<String> subCategories = new ArrayList<>();
+        for (BusinessCategory businessCategory : data.getChildren()) {
+            if (businessCategory.getIsDeleted().equals(false)){
+                subCategories.add(businessCategory.getName());
+            }
+        }
+        dto.setSubCategories(subCategories);
+        converter.CmsIDTimeStampResponse(dto, data);
+        return dto;
+    }
+
     public BusinessCategoryListResponse convertToListResponse(BusinessCategory data) {
         GlobalConverter converter = new GlobalConverter();
         BusinessCategoryListResponse dto = new BusinessCategoryListResponse();
@@ -55,18 +72,20 @@ public class BusinessCategoryDTOConverter {
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
         return dto;
     }
-
     // for create data parent
+
     public BusinessCategory convertToCreateParentRequest(@Valid BusinessCategoryParentCreateRequest dto) {
         // mapping DTO Entity with Entity
-        BusinessCategory data = modelMapper.map(dto, BusinessCategory.class);
-
+        BusinessCategory data = new BusinessCategory();
+        data.setName(dto.getName());
+        data.setIsActive(dto.getStatus());
+        data.setOrders(dto.getOrders());
         data.setIsParent(true);
         // return
         return data;
     }
-
     // for create data child
+
     public BusinessCategory convertToCreateChildRequest(@Valid BusinessCategoryItemCreateRequest dto) {
         // mapping DTO Entity with Entity
         BusinessCategory data = new BusinessCategory();
@@ -74,15 +93,13 @@ public class BusinessCategoryDTOConverter {
         // return
         return data;
     }
-
     // for update data
+
     public void convertToUpdateRequest(BusinessCategory data, @Valid BusinessCategoryUpdateRequest dto) {
         // mapping DTO Entity with Entity
-        modelMapper.map(dto, data);
-        // set updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        data.setName(dto.getName());
+        data.setOrders(dto.getOrders());
+        data.setIsActive(dto.getStatus());
     }
-
-
 
 }

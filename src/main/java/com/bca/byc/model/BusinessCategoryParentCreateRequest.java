@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class BusinessCategoryParentCreateRequest {
 
@@ -23,4 +25,6 @@ public class BusinessCategoryParentCreateRequest {
     @NotNull(message = "Status is mandatory")
     @Schema(example = "true | false")
     private Boolean status;
+
+    private List<String> subCategories;
 }

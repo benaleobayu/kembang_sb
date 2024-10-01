@@ -1,12 +1,14 @@
 package com.bca.byc.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
-
 public class BusinessCategoryUpdateRequest {
 
     @NotBlank(message = "Name is mandatory")
@@ -15,11 +17,13 @@ public class BusinessCategoryUpdateRequest {
 
     private String description;
 
-    @NotBlank(message = "Order is mandatory")
+    @NotNull(message = "Order is mandatory")
     private Integer orders;
 
-    @NotBlank(message = "Status is mandatory")
+    @NotNull(message = "Status is mandatory")
     private Boolean status;
+
+    private List<String> subCategories;
 
 }
 
