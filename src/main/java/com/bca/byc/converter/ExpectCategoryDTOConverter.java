@@ -3,9 +3,9 @@ package com.bca.byc.converter;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ExpectItem;
-import com.bca.byc.model.ExpectCategoryCreateRequest;
+import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
 import com.bca.byc.model.ExpectCategoryDetailResponse;
-import com.bca.byc.model.ExpectCategoryUpdateRequest;
+import com.bca.byc.model.ExpectCategoryIndexResponse;
 import com.bca.byc.model.ExpectItemDetailResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,21 @@ public class ExpectCategoryDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public ExpectCategoryDetailResponse convertToListResponse(ExpectCategory data) {
+    public ExpectCategoryIndexResponse convertToListResponse(ExpectCategory data) {
+        GlobalConverter converter = new GlobalConverter();
+        // mapping Entity with DTO Entity
+        ExpectCategoryIndexResponse dto = new ExpectCategoryIndexResponse();
+        dto.setName(data.getName());
+        dto.setDescription(data.getDescription());
+        dto.setOrders(data.getOrders());
+        dto.setIsOther(data.getIsOther());
+        dto.setStatus(data.getIsActive());
+        converter.CmsIDTimeStampResponse(dto, data);
+        // return
+        return dto;
+    }
+
+    public ExpectCategoryDetailResponse convertToDetailResponse(ExpectCategory data) {
         GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
         ExpectCategoryDetailResponse dto = new ExpectCategoryDetailResponse();
@@ -50,8 +64,10 @@ public class ExpectCategoryDTOConverter {
         return dto;
     }
 
+
+
     // for create data
-    public ExpectCategory convertToCreateRequest(@Valid ExpectCategoryCreateRequest dto) {
+    public ExpectCategory convertToCreateRequest(@Valid ExpectCategoryCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         ExpectCategory data = modelMapper.map(dto, ExpectCategory.class);
         // return
@@ -59,7 +75,7 @@ public class ExpectCategoryDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(ExpectCategory data, @Valid ExpectCategoryUpdateRequest dto) {
+    public void convertToUpdateRequest(ExpectCategory data, @Valid ExpectCategoryCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at
