@@ -12,5 +12,7 @@ public interface AppUserProfileService {
 
     void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeException;
 
-    ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

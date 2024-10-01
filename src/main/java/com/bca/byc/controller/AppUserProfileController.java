@@ -186,18 +186,33 @@ public class AppUserProfileController {
         }
     }
 
-    @Operation(summary = "Get list PostActivity", description = "Get list PostActivity")
-    @GetMapping("/post-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostActivity(
+    @Operation(summary = "Get list Post Saved Activity", description = "Get list Post Saved Activity")
+    @GetMapping("/post-saved-activity")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostSavedActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileActivity(pages, limit, sortBy, direction, keyword)));
+        log.info("GET " + urlRoute + "/post-saved-activity endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileSavedActivity(pages, limit, sortBy, direction, keyword)));
     }
+
+    @Operation(summary = "Get list Post Likes Activity", description = "Get list Post Likes Activity")
+    @GetMapping("/post-likes-activity")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostLikesActivity(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + "/post-likes-activity endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileLikesActivity(pages, limit, sortBy, direction, keyword)));
+    }
+
+
 
 
 }

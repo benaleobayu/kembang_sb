@@ -74,6 +74,14 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserHasSavedPost> savedPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<LikeDislike> likesPosts = new ArrayList<>();
+
     // many to one
     @ManyToOne
     @JoinColumn(name = "location_id")
@@ -90,11 +98,6 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
 
     @ManyToMany(mappedBy = "follows")
     private List<AppUser> followers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<UserHasSavedPost> savedPosts = new ArrayList<>();
-
 
     /////////////////
 //

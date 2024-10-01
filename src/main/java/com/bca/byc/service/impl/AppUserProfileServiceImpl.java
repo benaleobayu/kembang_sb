@@ -78,7 +78,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -87,7 +87,57 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
         String userId = user.getSecureId();
 
-        Page<AppUser> pageResult = userRepository.showProfileActivity(userId, pageable);
+        Page<AppUser> pageResult = userRepository.showProfileSavedActivity(userId, pageable);
+
+        List<ProfileActivityPostResponse> dtos = pageResult.stream().map(appUser -> {
+            ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
+
+            // Get the first saved post if it exists
+            Optional<UserHasSavedPost> firstSavedPostOpt = appUser.getSavedPosts().stream().findFirst();
+
+            if (firstSavedPostOpt.isPresent()) {
+                Post firstPost = firstSavedPostOpt.get().getPost(); // Access the Post through UserHasSavedPost
+
+                // Assuming PostHasContent provides a way to get the associated PostContents
+                List<PostContent> postContents = firstPost.getPostContents(); // Retrieve the list of PostContents
+                if (!postContents.isEmpty()) {
+                    PostContent firstContent = postContents.get(0); // Get the first PostContent
+                    dto.setContentId(firstContent.getSecureId());
+                    dto.setContent(firstContent.getContent()); // Set content
+                    dto.setContentType(firstContent.getType()); // Set content type
+                    dto.setThumbnail(firstContent.getThumbnail()); // Set thumbnail
+                } else {
+                    // Handle case where the post has no contents
+                    dto.setContentId(null);
+                    dto.setContent(null);
+                    dto.setContentType(null);
+                    dto.setThumbnail(null);
+                }
+            } else {
+                // Handle case where there are no saved posts
+                dto.setContentId(null);
+                dto.setContent(null);
+                dto.setContentType(null);
+                dto.setThumbnail(null);
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        String email = ContextPrincipal.getPrincipal();
+        AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
+        String userId = user.getSecureId();
+
+        Page<AppUser> pageResult = userRepository.showProfileLikesActivity(userId, pageable);
 
         List<ProfileActivityPostResponse> dtos = pageResult.stream().map(appUser -> {
             ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
