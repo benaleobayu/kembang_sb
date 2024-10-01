@@ -7,6 +7,6 @@ import java.util.Set;
 @Data
 public class BulkByIdRequest {
 
-    private Set<Long> ids;
+    private Set<String> ids;
 
 }
