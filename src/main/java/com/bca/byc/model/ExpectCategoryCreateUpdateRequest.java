@@ -1,11 +1,12 @@
 package com.bca.byc.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ExpectCategoryCreateRequest {
+public class ExpectCategoryCreateUpdateRequest {
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name must be less than 50 characters")
@@ -13,11 +14,10 @@ public class ExpectCategoryCreateRequest {
 
     private String description;
 
-    @NotBlank(message = "Order is mandatory")
+    @NotNull(message = "Order is mandatory")
     private Integer orders;
 
-    @NotBlank(message = "Status is mandatory")
+    @NotNull(message = "Status is mandatory")
     private Boolean status;
-
 
 }

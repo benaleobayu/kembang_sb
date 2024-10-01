@@ -9,12 +9,12 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ExpectCategoryDetailResponse extends AdminModelBaseDTOResponse implements Serializable {
+public class ExpectCategoryIndexResponse extends AdminModelBaseDTOResponse implements Serializable {
+
     private String name;
     private String description;
     private Boolean isOther;
     private Integer orders;
     private Boolean status;
 
-    private List<ExpectItemDetailResponse> expectItems = new ArrayList<>();
 }
