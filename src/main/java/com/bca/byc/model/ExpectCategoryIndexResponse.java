@@ -12,9 +12,10 @@ import java.util.List;
 public class ExpectCategoryIndexResponse extends AdminModelBaseDTOResponse implements Serializable {
 
     private String name;
-    private String description;
-    private Boolean isOther;
+
     private Integer orders;
     private Boolean status;
+
+    private List<String> subCategories = new ArrayList<>();
 
 }

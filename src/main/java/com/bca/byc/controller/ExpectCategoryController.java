@@ -53,7 +53,7 @@ public class ExpectCategoryController {
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
-            ExpectCategoryDetailResponse item = service.findDataBySecureId(id);
+            ExpectCategoryIndexResponse item = service.findDataBySecureId(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found expect category", item));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

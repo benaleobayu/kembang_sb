@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.model.attribute.AttrIdentificable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.List;
 @Table(name = "expect_item", indexes = {
     @Index(name = "expect_item_secure_id", columnList = "secure_id", unique = true)
 })
-public class ExpectItem extends AbstractBaseEntityCms implements SecureIdentifiable {
+public class ExpectItem extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
 
     @Override
     public String getSecureId() {
@@ -49,4 +50,9 @@ public class ExpectItem extends AbstractBaseEntityCms implements SecureIdentifia
 
     @OneToMany(mappedBy = "expectItem")
     private List<UserHasExpect> userHasExpects = new ArrayList<>();
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }

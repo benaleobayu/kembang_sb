@@ -43,7 +43,7 @@ public class ExpectCategory extends AbstractBaseEntityCms implements SecureIdent
     private Integer orders;
 
     // relations
-    @OneToMany(mappedBy = "expectCategory")
+    @OneToMany(mappedBy = "expectCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExpectItem> expectItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "expectCategory")

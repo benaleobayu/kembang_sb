@@ -1,5 +1,6 @@
 package com.bca.byc.repository;
 
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +20,5 @@ public interface ExpectCategoryRepository extends JpaRepository<ExpectCategory, 
     Optional<IdSecureIdProjection> findBySecureId(@Param("id") String expectCategoryId);
 
     Page<ExpectCategory> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
+
 }
