@@ -1,9 +1,12 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.AppUserRequestContact;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.AppUserRequestContactRequest;
+import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
@@ -13,6 +16,7 @@ import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -159,6 +163,22 @@ public class AppUserProfileController {
             
             // Return success response
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Notification settings retrieved successfully", notificationSettings));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+
+
+    @Operation(summary = "Create new request contact", description = "Creates a new user request contact and stores it in the database")
+    @PostMapping("/request-contact/create")
+    public ResponseEntity<?> createRequestContact(@RequestBody AppUserRequestContactRequest requestContact, Principal principal) {
+        try {
+            String userSecureId = ContextPrincipal.getSecureUserId();
+            // Create new request contact
+            AppUserRequestContactResponse createdContact = userService.createRequestContact(userSecureId, requestContact.getMessages());
+            // Return success response
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Request contact created successfully", createdContact));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

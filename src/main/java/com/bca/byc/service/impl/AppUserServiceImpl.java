@@ -4,13 +4,16 @@ import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserNotification;
+import com.bca.byc.entity.AppUserRequestContact;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.repository.AppUserNotificationRepository;
+import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
 import com.bca.byc.service.AppUserService;
@@ -42,6 +45,10 @@ public class AppUserServiceImpl implements AppUserService {
     private final ObjectMapper objectMapper;
     @Autowired
     private AppUserNotificationRepository appUserNotificationRepository;
+
+    @Autowired
+    private AppUserRequestContactRepository appUserRequestContactRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
     @PersistenceContext
@@ -170,8 +177,23 @@ public class AppUserServiceImpl implements AppUserService {
         // Return the response DTO with notification settings
         return new NotificationSettingsResponse(notification);
     }
+    @Override
+    public AppUserRequestContactResponse createRequestContact(String userSecureId, String messageString) {
+        // Fetch user by secure ID
+        AppUser user = appUserRepository.findBySecureId(userSecureId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     
-
+        // Create a new AppUserRequestContact object and set its fields
+        AppUserRequestContact requestContact = new AppUserRequestContact();
+        requestContact.setAppUserId(user.getId());
+        requestContact.setMessages(messageString);
+    
+        // Simpan request contact ke database melalui repository
+        AppUserRequestContact savedContact = appUserRequestContactRepository.save(requestContact);
+    
+        // Buat response dari entity yang baru disimpan
+        return new AppUserRequestContactResponse(savedContact.getId(), savedContact.getAppUserId(), savedContact.getMessages());
+    }
     
 
 
