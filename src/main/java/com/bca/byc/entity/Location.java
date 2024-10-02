@@ -16,11 +16,11 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Column(name = "province")
+    private String province;
+
     @Column(name = "address", columnDefinition = "text")
     private String address;
-
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
 
     @Column(name = "orders")
     private Integer orders;

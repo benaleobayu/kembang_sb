@@ -32,7 +32,7 @@ public abstract class AbstractBaseEntityCms implements Serializable {
     @Column(name = "is_deleted", columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "timestamp default now()")
     private LocalDateTime createdAt;
 
     @ManyToOne
