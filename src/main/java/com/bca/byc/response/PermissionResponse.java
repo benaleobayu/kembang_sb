@@ -11,4 +11,5 @@ public class PermissionResponse {
     private Long permissionId;
     private String permissionName;
     private Boolean disabled;
+    private Boolean active;
 }
