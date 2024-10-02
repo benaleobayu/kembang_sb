@@ -78,8 +78,9 @@ public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifi
 
     // other data
 
-    @Column(name = "branch_code", length = 80)
-    private String branchCode;
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branchCode;
 
     @Column(name = "pic_name")
     private String picName;

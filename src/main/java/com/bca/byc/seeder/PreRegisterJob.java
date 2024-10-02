@@ -1,9 +1,11 @@
 package com.bca.byc.seeder;
 
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Branch;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.UserType;
+import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.github.javafaker.Faker;
@@ -19,6 +21,7 @@ public class PreRegisterJob {
 
     private final PreRegisterRepository repository;
     private final AppAdminRepository adminRepository;
+    private final BranchRepository branchRepository;
 
 //    @Scheduled(fixedDelay = 50)
     public void run() {
@@ -32,6 +35,8 @@ public class PreRegisterJob {
 
         AppAdmin createAdmin = adminRepository.findByEmail("admin-opt@unictive.net")
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
+        Branch branch = branchRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Branch not found"));
 
         PreRegister data = new PreRegister(
                 faker.name().fullName(), // name
@@ -46,7 +51,7 @@ public class PreRegisterJob {
                 cardNumber.toString(), // card number
                 cinNumber.toString(), // cin number
                 LocalDate.now().minusDays(faker.number().numberBetween(365 * 10, 365 * 45)), // date of birth
-                faker.nation().language().toUpperCase(), // branchCode
+                branch, // branchCode
                 faker.name().firstName(), // picName
                 1, // orders
                 approval[faker.number().numberBetween(0, 4)] // status approval

@@ -7,6 +7,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PermissionService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class PermissionController {
 
     static final String urlRoute = "/cms/v1/am/permission";
 
+    @Operation(hidden = true)
     @GetMapping
     public ResponseEntity<?> getAll() {
         log.info("GET /cms/v1/am/permission endpoint hit");
@@ -41,6 +43,7 @@ public class PermissionController {
         }
     }
 
+    @Operation(summary = "Get list Permission", description = "Get list Permission")
     @GetMapping("/list")
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<PermissionListResponse>>> listDataPermission(
                 @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,

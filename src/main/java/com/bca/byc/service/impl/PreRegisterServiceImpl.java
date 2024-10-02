@@ -104,19 +104,23 @@ public class PreRegisterServiceImpl implements PreRegisterService {
 
     @Override
     public void saveData(@Valid PreRegisterCreateUpdateRequest dto, String email) throws BadRequestException {
-        // check if email exists return error
+        // Check if email exists and return error
         if (repository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
 
         AppAdmin admin = adminService.findByEmail(email);
+        if (admin == null) {
+            throw new BadRequestException("Admin not found");
+        }
 
-        // set entity to add with model mapper
+        // Set entity to add with model mapper
         PreRegister data = converter.convertToCreateRequest(dto, admin);
 
-        // save data
+        // Save data
         repository.save(data);
     }
+
 
     @Override
     public void updateData(String id, PreRegisterCreateUpdateRequest dto) throws BadRequestException {

@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.Branch;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.validator.annotation.UniqueCinPreRegister;
 import com.bca.byc.validator.annotation.UniqueEmail;

@@ -2,6 +2,7 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Branch;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.entity.PreRegisterLog;
 import com.bca.byc.enums.AdminApprovalStatus;
@@ -9,6 +10,7 @@ import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
+import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.PreRegisterLogRepository;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.util.helper.Formatter;
@@ -18,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -25,6 +28,7 @@ import java.time.LocalDateTime;
 public class PreRegisterDTOConverter {
 
     private PreRegisterLogRepository logRepository;
+    private final BranchRepository branchRepository;
 
     private ModelMapper modelMapper;
 
@@ -57,22 +61,9 @@ public class PreRegisterDTOConverter {
     // for create data
     public PreRegister convertToCreateRequest(@Valid PreRegisterCreateUpdateRequest dto, AppAdmin admin) {
         // mapping DTO Entity with Entity
-        PreRegister data = modelMapper.map(dto, PreRegister.class);
-
-        CreateUpdateSameConvert(data,
-                dto.getName(),
-                dto.getPicName(),
-                dto.getEmail(),
-                dto.getPhone(),
-                dto.getMemberBankAccount(),
-                dto.getParentBankAccount(),
-                dto.getMemberCin(),
-                dto.getParentCin(),
-                dto);
-
+        PreRegister data = new PreRegister();
+        CreateUpdateSameConvert(data, dto);
         data.setCreatedBy(admin);
-        System.out.println(admin);
-
         AdminType typeEquals = admin.getType();
 
         switch (typeEquals) {
@@ -94,7 +85,6 @@ public class PreRegisterDTOConverter {
         }
 
         data.setIsActive(true);
-
         // return
         return data;
     }
@@ -105,14 +95,6 @@ public class PreRegisterDTOConverter {
         modelMapper.map(dto, data);
 
         CreateUpdateSameConvert(data,
-                dto.getName(),
-                dto.getPicName(),
-                dto.getEmail(),
-                dto.getPhone(),
-                dto.getMemberBankAccount(),
-                dto.getParentBankAccount(),
-                dto.getMemberCin(),
-                dto.getParentCin(),
                 dto);
 
         // set updated_at
@@ -166,22 +148,18 @@ public class PreRegisterDTOConverter {
     }
 
     private void CreateUpdateSameConvert(PreRegister data,
-                                         String name,
-                                         String picName,
-                                         String email,
-                                         String phone,
-                                         String memberBankAccount,
-                                         String parentBankAccount,
-                                         String memberCin,
-                                         String parentCin,
                                          @Valid PreRegisterCreateUpdateRequest dto) {
-        data.setName(StringUtils.capitalize(name));
-        data.setPicName(StringUtils.capitalize(picName));
-        data.setEmail(email.toLowerCase());
-        data.setPhone(phone.replaceAll("[^0-9]", ""));
-        data.setMemberBankAccount(memberBankAccount.replaceAll("[^0-9]", ""));
-        data.setParentBankAccount(parentBankAccount.replaceAll("[^0-9]", ""));
-        data.setMemberCin(memberCin.replaceAll("[^0-9]", ""));
-        data.setParentCin(parentCin.replaceAll("[^0-9]", ""));
+        data.setName(StringUtils.capitalize(dto.getName()));
+        data.setEmail(dto.getEmail().toLowerCase());
+        data.setPhone(dto.getPhone().replaceAll("[^0-9]", ""));
+        data.setMemberBankAccount(dto.getMemberBankAccount() != null ? dto.getMemberBankAccount().replaceAll("[^0-9]", "") : null);
+        data.setParentBankAccount(dto.getParentBankAccount() != null ? dto.getParentBankAccount().replaceAll("[^0-9]", "") : null);
+        data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
+        data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
+        data.setMemberBirthdate(dto.getMemberBirthdate());
+        data.setParentBirthdate(dto.getParentBirthdate());
+        Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
+        data.setBranchCode(branch);
+        data.setPicName(StringUtils.capitalize(dto.getPicName()));
     }
 }
