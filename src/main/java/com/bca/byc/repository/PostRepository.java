@@ -19,9 +19,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE " +
             "p.user.id IN " +
             "(SELECT u.appUserAttribute.id FROM AppUser u WHERE u.appUserAttribute.id IN " +
-            "(SELECT ua.id FROM AppUserAttribute ua))" +
+            "(SELECT ua.id FROM AppUserAttribute ua)) AND " +
+            "LOWER(p.description) LIKE LOWER(:keyword) " +
             "ORDER BY function('RANDOM') ")
-    Page<Post> findRandomPosts(String tag, Pageable pageable);
+    Page<Post> findRandomPosts(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p FROM Post p WHERE p.user.id IN " +
             "(SELECT u.id FROM AppUser u JOIN u.follows f WHERE :userId = f.id)" +

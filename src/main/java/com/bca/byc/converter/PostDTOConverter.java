@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -45,12 +46,19 @@ public class PostDTOConverter {
         dto.setIsShareable(data.getIsShareable());
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
+        dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         AppUser appUser = data.getUser();
 
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
 
-        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
+//        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
+//        boolean isLiked = false;
+//        if (data.getLikeDislikes() != null && appUser.getId() != null) {
+//            isLiked = data.getLikeDislikes().stream()
+//                    .anyMatch(l -> l.getUser() != null && appUser.getId().equals(l.getUser().getId()));
+//        }
+//        dto.setIsLiked(isLiked); // TODO error when isLiked is uncomment
         // return
         return dto;
     }
@@ -73,7 +81,7 @@ public class PostDTOConverter {
         dto.setPostOwner(convertOwnerData(converter, appUser));
 
 //        dto.setCommentList(convertComments(data.getComments(), converter));
-        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
+//        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
 
         // return
         return dto;
@@ -208,11 +216,14 @@ public class PostDTOConverter {
     }
 
     private List<ListCommentResponse> convertComments(List<Comment> comments, TreePostConverter converter) {
+        AtomicInteger index = new AtomicInteger(0);
+
         return comments.stream().map(comment -> {
             List<ListCommentReplyResponse> replies = comment.getCommentReply().stream()
                     .map(reply -> converter.convertToListCommentReplyResponse(
                             new ListCommentReplyResponse(),
                             reply.getSecureId(),
+                            index.getAndIncrement(),
                             reply.getComment(),
                             converter.OwnerDataResponse(
                                     new OwnerDataResponse(),
@@ -224,6 +235,7 @@ public class PostDTOConverter {
                     )).collect(Collectors.toList());
             return new ListCommentResponse(
                     comment.getSecureId(),
+                    index.getAndIncrement(),
                     comment.getComment(),
                     replies,
                     converter.OwnerDataResponse(

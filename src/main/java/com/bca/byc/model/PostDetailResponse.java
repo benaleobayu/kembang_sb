@@ -26,7 +26,7 @@ public class PostDetailResponse {
 
     private List<PostContentDetailResponse> contentList; //
 
-    private List<ListCommentResponse> commentList;
+//    private List<ListCommentResponse> commentList;
 
     private OwnerDataResponse postOwner;
 

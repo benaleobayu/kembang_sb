@@ -43,6 +43,27 @@ public class PostServiceImpl implements PostService {
     private final PostContentRepository postContentRepository;
 
     @Override
+    public ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        // get user id
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        Long userId = user.getId();
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+
+        assert pageResult != null;
+        List<PostHomeResponse> dtos = pageResult.stream().map((c) -> {
+            PostHomeResponse dto = converter.convertToListResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
     public void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
@@ -83,27 +104,6 @@ public class PostServiceImpl implements PostService {
         } else {
             postRepository.deleteBySecureId(secureId);
         }
-    }
-
-    @Override
-    public ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        // get user id
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-        Long userId = user.getId();
-
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
-
-        assert pageResult != null;
-        List<PostHomeResponse> dtos = pageResult.stream().map((c) -> {
-            PostHomeResponse dto = converter.convertToListResponse(c);
-            return dto;
-        }).collect(Collectors.toList());
-
-        return PageCreateReturn.create(pageResult, dtos);
     }
 
 }
