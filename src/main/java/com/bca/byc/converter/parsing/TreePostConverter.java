@@ -81,12 +81,14 @@ public class TreePostConverter{
     public ListCommentReplyResponse convertToListCommentReplyResponse(
             ListCommentReplyResponse dto,
             String secureId,
+            Integer index,
             String comment,
             OwnerDataResponse owner,
             String createdAt
 
     ) {
         dto.setId(secureId);
+        dto.setIndex(index);
         dto.setComment(comment);
         dto.setOwner(owner);
         dto.setCreatedAt(createdAt);
