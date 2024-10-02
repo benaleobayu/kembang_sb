@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -44,7 +41,7 @@ public class AppUserActionController {
     }
 
     @PostMapping("/post/{id}/like-dislike")
-    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("id") String postId, @PathVariable("isLike") Boolean isLike) {
+    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("id") String postId, @RequestBody Boolean isLike) {
         log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", postId);
         String email = ContextPrincipal.getPrincipal();
         userActionService.likeDislikePost(postId, email, isLike);
@@ -53,7 +50,7 @@ public class AppUserActionController {
     }
 
     @PostMapping("/comment/{id}/like-dislike")
-    public ResponseEntity<ApiResponse> likeDislikeComment(@PathVariable("id") String commentId, @PathVariable("isLike") Boolean isLike) {
+    public ResponseEntity<ApiResponse> likeDislikeComment(@PathVariable("id") String commentId, @RequestBody Boolean isLike) {
         log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", commentId);
         String email = ContextPrincipal.getPrincipal();
         userActionService.likeDislikeComment(commentId, email, isLike);

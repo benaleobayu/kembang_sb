@@ -7,4 +7,5 @@ public interface SecureIdentifiable {
     String getSecureId();
 
     Boolean getActive();
+
 }

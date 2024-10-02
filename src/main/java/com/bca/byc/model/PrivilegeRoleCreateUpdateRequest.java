@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.Permission;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -12,7 +11,12 @@ public class PrivilegeRoleCreateUpdateRequest {
     @Getter(AccessLevel.NONE)
     private Boolean active;
 
+    // Constructor
+    public PrivilegeRoleCreateUpdateRequest() {
+        this.active = false; // Default value set to false
+    }
+
     public boolean isActive() {
-        return active;
+        return active != null ? active : false; // Return false if active is null
     }
 }

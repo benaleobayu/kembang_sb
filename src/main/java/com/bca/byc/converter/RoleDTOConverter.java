@@ -107,12 +107,15 @@ public class RoleDTOConverter {
         entityManager.flush();
         entityManager.clear();
 
-        // Step 2: Add permissions that are active and not already present
+        // Step 2: Add permissions with default active status as false
         if (dto.getPermissions() != null) {
             for (PrivilegeRoleCreateUpdateRequest permissionDto : dto.getPermissions()) {
                 Long permissionId = permissionDto.getPermissionId();
 
-                if (permissionId != null && permissionDto.isActive() && !existingPermissionIds.contains(permissionId)) {
+                // Default to inactive if not specified as active
+                boolean isActive = permissionDto.isActive();
+
+                if (permissionId != null && isActive && !existingPermissionIds.contains(permissionId)) {
                     Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
 
                     RoleHasPermission roleHasPermission = new RoleHasPermission(savedRole, permission);
@@ -127,6 +130,7 @@ public class RoleDTOConverter {
         // Return the saved role
         return savedRole;
     }
+
 
 
     // update
