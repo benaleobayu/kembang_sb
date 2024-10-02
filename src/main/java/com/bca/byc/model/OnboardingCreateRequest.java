@@ -34,7 +34,7 @@ public class OnboardingCreateRequest {
     @Data
     public static class OnboardingLocationRequest {
         @NotBlank(message = "Location is required")
-        private Long locationId;
+        private String locationId;
     }
 
     @Data

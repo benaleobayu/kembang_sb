@@ -41,7 +41,7 @@ public class BusinessCategoryDTOConverter {
         GlobalConverter converter = new GlobalConverter();
         BusinessCategoryListResponse dto = new BusinessCategoryListResponse();
         dto.setName(data.getName());
-        dto.setDescription(Formatter.formatDescription(data.getDescription()));
+        dto.setDescription(data.getDescription() != null ? Formatter.formatDescription(data.getDescription()) : null);
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
         converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
@@ -50,10 +50,9 @@ public class BusinessCategoryDTOConverter {
         for (BusinessCategory businessCategory : data.getChildren()) {
             BusinessCategoryItemListResponse child = new BusinessCategoryItemListResponse();
             child.setName(businessCategory.getName());
-            child.setDescription(Formatter.formatDescription(businessCategory.getDescription()));
+            child.setDescription(businessCategory.getDescription() != null ? Formatter.formatDescription(businessCategory.getDescription()) : null);
             child.setOrders(businessCategory.getOrders());
             child.setStatus(businessCategory.getIsActive());
-            child.setParentId(businessCategory.getParentId() != null ? businessCategory.getParentId().getSecureId() : null);
             converter.CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
             listBusiness.add(child);
         }

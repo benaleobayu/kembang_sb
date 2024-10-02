@@ -11,6 +11,4 @@ public class BusinessCategoryItemListResponse extends AdminModelBaseDTOResponse 
     private Integer orders;
 
     private Boolean status;
-
-    private String parentId;
 }

@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.Branch;
 import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
     private String memberType;
     private String parentCin;
     private String parentBankAccount;
-    private String branchCode;
+    private Branch branchCode;
     private String picName;
 
     private List<BusinessListResponse> businesses = new ArrayList<>();
