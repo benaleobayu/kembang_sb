@@ -190,5 +190,15 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         repository.deleteById(data.getId());
     }
 
+    @Override
+    public BusinessCategory getCategoryById(Long id) {
+        Optional<BusinessCategory> categoryOptional = repository.findById(id);
+        if (categoryOptional.isPresent()) {
+            return categoryOptional.get();
+        } else {
+            throw new ResourceNotFoundException("Category with ID " + id + " not found");
+        }
+    }
+    
 
 }

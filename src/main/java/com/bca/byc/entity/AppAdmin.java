@@ -41,7 +41,7 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "type")
     private AdminType type = AdminType.GENERAL;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
     private Role role;

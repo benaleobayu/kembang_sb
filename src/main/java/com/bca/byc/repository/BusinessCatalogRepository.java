@@ -15,4 +15,5 @@ import com.bca.byc.entity.Business;
 public interface BusinessCatalogRepository extends JpaRepository<BusinessCatalog, Long> {
     Optional<BusinessCatalog> findBySecureId(String secureId);
     Page<BusinessCatalog> findByBusiness(Business business, Pageable pageable);
+    void deleteByBusiness(Business business);
 }

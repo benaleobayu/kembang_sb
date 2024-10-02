@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BusinessCategoryIndexResponse;
 import com.bca.byc.model.BusinessCategoryListResponse;
@@ -28,4 +29,5 @@ public interface BusinessCategoryService {
     void deleteData(String id) throws BadRequestException;
 
     BusinessCategoryIndexResponse findDataBySecureId(String id);
+    BusinessCategory getCategoryById(Long id);
 }

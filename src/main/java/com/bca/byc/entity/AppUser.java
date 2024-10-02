@@ -83,14 +83,14 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     private List<LikeDislike> likesPosts = new ArrayList<>();
 
     // many to one
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     @JsonIgnore
     private Location location;
 
 
     // follow and followers
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_followers",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id"))
