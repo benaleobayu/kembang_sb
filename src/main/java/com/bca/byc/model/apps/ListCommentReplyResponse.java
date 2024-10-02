@@ -7,6 +7,8 @@ public class ListCommentReplyResponse {
 
     private String id;
 
+    private Integer index;
+
     private String comment;
 
     private OwnerDataResponse owner;

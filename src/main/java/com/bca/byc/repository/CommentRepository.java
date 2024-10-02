@@ -20,5 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Boolean existsByPostAndPostUser(Post post, AppUser user);
 
-    Optional<Comment> findBySecureId(String secureId);
+    @Query("SELECT c FROM Comment c WHERE c.secureId = :secureId")
+    Optional<Comment> findBySecureId(@Param("secureId") String secureId);
 }

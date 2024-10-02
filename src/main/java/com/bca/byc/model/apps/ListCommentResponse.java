@@ -13,6 +13,8 @@ public class ListCommentResponse {
 
     private String id;
 
+    private Integer index;
+
     private String comment;
 
     private List<ListCommentReplyResponse> commentReply;

@@ -14,6 +14,8 @@ public interface CommentService {
 
     void saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException;
 
+    void saveDataCommentReply(String postId, CommentCreateUpdateRequest item, String id);
+
     void updateData(String postId, String commentId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException;
 
     void deleteData(String postId, String commentId, String email) throws ResourceNotFoundException;

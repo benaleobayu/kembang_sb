@@ -11,6 +11,7 @@ import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class PostCommentController {
     static final String urlRoute = "/api/v1/post";
     private CommentService service;
 
+    @Operation(summary = "Get list comment", description = "Get list comment")
     @GetMapping("/{postId}/comments")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListCommentResponse>>> listDataComment(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -49,6 +51,7 @@ public class PostCommentController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list comment", service.listDataComment(pages, limit, sortBy, direction, keyword, postId)));
     }
 
+    @Operation(summary = "Get comment by id", description = "Get comment by id")
     @GetMapping("/{postId}/comments/{id}")
     public ResponseEntity<?> getById(@PathVariable("postId") String postId, @PathVariable("id") String commentId) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
@@ -60,6 +63,7 @@ public class PostCommentController {
         }
     }
 
+    @Operation(summary = "Create comment", description = "Create comment")
     @PostMapping("/{postId}/comments")
     public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateUpdateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
@@ -73,6 +77,7 @@ public class PostCommentController {
         }
     }
 
+    @Operation(summary = "Update comment", description = "Update comment")
     @PutMapping("/{postId}/comments/{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("postId") String postId, @PathVariable("id") String commentId, @Valid @RequestBody CommentCreateUpdateRequest item) {
         String email = ContextPrincipal.getPrincipal();
@@ -85,11 +90,12 @@ public class PostCommentController {
         }
     }
 
+    @Operation(summary = "Delete comment", description = "Delete comment")
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{postId}/comments/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("postId") String postId, @PathVariable("id") String commentId) {
         String email = ContextPrincipal.getPrincipal();
-        log.info("DELETE " + urlRoute + "/{id} endpoint hit");
+        log.info("DELETE " + urlRoute + "/{}/comments/{} endpoint hit", postId, commentId);
         try {
             service.deleteData(postId, commentId, email);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted post comments"));
@@ -97,4 +103,23 @@ public class PostCommentController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+    // reply
+
+    @Operation(summary = "Create comment reply", description = "Create comment reply")
+    @PostMapping("/{postId}/comments/{id}/replies")
+    public ResponseEntity<ApiResponse> createReply(
+            @PathVariable("postId") String postId,
+            @PathVariable("id") String commentId,
+            @Valid @RequestBody CommentCreateUpdateRequest item) {
+        log.info("POST " + urlRoute + "/{}/comments/{}/replies", postId, commentId);
+        try {
+            service.saveDataCommentReply(postId, item, commentId);
+            return ResponseEntity.created(URI.create(urlRoute))
+                    .body(new ApiResponse(true, "Successfully created post comments"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
 }
