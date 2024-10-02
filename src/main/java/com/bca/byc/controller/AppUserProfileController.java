@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.Notification;
 import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.ProfileActivityCounts;
 import com.bca.byc.model.ProfileActivityPostResponse;
@@ -8,6 +9,9 @@ import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
+import com.bca.byc.service.NotificationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +37,7 @@ public class AppUserProfileController {
     static final String urlRoute = "/api/v1/users";
     private final AppUserService userService;
     private final AppUserProfileService profileService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "Get user detail", description = "Get user detail")
     @GetMapping("/info")
@@ -171,6 +176,31 @@ public class AppUserProfileController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @GetMapping("/my-notifications")
+    @Operation(summary = "Notifications", description = "List Notifications")
+    public ResponseEntity<Page<NotificationResponse>> getNotifications(Pageable pageable) {
+        // Assuming `ContextPrincipal.getId()` retrieves the current user's ID
+        Long userId = ContextPrincipal.getId();
+    
+        // Fetch paginated notifications for the user
+        Page<Notification> notifications = notificationService.getNotificationsByUserId(userId, pageable);
+    
+        // Map each notification to a response object
+        Page<NotificationResponse> responseMessages = notifications.map(notification -> new NotificationResponse(
+                notification.getSecureId(),                       // Secure ID or primary key
+                notification.getType(),                     // Type of notification
+                notification.getNotifiableType(),           // Polymorphic type of the notification
+                notification.getNotifiableId(),             // Polymorphic ID of the related entity
+                notification.getData(),                     // JSON data or any message
+                notification.getReadAt(),                   // When the notification was read
+                notification.getCreatedAt(),                // Creation timestamp
+                notification.getUpdatedAt()                 // Last updated timestamp
+        ));
+    
+        // Return the paginated response
+        return ResponseEntity.ok(responseMessages);
     }
 
     @Operation(summary = "Get user activity counts", description = "Get user activity counts")
