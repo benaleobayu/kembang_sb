@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.model.attribute.AttrIdentificable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "branch", uniqueConstraints = {
     @UniqueConstraint(name = "uk_branch_seq_id", columnNames = "secure_id")
 })
-public class Branch extends AbstractBaseEntityCms implements SecureIdentifiable{
+public class Branch extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
 
     @Override
     public String getSecureId() {

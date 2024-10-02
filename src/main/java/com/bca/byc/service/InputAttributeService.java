@@ -7,4 +7,6 @@ public interface InputAttributeService {
     ResultPageResponseDTO<AttributeResponse> listDataSubCategoryBusiness(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<AttributeResponse> listDataSubCategoryExpect(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    ResultPageResponseDTO<AttributeResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

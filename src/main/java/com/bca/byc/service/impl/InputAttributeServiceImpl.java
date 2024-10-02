@@ -2,11 +2,13 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.InputAttributeDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.entity.Branch;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.entity.SecureIdentifiable;
 import com.bca.byc.model.attribute.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
+import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -29,6 +31,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     private final BusinessCategoryRepository businessCategoryRepository;
     private final ExpectItemRepository expectItemRepository;
+    private final BranchRepository branchRepository;
 
     private final InputAttributeDTOConverter converter;
 
@@ -39,7 +42,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<BusinessCategory> pageResult = businessCategoryRepository.findIdAndName(keyword, pageable);
         List<AttributeResponse> dtos = pageResult.stream()
-                .map(this::convertToListAttribute)
+                .map(this::convertToListAttributeOnName)
                 .collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
@@ -52,18 +55,39 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<ExpectItem> pageResult = expectItemRepository.findIdAndName(keyword, pageable);
         List<AttributeResponse> dtos = pageResult.stream()
+                .map(this::convertToListAttributeOnName)
+                .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<AttributeResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Branch> pageResult = branchRepository.findIdAndName(keyword, pageable);
+        List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
     }
 
-    public AttributeResponse convertToListAttribute(AttrIdentificable dto) {
+    public AttributeResponse convertToListAttributeOnName(AttrIdentificable dto) {
         AttributeResponse<Long> response = new AttributeResponse<>();
-        response.setId(dto.getId());
         response.setName(dto.getName());
         return response;
     }
+
+    public AttributeResponse convertToListAttribute(AttrIdentificable dto) {
+        AttributeResponse<String> response = new AttributeResponse<>();
+        response.setId(dto.getSecureId());
+        response.setName(dto.getName());
+        return response;
+    }
+
+
 
 
 }
