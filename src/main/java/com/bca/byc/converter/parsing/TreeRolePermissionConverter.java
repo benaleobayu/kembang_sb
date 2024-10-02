@@ -39,14 +39,18 @@ public class TreeRolePermissionConverter {
 
                 // Create a new PermissionResponse
                 PermissionResponse permissionDetail = new PermissionResponse();
+
+                boolean isActive = matchingPermission.isPresent();
                 if (matchingPermission.isPresent()) {
                     permissionDetail.setPermissionId(matchingPermission.get().getPermission().getId());
                     permissionDetail.setPermissionName(defaultPermission);
                     permissionDetail.setDisabled(false); // permission exists, not disabled
+                    permissionDetail.setActive(isActive);
                 } else {
                     permissionDetail.setPermissionId(null); // no ID because it doesn't exist
                     permissionDetail.setPermissionName(defaultPermission);
                     permissionDetail.setDisabled(true); // permission doesn't exist, disabled
+                    permissionDetail.setActive(false);
                 }
 
                 permissionDetails.add(permissionDetail);

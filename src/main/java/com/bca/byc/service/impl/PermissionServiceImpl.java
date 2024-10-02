@@ -56,9 +56,10 @@ public class PermissionServiceImpl implements PermissionService {
                                 .map(matchingPermission -> new PermissionResponse(
                                         matchingPermission.getId(),
                                         defaultPermission,
-                                        false
+                                        false,
+                                        true
                                 ))
-                                .orElse(new PermissionResponse(null, defaultPermission, true));
+                                .orElse(new PermissionResponse(null, defaultPermission, true, false));
                     })
                     .collect(Collectors.toList());
 

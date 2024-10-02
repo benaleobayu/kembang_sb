@@ -90,7 +90,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
 
 
     // follow and followers
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "user_followers",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id"))

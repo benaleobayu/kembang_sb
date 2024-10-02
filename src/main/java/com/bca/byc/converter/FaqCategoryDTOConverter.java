@@ -41,7 +41,7 @@ public class FaqCategoryDTOConverter {
             faqDetailResponse.setDescription(faq.getDescription());
             faqDetailResponse.setOrders(faq.getOrders());
             faqDetailResponse.setStatus(faq.getIsActive());
-            converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+            converter.CmsIDTimeStampResponse(faqDetailResponse, faq); // timestamp and id
             listFaq.add(faqDetailResponse);
         }
         dto.setFaqs(listFaq);

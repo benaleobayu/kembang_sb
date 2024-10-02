@@ -16,4 +16,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("select l from Location l where l.secureId = :id")
     Optional<IdSecureIdProjection> findBySecureId(@Param("id") String id);
+
+    @Query("select l from Location l where l.isDeleted = false and l.secureId = :id")
+    Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("id") String id);
 }

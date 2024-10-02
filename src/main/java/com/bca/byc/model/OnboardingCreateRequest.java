@@ -19,22 +19,22 @@ public class OnboardingCreateRequest {
         @NotBlank(message = "Business Address is required")
         private String businessAddress;
 
-        private List<Long> categoryItemIds;
-        private List<Long> locationIds;
+        private List<String> categoryItemIds;
+        private List<String> locationIds;
     }
 
     @Data
     public static class OnboardingBusinessCategoryRequest {
         @NotBlank(message = "Business Category is required")
-        private Long businessCategoryId;
+        private String businessCategoryId;
         @NotBlank(message = "Business Category Child is required")
-        private Long businessCategoryChildId;
+        private String businessCategoryChildId;
     }
 
     @Data
     public static class OnboardingLocationRequest {
         @NotBlank(message = "Location is required")
-        private Long locationId;
+        private String locationId;
     }
 
     @Data

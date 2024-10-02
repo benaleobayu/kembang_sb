@@ -49,14 +49,14 @@ public class ExpectCategoryDTOConverter {
         dto.setIsOther(data.getIsOther() != null && data.getIsOther());
         List<PublicExpectItemDetailResponse> subCategories = new ArrayList<>();
         for (ExpectItem expectItem : data.getExpectItems()) {
-            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
+//            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
                 PublicExpectItemDetailResponse sub = new PublicExpectItemDetailResponse();
                 sub.setId(expectItem.getSecureId());
                 sub.setIndex(expectItem.getId());
                 sub.setName(expectItem.getName());
                 sub.setIsOther(expectItem.getIsOther() != null && expectItem.getIsOther());
                 subCategories.add(sub);
-            }
+//            }
         }
         dto.setExpectItems(subCategories);
         return dto;

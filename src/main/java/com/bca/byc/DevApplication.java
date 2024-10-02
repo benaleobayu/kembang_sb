@@ -22,7 +22,7 @@ import java.util.Collections;
 @EnableJpaRepositories(basePackages = "com.bca.byc.repository")
 @EnableElasticsearchRepositories(basePackages = "com.bca.byc.repository.Elastic")
 @EntityScan(basePackages = "com.bca.byc.entity")
-@EnableScheduling
+//@EnableScheduling
 public class DevApplication {
 
     @Value("${spring.servlet.multipart.max-file-size}")

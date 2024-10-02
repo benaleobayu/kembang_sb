@@ -53,13 +53,10 @@ public class UserAuthServiceImpl implements UserAuthService {
             // Create a new user if not existing
             user = new AppUser();
             user.setEmail(StringUtils.lowerCase(dto.email()));
-            Role role = roleRepository.findByName("USER").orElseThrow(
-                    () -> new BadRequestException("Role not found")
-            );
-//            user.setRole(role);
 
             AppUserDetail userDetail = new AppUserDetail();
 
+            userDetail.setCountryCode("+62");
             userDetail.setPhone(dto.phone());
             userDetail.setMemberBankAccount(dto.member_bank_account());
             userDetail.setParentBankAccount(dto.parent_bank_account());
@@ -167,18 +164,26 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public void resendOtp(String identity, String email) throws MessagingException {
         Optional<AppUser> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent() && userOptional.get().getAppUserDetail().getStatus().equals(StatusType.PRE_ACTIVATED) ||
-                userOptional.isPresent() && userOptional.get().getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)) {
-            AppUser user = userOptional.get();
-            // Invalidate previous OTPs
-            otpRepository.invalidateOtpsForUser(user);
 
-            // Generate and send new OTP
-            generateAndSendOtp(identity, user);
+        if (userOptional.isPresent()) {
+            AppUser user = userOptional.get();
+            StatusType status = user.getAppUserDetail().getStatus();
+
+            if (identity.equals("reset") && (status.equals(StatusType.PRE_ACTIVATED) || status.equals(StatusType.ACTIVATED)) || identity.equals("resend")) {
+
+                // Invalidate previous OTPs
+                otpRepository.invalidateOtpsForUser(user);
+
+                // Generate and send new OTP
+                generateAndSendOtp(identity, user);
+            } else {
+                throw new MessagingException("User not found or not eligible for OTP.");
+            }
         } else {
             throw new MessagingException("User not found");
         }
     }
+
 
     @Override
     public void sendRegistrationOtp(String identity, String email) throws MessagingException {
