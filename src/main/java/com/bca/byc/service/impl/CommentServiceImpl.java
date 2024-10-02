@@ -80,25 +80,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveDataCommentReply(String postId, CommentCreateUpdateRequest dto, String parentCommentId) {
-        String secureId = ContextPrincipal.getSecureUserId();
-        AppUser user = userRepository.findBySecureId(secureId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        Comment comment = commentRepository.findBySecureId(parentCommentId).orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
-
-        if (!comment.getPost().getId().equals(post.getId())) {
-            throw new BadRequestException("Comment not found");
-        }
-        // set entity to add with model mapper
-        CommentReply data = new CommentReply();
-        data.setComment(dto.getComment());
-        data.setParentComment(comment);
-        data.setUser(user);
-        // save data
-        commentReplyRepository.save(data);
-    }
-
-    @Override
     public void updateData(String postId, String commentId, CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
         AppUser user = getUserByEmail(email, userRepository, "User not found");

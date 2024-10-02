@@ -104,22 +104,5 @@ public class PostCommentController {
         }
     }
 
-    // reply
-
-    @Operation(summary = "Create comment reply", description = "Create comment reply")
-    @PostMapping("/{postId}/comments/{id}/replies")
-    public ResponseEntity<ApiResponse> createReply(
-            @PathVariable("postId") String postId,
-            @PathVariable("id") String commentId,
-            @Valid @RequestBody CommentCreateUpdateRequest item) {
-        log.info("POST " + urlRoute + "/{}/comments/{}/replies", postId, commentId);
-        try {
-            service.saveDataCommentReply(postId, item, commentId);
-            return ResponseEntity.created(URI.create(urlRoute))
-                    .body(new ApiResponse(true, "Successfully created post comments"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        }
-    }
 
 }
