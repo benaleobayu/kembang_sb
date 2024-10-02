@@ -16,7 +16,7 @@ public class AppSearchDTOConverter {
     // for get data
     public AppSearchDetailResponse convertToListResponse(Post data) {
         // mapping Entity with DTO Entity
-        AppSearchDetailResponse dto = modelMapper.map(data, AppSearchDetailResponse.class);
+        AppSearchDetailResponse dto = new AppSearchDetailResponse();
         // return
         return dto;
     }
