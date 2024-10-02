@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.OnboardingDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
@@ -72,9 +73,13 @@ public class OnboardingServiceImpl implements OnboardingService {
                 business = businessRepository.save(business);
 
                 // Handle Business Categories via categoryItemIds
-                for (Long childCategoryId : businessDto.getCategoryItemIds()) {
-                    BusinessCategory childCategory = businessCategoryRepository.findById(childCategoryId)
-                            .orElseThrow(() -> new BadRequestException("Business Category Child not found"));
+                for (String childCategoryId : businessDto.getCategoryItemIds()) {
+                    BusinessCategory childCategory = HandlerRepository.getIdBySecureId(
+                            childCategoryId,
+                            businessCategoryRepository::findByIdAndSecureId,
+                            projection -> businessCategoryRepository.findById(projection.getId()),
+                            "Business Category not found for Child ID: " + childCategoryId
+                    );
 
                     BusinessCategory parentCategory = childCategory.getParentId();
                     if (parentCategory == null) {
@@ -94,9 +99,13 @@ public class OnboardingServiceImpl implements OnboardingService {
 
                 // Handle Business Locations via locationIds
                 Set<Location> locations = new HashSet<>();
-                for (Long locationId : businessDto.getLocationIds()) {
-                    Location location = locationRepository.findById(locationId)
-                            .orElseThrow(() -> new BadRequestException("Location not found"));
+                for (String locationId : businessDto.getLocationIds()) {
+                    Location location = HandlerRepository.getIdBySecureId(
+                            locationId,
+                            locationRepository::findByIdAndSecureId,
+                            projection -> locationRepository.findById(projection.getId()),
+                            "Location not found for ID: " + locationId
+                    );
                     locations.add(location);
                 }
 
@@ -183,18 +192,6 @@ public class OnboardingServiceImpl implements OnboardingService {
             return dto;
         }).collect(Collectors.toList());
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 }

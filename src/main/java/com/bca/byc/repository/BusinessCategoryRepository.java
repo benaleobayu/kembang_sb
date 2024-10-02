@@ -3,6 +3,7 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.model.data.InputAttributeResponse;
+import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,4 +56,9 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
             "(LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
             "bc.parentId IS NOT NULL ")
     Page<BusinessCategory> findIdAndName(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT bc FROM BusinessCategory bc " +
+            "WHERE bc.isDeleted = false AND " +
+            "bc.secureId = :id")
+    Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("id") String childCategoryId);
 }

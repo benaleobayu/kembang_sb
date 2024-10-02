@@ -29,7 +29,7 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
     private Boolean status;
 
     // relations
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "location")
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
     @Override
