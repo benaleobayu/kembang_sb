@@ -15,7 +15,7 @@ public class ListCommentResponse {
 
     private String comment;
 
-//    private List<ListCommentReplyResponse> commentReply;
+    private List<ListCommentReplyResponse> commentReply;
 
     private OwnerDataResponse owner;
 

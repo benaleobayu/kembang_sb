@@ -75,7 +75,7 @@ public class TreePostConverter{
             String secureId,
             Long index,
             String comment,
-//            List<CommentReply> commentReply,
+            List<CommentReply> commentReply,
             AppUser owner,
             LocalDateTime createdAt
 
@@ -84,22 +84,18 @@ public class TreePostConverter{
         dto.setIndex(index);
         dto.setComment(comment);
         List<ListCommentReplyResponse> commentReplyResponse = new ArrayList<>();
-//        for (CommentReply data : commentReply) {
-//            commentReplyResponse.add(convertToListCommentReplyResponse(
-//                    new ListCommentReplyResponse(),
-//                    data.getSecureId(),
-//                    data.getId(),
-//                    data.getComment(),
-//                    OwnerDataResponse(
-//                            new OwnerDataResponse(),
-//                            data.getUser().getSecureId(),
-//                            data.getUser().getName(),
-//                            data.getUser().getAppUserDetail().getAvatar()
-//                    ),
-//                    data.getCreatedAt()
-//            ));
-//        }
-//        dto.setCommentReply(commentReplyResponse);
+        for (CommentReply data : commentReply) {
+            commentReplyResponse.add(convertToListCommentReplyResponse(
+                    new ListCommentReplyResponse(),
+                    data.getSecureId(),
+                    data.getId(),
+                    data.getComment(),
+                    data.getUser(),
+                    data.getCreatedAt()
+            ));
+        }
+        dto.setCommentReply(commentReplyResponse);
+
         dto.setOwner(OwnerDataResponse(
                 new OwnerDataResponse(),
                 owner.getSecureId(),
@@ -115,14 +111,19 @@ public class TreePostConverter{
             String secureId,
             Long index,
             String comment,
-            OwnerDataResponse owner,
+            AppUser owner,
             LocalDateTime createdAt
 
     ) {
         dto.setId(secureId);
         dto.setIndex(index);
         dto.setComment(comment);
-        dto.setOwner(owner);
+        dto.setOwner(OwnerDataResponse(
+                new OwnerDataResponse(),
+                owner.getSecureId(),
+                owner.getAppUserDetail().getName(),
+                owner.getAppUserDetail().getAvatar()
+        ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
         return dto;
     }

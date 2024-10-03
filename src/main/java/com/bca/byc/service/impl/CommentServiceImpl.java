@@ -5,13 +5,11 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
+import com.bca.byc.entity.CommentReply;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.apps.CommentCreateUpdateRequest;
-import com.bca.byc.model.apps.CommentDetailResponse;
-import com.bca.byc.model.apps.ListCommentResponse;
-import com.bca.byc.model.apps.OwnerDataResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
@@ -32,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,15 +59,16 @@ public class CommentServiceImpl implements CommentService {
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<Comment> pageResult = commentRepository.findListDataComment(postId, pageable);
         List<ListCommentResponse> dtos = pageResult.stream().map((c) -> {
-//            ListCommentResponse dto = converter.convertToPageListResponse(c);
             TreePostConverter dataConverter = new TreePostConverter(baseUrl);
             ListCommentResponse dto = new ListCommentResponse();
+
+
             dataConverter.convertToListCommentResponse(
                     dto,
                     c.getSecureId(),
                     c.getId(),
                     c.getComment(),
-//                    c.getCommentReply(),
+                    c.getCommentReply(),
                     c.getUser(),
                     c.getCreatedAt()
             );

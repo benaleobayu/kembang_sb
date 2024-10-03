@@ -49,8 +49,7 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
     @JoinColumn(name = "user_id")
     private AppUser user;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReply> commentReply = new ArrayList<>();
 
     // stats
