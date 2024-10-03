@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.*;
+import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.UserActionService;
@@ -45,22 +46,22 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void likeDislikePost(@PathVariable("commentId") String postId, String email,@PathVariable("isLike") Boolean isLike) {
+    public void likeDislikePost(@PathVariable("commentId") String postId, String email,@PathVariable("isLike") SetLikeDislikeRequest isLike) {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
 
         LikeDislike existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
 
         if (existingLikeDislike != null) {
-            if (existingLikeDislike.getIsLike() == isLike) {
+            if (existingLikeDislike.getIsLike() == isLike.getIsLike()) {
                 likeDislikeRepository.delete(existingLikeDislike);
             } else {
-                existingLikeDislike.setIsLike(isLike);
+                existingLikeDislike.setIsLike(isLike.getIsLike());
                 likeDislikeRepository.save(existingLikeDislike);
             }
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
-            newLikeDislike.setIsLike(isLike);
+            newLikeDislike.setIsLike(isLike.getIsLike());
             newLikeDislike.setPost(post);
             newLikeDislike.setUser(user);
             likeDislikeRepository.save(newLikeDislike);
