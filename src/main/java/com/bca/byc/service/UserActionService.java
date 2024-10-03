@@ -10,7 +10,7 @@ public interface UserActionService {
 
     void likeDislikePost(String postId, String email, SetLikeDislikeRequest isLike);
 
-    void likeDislikeComment(String commentId, String email, Boolean isLike);
+    void likeDislikeComment(String commentId, String email, SetLikeDislikeRequest isLike);
 
-    void likeDislikeCommentReply(String commentId, String email, Boolean isLike);
+    void likeDislikeCommentReply(String commentId, String email, SetLikeDislikeRequest isLike);
 }

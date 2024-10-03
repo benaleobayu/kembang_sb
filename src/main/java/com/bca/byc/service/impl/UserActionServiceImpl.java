@@ -46,11 +46,41 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void likeDislikePost(@PathVariable("commentId") String postId, String email,@PathVariable("isLike") SetLikeDislikeRequest isLike) {
+    public void likeDislikePost(@PathVariable("commentId") String postId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
 
-        LikeDislike existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
+        handleLikeDislike(user, post, null, null, isLike);
+    }
+
+    @Override
+    public void likeDislikeComment(@PathVariable("commentId") String commentId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
+        Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
+
+        handleLikeDislike(user, null, comment, null, isLike);
+    }
+
+    @Override
+    public void likeDislikeCommentReply(@PathVariable("commentId") String commentId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
+        CommentReply comment = getEntityBySecureId(commentId, commentReplyRepository, "Comment not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
+
+        handleLikeDislike(user, null, null, comment, isLike);
+    }
+
+
+    // --------------------------------------------------------------------
+    private void handleLikeDislike(AppUser user, Post post, Comment comment, CommentReply commentReply, SetLikeDislikeRequest isLike) {
+        LikeDislike existingLikeDislike = null;
+
+        if (post != null) {
+            existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
+        } else if (comment != null) {
+            existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
+        } else if (commentReply != null) {
+            existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, user);
+        }
 
         if (existingLikeDislike != null) {
             if (existingLikeDislike.getIsLike() == isLike.getIsLike()) {
@@ -62,55 +92,16 @@ public class UserActionServiceImpl implements UserActionService {
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
             newLikeDislike.setIsLike(isLike.getIsLike());
-            newLikeDislike.setPost(post);
-            newLikeDislike.setUser(user);
-            likeDislikeRepository.save(newLikeDislike);
-        }
-    }
-
-    @Override
-    public void likeDislikeComment(@PathVariable("commentId") String commentId, String email,@PathVariable("isLike") Boolean isLike) {
-        Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found");
-
-        LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
-
-        if (existingLikeDislike != null) {
-            if (existingLikeDislike.getIsLike() == isLike) {
-                likeDislikeRepository.delete(existingLikeDislike);
-            } else {
-                existingLikeDislike.setIsLike(isLike);
-                likeDislikeRepository.save(existingLikeDislike);
+            if (post != null) {
+                newLikeDislike.setPost(post);
+            } else if (comment != null) {
+                newLikeDislike.setComment(comment);
+            } else if (commentReply != null) {
+                newLikeDislike.setCommentReply(commentReply);
             }
-        } else {
-            LikeDislike newLikeDislike = new LikeDislike();
-            newLikeDislike.setIsLike(isLike);
-            newLikeDislike.setComment(comment);
             newLikeDislike.setUser(user);
             likeDislikeRepository.save(newLikeDislike);
         }
     }
 
-    @Override
-    public void likeDislikeCommentReply(@PathVariable("commentId") String commentId, String email,@PathVariable("isLike") Boolean isLike) {
-        CommentReply comment = getEntityBySecureId(commentId, commentReplyRepository, "Comment not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found");
-
-        LikeDislike existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(comment, user);
-
-        if (existingLikeDislike != null) {
-            if (existingLikeDislike.getIsLike() == isLike) {
-                likeDislikeRepository.delete(existingLikeDislike);
-            } else {
-                existingLikeDislike.setIsLike(isLike);
-                likeDislikeRepository.save(existingLikeDislike);
-            }
-        } else {
-            LikeDislike newLikeDislike = new LikeDislike();
-            newLikeDislike.setIsLike(isLike);
-            newLikeDislike.setCommentReply(comment);
-            newLikeDislike.setUser(user);
-            likeDislikeRepository.save(newLikeDislike);
-        }
-    }
 }
