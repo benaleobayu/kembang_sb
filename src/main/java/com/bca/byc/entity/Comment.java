@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,6 +50,7 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
     private AppUser user;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CommentReply> commentReply = new ArrayList<>();
 
     // stats

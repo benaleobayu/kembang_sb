@@ -30,13 +30,12 @@ public class CommentDTOConverter {
 
     // for get data
     public ListCommentResponse convertToPageListResponse(Comment data) {
+        TreePostConverter converter = new TreePostConverter(baseUrl);
         // mapping Entity with DTO Entity
-        int index = 0;
         ListCommentResponse dto = new ListCommentResponse();
         dto.setId(data.getSecureId());
-        dto.setIndex(index + 1);
+        dto.setIndex(data.getId());
         dto.setComment(data.getComment());
-        TreePostConverter converter = new TreePostConverter(baseUrl);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 data.getUser().getSecureId(),
@@ -44,22 +43,22 @@ public class CommentDTOConverter {
                 data.getUser().getAppUserDetail().getAvatar()
         );
         dto.setOwner(owner);
-        ListCommentReplyResponse commentReplyResponse = converter.convertToListCommentReplyResponse(
-                new ListCommentReplyResponse(),
-                data.getSecureId(),
-                index + 1,
-                data.getComment(),
-                converter.OwnerDataResponse(
-                        new OwnerDataResponse(),
-                        data.getUser().getSecureId(),
-                        data.getUser().getName(),
-                        data.getUser().getAppUserDetail().getAvatar()
-                ),
-                Formatter.formatDateTimeApps(data.getCreatedAt())
-        );
-        List<ListCommentReplyResponse> commentReplyResponseList = new ArrayList<>();
-        commentReplyResponseList.add(commentReplyResponse);
-        dto.setCommentReply(commentReplyResponseList);
+        List<ListCommentReplyResponse> commentReplyResponse  = new ArrayList<>();
+        for (CommentReply reply : data.getCommentReply()) {
+            ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
+            replyResponse.setId(reply.getSecureId());
+            replyResponse.setIndex(reply.getId());
+            replyResponse.setComment(reply.getComment());
+            OwnerDataResponse replyOwner = converter.OwnerDataResponse(
+                    new OwnerDataResponse(),
+                    reply.getUser().getSecureId(),
+                    reply.getUser().getName(),
+                    reply.getUser().getAppUserDetail().getAvatar()
+            );
+            replyResponse.setOwner(replyOwner);
+            commentReplyResponse.add(replyResponse);
+        }
+//        dto.setCommentReply(commentReplyResponse);
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
         // return
         return dto;

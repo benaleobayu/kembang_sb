@@ -7,17 +7,15 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ListCommentResponse {
 
     private String id;
 
-    private Integer index;
+    private Long index;
 
     private String comment;
 
-    private List<ListCommentReplyResponse> commentReply;
+//    private List<ListCommentReplyResponse> commentReply;
 
     private OwnerDataResponse owner;
 

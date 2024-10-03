@@ -7,7 +7,7 @@ public class ListCommentReplyResponse {
 
     private String id;
 
-    private Integer index;
+    private Long index;
 
     private String comment;
 

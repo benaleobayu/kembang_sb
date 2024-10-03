@@ -4,19 +4,18 @@ import com.bca.byc.converter.CommentDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
-import com.bca.byc.entity.CommentReply;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
+import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.CommentService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
@@ -34,8 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOnPost;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
-import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
-import static com.bca.byc.repository.handler.HandlerRepository.getUserByEmail;
+import static com.bca.byc.repository.handler.HandlerRepository.*;
 
 @Service
 @AllArgsConstructor
@@ -53,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Comment> pageResult = commentRepository.findListDataComment(postId, keyword, pageable);
+        Page<Comment> pageResult = commentRepository.findListDataComment(postId, pageable);
         List<ListCommentResponse> dtos = pageResult.stream().map((c) -> {
             ListCommentResponse dto = converter.convertToPageListResponse(c);
             return dto;
