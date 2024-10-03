@@ -1,10 +1,14 @@
 package com.bca.byc.converter.parsing;
 
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.CommentReply;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TreePostConverter{
 
@@ -59,24 +63,50 @@ public class TreePostConverter{
     ) {
         dto.setId(id);
         dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
+        dto.setAvatar(Objects.isNull(avatar) || avatar.isBlank() ? null :
+                avatar.startsWith("uploads/") ?
+                        baseUrl + "/" + avatar :
+                        avatar.startsWith("/uploads/") ? baseUrl + avatar : avatar);
         return dto;
     }
 
     public ListCommentResponse convertToListCommentResponse(
             ListCommentResponse dto,
             String secureId,
+            Long index,
             String comment,
-//            List<ListCommentReplyResponse> commentReply,
-            OwnerDataResponse owner,
-            String createdAt
+//            List<CommentReply> commentReply,
+            AppUser owner,
+            LocalDateTime createdAt
 
     ) {
         dto.setId(secureId);
+        dto.setIndex(index);
         dto.setComment(comment);
-//        dto.setCommentReply(commentReply);
-        dto.setOwner(owner);
-        dto.setCreatedAt(createdAt);
+        List<ListCommentReplyResponse> commentReplyResponse = new ArrayList<>();
+//        for (CommentReply data : commentReply) {
+//            commentReplyResponse.add(convertToListCommentReplyResponse(
+//                    new ListCommentReplyResponse(),
+//                    data.getSecureId(),
+//                    data.getId(),
+//                    data.getComment(),
+//                    OwnerDataResponse(
+//                            new OwnerDataResponse(),
+//                            data.getUser().getSecureId(),
+//                            data.getUser().getName(),
+//                            data.getUser().getAppUserDetail().getAvatar()
+//                    ),
+//                    data.getCreatedAt()
+//            ));
+//        }
+//        dto.setCommentReply(commentReplyResponse);
+        dto.setOwner(OwnerDataResponse(
+                new OwnerDataResponse(),
+                owner.getSecureId(),
+                owner.getAppUserDetail().getName(),
+                owner.getAppUserDetail().getAvatar()
+        ));
+        dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : null);
         return dto;
     }
 

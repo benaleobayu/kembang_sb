@@ -2,6 +2,7 @@ package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
+import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.apps.*;
@@ -54,7 +55,16 @@ public class TreeUserManagementConverter {
         dto.setParentCin(data.getAppUserDetail().getParentCin());
         dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
         dto.setOrders(data.getAppUserDetail().getOrders());
-        dto.setBranchCode(data.getAppUserDetail().getBranchCode() != null ? data.getAppUserDetail().getBranchCode() : null);
+
+        Branch branch = data.getAppUserDetail().getBranchCode();
+        BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
+        if (branch != null) {
+            branchCodeResponse.setId(branch.getSecureId());
+            branchCodeResponse.setName(branch.getName());
+        }
+
+        dto.setBranchCode(branchCodeResponse);
+
         dto.setPicName(data.getAppUserDetail().getPicName());
 
         List<Business> businesses = data.getBusinesses();

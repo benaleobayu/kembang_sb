@@ -23,7 +23,7 @@ public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
     private String memberType;
     private String parentCin;
     private String parentBankAccount;
-    private Branch branchCode;
+    private BranchCodeResponse branchCode;
     private String picName;
 
     private List<BusinessListResponse> businesses = new ArrayList<>();
