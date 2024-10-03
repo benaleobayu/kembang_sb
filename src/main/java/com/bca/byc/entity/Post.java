@@ -83,6 +83,9 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostContent> postContents = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserHasSavedPost> savedPosts = new ArrayList<>();
+
 
     // stats
 

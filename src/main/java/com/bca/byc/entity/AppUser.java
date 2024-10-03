@@ -79,7 +79,6 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     private List<UserHasSavedPost> savedPosts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<LikeDislike> likesPosts = new ArrayList<>();
 
     // many to one
