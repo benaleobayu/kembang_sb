@@ -57,7 +57,7 @@ public class PermissionServiceImpl implements PermissionService {
                                         matchingPermission.getId(),
                                         defaultPermission,
                                         false,
-                                        true
+                                        false
                                 ))
                                 .orElse(new PermissionResponse(null, defaultPermission, true, false));
                     })

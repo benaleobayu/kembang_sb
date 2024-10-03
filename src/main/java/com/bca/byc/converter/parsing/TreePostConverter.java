@@ -1,7 +1,9 @@
 package com.bca.byc.converter.parsing;
 
 import com.bca.byc.model.apps.*;
+import com.bca.byc.util.helper.Formatter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TreePostConverter{
@@ -65,14 +67,14 @@ public class TreePostConverter{
             ListCommentResponse dto,
             String secureId,
             String comment,
-            List<ListCommentReplyResponse> commentReply,
+//            List<ListCommentReplyResponse> commentReply,
             OwnerDataResponse owner,
             String createdAt
 
     ) {
         dto.setId(secureId);
         dto.setComment(comment);
-        dto.setCommentReply(commentReply);
+//        dto.setCommentReply(commentReply);
         dto.setOwner(owner);
         dto.setCreatedAt(createdAt);
         return dto;
@@ -81,17 +83,17 @@ public class TreePostConverter{
     public ListCommentReplyResponse convertToListCommentReplyResponse(
             ListCommentReplyResponse dto,
             String secureId,
-            Integer index,
+            Long index,
             String comment,
             OwnerDataResponse owner,
-            String createdAt
+            LocalDateTime createdAt
 
     ) {
         dto.setId(secureId);
         dto.setIndex(index);
         dto.setComment(comment);
         dto.setOwner(owner);
-        dto.setCreatedAt(createdAt);
+        dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
         return dto;
     }
 }

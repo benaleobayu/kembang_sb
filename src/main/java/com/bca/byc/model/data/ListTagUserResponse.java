@@ -7,7 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class ListTagUserResponse {
 
-    private Long id;
+    private String id;
+    private Long index;
     private String avatar;
     private String name;
 

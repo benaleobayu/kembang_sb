@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserNotification;
 import com.bca.byc.entity.AppUserRequestContact;
@@ -12,20 +13,32 @@ import com.bca.byc.model.ProfileActivityCounts;
 import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
+import com.bca.byc.model.projection.IdEmailProjection;
+import com.bca.byc.model.projection.IdSecureIdProjection;
+import com.bca.byc.model.projection.PostContentProjection;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserService;
+import com.bca.byc.util.PaginationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,15 +46,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
 @Service
 public class AppUserServiceImpl implements AppUserService {
 
+    @Value("${app.base.url}")
+    private final String baseUrl;
+
     private final AppUserRepository appUserRepository;
     private final AppUserDTOConverter converter;
     private final PostDTOConverter postConverter;
+
+    private final PostRepository postRepository;
+
     @Autowired
     private final ObjectMapper objectMapper;
     @Autowired
@@ -119,6 +139,28 @@ public class AppUserServiceImpl implements AppUserService {
 
 
         return postConverter.convertToProfilePostResponse(user);
+    }
+
+    @Override
+    public ResultPageResponseDTO<ProfilePostResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        String email = ContextPrincipal.getPrincipal();
+        IdEmailProjection user = appUserRepository.findByIdInEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<PostContentProjection> pageResult = postRepository.findMyPost(user.getId(), keyword, pageable);
+        List<ProfilePostResponse> dtos = pageResult.stream().map((c) -> {
+            ProfilePostResponse dto = new ProfilePostResponse();
+            dto.setId(c.getSecureId());
+            dto.setIndex(c.getId());
+            dto.setContent(c.getContent().contains("uploads/post/") ? baseUrl + c.getContent() : c.getContent());
+            dto.setThumbnail(c.getThumbnail());
+            dto.setContentType(c.getContentType());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     public void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception {
