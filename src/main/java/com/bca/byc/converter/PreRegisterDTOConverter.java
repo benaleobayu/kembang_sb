@@ -158,6 +158,7 @@ public class PreRegisterDTOConverter {
         data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
         data.setMemberBirthdate(dto.getMemberBirthdate());
         data.setParentBirthdate(dto.getParentBirthdate());
+        data.setType(dto.getType() != null ? dto.getType() : null);
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
         data.setBranchCode(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
