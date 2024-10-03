@@ -145,6 +145,7 @@ public class UserActiveServiceImpl implements UserActiveService {
 
             dto.setAvatar(avatar);
             dto.setId(data.getId());
+            dto.setIndex(data.getIndex());
             dto.setName(data.getName());
             dto.setBusinessName(data.getBusinessName());
             dto.setLineOfBusiness(data.getLineOfBusiness());

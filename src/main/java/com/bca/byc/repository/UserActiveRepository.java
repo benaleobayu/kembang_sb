@@ -60,7 +60,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
 
     @Query("SELECT new com.bca.byc.model.data.ListTagUserResponse(" +
-            "u.id, aud.avatar, aud.name, " +
+            "u.secureId, u.id, aud.avatar, aud.name, " +
             "bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary " + // Include business fields
             ") " +
             "FROM AppUser u " +
