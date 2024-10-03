@@ -6,7 +6,6 @@ import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.PostCategoryCreateUpdateRequest;
 import com.bca.byc.model.PostCategoryDetailResponse;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

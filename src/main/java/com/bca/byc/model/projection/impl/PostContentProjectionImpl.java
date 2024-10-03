@@ -1,7 +1,6 @@
 package com.bca.byc.model.projection.impl;
 
 import com.bca.byc.model.projection.PostContentProjection;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

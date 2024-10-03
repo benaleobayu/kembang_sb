@@ -21,16 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
 @AllArgsConstructor
 public class PreRegisterDTOConverter {
 
-    private PreRegisterLogRepository logRepository;
     private final BranchRepository branchRepository;
-
+    private PreRegisterLogRepository logRepository;
     private ModelMapper modelMapper;
 
     // for get data
