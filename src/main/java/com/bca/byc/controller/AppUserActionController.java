@@ -1,7 +1,6 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
-import com.bca.byc.model.attribute.setSaveUnsaveRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActionService;
@@ -84,7 +83,6 @@ public class AppUserActionController {
 
         return ResponseEntity.ok(new ApiResponse(true, message));
     }
-
 
 
 }
