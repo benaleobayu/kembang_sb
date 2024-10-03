@@ -43,6 +43,7 @@ public class CommentDTOConverter {
                 data.getUser().getAppUserDetail().getAvatar()
         );
         dto.setOwner(owner);
+//        dto.setOwner(owner);
         List<ListCommentReplyResponse> commentReplyResponse  = new ArrayList<>();
         for (CommentReply reply : data.getCommentReply()) {
             ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
