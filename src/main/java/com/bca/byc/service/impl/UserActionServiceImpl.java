@@ -18,6 +18,7 @@ public class UserActionServiceImpl implements UserActionService {
     private final AppUserRepository userRepository;
     private final UserActionRepository userActionRepository;
     private final LikeDislikeRepository likeDislikeRepository;
+    private final UserHasSavedPostRepository userHasSavedPostRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentReplyRepository commentReplyRepository;
@@ -67,6 +68,24 @@ public class UserActionServiceImpl implements UserActionService {
         AppUser user = getUserByEmail(email, userRepository, "User not found");
 
         handleLikeDislike(user, null, null, comment, isLike);
+    }
+
+    @Override
+    public String saveUnsavePost(String postId, String email) {
+        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
+        AppUser user = getUserByEmail(email, userRepository, "User not found");
+
+        UserHasSavedPost existingSavedPost = userHasSavedPostRepository.findByPostAndUser(post, user);
+        if (existingSavedPost != null) {
+            userHasSavedPostRepository.delete(existingSavedPost);
+            return "success remove saved post";
+        } else {
+            UserHasSavedPost newSavedPost = new UserHasSavedPost();
+            newSavedPost.setPost(post);
+            newSavedPost.setUser(user);
+            userHasSavedPostRepository.save(newSavedPost);
+            return "success save post";
+        }
     }
 
 

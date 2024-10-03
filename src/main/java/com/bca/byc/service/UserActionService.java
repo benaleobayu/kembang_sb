@@ -13,4 +13,6 @@ public interface UserActionService {
     void likeDislikeComment(String commentId, String email, SetLikeDislikeRequest isLike);
 
     void likeDislikeCommentReply(String commentId, String email, SetLikeDislikeRequest isLike);
+
+    String saveUnsavePost(String postId, String email);
 }
