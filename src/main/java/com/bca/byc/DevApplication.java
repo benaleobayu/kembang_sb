@@ -54,9 +54,9 @@ public class DevApplication {
                 "http://localhost:4200",
                 "http://localhost",
                 "http://localhost/"
-                
+
         ));
-        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
         corsConfiguration.setAllowCredentials(true);
 
