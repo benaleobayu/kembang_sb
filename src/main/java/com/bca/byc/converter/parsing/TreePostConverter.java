@@ -13,49 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TreePostConverter{
+public class TreePostConverter {
 
     private final String baseUrl;
 
     public TreePostConverter(String baseUrl) {
         this.baseUrl = baseUrl;
-    }
-
-    public PostOwnerResponse PostOwnerResponse(
-            PostOwnerResponse dto,
-            String id,
-            String name,
-            String avatar,
-            String businessName,
-            String lineOfBusiness,
-            Boolean isPrimary
-    ) {
-        dto.setId(id);
-        dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
-        dto.setBusinessName(businessName);
-        dto.setLineOfBusiness(lineOfBusiness);
-        dto.setIsPrimary(isPrimary);
-
-        return dto;
-    }
-
-    public PostContentDetailResponse PostContentDetailResponse(
-            PostContentDetailResponse dto,
-            String contentId,
-            String content,
-            String contentType,
-            String thumbnail,
-            List<OwnerDataResponse> tagsUser
-    ) {
-        dto.setContentId(contentId);
-        dto.setContent(content != null && (content.startsWith("uploads/") || content.startsWith("/uploads/"))
-                ? baseUrl + content.replaceFirst("^/", "/")
-                : content);
-        dto.setContentType(contentType);
-        dto.setThumbnail(thumbnail);
-        dto.setContentTagsUser(tagsUser);
-        return dto;
     }
 
     public OwnerDataResponse OwnerDataResponse(
@@ -128,6 +91,43 @@ public class TreePostConverter{
                 owner.getAppUserDetail().getAvatar()
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
+        return dto;
+    }
+
+    public PostOwnerResponse PostOwnerResponse(
+            PostOwnerResponse dto,
+            String id,
+            String name,
+            String avatar,
+            String businessName,
+            String lineOfBusiness,
+            Boolean isPrimary
+    ) {
+        dto.setId(id);
+        dto.setName(name);
+        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
+        dto.setBusinessName(businessName);
+        dto.setLineOfBusiness(lineOfBusiness);
+        dto.setIsPrimary(isPrimary);
+
+        return dto;
+    }
+
+    public PostContentDetailResponse PostContentDetailResponse(
+            PostContentDetailResponse dto,
+            String contentId,
+            String content,
+            String contentType,
+            String thumbnail,
+            List<OwnerDataResponse> tagsUser
+    ) {
+        dto.setContentId(contentId);
+        dto.setContent(content != null && (content.startsWith("uploads/") || content.startsWith("/uploads/"))
+                ? baseUrl + content.replaceFirst("^/", "/")
+                : content);
+        dto.setContentType(contentType);
+        dto.setThumbnail(thumbnail);
+        dto.setContentTagsUser(tagsUser);
         return dto;
     }
 

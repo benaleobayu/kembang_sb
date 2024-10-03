@@ -2,6 +2,7 @@ package com.bca.byc.service;
 
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.model.ProfileActivityPostResponse;
+import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,4 +16,6 @@ public interface AppUserProfileService {
     ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    ResultPageResponseDTO<ProfileActivityPostCommentsResponse> listDataPostCommentsActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

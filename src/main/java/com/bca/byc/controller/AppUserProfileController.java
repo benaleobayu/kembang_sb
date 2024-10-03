@@ -5,6 +5,7 @@ import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.ProfileActivityCounts;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -229,8 +230,8 @@ public class AppUserProfileController {
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostSavedActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         log.info("GET " + urlRoute + "/post-saved-activity endpoint hit");
@@ -243,12 +244,27 @@ public class AppUserProfileController {
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         log.info("GET " + urlRoute + "/post-likes-activity endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileLikesActivity(pages, limit, sortBy, direction, keyword)));
     }
+
+    @Operation(summary = "Get list Post Comments Activity", description = "Get list Post Comments Activity")
+    @GetMapping("/post-comment-activity")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostCommentsResponse>>> listDataPostCommentsActivity(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + "/post-likes-activity endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataPostCommentsActivity(pages, limit, sortBy, direction, keyword)));
+    }
+
+
 
 
 }

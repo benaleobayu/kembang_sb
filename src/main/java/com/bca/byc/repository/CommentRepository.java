@@ -22,4 +22,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c WHERE c.secureId = :secureId")
     Optional<Comment> findBySecureId(@Param("secureId") String secureId);
+
+    @Query("SELECT c, u AS commentUser, cr, ur AS replyUser FROM Post p " +
+            "JOIN p.comments c " +
+            "LEFT JOIN c.commentReply cr " +
+            "LEFT JOIN AppUser u ON c.user.id = u.id " +
+            "LEFT JOIN AppUser ur ON cr.user.id = ur.id " +
+            "WHERE p.user.secureId = :userId")
+    Page<Object[]> findAllActivityCommentByUser(@Param("userId") String userId, Pageable pageable);
+
+
 }

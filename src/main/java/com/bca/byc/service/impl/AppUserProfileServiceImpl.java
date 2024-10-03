@@ -1,12 +1,16 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.TreeProfileActivityConverter;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.ProfileActivityPostResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.AppUserDetailRepository;
+import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -16,6 +20,7 @@ import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.util.FileUploadHelper;
 import com.bca.byc.util.PaginationUtil;
+import com.bca.byc.util.helper.Formatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,9 +32,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +45,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private final AppUserDetailRepository userDetailRepository;
     private final LikeDislikeRepository likeDislikeRepository;
     private final UserHasSavedPostRepository userHasSavedPostRepository;
+    private final CommentRepository commentRepository;
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
@@ -94,9 +100,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
-        String email = ContextPrincipal.getPrincipal();
-        AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
-        String userId = user.getSecureId();
+        String userId = GlobalConverter.getUuidUser(userRepository);
 
         // Retrieve likes for the user
         Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, pageable);
@@ -117,21 +121,13 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(
-            Integer pages,
-            Integer limit,
-            String sortBy,
-            String direction,
-            String keyword
-    ) {
+    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
-        String email = ContextPrincipal.getPrincipal();
-        AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
-        String userId = user.getSecureId();
+        String userId = GlobalConverter.getUuidUser(userRepository);
 
         // Retrieve likes for the user
         Page<LikeDislike> likesPage = likeDislikeRepository.findLikesByUserId(userId, pageable);
@@ -150,6 +146,56 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
         return PageCreateReturn.create(likesPage, dtos);
     }
+
+    @Override
+    public ResultPageResponseDTO<ProfileActivityPostCommentsResponse> listDataPostCommentsActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        String userId = GlobalConverter.getUuidUser(userRepository);
+
+        // Mengambil data komentar dan pengguna dari query
+        Page<Object[]> pageResult = commentRepository.findAllActivityCommentByUser(userId, pageable);
+
+        TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
+
+        List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
+            Comment comment = (Comment) result[0]; // Ambil comment
+            AppUser commentUser = (AppUser) result[1]; // Ambil user yang membuat comment
+            CommentReply commentReply = (CommentReply) result[2]; // Ambil commentReply
+            AppUser replyUser = (AppUser) result[3]; // Ambil user yang membuat commentReply
+            Post post = comment.getPost(); // Ambil post dari komentar
+
+            ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
+
+            // Menggunakan TreeProfileActivityConverter untuk mengonversi data
+            SimplePostResponse postDto = new SimplePostResponse();
+            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl);
+
+            // Set data untuk balasan jika ada
+            if (commentReply != null) {
+                ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
+                replyResponse.setId(commentReply.getSecureId());
+                replyResponse.setComment(commentReply.getComment());
+                replyResponse.setOwner(postConverter.OwnerDataResponse(
+                        new OwnerDataResponse(),
+                        replyUser.getSecureId(),
+                        replyUser.getAppUserDetail().getName(),
+                        replyUser.getAppUserDetail().getAvatar()
+                ));
+                replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
+                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Menambahkan balasan ke komentar
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+
 
 
 }
