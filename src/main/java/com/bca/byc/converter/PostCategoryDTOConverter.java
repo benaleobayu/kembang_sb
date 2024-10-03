@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.PostCategoryCreateUpdateRequest;
@@ -26,13 +27,12 @@ public class PostCategoryDTOConverter {
     // for get data
     public PostCategoryDetailResponse convertToListResponse(PostCategory data) {
         // mapping Entity with DTO Entity
-        PostCategoryDetailResponse dto = modelMapper.map(data, PostCategoryDetailResponse.class);
-        // set created_by
-        dto.setCreatedBy(data.getCreatedBy() == null ? null : data.getCreatedBy().getName());
-        dto.setUpdatedBy(data.getUpdatedBy() == null ? null : data.getUpdatedBy().getName());
+        GlobalConverter converter = new GlobalConverter();
+        PostCategoryDetailResponse dto = new PostCategoryDetailResponse();
+        dto.setName(data.getName());
+        dto.setIcon(data.getIcon());
         // format
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+        converter.CmsIDTimeStampResponse(dto, data);
         // return
         return dto;
     }

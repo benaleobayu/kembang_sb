@@ -6,15 +6,18 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
+import com.bca.byc.model.projection.PostContentProjection;
 import com.bca.byc.repository.PostCategoryRepository;
 import com.bca.byc.repository.PostLocationRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
+import com.bca.byc.response.Page;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -215,39 +218,6 @@ public class PostDTOConverter {
         );
     }
 
-    private List<ListCommentResponse> convertComments(List<Comment> comments, TreePostConverter converter) {
-        AtomicInteger index = new AtomicInteger(0);
-
-        return comments.stream().map(comment -> {
-            List<ListCommentReplyResponse> replies = comment.getCommentReply().stream()
-                    .map(reply -> converter.convertToListCommentReplyResponse(
-                            new ListCommentReplyResponse(),
-                            reply.getSecureId(),
-                            index.getAndIncrement(),
-                            reply.getComment(),
-                            converter.OwnerDataResponse(
-                                    new OwnerDataResponse(),
-                                    reply.getUser().getSecureId(),
-                                    reply.getUser().getName(),
-                                    reply.getUser().getAppUserDetail().getAvatar()
-                            ),
-                            Formatter.formatDateTimeApps(reply.getCreatedAt())
-                    )).collect(Collectors.toList());
-            return new ListCommentResponse(
-                    comment.getSecureId(),
-                    index.getAndIncrement(),
-                    comment.getComment(),
-                    replies,
-                    converter.OwnerDataResponse(
-                            new OwnerDataResponse(),
-                            comment.getUser().getSecureId(),
-                            comment.getUser().getName(),
-                            comment.getUser().getAppUserDetail().getAvatar()
-                    ),
-                    Formatter.formatDateTimeApps(comment.getCreatedAt())
-            );
-        }).collect(Collectors.toList());
-    }
 
     public ProfilePostResponse convertToProfilePostResponse(AppUser data) {
         ProfilePostResponse dto = modelMapper.map(data, ProfilePostResponse.class);
@@ -278,4 +248,5 @@ public class PostDTOConverter {
         }
         return replyResponses;
     }
+
 }

@@ -7,6 +7,7 @@ import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
+import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiDataResponse;
@@ -31,10 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -188,18 +186,30 @@ public class PostController {
 
     // ----------------------------------------- method ---------------------------------------------
     private PostContent processFile(MultipartFile file, PostContentRequest contentRequest, int index) throws IOException {
-        // Simpan file ke direktori tertentu
         String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR + "/post/");
         String contentType = file.getContentType();
         String fileType = null;
 
-        if (contentType != null) {
-            if (contentType.startsWith("image/")) {
+
+        String fileName = file.getOriginalFilename();
+        if (fileName != null) {
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") ||
+                    fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
+                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
+                    fileName.endsWith(".svg") || fileName.endsWith(".ico")) {
+                contentType = "image/webp"; // Default to WEBP
                 fileType = "image";
-            } else if (contentType.startsWith("video/")) {
+            } else if (fileName.endsWith(".mp4") || fileName.endsWith(".avi") ||
+                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
+                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
+                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")) {
+                contentType = "video/mp4"; // Default to MP4
                 fileType = "video";
+            } else {
+                throw new RuntimeException("Unsupported file type: " + fileName);
             }
         }
+
 
         // Membuat PostContent dari file dan contentRequest yang sesuai
         PostContent postContent = new PostContent();
@@ -211,10 +221,16 @@ public class PostController {
         // Menangani tagUserIds
         Set<AppUser> appUsers = new HashSet<>();
         if (contentRequest.getTagUserIds() != null) {
-            for (Long userId : contentRequest.getTagUserIds()) {
-                AppUser user = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-                appUsers.add(user);
+            for (String userId : contentRequest.getTagUserIds()) {
+                try {
+                    UUID.fromString(userId); // Validate UUID
+                    IdSecureIdProjection gotId = userRepository.findUserBySecureId(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                    appUsers.add(gotId.toAppUser());
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Invalid UUID format: " + userId);
+                }
+
             }
         }
         postContent.setTagUsers(appUsers);

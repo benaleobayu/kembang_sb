@@ -17,8 +17,8 @@ public class PostContentRequest {
     @Schema(description = "let this be null", example = "")
     private String type;
 
-    @Schema(description = "tag ids person", example = "1,2,3,4")
-    private List<Long> tagUserIds; // user _id
+    @Schema(description = "tag ids person", example = "'1'', 2', '3','4'")
+    private List<String> tagUserIds; // user _id
 
     @Schema(description = "fill this for the original name", example = "abc.jpg")
     private String originalName;
