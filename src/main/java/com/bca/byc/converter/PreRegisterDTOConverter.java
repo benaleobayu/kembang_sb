@@ -8,6 +8,7 @@ import com.bca.byc.entity.PreRegisterLog;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
+import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.repository.BranchRepository;
@@ -49,6 +50,16 @@ public class PreRegisterDTOConverter {
         dto.setMemberType(data.getMemberType());
         dto.setOrders(data.getOrders());
         dto.setApprovalStatus(data.getStatusApproval());
+
+        Branch branch = data.getBranchCode();
+        BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
+        if (branch != null) {
+            branchCodeResponse.setId(branch.getSecureId());
+            branchCodeResponse.setName(branch.getName());
+        }
+
+        dto.setBranchCode(branchCodeResponse);
+        dto.setPicName(data.getPicName());
 
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));

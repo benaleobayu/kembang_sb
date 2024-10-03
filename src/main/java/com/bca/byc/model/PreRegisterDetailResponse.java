@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.bca.byc.entity.Branch;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.StatusType;
 import lombok.Data;
@@ -21,6 +22,9 @@ public class PreRegisterDetailResponse extends AdminModelBaseDTOResponse {
     private String parentCin;
     private String memberBirthdate;
     private String parentBirthdate;
+
+    private BranchCodeResponse branchCode;
+    private String picName;
 
 //    private String birthDate;
 

@@ -61,8 +61,14 @@ public class AppUserDTOConverter {
         dto.setType(appUserDetail.getType());
         dto.setTypeName(appUserDetail.getType().equals(UserType.MEMBER_SOLITAIRE) ? "Solitaire" :
                 appUserDetail.getType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
-        dto.setAvatar(appUserDetail.getAvatar() != null && appUserDetail.getAvatar().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getAvatar() : appUserDetail.getAvatar());
-        dto.setCover(appUserDetail.getCover() != null && appUserDetail.getCover().startsWith("uploads/") ? baseUrl + "/" + appUserDetail.getCover() : appUserDetail.getCover());
+        dto.setAvatar(Objects.isNull(appUserDetail.getAvatar()) || appUserDetail.getAvatar().isBlank() ? null :
+                appUserDetail.getAvatar().startsWith("uploads/") ?
+                        baseUrl + "/" + appUserDetail.getAvatar() :
+                        appUserDetail.getAvatar().startsWith("/uploads/") ? baseUrl + appUserDetail.getAvatar() : appUserDetail.getAvatar());
+        dto.setCover(Objects.isNull(appUserDetail.getCover()) || appUserDetail.getCover().isBlank() ? null :
+                appUserDetail.getCover().startsWith("uploads/") ?
+                        baseUrl + "/" + appUserDetail.getCover() :
+                        appUserDetail.getCover().startsWith("/uploads/") ? baseUrl + appUserDetail.getCover() : appUserDetail.getCover());
         dto.setBiodata(Objects.equals(appUserDetail.getBiodata(), "") ? null : appUserDetail.getBiodata());
         dto.setCountryCode(appUserDetail.getCountryCode());
         dto.setPhone(appUserDetail.getPhone());
