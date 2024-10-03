@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActionService;
@@ -41,11 +42,11 @@ public class AppUserActionController {
     }
 
     @PostMapping("/post/{id}/like-dislike")
-    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("id") String postId, @RequestBody Boolean isLike) {
+    public ResponseEntity<ApiResponse> likeDislikePost(@PathVariable("id") String postId, @RequestBody SetLikeDislikeRequest isLike) {
         log.info("POST " + urlRoute + "/post/{}/like-post endpoint hit", postId);
         String email = ContextPrincipal.getPrincipal();
         userActionService.likeDislikePost(postId, email, isLike);
-        String success = isLike ? "success like" : "success dislike";
+        String success = isLike.getIsLike() ? "success like" : "success dislike";
         return ResponseEntity.ok(new ApiResponse(true, "Liked " + success));
     }
 

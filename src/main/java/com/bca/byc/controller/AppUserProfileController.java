@@ -242,7 +242,7 @@ public class AppUserProfileController {
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostLikesActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true

@@ -6,6 +6,8 @@ import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.repository.AppUserDetailRepository;
+import com.bca.byc.repository.LikeDislikeRepository;
+import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -34,6 +36,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     private final AppUserRepository userRepository;
     private final AppUserDetailRepository userDetailRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
+    private final UserHasSavedPostRepository userHasSavedPostRepository;
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
@@ -79,104 +83,86 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         String email = ContextPrincipal.getPrincipal();
         AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
         String userId = user.getSecureId();
 
-        Page<AppUser> pageResult = userRepository.showProfileSavedActivity(userId, pageable);
+        // Retrieve likes for the user
+        Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, pageable);
 
-        List<ProfileActivityPostResponse> dtos = pageResult.stream().map(appUser -> {
-            ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
+        List<ProfileActivityPostResponse> dtos = likesPage.stream()
+                .map(savedPost -> {
+                    ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
 
-            // Get the first saved post if it exists
-            Optional<UserHasSavedPost> firstSavedPostOpt = appUser.getSavedPosts().stream().findFirst();
+                    Post post = savedPost.getPost();
+                    ProfileActivityPostResponseConverter(dto, post);
 
-            if (firstSavedPostOpt.isPresent()) {
-                Post firstPost = firstSavedPostOpt.get().getPost(); // Access the Post through UserHasSavedPost
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
-                // Assuming PostHasContent provides a way to get the associated PostContents
-                List<PostContent> postContents = firstPost.getPostContents(); // Retrieve the list of PostContents
-                if (!postContents.isEmpty()) {
-                    PostContent firstContent = postContents.get(0); // Get the first PostContent
-                    dto.setContentId(firstContent.getSecureId());
-                    dto.setContent(firstContent.getContent()); // Set content
-                    dto.setContentType(firstContent.getType()); // Set content type
-                    dto.setThumbnail(firstContent.getThumbnail()); // Set thumbnail
-                } else {
-                    // Handle case where the post has no contents
-                    dto.setContentId(null);
-                    dto.setContent(null);
-                    dto.setContentType(null);
-                    dto.setThumbnail(null);
-                }
-            } else {
-                // Handle case where there are no saved posts
-                dto.setContentId(null);
-                dto.setContent(null);
-                dto.setContentType(null);
-                dto.setThumbnail(null);
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
-
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(likesPage, dtos);
     }
 
     @Override
-    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(
+            Integer pages,
+            Integer limit,
+            String sortBy,
+            String direction,
+            String keyword
+    ) {
+        // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         String email = ContextPrincipal.getPrincipal();
         AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
         String userId = user.getSecureId();
 
-        Page<AppUser> pageResult = userRepository.showProfileLikesActivity(userId, pageable);
+        // Retrieve likes for the user
+        Page<LikeDislike> likesPage = likeDislikeRepository.findLikesByUserId(userId, pageable);
 
-        List<ProfileActivityPostResponse> dtos = pageResult.stream().map(appUser -> {
-            ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
+        List<ProfileActivityPostResponse> dtos = likesPage.stream()
+                .map(likeDislike -> {
+                    ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
 
-            // Get the first saved post if it exists
-            Optional<UserHasSavedPost> firstSavedPostOpt = appUser.getSavedPosts().stream().findFirst();
+                    Post post = likeDislike.getPost();
+                    ProfileActivityPostResponseConverter(dto, post);
 
-            if (firstSavedPostOpt.isPresent()) {
-                Post firstPost = firstSavedPostOpt.get().getPost(); // Access the Post through UserHasSavedPost
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
-                // Assuming PostHasContent provides a way to get the associated PostContents
-                List<PostContent> postContents = firstPost.getPostContents(); // Retrieve the list of PostContents
-                if (!postContents.isEmpty()) {
-                    PostContent firstContent = postContents.get(0); // Get the first PostContent
-                    dto.setContentId(firstContent.getSecureId());
-                    dto.setContent(firstContent.getContent()); // Set content
-                    dto.setContentType(firstContent.getType()); // Set content type
-                    dto.setThumbnail(firstContent.getThumbnail()); // Set thumbnail
-                } else {
-                    // Handle case where the post has no contents
-                    dto.setContentId(null);
-                    dto.setContent(null);
-                    dto.setContentType(null);
-                    dto.setThumbnail(null);
-                }
-            } else {
-                // Handle case where there are no saved posts
-                dto.setContentId(null);
-                dto.setContent(null);
-                dto.setContentType(null);
-                dto.setThumbnail(null);
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
-
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(likesPage, dtos);
     }
 
+    private static void ProfileActivityPostResponseConverter(
+            ProfileActivityPostResponse dto,
+            Post post
+    ) {
+        List<PostContent> postContents = post.getPostContents();
+
+        if (!postContents.isEmpty()) {
+            PostContent firstContent = postContents.get(0);
+            dto.setContentId(firstContent.getSecureId());
+            dto.setContent(firstContent.getContent());
+            dto.setContentType(firstContent.getType());
+            dto.setThumbnail(firstContent.getThumbnail());
+        } else {
+            dto.setContentId(null);
+            dto.setContent(null);
+            dto.setContentType(null);
+            dto.setThumbnail(null);
+        }
+
+    }
 
 
 }
