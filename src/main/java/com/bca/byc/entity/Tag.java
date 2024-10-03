@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Tag extends AbstractBaseEntityTimestamp{
+public class Tag extends AbstractBaseEntityCms implements SecureIdentifiable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,13 @@ public class Tag extends AbstractBaseEntityTimestamp{
     @Column(name = "name")
     private String name;
 
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
 
+    @Override
+    public Boolean getActive() {
+        return super.getIsActive();
+    }
 }

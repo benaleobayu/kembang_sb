@@ -21,7 +21,10 @@ public class TagDTOConverter {
     // for get data
     public TagDetailResponse convertToListResponse(Tag data) {
         // mapping Entity with DTO Entity
-        TagDetailResponse dto = modelMapper.map(data, TagDetailResponse.class);
+        TagDetailResponse dto = new TagDetailResponse();
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setName(data.getName());
         // return
         return dto;
     }

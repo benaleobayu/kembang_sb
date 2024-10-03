@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class TagDetailResponse {
 
-    private Long id;
+    private String id;
+
+    private Long index;
 
     private String name;
 
