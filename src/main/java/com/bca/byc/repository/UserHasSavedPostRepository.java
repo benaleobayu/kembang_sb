@@ -1,5 +1,7 @@
 package com.bca.byc.repository;
 
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Post;
 import com.bca.byc.entity.UserHasSavedPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,4 +13,6 @@ public interface UserHasSavedPostRepository extends JpaRepository<UserHasSavedPo
 
     @Query("SELECT sp FROM UserHasSavedPost sp WHERE sp.user.secureId = :userId")
     Page<UserHasSavedPost> findSavedPostByUserId(@Param("userId") String userId, Pageable pageable);
+
+    UserHasSavedPost findByPostAndUser(Post post, AppUser user);
 }

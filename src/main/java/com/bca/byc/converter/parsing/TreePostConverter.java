@@ -2,6 +2,9 @@ package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.CommentReply;
+import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostContent;
+import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.util.helper.Formatter;
 
@@ -126,5 +129,33 @@ public class TreePostConverter{
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
         return dto;
+    }
+
+    public void ProfileActivityPostResponseConverter(
+            ProfileActivityPostResponse dto,
+            Post post
+    ) {
+        List<PostContent> postContents = post.getPostContents();
+
+        if (!postContents.isEmpty()) {
+            PostContent firstContent = postContents.get(0);
+            dto.setContentId(firstContent.getSecureId());
+            dto.setContent(
+                    Objects.isNull(firstContent.getContent()) || firstContent.getContent().isBlank() ? null :
+                            firstContent.getContent().startsWith("uploads/") ?
+                                    baseUrl + "/" + firstContent.getContent() :
+                                    firstContent.getContent().startsWith("/uploads/") ?
+                                            baseUrl + firstContent.getContent() :
+                                            firstContent.getContent()
+            );
+            dto.setContentType(firstContent.getType());
+            dto.setThumbnail(firstContent.getThumbnail());
+        } else {
+            dto.setContentId(null);
+            dto.setContent(null);
+            dto.setContentType(null);
+            dto.setThumbnail(null);
+        }
+
     }
 }

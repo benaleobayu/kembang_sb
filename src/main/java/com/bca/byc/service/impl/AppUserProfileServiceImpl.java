@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,8 +40,12 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private final AppUserDetailRepository userDetailRepository;
     private final LikeDislikeRepository likeDislikeRepository;
     private final UserHasSavedPostRepository userHasSavedPostRepository;
+
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     @Override
     public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeException {
@@ -100,7 +106,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                     ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
 
                     Post post = savedPost.getPost();
-                    ProfileActivityPostResponseConverter(dto, post);
+                    TreePostConverter converter = new TreePostConverter(baseUrl);
+                    converter.ProfileActivityPostResponseConverter(dto, post);
 
                     return dto;
                 })
@@ -134,34 +141,14 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                     ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
 
                     Post post = likeDislike.getPost();
-                    ProfileActivityPostResponseConverter(dto, post);
+                    TreePostConverter converter = new TreePostConverter(baseUrl);
+                    converter.ProfileActivityPostResponseConverter(dto, post);
 
                     return dto;
                 })
                 .collect(Collectors.toList());
 
         return PageCreateReturn.create(likesPage, dtos);
-    }
-
-    private static void ProfileActivityPostResponseConverter(
-            ProfileActivityPostResponse dto,
-            Post post
-    ) {
-        List<PostContent> postContents = post.getPostContents();
-
-        if (!postContents.isEmpty()) {
-            PostContent firstContent = postContents.get(0);
-            dto.setContentId(firstContent.getSecureId());
-            dto.setContent(firstContent.getContent());
-            dto.setContentType(firstContent.getType());
-            dto.setThumbnail(firstContent.getThumbnail());
-        } else {
-            dto.setContentId(null);
-            dto.setContent(null);
-            dto.setContentType(null);
-            dto.setThumbnail(null);
-        }
-
     }
 
 
