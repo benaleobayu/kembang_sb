@@ -27,7 +27,7 @@ public class AppSearchController {
     private final AppSearchService service;
 
     @Operation(summary = "Get list result posts", description = "Get list result posts")
-    @GetMapping("/result/post")
+    @GetMapping("/post")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultPostResponse>>> listResultPosts(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
@@ -40,7 +40,7 @@ public class AppSearchController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, tag)));
     }
 
-    @Operation(summary = "Get list result tags", description = "Get list result tags")
+    @Operation(summary = "Get list result tags", description = "Get list result tags", hidden = true)
     @GetMapping("/result/tag")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultTagResponse>>> listResultTags(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -54,7 +54,7 @@ public class AppSearchController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultTags(email, pages, limit, sortBy, direction, tag)));
     }
 
-    @Operation(summary = "Get list result accounts", description = "Get list result accounts")
+    @Operation(summary = "Get list result accounts", description = "Get list result accounts", hidden = true)
     @GetMapping("/result/account")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultAccountResponse>>> listResultAccounts(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,

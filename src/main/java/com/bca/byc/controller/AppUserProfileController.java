@@ -5,19 +5,20 @@ import com.bca.byc.model.AppUserProfileRequest;
 import com.bca.byc.model.ProfileActivityCounts;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.NotificationService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.IOFileUploadException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -105,10 +106,17 @@ public class AppUserProfileController {
         }
     }
 
-    @GetMapping("/{userId}/posts")
-    public ResponseEntity<?> getUserPosts(@PathVariable String userId) {
-        log.info("GET " + urlRoute + "/{userId}/posts endpoint hit");
-        return ResponseEntity.ok(new ApiDataResponse<>(true, "Posts found", userService.getUserPosts(userId)));
+    @Operation(summary = "Get list My Post", description = "Get list My Post")
+    @GetMapping("/my-posts")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfilePostResponse>>> listDataMyPost(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + " endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list My Post", userService.listDataMyPost(pages, limit, sortBy, direction, keyword)));
     }
 
     @Operation(summary = "Change user password", description = "Change user password")
@@ -183,10 +191,10 @@ public class AppUserProfileController {
     public ResponseEntity<Page<NotificationResponse>> getNotifications(Pageable pageable) {
         // Assuming `ContextPrincipal.getId()` retrieves the current user's ID
         Long userId = ContextPrincipal.getId();
-    
+
         // Fetch paginated notifications for the user
         Page<Notification> notifications = notificationService.getNotificationsByUserId(userId, pageable);
-    
+
         // Map each notification to a response object
         Page<NotificationResponse> responseMessages = notifications.map(notification -> new NotificationResponse(
                 notification.getSecureId(),                       // Secure ID or primary key
@@ -198,7 +206,7 @@ public class AppUserProfileController {
                 notification.getCreatedAt(),                // Creation timestamp
                 notification.getUpdatedAt()                 // Last updated timestamp
         ));
-    
+
         // Return the paginated response
         return ResponseEntity.ok(responseMessages);
     }
@@ -241,8 +249,6 @@ public class AppUserProfileController {
         log.info("GET " + urlRoute + "/post-likes-activity endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataProfileLikesActivity(pages, limit, sortBy, direction, keyword)));
     }
-
-
 
 
 }

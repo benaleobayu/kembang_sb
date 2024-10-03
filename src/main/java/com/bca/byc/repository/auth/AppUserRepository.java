@@ -3,6 +3,7 @@ package com.bca.byc.repository.auth;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserActivityCounts;
+import com.bca.byc.model.projection.IdEmailProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,15 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("SELECT u  FROM AppUser u WHERE u.email = :email")
     Optional<AppUser> findByEmail(@Param("email") String email);
 
+    @Query("SELECT new com.bca.byc.model.projection.impl.IdEmailProjectionImpl(u.id, u.email) FROM AppUser u " +
+            "WHERE u.email = :email")
+    Optional<IdEmailProjection> findByIdInEmail(@Param("email") String email);
+
     @Query("SELECT u FROM AppUser u WHERE u.secureId = :userId")
     Optional<AppUser> findBySecureId(@Param("userId") String secureId);
 
-    @Query("SELECT u FROM AppUser u WHERE u.secureId = :id")
+    @Query("SELECT new com.bca.byc.model.projection.impl.IdSecureIdProjectionImpl(u.id, u.secureId) " +
+            "FROM AppUser u WHERE u.secureId = :id")
     Optional<IdSecureIdProjection> findUserBySecureId(@Param("id") String id);
 
 
@@ -52,5 +58,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT u FROM AppUser u " + "JOIN u.likesPosts lp " + "JOIN lp.post p " + "WHERE u.secureId = :userId " + "GROUP BY u")
     Page<AppUser> showProfileLikesActivity(String userId, Pageable pageable);
+
 }
 

@@ -132,6 +132,8 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
 //        this.role = role;
     }
 
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
