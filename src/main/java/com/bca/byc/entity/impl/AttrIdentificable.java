@@ -1,4 +1,4 @@
-package com.bca.byc.model.attribute;
+package com.bca.byc.entity.impl;
 
 public interface AttrIdentificable {
     Long getId();

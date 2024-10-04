@@ -2,10 +2,8 @@ package com.bca.byc.repository.handler;
 
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.SecureIdentifiable;
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.projection.FollowsUserProjection;
-import com.bca.byc.repository.AppUserProjectionRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import jakarta.persistence.EntityNotFoundException;

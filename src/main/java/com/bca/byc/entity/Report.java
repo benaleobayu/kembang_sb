@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.validator.annotation.ReportTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Report extends AbstractBaseEntity implements SecureIdentifiable{
+public class Report extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

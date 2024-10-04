@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.enums.AdminType;
 import jakarta.persistence.*;
 import lombok.Data;

@@ -4,7 +4,7 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Branch;
 import com.bca.byc.entity.PreRegister;
-import com.bca.byc.entity.PreRegisterLog;
+import com.bca.byc.entity.UserManagementLog;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
@@ -12,7 +12,7 @@ import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.repository.BranchRepository;
-import com.bca.byc.repository.PreRegisterLogRepository;
+import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 public class PreRegisterDTOConverter {
 
     private final BranchRepository branchRepository;
-    private PreRegisterLogRepository logRepository;
+    private LogUserManagementRepository logRepository;
     private ModelMapper modelMapper;
 
     // for get data
@@ -115,11 +115,11 @@ public class PreRegisterDTOConverter {
 
 
     public void convertToApprovalRequest(PreRegister data, AppAdmin admin) {
-        PreRegisterLog log = new PreRegisterLog();
+        UserManagementLog log = new UserManagementLog();
         log.setStatus(LogStatus.APPROVED);
         log.setPreRegister(data);
         log.setMessage("Approved by " + admin.getName());
-        log.setUpdatedBy(admin.getName());
+        log.setUpdatedBy(admin);
         logRepository.save(log);
 
         AdminType typeAdmin = admin.getType();
@@ -143,11 +143,11 @@ public class PreRegisterDTOConverter {
     }
 
     public void convertToRejectRequest(PreRegister data, RejectRequest reason, AppAdmin admin) {
-        PreRegisterLog log = new PreRegisterLog();
+        UserManagementLog log = new UserManagementLog();
         log.setStatus(LogStatus.APPROVED);
         log.setPreRegister(data);
         log.setMessage(reason.message());
-        log.setUpdatedBy(admin.getName());
+        log.setUpdatedBy(admin);
         logRepository.save(log);
 
         data.setIsDeleted(true);

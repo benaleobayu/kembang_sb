@@ -1,6 +1,6 @@
 package com.bca.byc.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "comments" ,indexes = {
     @Index(name = "idx_comments_secure_id", columnList = "secure_id", unique = true)
 })
-public class Comment extends AbstractBaseEntity implements SecureIdentifiable{
+public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Override
     public String getSecureId() {

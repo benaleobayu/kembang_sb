@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Tag extends AbstractBaseEntityCms implements SecureIdentifiable{
+public class Tag extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

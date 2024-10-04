@@ -12,16 +12,23 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "log_pre_register")
-public class PreRegisterLog extends AbstractBaseEntityTimestamp{
+@Table(name = "log_user_management")
+public class UserManagementLog extends AbstractBaseEntityTimestamp{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "type")
+    private String type;
+
     @ManyToOne
     @JoinColumn(name = "pre_register_id")
     private PreRegister preRegister;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -30,7 +37,8 @@ public class PreRegisterLog extends AbstractBaseEntityTimestamp{
     @Column(name = "message", columnDefinition = "text")
     private String message;
 
-    @Column(name = "updated_by")
-    private String updatedBy;
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private AppAdmin updatedBy;
 
 }

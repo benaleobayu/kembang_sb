@@ -32,6 +32,7 @@ public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
 
     private Integer orders;
     private String status;
+    private String suspendedReason;
 
 }
 

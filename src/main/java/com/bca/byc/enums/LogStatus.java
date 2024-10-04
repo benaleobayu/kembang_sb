@@ -6,5 +6,11 @@ public enum LogStatus {
     FAILED,
     REJECT,
     APPROVED,
+    IN_PROGRESS,
+    WAITING,
+    CANCELED,
+    SUSPENDED,
+    DELETED,
+    RESTORED,
     PENDING
 }

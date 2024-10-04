@@ -2,6 +2,7 @@ package com.bca.byc.controller;
 
 
 import com.bca.byc.model.Elastic.UserActiveElastic;
+import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.*;
@@ -102,10 +103,10 @@ public class UserActiveController {
     }
 
     @PutMapping("{id}/suspend")
-    public ResponseEntity<ApiResponse> suspend(@PathVariable("id") String id) {
+    public ResponseEntity<ApiResponse> suspend(@PathVariable("id") String id, @Valid @RequestBody LogUserManagementRequest dto) {
         log.info("PUT " + urlRoute + "/{id}/suspend endpoint hit");
         try {
-            service.suspendData(id);
+            service.suspendData(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully suspended user active"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

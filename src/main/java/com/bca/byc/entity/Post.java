@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @Table(name = "post", indexes = {
     @Index(name = "idx_secure_id", columnList = "secure_id", unique = true)
 })
-public class Post extends AbstractBaseEntity implements SecureIdentifiable{
+public class Post extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

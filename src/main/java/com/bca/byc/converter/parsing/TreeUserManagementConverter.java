@@ -9,6 +9,7 @@ import com.bca.byc.model.apps.*;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +44,8 @@ public class TreeUserManagementConverter {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setName(data.getAppUserDetail().getName());
-        dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
-                Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
-                Formatter.formatLocalDate(data.getAppUserDetail().getParentBirthdate()));
+        dto.setBirthDate(data.getAppUserDetail().getMemberBirthdate() != null ?
+                Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) : null);
         dto.setEmail(data.getEmail().toLowerCase());
         dto.setPhone(data.getAppUserDetail().getPhone());
         dto.setMemberCin(data.getAppUserDetail().getMemberCin());
@@ -108,7 +108,11 @@ public class TreeUserManagementConverter {
                     expectCategoryDetailResponse.setId(ue.getExpectCategory().getSecureId());
                     expectCategoryDetailResponse.setIndex(ue.getExpectCategory().getOrders());
                     expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
-                    expectCategoryDetailResponse.setSubCategories(ue.getExpectCategory().getExpectItems().stream()
+                    List<ExpectItem> expectItems = ue.getExpectCategory().getExpectItems().stream()
+                            .sorted(Comparator.comparing(ExpectItem::getOrders))
+                            .limit(3)
+                            .collect(Collectors.toList());
+                    expectCategoryDetailResponse.setSubCategories(expectItems.stream()
                             .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))
                             .map(ei -> {
                                         SubExpectCategoryList expectItem = new SubExpectCategoryList();
@@ -127,11 +131,14 @@ public class TreeUserManagementConverter {
                 data.getAppUserDetail().getStatus().equals(StatusType.ACTIVATED)
                         ? data.getAppUserAttribute().getIsSuspended()
                         ? data.getAppUserAttribute().getIsDeleted()
-                        ? "Deleted User"
-                        : "Suspended User"
-                        : "Active User"
-                        : "Inactive User"
+                        ? "Deleted"
+                        : "Suspended"
+                        : "Active"
+                        : "Inactive"
         );
+        if (data.getAppUserAttribute().getIsSuspended()){
+            dto.setSuspendedReason(data.getLog().stream().findFirst().get().getMessage());
+        }
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
     }

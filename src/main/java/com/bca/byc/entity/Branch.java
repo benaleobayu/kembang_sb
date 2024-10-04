@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
-import com.bca.byc.model.attribute.AttrIdentificable;
+import com.bca.byc.entity.impl.SecureIdentifiable;
+import com.bca.byc.entity.impl.AttrIdentificable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

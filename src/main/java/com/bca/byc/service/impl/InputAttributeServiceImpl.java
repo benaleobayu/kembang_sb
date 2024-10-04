@@ -6,7 +6,7 @@ import com.bca.byc.entity.Branch;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.model.AttributeNameResponse;
-import com.bca.byc.model.attribute.AttrIdentificable;
+import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.BusinessCategoryRepository;

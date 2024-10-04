@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserAuthService {
 
+    ResponseEntity<?> authenticate(String deviceId, String version, LoginRequestDTO dto, HttpServletRequest request);
+
     void saveUser(AppRegisterRequest dto) throws MessagingException;
 
     boolean validateOtp(String email, String otp);
@@ -18,12 +20,9 @@ public interface UserAuthService {
 
     void sendRegistrationOtp(String identity, String email) throws MessagingException;
 
-
     // generate
+
     void generateAndSendOtp(String identity, AppUser user) throws MessagingException;
 
-
     void setNewPassword(String email, UserSetPasswordRequest dto);
-
-    ResponseEntity<?> authenticate(String deviceId, String version, LoginRequestDTO dto, HttpServletRequest request);
 }

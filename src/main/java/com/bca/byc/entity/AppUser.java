@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -54,6 +55,10 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "app_user_attribute_id", referencedColumnName = "id")
     private AppUserAttribute appUserAttribute;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserManagementLog> log = new ArrayList<>();
 
     // Relasi OneToOne dengan AppUserNotification
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,4 +1,4 @@
-package com.bca.byc.entity;
+package com.bca.byc.entity.impl;
 
 public interface SecureIdentifiable {
 

@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.validator.annotation.MemberTypeEnum;

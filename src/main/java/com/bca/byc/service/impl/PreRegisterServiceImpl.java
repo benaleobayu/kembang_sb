@@ -8,7 +8,7 @@ import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PreRegisterCreateUpdateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.repository.PreRegisterLogRepository;
+import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.RejectRequest;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.logging.Handler;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 public class PreRegisterServiceImpl implements PreRegisterService {
 
     private PreRegisterRepository repository;
-    private PreRegisterLogRepository logRepository;
+    private LogUserManagementRepository logRepository;
     private PreRegisterDTOConverter converter;
 
     private AppAdminService adminService;

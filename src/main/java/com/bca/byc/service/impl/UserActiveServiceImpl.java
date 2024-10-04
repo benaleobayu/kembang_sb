@@ -2,20 +2,28 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
+import com.bca.byc.entity.UserManagementLog;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
+import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
+import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
+import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.naming.Context;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,9 +48,13 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Value("${app.base.url}")
     private String baseUrl;
 
+    private final AdminRepository adminRepository;
+
     private UserActiveRepository repository;
     private UserActiveElasticRepository elasticRepository;
     private UserActiveDTOConverter converter;
+
+    private final LogUserManagementRepository logUserManagementRepository;
 
     @Override
     public UserManagementDetailResponse findBySecureId(String id) throws BadRequestException {
@@ -121,14 +134,17 @@ public class UserActiveServiceImpl implements UserActiveService {
 
     @Override
     @Transactional
-    public void suspendData(String id) throws BadRequestException {
-        AppUser data = getEntityBySecureId(id, repository, "user not found");
-        AppUserAttribute attribute = data.getAppUserAttribute();
+    public void suspendData(String id, @Valid LogUserManagementRequest dto) throws BadRequestException {
+        AppUser user = getEntityBySecureId(id, repository, "user not found");
+        String AdminEmail = ContextPrincipal.getPrincipal();
+        AppAdmin admin = adminRepository.findByEmail(AdminEmail).orElseThrow(() -> new BadRequestException("admin not found"));
+        AppUserAttribute attribute = user.getAppUserAttribute();
         // toggle
         attribute.setIsSuspended(!attribute.getIsSuspended().equals(true));
         // save
-        data.setAppUserAttribute(attribute);
-        repository.save(data);
+        user.setAppUserAttribute(attribute);
+        LogUserManagement(user,dto, admin);
+        repository.save(user);
     }
 
     @Override
@@ -168,6 +184,19 @@ public class UserActiveServiceImpl implements UserActiveService {
                 pageable,
                 userList.getTotalElements()
         );
+    }
+
+    // -------------------------------------------------------------------
+
+    private void LogUserManagement(AppUser data, LogUserManagementRequest dto, AppAdmin admin) {
+        UserManagementLog log = new UserManagementLog();
+        log.setType(dto.getType());
+        log.setUser(data);
+        log.setMessage(dto.getReason());
+        log.setStatus(LogStatus.SUSPENDED);
+        log.setUpdatedBy(admin);
+
+        logUserManagementRepository.save(log);
     }
 
 }
