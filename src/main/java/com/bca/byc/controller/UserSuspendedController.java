@@ -68,9 +68,9 @@ public class UserSuspendedController {
     }
 
     @Operation(summary = "Delete user suspended by id", description = "Delete user suspended by id")
-    @PatchMapping("/{id}/delete")
+    @PutMapping("/{id}/delete")
     public ResponseEntity<?> delete(@PathVariable("id") String id) {
-        log.info("PATCH " + urlRoute + "/{id}/delete endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/delete endpoint hit");
         try {
             service.makeUserIsDeletedTrue(id);
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully deleted user", null));
@@ -92,9 +92,9 @@ public class UserSuspendedController {
     }
 
     @Operation(summary = "Restore user suspended by id", description = "Restore user suspended by id")
-    @PatchMapping("/{id}/restore")
+    @PutMapping("/{id}/restore")
     public ResponseEntity<?> restore(@PathVariable("id") String id) {
-        log.info("PATCH " + urlRoute + "/{id}/restore endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/restore endpoint hit");
         try {
             service.makeUserIsSuspendedFalse(id);
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully restored user", null));

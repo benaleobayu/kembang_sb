@@ -133,9 +133,9 @@ public class UserPreRegisterController {
     // patch approve
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Approve Pre-Register User", description = "Approve Pre-Register User")
-    @PatchMapping("{id}/approve")
+    @PutMapping("{id}/approve")
     public ResponseEntity<ApiResponse> approve(@PathVariable("id") String id, @AuthenticationPrincipal UserDetails userDetails) {
-        log.info("PATCH " + urlRoute + "/{id}/approve endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/approve endpoint hit");
         try {
             String email = userDetails.getUsername();
             service.approveData(id, email);
@@ -148,12 +148,12 @@ public class UserPreRegisterController {
     // patch approve
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Reject Pre-Register User", description = "Reject Pre-Register User")
-    @PatchMapping("{id}/reject")
+    @PutMapping("{id}/reject")
     public ResponseEntity<ApiResponse> reject(
             @PathVariable("id") String id,
             @RequestBody RejectRequest reason,
             @AuthenticationPrincipal UserDetails userDetails) {
-        log.info("PATCH " + urlRoute + "/{id}/reject endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/reject endpoint hit");
         try {
             String email = userDetails.getUsername();
             service.rejectData(id, reason, email);

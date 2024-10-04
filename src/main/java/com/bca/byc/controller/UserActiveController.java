@@ -101,9 +101,9 @@ public class UserActiveController {
         }
     }
 
-    @PatchMapping("{id}/suspend")
+    @PutMapping("{id}/suspend")
     public ResponseEntity<ApiResponse> suspend(@PathVariable("id") String id) {
-        log.info("PATCH " + urlRoute + "/{id}/suspend endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/suspend endpoint hit");
         try {
             service.suspendData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully suspended user active"));

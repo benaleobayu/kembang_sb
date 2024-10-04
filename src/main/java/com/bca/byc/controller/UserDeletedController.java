@@ -68,9 +68,9 @@ public class UserDeletedController {
     }
 
     @Operation(summary = "Restore user deleted by id", description = "Restore user deleted by id")
-    @PatchMapping("/{id}/restore")
+    @PutMapping("/{id}/restore")
     public ResponseEntity<?> restore(@PathVariable("id") Long id) {
-        log.info("PATCH " + urlRoute + "/{id}/restore endpoint hit");
+        log.info("PUT " + urlRoute + "/{id}/restore endpoint hit");
         try {
             service.makeUserIsDeletedFalse(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully restored user", null));
