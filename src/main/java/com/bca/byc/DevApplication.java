@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,22 +32,21 @@ public class DevApplication {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-
         corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "https://cms-byc2024.kelolain.id",
                 "https://admin-byc2024.kelolain.id",
-                "http://localhost:4200",
-                "http://localhost"
+                "http://localhost:4200"
         ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
 
-        return source;
+        return new CorsFilter(source);
     }
 
 }

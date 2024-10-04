@@ -21,7 +21,7 @@ public class CorsConfig {
 //                "http://localhost:4200"
 //        ));
 //        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-//        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+//        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 //        corsConfiguration.setAllowCredentials(true);
 //
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
