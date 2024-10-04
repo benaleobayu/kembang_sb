@@ -43,6 +43,7 @@ public class RoleDTOConverter {
         dto.setName(data.getName());
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
+        dto.setStatus(data.getIsActive());
         converter.CmsIDTimeStampResponse(dto, data);
 
         // return the DTO
@@ -62,6 +63,7 @@ public class RoleDTOConverter {
 
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
+        dto.setStatus(data.getIsActive());
 
         // return the DTO
         return dto;
