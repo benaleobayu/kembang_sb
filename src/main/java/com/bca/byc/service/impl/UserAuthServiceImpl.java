@@ -2,21 +2,34 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.Otp;
+import com.bca.byc.enums.ActionType;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppRegisterRequest;
+import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
+import com.bca.byc.response.ApiDataResponse;
+import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.DataAccessResponse;
+import com.bca.byc.security.util.JWTTokenFactory;
+import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.UserAuthService;
 import com.bca.byc.service.email.EmailService;
+import com.bca.byc.service.util.ClientInfoService;
 import com.bca.byc.util.OtpUtil;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +50,43 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final OtpRepository otpRepository;
 
     private final TestAutocheckRepository testAutocheckRepository;
-
+    private final AuthenticationManager authenticationManager;
+    private final AppUserService appUserService;
+    private final JWTTokenFactory jwtUtil;
+    private final LogDeviceRepository logDeviceRepository;
+    private final ClientInfoService clientInfoService;
     private PasswordEncoder passwordEncoder;
+
+    @Override
+    public ResponseEntity<?> authenticate(String deviceId, String version, LoginRequestDTO dto, HttpServletRequest request) {
+        AppUser user = appUserService.findByEmail(dto.email());
+
+        if (user.getAppUserAttribute().getIsSuspended()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Your account has been suspended. Please contact the administrator."));
+        }
+
+        if (user.getAppUserAttribute().getIsDeleted()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Your account has been deleted. Please contact the administrator."));
+        }
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(StringUtils.lowerCase(dto.email()), dto.password())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again."));
+        }
+
+        final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
+        final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), null).getToken();
+        final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
+
+        final String ipAddress = clientInfoService.getClientIp(request);
+
+        logDeviceActivity(dto.email(), deviceId, version, ipAddress);
+
+        return ResponseEntity.ok().body(new ApiDataResponse<>(true, "success", dataAccess));
+    }
 
     @Override
     public void saveUser(AppRegisterRequest dto) throws MessagingException {
@@ -182,8 +230,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
                 // Generate and send new OTP
                 generateAndSendOtp(identity, user);
-            }
-            else {
+            } else {
                 throw new MessagingException("User not found or not eligible for OTP.");
             }
         } else {
@@ -244,5 +291,18 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (dataCheck != null) {
             testAutocheckRepository.delete(dataCheck);
         }
+    }
+
+
+    // --------------------------------------------------------------------------
+    private void logDeviceActivity(String email, String deviceId, String version, String ipAddress) {
+        AppUser appUser = appUserService.findByEmail(email);
+        LogDevice logDevice = new LogDevice();
+        logDevice.setUser(appUser);
+        logDevice.setDeviceId(deviceId);
+        logDevice.setVersion(version);
+        logDevice.setIpAddress(ipAddress);
+        logDevice.setActionType(ActionType.LOGIN);
+        logDeviceRepository.save(logDevice);
     }
 }

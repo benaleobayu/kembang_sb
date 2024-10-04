@@ -62,30 +62,7 @@ public class AppAuthController {
             @RequestBody LoginRequestDTO dto,
             HttpServletRequest request) {
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(StringUtils.lowerCase(dto.email()), dto.password())
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again."));
-        }
-
-        final UserDetails userDetails = appUserService.loadUserByUsername(dto.email());
-        final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), null).getToken();
-        final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
-
-        final String ipAddress = clientInfoService.getClientIp(request);
-
-        AppUser appUser = appUserService.findByEmail(dto.email());
-        LogDevice logDevice = new LogDevice();
-        logDevice.setUser(appUser);
-        logDevice.setDeviceId(deviceId);
-        logDevice.setVersion(version);
-        logDevice.setIpAddress(ipAddress);
-        logDevice.setActionType(ActionType.LOGIN);
-        logDeviceRepository.save(logDevice);
-
-        return ResponseEntity.ok().body(new ApiDataResponse<>(true, "success", dataAccess));
+        return authService.authenticate(deviceId, version, dto, request);
     }
 
     @PostMapping("/register")

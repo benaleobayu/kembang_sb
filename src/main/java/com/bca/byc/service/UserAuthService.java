@@ -2,8 +2,11 @@ package com.bca.byc.service;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.AppRegisterRequest;
+import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserSetPasswordRequest;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 
 public interface UserAuthService {
 
@@ -21,4 +24,6 @@ public interface UserAuthService {
 
 
     void setNewPassword(String email, UserSetPasswordRequest dto);
+
+    ResponseEntity<?> authenticate(String deviceId, String version, LoginRequestDTO dto, HttpServletRequest request);
 }
