@@ -39,6 +39,7 @@ public class DevApplication {
                 "http://localhost:4200",
                 "http://localhost"
         ));
+
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
         corsConfiguration.setAllowCredentials(true);
@@ -48,5 +49,6 @@ public class DevApplication {
 
         return source;
     }
+
 
 }

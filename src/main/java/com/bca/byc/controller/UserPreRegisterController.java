@@ -40,7 +40,6 @@ import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
 @RequestMapping(urlRoute)
 @Tag(name = "User Pre-Register API")
 @SecurityRequirement(name = "Authorization")
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.HEAD, RequestMethod.OPTIONS})
 public class UserPreRegisterController {
 
     static final String urlRoute = "/cms/v1/um/pre-register";
