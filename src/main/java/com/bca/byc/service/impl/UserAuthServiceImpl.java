@@ -169,14 +169,21 @@ public class UserAuthServiceImpl implements UserAuthService {
             AppUser user = userOptional.get();
             StatusType status = user.getAppUserDetail().getStatus();
 
-            if (identity.equals("reset") && (status.equals(StatusType.PRE_ACTIVATED) || status.equals(StatusType.ACTIVATED)) || identity.equals("resend")) {
+            if (identity.equals("reset") && (status.equals(StatusType.PRE_ACTIVATED) || status.equals(StatusType.ACTIVATED))) {
 
                 // Invalidate previous OTPs
                 otpRepository.invalidateOtpsForUser(user);
 
                 // Generate and send new OTP
                 generateAndSendOtp(identity, user);
-            } else {
+            } else if (identity.equals("resend") && status.equals(StatusType.APPROVED) || status.equals(StatusType.VERIFIED)) {
+                // Invalidate previous OTPs
+                otpRepository.invalidateOtpsForUser(user);
+
+                // Generate and send new OTP
+                generateAndSendOtp(identity, user);
+            }
+            else {
                 throw new MessagingException("User not found or not eligible for OTP.");
             }
         } else {
