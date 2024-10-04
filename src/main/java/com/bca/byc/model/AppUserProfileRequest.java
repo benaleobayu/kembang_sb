@@ -22,7 +22,7 @@ public class AppUserProfileRequest {
 
         private String otherExpect;
 
-        private OnboardingCreateRequest.OnboardingExpectCategoryResponse.Items items;
+        private Items items;
 
         @Data
         public static class Items {
