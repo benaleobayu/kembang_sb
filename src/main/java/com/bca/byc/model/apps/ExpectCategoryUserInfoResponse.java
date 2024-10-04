@@ -6,12 +6,15 @@ import java.util.List;
 
 @Data
 public class ExpectCategoryUserInfoResponse {
-    private String categoryId;
+
+    private String expectCategoryId;
+
     private String otherExpect;
-    private ExpectItemUserInfoResponse items; //<item>
+
+    private Items items;
 
     @Data
-    public static class ExpectItemUserInfoResponse {
+    public static class Items {
         private List<String> ids;
         private String otherExpectItem;
     }
