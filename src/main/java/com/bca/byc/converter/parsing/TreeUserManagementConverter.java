@@ -71,6 +71,7 @@ public class TreeUserManagementConverter {
         dto.setBusinesses(businesses.stream().map(business -> {
             BusinessListResponse businessResponse = new BusinessListResponse();
             businessResponse.setId(business.getSecureId());
+            businessResponse.setIndex(business.getId());
             businessResponse.setName(business.getName());
             businessResponse.setAddress(business.getAddress());
             businessResponse.setLineOfBusiness(business.getBusinessCategories().stream().findFirst().get().getBusinessCategoryParent().getName());
@@ -104,7 +105,8 @@ public class TreeUserManagementConverter {
                 .filter(ue -> ue.getExpectItem() != null)
                 .map(ue -> {
                     ExpectCategoryList expectCategoryDetailResponse = new ExpectCategoryList();
-                    expectCategoryDetailResponse.setId(ue.getExpectCategory().getId());
+                    expectCategoryDetailResponse.setId(ue.getExpectCategory().getSecureId());
+                    expectCategoryDetailResponse.setIndex(ue.getExpectCategory().getOrders());
                     expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
                     expectCategoryDetailResponse.setSubCategories(ue.getExpectCategory().getExpectItems().stream()
                             .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))

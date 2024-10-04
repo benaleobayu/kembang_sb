@@ -8,7 +8,8 @@ import java.util.List;
 // inner
 @Data
 public  class ExpectCategoryList {
-    private Long id;
+    private String id;
+    private Integer index;
     private String name;
     private List<String> otherValue = new ArrayList<>();
     private List<SubExpectCategoryList> subCategories = new ArrayList<>();

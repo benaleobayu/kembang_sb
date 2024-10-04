@@ -37,7 +37,7 @@ public class ExpectCategory extends AbstractBaseEntityCms implements SecureIdent
     private String description;
 
     @Column(name = "is_other", columnDefinition = "boolean default false")
-    private Boolean isOther;
+    private Boolean isOther = false;
 
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;
