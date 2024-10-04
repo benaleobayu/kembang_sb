@@ -12,21 +12,21 @@ import java.util.Collections;
 @Configuration
 public class CorsConfig {
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "https://cms-byc2024.kelolain.id",
-                "https://admin-byc2024.kelolain.id",
-                "http://localhost:4200"
-        ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-        corsConfiguration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-
-        return new CorsFilter(source);
-    }
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(Arrays.asList(
+//                "https://cms-byc2024.kelolain.id",
+//                "https://admin-byc2024.kelolain.id",
+//                "http://localhost:4200"
+//        ));
+//        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+//        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+//        corsConfiguration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//
+//        return new CorsFilter(source);
+//    }
 }
