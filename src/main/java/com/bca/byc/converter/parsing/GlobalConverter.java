@@ -32,6 +32,14 @@ public class GlobalConverter {
         return user.getSecureId();
     }
 
+    public static AppUser getUserEntity(
+            AppUserRepository userRepository
+    ) {
+        String email = ContextPrincipal.getPrincipal();
+        return HandlerRepository.getUserByEmail(email, userRepository, "User not found");
+
+    }
+
     public static String getAvatarUser (
             String avatar,
             String baseUrl
