@@ -23,14 +23,12 @@ public class TreeUserManagementConverter {
         dto.setIndex(data.getId());
         dto.setBranchCode(data.getAppUserDetail().getBranchCode() != null ? data.getAppUserDetail().getBranchCode().getCode() : null);
         dto.setName(data.getAppUserDetail().getName());
-        dto.setBirthDate(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
-                Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) :
-                Formatter.formatLocalDate(data.getAppUserDetail().getParentBirthdate()));
+        dto.setBirthDate(data.getAppUserDetail().getMemberBirthdate() != null ?
+                Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) : null);
         dto.setEmail(data.getEmail().toLowerCase());
         dto.setPhone(data.getAppUserDetail().getPhone());
-        dto.setMemberCin(data.getAppUserDetail().getUserAs() == null || data.getAppUserDetail().getUserAs().equalsIgnoreCase("member") ?
-                data.getAppUserDetail().getMemberCin() :
-                data.getAppUserDetail().getParentCin());
+        dto.setMemberCin(data.getAppUserDetail().getMemberCin() != null ?
+                data.getAppUserDetail().getMemberCin() : null);
         dto.setCreatedAt(data.getAppUserDetail().getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()) : null);
         dto.setUpdatedAt(data.getAppUserDetail().getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()) : null);
         dto.setApproveAt(data.getAppUserDetail().getApprovedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getApprovedAt()) : null);
