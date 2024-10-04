@@ -125,9 +125,9 @@ public class AppUserDTOConverter {
             ExpectCategoryUserInfoResponse categoryResponse = expectCategoryMap.get(categoryId);
             if (categoryResponse == null) {
                 categoryResponse = new ExpectCategoryUserInfoResponse();
-                categoryResponse.setCategoryId(String.valueOf(categoryId));
+                categoryResponse.setExpectCategoryId(String.valueOf(categoryId));
                 categoryResponse.setOtherExpect(ec.getOtherExpect());
-                categoryResponse.setItems(new ExpectCategoryUserInfoResponse.ExpectItemUserInfoResponse());
+                categoryResponse.setItems(new ExpectCategoryUserInfoResponse.Items());
                 categoryResponse.getItems().setIds(new ArrayList<>());
                 expectCategoryMap.put(categoryId, categoryResponse);
             }
