@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CorsController {
-    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
-    public ResponseEntity<Void> handleOptions() {
-        return ResponseEntity.ok().build();
-    }
+//    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+//    public ResponseEntity<Void> handleOptions() {
+//        return ResponseEntity.ok().build();
+//    }
 }
