@@ -13,6 +13,8 @@ public interface PostService {
 
 //    PostDetailResponse findById(Long id) throws Exception;
 
+    ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category);
+
     PostDetailResponse findBySecureId(String secureId);
 
     void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException;
@@ -20,8 +22,6 @@ public interface PostService {
     void update(String secureId, PostCreateUpdateRequest post) throws Exception;
 
     void deleteData(String secureId) throws Exception;
-
-    ResultPageResponseDTO<PostHomeResponse> listData(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
 //    String uploadContent(MultipartFile fileName) throws IOException;
 //
