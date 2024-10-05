@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    // ------------- show list post home -------------
     @Query("SELECT p FROM Post p " +
             "WHERE " +
             "p.user.id IN " +
@@ -21,6 +22,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LOWER(p.description) LIKE LOWER(:keyword) " +
             "ORDER BY function('RANDOM') ")
     Page<Post> findRandomPosts(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Post p " +
+            "WHERE p.user.id IN " +
+            "(SELECT f.id FROM AppUser u JOIN u.follows f WHERE u.id = :userId) AND " +
+            "LOWER(p.description) LIKE LOWER(:keyword) " +
+            "ORDER BY p.createdAt DESC")
+    Page<Post> findPostByFollowingUsers(Long userId, String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Post p " +
+            "WHERE p.user.appUserAttribute.isOfficial = true AND " +
+            "LOWER(p.description) LIKE LOWER(:keyword) " +
+            "ORDER BY p.createdAt DESC")
+    Page<Post> findPostByOfficialUsers(String keyword, Pageable pageable);
+
+    // ------------- show list post home -------------
+
 
     @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
             "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
@@ -43,4 +60,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsBySecureId(String secureId);
 
     void deleteBySecureId(String secureId);
+
 }
