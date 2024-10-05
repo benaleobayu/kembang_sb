@@ -6,9 +6,7 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
-import com.bca.byc.repository.PostCategoryRepository;
-import com.bca.byc.repository.PostLocationRepository;
-import com.bca.byc.repository.TagRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -29,11 +27,13 @@ public class PostDTOConverter {
     private final TagRepository tagRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostCategoryRepository postCategoryRepository;
+    private final CommentRepository commentRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
     @Value("${app.base.url}")
     private String baseUrl;
 
     // for get data
-    public PostHomeResponse convertToListResponse(Post data) {
+    public PostHomeResponse convertToListResponse(Post data, Long userId) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
         TreePostConverter converter = new TreePostConverter(baseUrl);
@@ -50,13 +50,13 @@ public class PostDTOConverter {
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
 
-//        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
-//        boolean isLiked = false;
-//        if (data.getLikeDislikes() != null && appUser.getId() != null) {
-//            isLiked = data.getLikeDislikes().stream()
-//                    .anyMatch(l -> l.getUser() != null && appUser.getId().equals(l.getUser().getId()));
-//        }
-//        dto.setIsLiked(isLiked); // TODO error when isLiked is uncomment
+        // Check if the post is liked by the user
+        boolean isLiked = likeDislikeRepository.findByPostIdAndUserIdAndIsLikeTrue(data.getId(), userId).isPresent();
+        dto.setIsLiked(isLiked);
+
+        dto.setLikeCount(likeDislikeRepository.countByPostIdAndIsLikeTrue(data.getId()));
+        dto.setCommentCount(commentRepository.countByPostId(data.getId()));
+
         // return
         return dto;
     }
