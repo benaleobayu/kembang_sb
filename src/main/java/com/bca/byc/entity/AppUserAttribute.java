@@ -54,4 +54,10 @@ public class AppUserAttribute {
     @Column(name = "recommended_at")
     private LocalDateTime recommendedAt;
 
+    @Column(name = "is_official", columnDefinition = "boolean default false")
+    private Boolean isOfficial = false;
+
+    @Column(name = "official_at")
+    private LocalDateTime officialAt;
+
 }
