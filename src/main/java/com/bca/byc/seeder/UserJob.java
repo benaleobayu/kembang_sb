@@ -76,6 +76,8 @@ public class UserJob {
                 faker.random().nextBoolean(),
                 null,
                 faker.random().nextBoolean(),
+                null,
+                faker.random().nextBoolean(),
                 null
         );
         AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
