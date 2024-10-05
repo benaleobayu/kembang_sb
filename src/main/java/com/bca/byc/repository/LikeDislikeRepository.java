@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface LikeDislikeRepository extends JpaRepository<LikeDislike, Long> {
 
     LikeDislike findByPostAndUser(Post post, AppUser user);
@@ -17,4 +19,8 @@ public interface LikeDislikeRepository extends JpaRepository<LikeDislike, Long> 
 
     @Query("SELECT ld FROM LikeDislike ld WHERE ld.user.secureId = :userId")
     Page<LikeDislike> findLikesByUserId(@Param("userId") String userId, Pageable pageable);
+
+    Optional<LikeDislike> findByPostIdAndUserIdAndIsLikeTrue(Long id, Long userId);
+
+    Integer countByPostIdAndIsLikeTrue(Long id);
 }
