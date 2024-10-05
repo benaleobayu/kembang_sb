@@ -37,4 +37,10 @@ public class PostHomeResponse {
     private Boolean isLiked;
     // ------- added function -------
 
+    // ------- count -------
+    private Integer likeCount;
+
+    private Integer commentCount;
+    // ------- count -------
+
 }
