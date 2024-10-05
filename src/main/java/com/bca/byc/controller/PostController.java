@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -52,21 +53,21 @@ public class PostController {
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
-    @Operation(summary = "Get list post", description = "Get list post")
+    @Operation(summary = "Get list post home", description = "Get list post home")
     @GetMapping
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listFollowUser(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostHome(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @Schema(example = "top-picks", description = "top-picks | following | discover")
+            @RequestParam(name = "category", required = false, defaultValue = "top-picks") String category) {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listData(email, pages, limit, sortBy, direction, keyword)));
-
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(email, pages, limit, sortBy, direction, keyword, category)));
     }
-
 
     @Operation(summary = "Create Post", description = "Create Post")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
