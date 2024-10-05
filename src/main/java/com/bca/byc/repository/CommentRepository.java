@@ -31,5 +31,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "WHERE p.user.secureId = :userId")
     Page<Object[]> findAllActivityCommentByUser(@Param("userId") String userId, Pageable pageable);
 
-
+    Integer countByPostId(Long id);
 }
