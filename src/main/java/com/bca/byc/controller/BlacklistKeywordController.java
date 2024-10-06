@@ -12,12 +12,14 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.BlacklistKeywordService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Slf4j
@@ -86,5 +88,15 @@ public class BlacklistKeywordController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @GetMapping("/export")
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        log.info("GET " + urlRoute + "/export endpoint hit");
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=blacklist_keyword.xls";
+        response.setHeader(headerKey, headerValue);
+        service.exportExcel(response);
     }
 }

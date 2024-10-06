@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
+import static com.bca.byc.converter.dictionary.ExportHelper.createRow;
+
 @Service
 @AllArgsConstructor
 public class UserManagementExportServiceImpl implements UserManagementExportService {
@@ -179,17 +181,4 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         ops.close();
     }
 
-    private static CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        headerStyle.setFont(font);
-        return headerStyle;
-    }
-
-    private static void createRow(HSSFSheet sheet, HSSFRow row, int colIndex, String rowName) {
-        HSSFCell cell = row.createCell(colIndex);
-        cell.setCellValue(rowName);
-        cell.setCellStyle(createHeaderStyle(sheet.getWorkbook()));
-    }
 }
