@@ -6,12 +6,9 @@ import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.apps.*;
-import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.util.helper.Formatter;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TreeUserManagementConverter {
 
@@ -60,68 +57,17 @@ public class TreeUserManagementConverter {
             branchCodeResponse.setId(branch.getSecureId());
             branchCodeResponse.setName(branch.getName());
         }
-
         dto.setBranchCode(branchCodeResponse);
-
         dto.setPicName(data.getAppUserDetail().getPicName());
 
+        TreeUserResponse treeUserResponse = new TreeUserResponse();
+
+        // business
         List<Business> businesses = data.getBusinesses();
-        dto.setBusinesses(businesses.stream().map(business -> {
-            BusinessListResponse businessResponse = new BusinessListResponse();
-            businessResponse.setId(business.getSecureId());
-            businessResponse.setIndex(business.getId());
-            businessResponse.setName(business.getName());
-            businessResponse.setAddress(business.getAddress());
-            businessResponse.setLineOfBusiness(business.getBusinessCategories().stream().findFirst().get().getBusinessCategoryParent().getName());
-            businessResponse.setIsPrimary(business.getIsPrimary());
+        dto.setBusinesses(treeUserResponse.convertListBusinesses(businesses));
 
-            List<BusinessListResponse.LocationListResponse> locationListResponses = business.getBusinessHasLocations().stream()
-                    .map(bhl -> {
-                        BusinessListResponse.LocationListResponse locationListResponse = new BusinessListResponse.LocationListResponse();
-                        locationListResponse.setId(bhl.getLocation().getSecureId());
-                        locationListResponse.setIndex(bhl.getLocation().getId());
-                        locationListResponse.setName(bhl.getLocation().getName());
-                        return locationListResponse;
-                    })
-                    .collect(Collectors.toList());
-            businessResponse.setLocations(locationListResponses);
-
-            List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = business.getBusinessCategories().stream()
-                    .map(bc -> {
-                        BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
-                        businessCategoryResponse.setId(bc.getBusinessCategoryChild().getSecureId());
-                        businessCategoryResponse.setIndex(bc.getBusinessCategoryChild().getId());
-                        businessCategoryResponse.setName(bc.getBusinessCategoryChild().getName());
-                        return businessCategoryResponse;
-                    }).collect(Collectors.toList());
-            businessResponse.setSubCategories(businessCategoryResponses);
-
-            return businessResponse;
-        }).collect(Collectors.toList()));
-
-        List<ExpectCategoryList> expectCategories = data.getUserHasExpects().stream()
-                .filter(ue -> ue.getExpectItem() != null)
-                .map(ue -> {
-                    ExpectCategoryList expectCategoryDetailResponse = new ExpectCategoryList();
-                    expectCategoryDetailResponse.setId(ue.getExpectCategory().getSecureId());
-                    expectCategoryDetailResponse.setIndex(ue.getExpectCategory().getOrders());
-                    expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
-                    List<ExpectItem> expectItems = ue.getExpectCategory().getExpectItems().stream()
-                            .sorted(Comparator.comparing(ExpectItem::getOrders))
-                            .limit(3)
-                            .collect(Collectors.toList());
-                    expectCategoryDetailResponse.setSubCategories(expectItems.stream()
-                            .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))
-                            .map(ei -> {
-                                        SubExpectCategoryList expectItem = new SubExpectCategoryList();
-                                        expectItem.setId(ei.getId());
-                                        expectItem.setName(ei.getName());
-                                        return expectItem;
-                                    }
-                            ).collect(Collectors.toList()));
-                    return expectCategoryDetailResponse;
-                }).collect(Collectors.toList());
-
+        // expect
+        List<ExpectCategoryList> expectCategories = treeUserResponse.convertExpectCategories(data.getUserHasExpects());
         dto.setExpectCategory(expectCategories);
 
         dto.setOrders(data.getAppUserDetail().getOrders());
