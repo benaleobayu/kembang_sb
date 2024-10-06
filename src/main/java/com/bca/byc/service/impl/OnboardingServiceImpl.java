@@ -5,6 +5,8 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.BusinessTreeRequest;
+import com.bca.byc.model.ExpectCategoryTreeRequest;
 import com.bca.byc.model.OnboardingCreateRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.repository.*;
@@ -57,7 +59,7 @@ public class OnboardingServiceImpl implements OnboardingService {
 
             // Create Businesses
             boolean isFirstBusiness = true;
-            for (OnboardingCreateRequest.OnboardingBusinessRequest businessDto : dto.getBusinesses()) {
+            for (BusinessTreeRequest businessDto : dto.getBusinesses()) {
                 Business business = new Business();
                 business.setName(businessDto.getBusinessName());
                 business.setAddress(businessDto.getBusinessAddress());
@@ -124,7 +126,7 @@ public class OnboardingServiceImpl implements OnboardingService {
             String expectCategoryIdForSpecialCase = specialExpectCategory.getSecureId();
 
             // Create Expect Categories
-            for (OnboardingCreateRequest.OnboardingExpectCategoryResponse expectDto : dto.getExpectCategories()) {
+            for (ExpectCategoryTreeRequest expectDto : dto.getExpectCategories()) {
                 ExpectCategory expectCategory = HandlerRepository.getIdBySecureId(
                         expectDto.getExpectCategoryId(),
                         expectCategoryRepository::findBySecureId,
