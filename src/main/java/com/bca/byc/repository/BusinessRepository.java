@@ -2,7 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
-
+import com.bca.byc.model.BusinessCatalogCountsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,4 +37,13 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "WHERE (LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
             "b.user.id = :id")
     Page<Business> findBusinessByKeyword(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
+
+
+    @Query("SELECT new com.bca.byc.model.BusinessCatalogCountsResponse(" +
+            "b.secureId, b.id, b.name, COUNT(bc)) " +
+            "FROM Business b " +
+            "JOIN BusinessCatalog bc ON bc.business.id = b.id " +
+            "WHERE b.user.id = :id " +
+            "GROUP BY b")
+    List<BusinessCatalogCountsResponse> getBusinessCatalogsCount(Long id);
 }

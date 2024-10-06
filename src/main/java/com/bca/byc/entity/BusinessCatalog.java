@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.SecureIdentifiable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "business_catalog")
-public class BusinessCatalog  extends AbstractBaseEntity {
+public class BusinessCatalog  extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +33,13 @@ public class BusinessCatalog  extends AbstractBaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;  // Description of the catalog entry
 
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getActive() {
+        return super.getIsActive();
+    }
 }
