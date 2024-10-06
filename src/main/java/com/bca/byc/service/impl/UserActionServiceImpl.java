@@ -1,13 +1,15 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
+import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import static com.bca.byc.repository.handler.HandlerRepository.*;
 
@@ -47,28 +49,59 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void likeDislikePost(@PathVariable("commentId") String postId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
-        Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
+    public TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto) {
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
+        LikeDislike existingLikeDislike = null;
 
-        handleLikeDislike(user, post, null, null, isLike);
+        if ("POST".equals(dto.getType())) {
+            Post post = postRepository.findBySecureId(dto.getTargetId())
+                    .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
+            existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
+        } else if ("COMMENT".equals(dto.getType())) {
+            Comment comment = commentRepository.findBySecureId(dto.getTargetId())
+                    .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
+            existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
+        } else if ("COMMENT_REPLY".equals(dto.getType())) {
+            CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
+                    .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
+            existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, user);
+        }
+
+        // Logika toggle
+        if (existingLikeDislike != null) {
+            likeDislikeRepository.delete(existingLikeDislike); // Jika sudah ada, hapus
+        } else {
+            LikeDislike newLikeDislike = new LikeDislike();
+            TotalCountResponse message = new TotalCountResponse();
+            if ("POST".equals(dto.getType())) {
+                Post post = postRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
+                newLikeDislike.setPost(post);
+                newLikeDislike.setUser(user);
+                likeDislikeRepository.save(newLikeDislike);
+                message.setTotal(likeDislikeRepository.countByPostId(post.getId()));
+            } else if ("COMMENT".equals(dto.getType())) {
+                Comment comment = commentRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
+                newLikeDislike.setComment(comment);
+                newLikeDislike.setUser(user);
+                likeDislikeRepository.save(newLikeDislike);
+                message.setTotal(likeDislikeRepository.countByCommentId(comment.getId()));
+            } else if ("COMMENT_REPLY".equals(dto.getType())) {
+                CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
+                newLikeDislike.setCommentReply(commentReply);
+                newLikeDislike.setUser(user);
+                likeDislikeRepository.save(newLikeDislike);
+                message.setTotal(likeDislikeRepository.countByCommentReplyId(commentReply.getId()));
+            }
+            return message;
+        }
+
+        return null;
     }
 
-    @Override
-    public void likeDislikeComment(@PathVariable("commentId") String commentId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
-        Comment comment = getEntityBySecureId(commentId, commentRepository, "Comment not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found");
 
-        handleLikeDislike(user, null, comment, null, isLike);
-    }
-
-    @Override
-    public void likeDislikeCommentReply(@PathVariable("commentId") String commentId, String email, @PathVariable("isLike") SetLikeDislikeRequest isLike) {
-        CommentReply comment = getEntityBySecureId(commentId, commentReplyRepository, "Comment not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found");
-
-        handleLikeDislike(user, null, null, comment, isLike);
-    }
 
     @Override
     public String saveUnsavePost(String postId, String email) {
@@ -85,41 +118,6 @@ public class UserActionServiceImpl implements UserActionService {
             newSavedPost.setUser(user);
             userHasSavedPostRepository.save(newSavedPost);
             return "success save post";
-        }
-    }
-
-
-    // --------------------------------------------------------------------
-    private void handleLikeDislike(AppUser user, Post post, Comment comment, CommentReply commentReply, SetLikeDislikeRequest isLike) {
-        LikeDislike existingLikeDislike = null;
-
-        if (post != null) {
-            existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
-        } else if (comment != null) {
-            existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
-        } else if (commentReply != null) {
-            existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, user);
-        }
-
-        if (existingLikeDislike != null) {
-            if (existingLikeDislike.getIsLike() == isLike.getIsLike()) {
-                likeDislikeRepository.delete(existingLikeDislike);
-            } else {
-                existingLikeDislike.setIsLike(isLike.getIsLike());
-                likeDislikeRepository.save(existingLikeDislike);
-            }
-        } else {
-            LikeDislike newLikeDislike = new LikeDislike();
-            newLikeDislike.setIsLike(isLike.getIsLike());
-            if (post != null) {
-                newLikeDislike.setPost(post);
-            } else if (comment != null) {
-                newLikeDislike.setComment(comment);
-            } else if (commentReply != null) {
-                newLikeDislike.setCommentReply(commentReply);
-            }
-            newLikeDislike.setUser(user);
-            likeDislikeRepository.save(newLikeDislike);
         }
     }
 

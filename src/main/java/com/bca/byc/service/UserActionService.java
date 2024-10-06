@@ -1,6 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
+import com.bca.byc.model.attribute.TotalCountResponse;
 
 public interface UserActionService {
 
@@ -8,11 +9,7 @@ public interface UserActionService {
 
     void unfollowUser(String userId, String name);
 
-    void likeDislikePost(String postId, String email, SetLikeDislikeRequest isLike);
-
-    void likeDislikeComment(String commentId, String email, SetLikeDislikeRequest isLike);
-
-    void likeDislikeCommentReply(String commentId, String email, SetLikeDislikeRequest isLike);
+    TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto);
 
     String saveUnsavePost(String postId, String email);
 }
