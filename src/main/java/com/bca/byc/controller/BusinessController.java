@@ -29,8 +29,6 @@ public class BusinessController {
     static final String urlRoute = "/api/v1/business";
 
     private final BusinessService businessService;
-    private final AppUserServiceImpl appUserService;
-    private final BusinessCategoryServiceImpl businessCategoryService;
 
     @Operation(summary = "Get all businesses")
     @GetMapping("/list")
@@ -47,9 +45,9 @@ public class BusinessController {
 
     @Operation(summary = "Get details of a business")
     @GetMapping("/{businessId}")
-    public ResponseEntity<?> getBusinessDetail(@PathVariable String secureId) {
+    public ResponseEntity<?> getBusinessDetail(@PathVariable("businessId") String businessId) {
         try {
-            BusinessListResponse business = businessService.getBusinessBySecureId(secureId);
+            BusinessListResponse business = businessService.getBusinessBySecureId(businessId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Success get business detail", business));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResponse(false, e.getMessage()));
