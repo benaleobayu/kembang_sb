@@ -1,8 +1,10 @@
 package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.AbstractBaseEntityCms;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.AdminModelBaseDTOResponse;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -12,7 +14,7 @@ import java.util.Objects;
 
 public class GlobalConverter {
 
-    public <T extends AdminModelBaseDTOResponse, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponse(
+    public static <T extends AdminModelBaseDTOResponse, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponse(
             T dto, D data
     ) {
         dto.setId(data.getSecureId());
@@ -37,7 +39,13 @@ public class GlobalConverter {
     ) {
         String email = ContextPrincipal.getPrincipal();
         return HandlerRepository.getUserByEmail(email, userRepository, "User not found");
+    }
 
+     public static AppAdmin getAdminEntity(
+            AppAdminRepository adminRepository
+    ) {
+        String email = ContextPrincipal.getPrincipal();
+        return HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
     }
 
     public static String getAvatarUser (
