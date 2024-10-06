@@ -1,6 +1,5 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.Branch;
 import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 import lombok.Data;

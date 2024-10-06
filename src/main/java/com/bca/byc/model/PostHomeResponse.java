@@ -2,10 +2,8 @@ package com.bca.byc.model;
 
 import com.bca.byc.model.apps.PostContentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
-import com.github.javafaker.Bool;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
