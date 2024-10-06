@@ -13,6 +13,7 @@ import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
+import com.bca.byc.model.projection.CMSBulkSuspendProjection;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
@@ -22,6 +23,7 @@ import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,7 @@ import javax.naming.Context;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
@@ -145,6 +148,20 @@ public class UserActiveServiceImpl implements UserActiveService {
         user.setAppUserAttribute(attribute);
         LogUserManagement(user,dto, admin);
         repository.save(user);
+    }
+
+    @Override
+    public void makeUserBulkSuspendedTrue(Set<String> ids) {
+        Set<CMSBulkSuspendProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser user = repository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            userAttribute.setIsSuspended(true);
+            user.setAppUserAttribute(userAttribute);
+            repository.save(user);
+        });
     }
 
     @Override

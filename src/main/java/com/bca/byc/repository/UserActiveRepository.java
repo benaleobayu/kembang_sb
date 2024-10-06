@@ -3,6 +3,7 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
+import com.bca.byc.model.projection.CMSBulkSuspendProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
@@ -79,5 +81,11 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findBySecureId(String id);
 
     boolean existsBySecureId(String id);
+
+    @Query("SELECT u " +
+            "FROM AppUser u " +
+            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
+            "WHERE u.secureId IN :ids")
+    Set<CMSBulkSuspendProjection> findToSuspendBySecureIdIn(@Param("ids") Set<String> ids);
 }
 

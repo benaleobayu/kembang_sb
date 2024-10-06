@@ -11,6 +11,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public interface UserActiveService {
 
@@ -26,6 +27,7 @@ public interface UserActiveService {
 
     void suspendData(String id, @Valid LogUserManagementRequest dto) throws BadRequestException;
 
-    Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size);
+    void makeUserBulkSuspendedTrue(Set<String> ids);
 
+    Page<UserActiveElastic> getAllActiveUser(Integer page, Integer size);
 }

@@ -1,6 +1,8 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
@@ -109,6 +111,18 @@ public class UserActiveController {
             service.suspendData(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully suspended user active"));
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "Bulk Suspend user by id", description = "Bulk Suspend user by id")
+    @PostMapping("/suspend")
+    public ResponseEntity<?> suspend(@RequestBody BulkByIdRequest dto) {
+        log.info("POST " + urlRoute + "/suspend endpoint hit");
+        try {
+            service.makeUserBulkSuspendedTrue(dto.getIds());
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully suspended user"));
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
