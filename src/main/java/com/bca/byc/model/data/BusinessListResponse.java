@@ -18,6 +18,8 @@ public class BusinessListResponse {
 
     private List<BusinessCategoryResponse> subCategories = new ArrayList<>();
 
+    private Integer totalCatalogs;
+
     @Data
     public static class BusinessCategoryResponse {
         private String id;
