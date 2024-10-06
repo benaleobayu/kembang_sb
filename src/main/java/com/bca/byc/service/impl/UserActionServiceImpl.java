@@ -30,6 +30,11 @@ public class UserActionServiceImpl implements UserActionService {
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
         AppUser userToFollow = getEntityUserBySecureId(userId, userRepository, "User not found");
 
+        // if user = userToFollow return error
+        if (user.getId().equals(userToFollow.getId())) {
+            throw new BadRequestException("User cannot follow itself");
+        }
+
         if (!user.getFollows().contains(userToFollow)) {
             user.getFollows().add(userToFollow);
             userActionRepository.save(user);
@@ -41,6 +46,11 @@ public class UserActionServiceImpl implements UserActionService {
     public void unfollowUser(String userId, String email) {
         AppUser user = getUserByEmail(email, userRepository, "User not found in email: " + email);
         AppUser userToUnfollow = getEntityUserBySecureId(userId, userRepository, "User not found");
+
+        // if user = userToUnfollow return error
+        if (user.getId().equals(userToUnfollow.getId())) {
+            throw new BadRequestException("User cannot unfollow itself");
+        }
 
         if (user.getFollows().contains(userToUnfollow)) {
             user.getFollows().remove(userToUnfollow);

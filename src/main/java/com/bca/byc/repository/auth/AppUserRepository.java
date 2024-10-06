@@ -43,15 +43,17 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     Page<AppUser> findByNameLikeIgnoreCase(String name, Pageable pageable);
 
-    @Query("SELECT COUNT(p) AS totalPosts, " +
-            "COUNT(f) AS totalFollowing, " +
-            "COUNT(fw) AS totalFollowers " +
+    @Query("SELECT COUNT(DISTINCT p) AS totalPosts, " +
+            "COUNT(DISTINCT f) AS totalFollowing, " +
+            "COUNT(DISTINCT fw) AS totalFollowers " +
             "FROM AppUser u " +
             "LEFT JOIN u.posts p " +
             "LEFT JOIN u.follows f " +
             "LEFT JOIN u.followers fw " +
             "WHERE u.secureId = :secureId")
     UserActivityCounts getActivityCounts(@Param("secureId") String secureId);
+
+
 
     @Query("SELECT u FROM AppUser u " + "JOIN u.savedPosts us " + "JOIN us.post p " + "WHERE u.secureId = :userId " + "GROUP BY u")
     Page<AppUser> showProfileSavedActivity(String userId, Pageable pageable);
