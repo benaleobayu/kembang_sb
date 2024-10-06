@@ -51,10 +51,10 @@ public class PostDTOConverter {
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
 
         // Check if the post is liked by the user
-        boolean isLiked = likeDislikeRepository.findByPostIdAndUserIdAndIsLikeTrue(data.getId(), userId).isPresent();
+        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userId).isPresent();
         dto.setIsLiked(isLiked);
 
-        dto.setLikeCount(likeDislikeRepository.countByPostIdAndIsLikeTrue(data.getId()));
+        dto.setLikeCount(likeDislikeRepository.countByPostId(data.getId()));
         dto.setCommentCount(commentRepository.countByPostId(data.getId()));
 
         // return
