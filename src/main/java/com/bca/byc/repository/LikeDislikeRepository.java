@@ -20,7 +20,16 @@ public interface LikeDislikeRepository extends JpaRepository<LikeDislike, Long> 
     @Query("SELECT ld FROM LikeDislike ld WHERE ld.user.secureId = :userId")
     Page<LikeDislike> findLikesByUserId(@Param("userId") String userId, Pageable pageable);
 
-    Optional<LikeDislike> findByPostIdAndUserIdAndIsLikeTrue(Long id, Long userId);
+    Optional<LikeDislike> findByPostIdAndUserId(Long id, Long userId);
 
-    Integer countByPostIdAndIsLikeTrue(Long id);
+    // ---- count like and dislike by id ---
+
+    Integer countByPostId(Long id);
+
+    Integer countByCommentId(Long id);
+
+    Integer countByCommentReplyId(Long id);
+
+    // ---- count like and dislike by id ---
+
 }
