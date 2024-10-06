@@ -4,16 +4,14 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
-import com.bca.byc.entity.CommentReply;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.SimplePostResponse;
 import com.bca.byc.util.helper.Formatter;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
-import static com.bca.byc.converter.parsing.GlobalConverter.getAvatarUser;
+import static com.bca.byc.converter.parsing.GlobalConverter.getParseImage;
 
 public class TreeProfileActivityConverter {
 
@@ -24,7 +22,7 @@ public class TreeProfileActivityConverter {
     ) {
         dto.setPostId(user.getPosts().getFirst().getSecureId());
         dto.setPostDescription(user.getPosts().getFirst().getDescription());
-        dto.setPostContent(GlobalConverter.getAvatarUser(user.getPosts().getFirst().getPostContents().getFirst().getContent(), baseUrl));
+        dto.setPostContent(GlobalConverter.getParseImage(user.getPosts().getFirst().getPostContents().getFirst().getContent(), baseUrl));
         dto.setPostCreatedAt(user.getPosts().getFirst().getCreatedAt() != null ? Formatter.formatDateTimeApps(user.getPosts().getFirst().getCreatedAt()) : null);
         return dto;
     }
@@ -39,7 +37,7 @@ public class TreeProfileActivityConverter {
     ) {
         dto.setUserId(user.getSecureId());
         dto.setUserName(user.getAppUserDetail().getName());
-        dto.setUserAvatar(getAvatarUser(user.getAppUserDetail().getAvatar(), baseUrl));
+        dto.setUserAvatar(getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
         dto.setPost(convertPostData(postDto, user, baseUrl));
         TreePostConverter converter = new TreePostConverter(baseUrl);
         dto.setComments(Collections.singletonList(converter.convertToListCommentResponse(

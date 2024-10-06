@@ -41,21 +41,21 @@ public class GlobalConverter {
         return HandlerRepository.getUserByEmail(email, userRepository, "User not found");
     }
 
-     public static AppAdmin getAdminEntity(
+    public static AppAdmin getAdminEntity(
             AppAdminRepository adminRepository
     ) {
         String email = ContextPrincipal.getPrincipal();
         return HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
     }
 
-    public static String getAvatarUser (
-            String avatar,
+    public static String getParseImage(
+            String imageUrl,
             String baseUrl
     ) {
-        return Objects.isNull(avatar) || avatar.isBlank() ? null :
-                avatar.startsWith("uploads/") ?
-                        baseUrl + "/" + avatar :
-                        avatar.startsWith("/uploads/") ? baseUrl + avatar : avatar;
+        return Objects.isNull(imageUrl) || imageUrl.isBlank() ? null :
+                imageUrl.startsWith("uploads/") ?
+                        baseUrl + "/" + imageUrl :
+                        imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
     }
 
 
