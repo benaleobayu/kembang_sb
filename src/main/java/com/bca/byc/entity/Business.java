@@ -64,6 +64,10 @@ public class Business extends AbstractBaseEntity implements SecureIdentifiable {
     @EqualsAndHashCode.Exclude
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
 
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    private Set<BusinessCatalog> businessCatalogs = new HashSet<>();
+
 
     @Override
     public String getSecureId() {
