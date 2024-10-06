@@ -3,6 +3,7 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
+import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,4 +33,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Object[]> findAllActivityCommentByUser(@Param("userId") String userId, Pageable pageable);
 
     Integer countByPostId(Long id);
+
+    // ------------------------- Projection -----------------------
+
+    @Query("SELECT c FROM Comment c WHERE c.post.secureId = :postId")
+    Optional<IdSecureIdProjection> findByIdSecureId(@Param("postId") String postId);
+
+    // ------------------------- Projection -----------------------
+
 }

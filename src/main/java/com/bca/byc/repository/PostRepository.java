@@ -28,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "(SELECT f.id FROM AppUser u JOIN u.follows f WHERE u.id = :userId) AND " +
             "LOWER(p.description) LIKE LOWER(:keyword) " +
             "ORDER BY p.createdAt DESC")
-    Page<Post> findPostByFollowingUsers(Long userId, String keyword, Pageable pageable);
+    Page<Post> findPostByFollowingUsers(@Param("userId") Long userId,@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p FROM Post p " +
             "WHERE p.user.appUserAttribute.isOfficial = true AND " +
@@ -54,8 +54,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND LOWER (p.description) LIKE LOWER(:tag) ")
     Page<Post> findLatestPostsFromFollowingUsers(@Param("userId") Long userId, @Param("tag") String tag, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.user.id = :userId")
-    Optional<Post> findBySecureId(@Param("userId") String secureId);
+    @Query("SELECT p FROM Post p WHERE p.secureId = :postId")
+    Optional<Post> findBySecureId(@Param("postId") String secureId);
 
     boolean existsBySecureId(String secureId);
 
