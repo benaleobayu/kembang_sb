@@ -35,7 +35,4 @@ public class LikeDislike extends AbstractBaseEntityTimestamp{
     @JoinColumn(name = "user_id")
     private AppUser user;
 
-    @Column(name = "is_like")
-    private Boolean isLike;
-
 }
