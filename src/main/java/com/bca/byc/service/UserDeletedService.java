@@ -18,9 +18,9 @@ public interface UserDeletedService {
                                                                Long locationId, LocalDate startDate,
                                                                LocalDate endDate);
 
-    UserManagementDetailResponse findDataById(Long id) throws BadRequestException;
+    UserManagementDetailResponse findDataById(String id) throws BadRequestException;
 
-    void makeUserIsDeletedFalse(Long id);
+    void makeUserIsDeletedFalse(String id);
 
     void makeUserBulkRestoreTrue(Set<String> ids);
 

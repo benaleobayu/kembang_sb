@@ -87,10 +87,10 @@ public class PreRegisterDTOConverter {
                 data.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
                 break;
             case SUPERVISOR:
-                data.setStatusApproval(AdminApprovalStatus.SPV_APPROVED);
+                data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
             case MANAGER:
-                data.setStatusApproval(AdminApprovalStatus.MGR_APPROVED);
+                data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
             default:
                 data.setStatusApproval(AdminApprovalStatus.PENDING);

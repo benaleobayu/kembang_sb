@@ -1,6 +1,8 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserSuspendedDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
@@ -40,14 +42,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     private final UserSuspendedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
-                                                                      Integer limit,
-                                                                      String sortBy,
-                                                                      String direction,
-                                                                      String keyword,
-                                                                      Long locationId,
-                                                                      LocalDate startDate,
-                                                                      LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -63,26 +58,18 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
             return dto;
         }).collect(Collectors.toList());
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override
     public UserManagementDetailResponse findDataBySecureId(String id) throws BadRequestException {
-        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUser user = repository.findBySecureId(id)
+                .orElseThrow(() -> new BadRequestException("User suspended not found"));
 
-        return converter.convertToListResponse(user);
+        UserManagementDetailResponse dto = new UserManagementDetailResponse();
+        TreeUserManagementConverter converter = new TreeUserManagementConverter();
+        converter.DetailResponse(user, dto);
+        return dto;
     }
 
     @Override

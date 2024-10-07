@@ -80,7 +80,7 @@ public class TreeUserManagementConverter {
                         : "Inactive"
         );
         if (data.getAppUserAttribute().getIsSuspended()){
-            dto.setSuspendedReason(data.getLog().stream().findFirst().get().getMessage());
+            dto.setSuspendedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream().findFirst().get().getMessage() : null);
         }
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));

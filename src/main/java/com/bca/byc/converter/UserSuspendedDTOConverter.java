@@ -24,7 +24,7 @@ public class UserSuspendedDTOConverter {
     // for get data
     public UserManagementDetailResponse convertToListResponse(AppUser data) {
         // mapping Entity with DTO Entity
-        UserManagementDetailResponse dto = new UserManagementDetailResponse();
+        UserManagementDetailResponse dto = modelMapper.map(data, UserManagementDetailResponse.class);
 
         TreeUserManagementConverter converter = new TreeUserManagementConverter();
         converter.DetailResponse(data, dto);

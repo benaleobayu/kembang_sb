@@ -57,7 +57,7 @@ public class UserDeletedController {
 
     @Operation(summary = "Get detail user deleted", description = "Get detail user deleted")
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET" + urlRoute + "/{id} endpoint hit");
         try {
             UserManagementDetailResponse item = service.findDataById(id);
@@ -69,7 +69,7 @@ public class UserDeletedController {
 
     @Operation(summary = "Restore user deleted by id", description = "Restore user deleted by id")
     @PutMapping("/{id}/restore")
-    public ResponseEntity<?> restore(@PathVariable("id") Long id) {
+    public ResponseEntity<?> restore(@PathVariable("id") String id) {
         log.info("PUT " + urlRoute + "/{id}/restore endpoint hit");
         try {
             service.makeUserIsDeletedFalse(id);

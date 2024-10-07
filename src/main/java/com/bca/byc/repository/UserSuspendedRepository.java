@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
@@ -31,7 +32,6 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
             "WHERE u.secureId IN :ids")
     Set<CMSBulkSuspendProjection> findToSuspendBySecureIdIn(@Param("ids") Set<String> ids);
-
 
 
     @Query("SELECT u FROM AppUser u " +
@@ -73,4 +73,6 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "aua.isDeleted = false " +
             "ORDER BY u.createdAt DESC")
     List<UserActiveExportResponse> findDataForExport();
+
+    Optional<AppUser> findBySecureId(String id);
 }

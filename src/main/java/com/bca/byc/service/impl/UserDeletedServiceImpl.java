@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserDeletedDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
@@ -8,6 +9,7 @@ import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.repository.UserDeletedRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.util.PaginationUtil;
@@ -60,33 +62,19 @@ public class UserDeletedServiceImpl implements UserDeletedService {
             return dto;
         }).collect(Collectors.toList());
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override
-    public UserManagementDetailResponse findDataById(Long id) throws BadRequestException {
-        AppUser data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("user not found"));
+    public UserManagementDetailResponse findDataById(String id) throws BadRequestException {
+        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
 
         return converter.convertToListResponse(data);
     }
 
     @Override
-    public void makeUserIsDeletedFalse(Long id) {
-        AppUser user = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+    public void makeUserIsDeletedFalse(String id) {
+        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = user.getAppUserAttribute();
         userAttribute.setIsDeleted(false);
         user.setAppUserAttribute(userAttribute);

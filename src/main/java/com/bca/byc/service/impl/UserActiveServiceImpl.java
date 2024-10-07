@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
@@ -62,9 +63,12 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Override
     public UserManagementDetailResponse findBySecureId(String id) throws BadRequestException {
         AppUser data = repository.findBySecureId(id)
-                .orElseThrow(() -> new BadRequestException("UserActive not found"));
+                .orElseThrow(() -> new BadRequestException("User Active not found"));
 
-        return converter.convertToDetailResponse(data);
+        UserManagementDetailResponse dto = new UserManagementDetailResponse();
+        TreeUserManagementConverter converter = new TreeUserManagementConverter();
+        converter.DetailResponse(data, dto);
+        return dto;
     }
 
     @Override
