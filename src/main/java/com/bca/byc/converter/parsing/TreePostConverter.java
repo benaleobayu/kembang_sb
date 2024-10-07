@@ -6,6 +6,7 @@ import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.LocalDateTime;
@@ -157,5 +158,14 @@ public class TreePostConverter {
             dto.setThumbnail(null);
         }
 
+    }
+
+    public Post countPostComments(Post post, PostRepository repository, String type) {
+        if (type.equals("add")){
+            post.setCommentsCount(post.getCommentsCount() + 1);
+        } else if (type.equals("delete")) {
+            post.setCommentsCount(post.getCommentsCount() - 1);
+        }
+        return repository.save(post);
     }
 }

@@ -77,9 +77,26 @@ public class UserActionServiceImpl implements UserActionService {
             existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, user);
         }
 
-        // Logika toggle
+        // Logic toggle
         if (existingLikeDislike != null) {
-            likeDislikeRepository.delete(existingLikeDislike); // Jika sudah ada, hapus
+            likeDislikeRepository.delete(existingLikeDislike);
+            // decrease like count
+            if ("POST".equals(dto.getType())) {
+                Post post = postRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
+                post.setLikesCount(post.getLikesCount() - 1);
+                postRepository.save(post);
+            } else if ("COMMENT".equals(dto.getType())) {
+                Comment comment = commentRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
+                comment.setLikesCount(comment.getLikesCount() - 1);
+                commentRepository.save(comment);
+            } else if ("COMMENT_REPLY".equals(dto.getType())) {
+                CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
+                        .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
+                commentReply.setLikesCount(commentReply.getLikesCount() - 1);
+                commentReplyRepository.save(commentReply);
+            }
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
             TotalCountResponse message = new TotalCountResponse();
@@ -89,6 +106,8 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setPost(post);
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
+                post.setLikesCount(post.getLikesCount() + 1);
+                postRepository.save(post);
                 message.setTotal(likeDislikeRepository.countByPostId(post.getId()));
             } else if ("COMMENT".equals(dto.getType())) {
                 Comment comment = commentRepository.findBySecureId(dto.getTargetId())
@@ -96,6 +115,8 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setComment(comment);
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
+                comment.setLikesCount(comment.getLikesCount() + 1);
+                commentRepository.save(comment);
                 message.setTotal(likeDislikeRepository.countByCommentId(comment.getId()));
             } else if ("COMMENT_REPLY".equals(dto.getType())) {
                 CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
@@ -103,6 +124,8 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setCommentReply(commentReply);
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
+                commentReply.setLikesCount(commentReply.getLikesCount() + 1);
+                commentReplyRepository.save(commentReply);
                 message.setTotal(likeDislikeRepository.countByCommentReplyId(commentReply.getId()));
             }
             return message;

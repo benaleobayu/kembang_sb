@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.CommentReply;
@@ -42,6 +43,11 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
         data.setComment(dto.getComment());
         data.setParentComment(comment);
         data.setUser(user);
+
+        // incrase comment post
+        TreePostConverter postConverter = new TreePostConverter(null);
+        postConverter.countPostComments(post, postRepository, "add");
+
         // save data
         commentReplyRepository.save(data);
     }
@@ -88,6 +94,10 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
         if (!data.getUser().getId().equals(user.getId())) {
             throw new BadRequestException("Comment does not belong to the specified user");
         }
+
+        // decrase comment post
+        TreePostConverter postConverter = new TreePostConverter(null);
+        postConverter.countPostComments(post, postRepository, "delete");
 
         commentReplyRepository.delete(data);
     }

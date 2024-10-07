@@ -80,9 +80,9 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
 
     @Override
     public UserManagementDetailResponse findDataBySecureId(String id) throws BadRequestException {
-        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
 
-        return converter.convertToListResponse(data);
+        return converter.convertToListResponse(user);
     }
 
     @Override

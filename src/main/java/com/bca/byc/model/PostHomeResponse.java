@@ -36,9 +36,9 @@ public class PostHomeResponse {
     // ------- added function -------
 
     // ------- count -------
-    private Integer likeCount;
+    private Long likeCount;
 
-    private Integer commentCount;
+    private Long commentCount;
     // ------- count -------
 
 }

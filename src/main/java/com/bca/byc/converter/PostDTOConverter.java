@@ -54,8 +54,8 @@ public class PostDTOConverter {
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userId).isPresent();
         dto.setIsLiked(isLiked);
 
-        dto.setLikeCount(likeDislikeRepository.countByPostId(data.getId()));
-        dto.setCommentCount(commentRepository.countByPostId(data.getId()));
+        dto.setLikeCount(data.getLikesCount());
+        dto.setCommentCount(data.getCommentsCount());
 
         // return
         return dto;

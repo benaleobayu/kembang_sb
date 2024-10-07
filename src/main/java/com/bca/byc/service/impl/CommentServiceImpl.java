@@ -91,6 +91,10 @@ public class CommentServiceImpl implements CommentService {
 
         // set entity to add with model mapper
         Comment data = converter.convertToCreateRequest(post, dto, email);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
+
+        // add count comment
+        postConverter.countPostComments(post, postRepository, "add");
         // save data
         commentRepository.save(data);
     }
@@ -122,6 +126,10 @@ public class CommentServiceImpl implements CommentService {
         // check data
         checkCommentOnPost(comment, post, "delete");
         checkCommentUser(comment, user, "delete");
+
+        // decrease count comment
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
+        postConverter.countPostComments(post, postRepository, "delete");
 
         // delete data
         commentRepository.deleteById(comment.getId());

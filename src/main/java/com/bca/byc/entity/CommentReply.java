@@ -57,9 +57,6 @@ public class CommentReply extends AbstractBaseEntity implements SecureIdentifiab
     @Column(name = "likes_count")
     private Long LikesCount = 0L;
 
-    @Column(name = "shares_count")
-    private Long SharesCount = 0L;
-
     @Column(name = "comments_count")
     private Long CommentsCount = 0L;
 
