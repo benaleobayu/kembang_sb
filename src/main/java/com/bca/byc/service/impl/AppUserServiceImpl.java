@@ -6,15 +6,12 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserNotification;
 import com.bca.byc.entity.AppUserRequestContact;
+import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.AppUserProfileRequest;
-import com.bca.byc.model.ProfileActivityCounts;
-import com.bca.byc.model.UserActivityCounts;
-import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.model.projection.IdEmailProjection;
-import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.model.projection.PostContentProjection;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
@@ -142,21 +139,17 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResultPageResponseDTO<ProfilePostResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostDetailResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         String email = ContextPrincipal.getPrincipal();
         IdEmailProjection user = appUserRepository.findByIdInEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<PostContentProjection> pageResult = postRepository.findMyPost(user.getId(), keyword, pageable);
-        List<ProfilePostResponse> dtos = pageResult.stream().map((c) -> {
-            ProfilePostResponse dto = new ProfilePostResponse();
-            dto.setId(c.getSecureId());
-            dto.setIndex(c.getId());
-            dto.setContent(c.getContent().contains("uploads/post/") ? baseUrl + c.getContent() : c.getContent());
-            dto.setThumbnail(c.getThumbnail());
-            dto.setContentType(c.getContentType());
+        Page<Post> pageResult = postRepository.findMyPost(user.getId(), keyword, pageable);
+        assert pageResult != null;
+        List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
+            PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
             return dto;
         }).collect(Collectors.toList());
 

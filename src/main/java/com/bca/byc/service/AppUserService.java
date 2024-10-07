@@ -5,7 +5,6 @@ import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.response.*;
 
-import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AppUserService extends UserDetailsService {
@@ -20,7 +19,7 @@ public interface AppUserService extends UserDetailsService {
 	void updateUserData(String email, AppUserProfileRequest dto);
 
     ProfilePostResponse getUserPosts(String userId);
-	ResultPageResponseDTO<ProfilePostResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+	ResultPageResponseDTO<PostDetailResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
 	void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception;
 	void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto);

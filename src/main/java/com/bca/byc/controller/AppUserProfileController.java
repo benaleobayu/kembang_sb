@@ -1,10 +1,7 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.entity.Notification;
-import com.bca.byc.model.AppUserProfileRequest;
-import com.bca.byc.model.ProfileActivityCounts;
-import com.bca.byc.model.ProfileActivityPostResponse;
-import com.bca.byc.model.UserInfoResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.response.*;
@@ -109,9 +106,9 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list My Post", description = "Get list My Post")
     @GetMapping("/my-posts")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfilePostResponse>>> listDataMyPost(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataMyPost(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {

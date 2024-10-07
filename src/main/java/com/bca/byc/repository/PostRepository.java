@@ -35,16 +35,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LOWER(p.description) LIKE LOWER(:keyword) " +
             "ORDER BY p.createdAt DESC")
     Page<Post> findPostByOfficialUsers(String keyword, Pageable pageable);
-
     // ------------- show list post home -------------
 
-
-    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
-            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
+    // ------------- show list my post -------------
+    @Query("SELECT p " +
             "FROM Post p JOIN p.postContents pc " +
             "WHERE p.user.id = :userId AND LOWER(p.description) LIKE LOWER(:keyword) " +
             "GROUP BY p.id, p.secureId")
-    Page<PostContentProjection> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+    Page<Post> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+
+//    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
+//            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
+//            "FROM Post p JOIN p.postContents pc " +
+//            "WHERE p.user.id = :userId AND LOWER(p.description) LIKE LOWER(:keyword) " +
+//            "GROUP BY p.id, p.secureId")
+//    Page<Post> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+    // ------------- show list my post -------------
+
+
 
     @Query("SELECT p FROM Post p WHERE p.secureId = :secureId")
     Optional<IdSecureIdProjection> findByIdSecureId(@Param("secureId") String secureId);
