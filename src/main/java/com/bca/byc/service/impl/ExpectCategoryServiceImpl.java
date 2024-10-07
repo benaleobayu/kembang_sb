@@ -66,7 +66,7 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
     @Override
     public List<PublicExpectCategoryDetailResponse> findAllData() {
         // Get the list
-        List<ExpectCategory> datas = repository.findAll();
+        List<ExpectCategory> datas = repository.findAllAndOrderById();
 
         // stream into the list
         return datas.stream()

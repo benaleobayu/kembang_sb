@@ -24,8 +24,7 @@ public class TreeUserManagementConverter {
                 Formatter.formatLocalDate(data.getAppUserDetail().getMemberBirthdate()) : null);
         dto.setEmail(data.getEmail().toLowerCase());
         dto.setPhone(data.getAppUserDetail().getPhone());
-        dto.setMemberCin(data.getAppUserDetail().getMemberCin() != null ?
-                data.getAppUserDetail().getMemberCin() : null);
+        dto.setMemberCin(data.getAppUserDetail().getMemberCin());
         dto.setCreatedAt(data.getAppUserDetail().getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()) : null);
         dto.setUpdatedAt(data.getAppUserDetail().getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()) : null);
         dto.setApproveAt(data.getAppUserDetail().getApprovedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getApprovedAt()) : null);

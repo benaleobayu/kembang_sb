@@ -141,8 +141,8 @@ public class UserAuthServiceImpl implements UserAuthService {
                 child) {
             userDetail.setStatus(StatusType.APPROVED);
             user.setAppUserDetail(userDetail);
+            userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
             if (dto.parent_bank_account() == null) {
-                userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
                 userDetail.setUserAs("member");
             } else {
                 userDetail.setParentCin(dataCheck.getParentCin()); // set child cin
