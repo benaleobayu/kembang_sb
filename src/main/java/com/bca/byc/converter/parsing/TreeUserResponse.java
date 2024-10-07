@@ -1,8 +1,10 @@
 package com.bca.byc.converter.parsing;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.entity.UserHasExpect;
+import com.bca.byc.model.SuggestedUserResponse;
 import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.apps.SubExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
@@ -108,5 +110,22 @@ public class TreeUserResponse {
 
                     return expectCategoryDetailResponse;
                 }).collect(Collectors.toList());
+    }
+
+    public static SuggestedUserResponse convertToCardUser(AppUser user, String baseUrl) {
+        SuggestedUserResponse response = new SuggestedUserResponse();
+        response.setUserId(user.getSecureId());
+        response.setUserAvatar(GlobalConverter.getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
+        response.setUserName(user.getAppUserDetail().getName());
+        response.setBusinessName(user.getBusinesses().stream()
+                .filter(Business::getIsPrimary)
+                .map(Business::getName)
+                .findFirst().orElse(null));
+        response.setBusinessLob(user.getBusinesses().stream()
+                .filter(Business::getIsPrimary)
+                .flatMap(b-> b.getBusinessCategories().stream()
+                        .map(bc -> bc.getBusinessCategoryParent().getName()))
+                .findFirst().orElse(null));
+        return response;
     }
 }

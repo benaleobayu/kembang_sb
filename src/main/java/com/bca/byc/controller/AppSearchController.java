@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.model.search.SearchResultAccountResponse;
 import com.bca.byc.model.search.SearchResultPostResponse;
 import com.bca.byc.model.search.SearchResultTagResponse;
@@ -11,20 +12,38 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/v1/data/")
+@RequestMapping(AppSearchController.urlRoute)
 @AllArgsConstructor
 @Tag(name = "Apps Data API")
 @SecurityRequirement(name = "Authorization")
 public class AppSearchController {
 
+    static final String urlRoute = "/api/v1/data";
+
     private final AppSearchService service;
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/suggested")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<OnboardingListUserResponse>>> listSuggested(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "6") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        log.info("GET " + urlRoute + "/suggested endpoint hit");
+        // response true
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list suggested user", service.listSuggestedUser(pages, limit, sortBy, direction, keyword)));
+    }
 
     @Operation(summary = "Get list result posts", description = "Get list result posts")
     @GetMapping("/post")

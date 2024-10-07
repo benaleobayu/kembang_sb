@@ -2,10 +2,12 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppSearchDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.TreeUserResponse;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppSearchDetailResponse;
+import com.bca.byc.model.SuggestedUserResponse;
 import com.bca.byc.repository.AppSearchRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -13,6 +15,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppSearchService;
 import com.bca.byc.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +32,10 @@ public class AppSearchServiceImpl implements AppSearchService {
 
     private final AppUserRepository appUserRepository;
     private final AppSearchRepository repository;
-
     private final PostRepository postRepository;
-
     private final AppSearchDTOConverter converter;
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     @Override
     public ResultPageResponseDTO<AppSearchDetailResponse> listResultPosts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -97,4 +100,20 @@ public class AppSearchServiceImpl implements AppSearchService {
 
         return PageCreateReturn.create(pageResult, dtos);
     }
+
+    @Override
+    public ResultPageResponseDTO<SuggestedUserResponse> listSuggestedUser(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        Page<AppUser> pageResult = appUserRepository.findRandomUsers(keyword, pageable);
+
+        List<SuggestedUserResponse> dtos = pageResult.getContent().stream()
+                .map(user -> TreeUserResponse.convertToCardUser(user, baseUrl)) // Convert AppUser to SuggestedUserResponse
+                .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
 }
