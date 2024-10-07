@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.dictionary.TreeProfileActivityConverter;
 import com.bca.byc.converter.parsing.GlobalConverter;
@@ -7,6 +8,8 @@ import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
+import com.bca.byc.model.PostDetailResponse;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.AppUserDetailRepository;
@@ -16,7 +19,6 @@ import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.util.FileUploadHelper;
 import com.bca.byc.util.PaginationUtil;
@@ -32,7 +34,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private final LikeDislikeRepository likeDislikeRepository;
     private final UserHasSavedPostRepository userHasSavedPostRepository;
     private final CommentRepository commentRepository;
+    
+    private final PostDTOConverter postConverter;
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
@@ -94,25 +97,22 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostDetailResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         String userId = GlobalConverter.getUuidUser(userRepository);
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
 
         // Retrieve likes for the user
         Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, pageable);
 
-        List<ProfileActivityPostResponse> dtos = likesPage.stream()
+        List<PostHomeResponse> dtos = likesPage.stream()
                 .map(savedPost -> {
-                    ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
-
                     Post post = savedPost.getPost();
-                    TreePostConverter converter = new TreePostConverter(baseUrl);
-                    converter.ProfileActivityPostResponseConverter(dto, post);
-
+                    PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -121,25 +121,22 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<ProfileActivityPostResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostDetailResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
         String userId = GlobalConverter.getUuidUser(userRepository);
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
 
         // Retrieve likes for the user
         Page<LikeDislike> likesPage = likeDislikeRepository.findLikesByUserId(userId, pageable);
 
-        List<ProfileActivityPostResponse> dtos = likesPage.stream()
+        List<PostHomeResponse> dtos = likesPage.stream()
                 .map(likeDislike -> {
-                    ProfileActivityPostResponse dto = new ProfileActivityPostResponse();
-
                     Post post = likeDislike.getPost();
-                    TreePostConverter converter = new TreePostConverter(baseUrl);
-                    converter.ProfileActivityPostResponseConverter(dto, post);
-
+                    PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
                     return dto;
                 })
                 .collect(Collectors.toList());

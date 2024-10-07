@@ -224,9 +224,9 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Saved Activity", description = "Get list Post Saved Activity")
     @GetMapping("/post-saved-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostSavedActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostSavedActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
@@ -237,9 +237,9 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Likes Activity", description = "Get list Post Likes Activity")
     @GetMapping("/post-likes-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostResponse>>> listDataPostLikesActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostLikesActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {

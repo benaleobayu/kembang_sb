@@ -12,7 +12,6 @@ import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.model.projection.IdEmailProjection;
-import com.bca.byc.model.projection.PostContentProjection;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.PostRepository;
