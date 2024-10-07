@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.model.PostShareResponse;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
 
@@ -12,4 +13,6 @@ public interface UserActionService {
     TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto);
 
     String saveUnsavePost(String postId, String email);
+
+    String sharePost(PostShareResponse postId, String email);
 }

@@ -2,6 +2,7 @@ package com.bca.byc.repository.auth;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
+import com.bca.byc.model.SuggestedUserResponse;
 import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
@@ -79,5 +80,17 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
             "WHERE u.secureId = :secureId")
     UserProfileActivityCountsProjection getProfileActivityCounts(@Param("secureId") String uuid);
     // --- count activity ---
+
+    // --- suggested user ---
+    @Query("SELECT au FROM AppUser au " +
+            "LEFT JOIN au.appUserDetail detail " +
+            "LEFT JOIN au.businesses b " +
+            "WHERE LOWER(detail.name) LIKE LOWER(:keyword) " +
+            "AND detail.status = 6 " +
+            "AND au.appUserAttribute.isSuspended = false " +
+            "AND au.appUserAttribute.isDeleted = false " +
+            "ORDER BY function('RANDOM')")
+    Page<AppUser> findRandomUsers(@Param("keyword") String keyword, Pageable pageable);
+    // --- suggested user ---
 }
 
