@@ -11,6 +11,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
+import com.bca.byc.model.data.UserProfileActivityCounts;
+import com.bca.byc.model.data.UserProfileActivityCountsProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
@@ -243,6 +245,21 @@ public class AppUserServiceImpl implements AppUserService {
         dto.setTotalFollowing(counts.getTotalFollowing() != null ? counts.getTotalFollowing() : 0);
         dto.setTotalFollowers(counts.getTotalFollowers() != null ? counts.getTotalFollowers() : 0);
         dto.setTotalEvents(0); // TODO: get total events
+        return dto;
+    }
+
+    @Override
+    public UserProfileActivityCounts getProfileActivityCounts() {
+        String uuid = ContextPrincipal.getSecureUserId();
+
+        UserProfileActivityCountsProjection counts = appUserRepository.getProfileActivityCounts(uuid);
+
+        UserProfileActivityCounts dto = new UserProfileActivityCounts();
+        dto.setTotalBusinesses(counts.getTotalBusinesses() != null ? counts.getTotalBusinesses() : 0);
+        dto.setTotalBusinessCatalogs(counts.getTotalBusinessCatalogs() != null ? counts.getTotalBusinessCatalogs() : 0);
+        dto.setTotalSavedPosts(counts.getTotalSavedPosts() != null ? counts.getTotalSavedPosts() : 0);
+        dto.setTotalLikesPosts(counts.getTotalLikesPosts() != null ? counts.getTotalLikesPosts() : 0);
+        dto.setTotalComments(counts.getTotalComments() != null ? counts.getTotalComments() : 0);
         return dto;
     }
 

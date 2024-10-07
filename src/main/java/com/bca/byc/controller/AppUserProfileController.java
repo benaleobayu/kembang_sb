@@ -4,6 +4,7 @@ import com.bca.byc.entity.Notification;
 import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.ProfilePostResponse;
+import com.bca.byc.model.data.UserProfileActivityCounts;
 import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserProfileService;
@@ -259,6 +260,19 @@ public class AppUserProfileController {
         // response true
         log.info("GET " + urlRoute + "/post-likes-activity endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataPostCommentsActivity(pages, limit, sortBy, direction, keyword)));
+    }
+
+    // Fetch to get profile activity
+    @GetMapping("/profile-activity-counts")
+    public ResponseEntity<?> getProfileActivityCounts() {
+        try {
+            // Fetch activity counts
+            UserProfileActivityCounts data = userService.getProfileActivityCounts();
+            // Return success response
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile activity counts retrieved successfully", data));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
 
