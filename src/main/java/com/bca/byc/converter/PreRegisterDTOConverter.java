@@ -8,11 +8,14 @@ import com.bca.byc.entity.UserManagementLog;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BranchCodeResponse;
-import com.bca.byc.model.PreRegisterCreateUpdateRequest;
+import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
+import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
+import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -28,6 +31,7 @@ import java.time.LocalDateTime;
 public class PreRegisterDTOConverter {
 
     private final BranchRepository branchRepository;
+    private final PreRegisterRepository repository;
     private LogUserManagementRepository logRepository;
     private ModelMapper modelMapper;
 
@@ -68,10 +72,10 @@ public class PreRegisterDTOConverter {
     }
 
     // for create data
-    public PreRegister convertToCreateRequest(@Valid PreRegisterCreateUpdateRequest dto, AppAdmin admin) {
+    public PreRegister convertToCreateRequest(@Valid PreRegisterCreateRequest dto, AppAdmin admin) {
         // mapping DTO Entity with Entity
         PreRegister data = new PreRegister();
-        CreateUpdateSameConvert(data, dto);
+        CreateUpdateSameConvert(data, dto, null);
         data.setCreatedBy(admin);
         AdminType typeEquals = admin.getType();
 
@@ -99,12 +103,11 @@ public class PreRegisterDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(PreRegister data, @Valid PreRegisterCreateUpdateRequest dto) {
+    public void convertToUpdateRequest(PreRegister data, @Valid PreRegisterUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
-
-        CreateUpdateSameConvert(data,
-                dto);
+        String type = "update";
+        convertToUpdate(data, dto, repository);
 
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
@@ -157,13 +160,24 @@ public class PreRegisterDTOConverter {
     }
 
     private void CreateUpdateSameConvert(PreRegister data,
-                                         @Valid PreRegisterCreateUpdateRequest dto) {
+                                         @Valid PreRegisterCreateRequest dto,
+                                         PreRegisterRepository repository) {
         data.setName(StringUtils.capitalize(dto.getName()));
-        data.setEmail(dto.getEmail().toLowerCase());
+        if (!data.getEmail().equals(dto.getEmail())) {
+            if (emailExists(dto.getEmail(), repository)) {
+                throw new BadRequestException("Email already exists");
+            }
+            data.setEmail(dto.getEmail().toLowerCase());
+        }
         data.setPhone(dto.getPhone().replaceAll("[^0-9]", ""));
         data.setMemberBankAccount(dto.getMemberBankAccount() != null ? dto.getMemberBankAccount().replaceAll("[^0-9]", "") : null);
         data.setParentBankAccount(dto.getParentBankAccount() != null ? dto.getParentBankAccount().replaceAll("[^0-9]", "") : null);
-        data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
+        if (!data.getMemberCin().equals(dto.getMemberCin())) {
+            if (cinExists(dto.getMemberCin(), repository)) {
+                throw new BadRequestException("Cin data already exists");
+            }
+            data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
+        }
         data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
         data.setMemberBirthdate(dto.getMemberBirthdate());
         data.setParentBirthdate(dto.getParentBirthdate());
@@ -171,5 +185,43 @@ public class PreRegisterDTOConverter {
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
         data.setBranchCode(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
+    }
+
+    private void convertToUpdate(PreRegister data,
+                                         @Valid PreRegisterUpdateRequest dto,
+                                         PreRegisterRepository repository) {
+        data.setName(StringUtils.capitalize(dto.getName()));
+        if (!data.getEmail().equals(dto.getEmail())) {
+            if (emailExists(dto.getEmail(), repository)) {
+                throw new BadRequestException("Email already exists");
+            }
+            data.setEmail(dto.getEmail().toLowerCase());
+        }
+        data.setPhone(dto.getPhone().replaceAll("[^0-9]", ""));
+        data.setMemberBankAccount(dto.getMemberBankAccount() != null ? dto.getMemberBankAccount().replaceAll("[^0-9]", "") : null);
+        data.setParentBankAccount(dto.getParentBankAccount() != null ? dto.getParentBankAccount().replaceAll("[^0-9]", "") : null);
+        if (!data.getMemberCin().equals(dto.getMemberCin())) {
+            if (cinExists(dto.getMemberCin(), repository)) {
+                throw new BadRequestException("Cin data already exists");
+            }
+            data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
+        }
+        data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
+        data.setMemberBirthdate(dto.getMemberBirthdate());
+        data.setParentBirthdate(dto.getParentBirthdate());
+        data.setType(dto.getType() != null ? dto.getType() : null);
+        Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
+        data.setBranchCode(branch);
+        data.setPicName(StringUtils.capitalize(dto.getPicName()));
+    }
+
+
+
+    public boolean emailExists(String email, PreRegisterRepository repository) {
+        return repository.existsByEmail(email);
+    }
+
+    public boolean cinExists(String cin, PreRegisterRepository repository) {
+        return repository.existsByMemberCin(cin);
     }
 }

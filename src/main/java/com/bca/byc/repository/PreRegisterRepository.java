@@ -8,13 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> {
-
-    boolean existsByEmail(String email);
 
     @Query("SELECT p FROM PreRegister p WHERE p.secureId = :id" )
     Optional<PreRegister> findBySecureId(@Param("id") String id);
@@ -39,6 +36,7 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
 
 
     // validator
+    boolean existsByEmail(String email);
     boolean existsByMemberCin(String cin);
 
 

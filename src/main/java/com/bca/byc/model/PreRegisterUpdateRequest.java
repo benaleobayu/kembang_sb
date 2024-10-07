@@ -1,9 +1,7 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.Branch;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.validator.annotation.UniqueCinPreRegister;
-import com.bca.byc.validator.annotation.UniqueEmail;
 import com.bca.byc.validator.annotation.UniqueEmailPreRegister;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -14,12 +12,11 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class PreRegisterCreateUpdateRequest {
+public class PreRegisterUpdateRequest {
 
     @NotBlank(message = "Name is required")
     private String name;
 
-    @UniqueEmailPreRegister
     @NotBlank(message = "Email is required")
     private String email;
 
@@ -43,7 +40,6 @@ public class PreRegisterCreateUpdateRequest {
     // nullable true
     private LocalDate parentBirthdate;
 
-    @UniqueCinPreRegister
     @NotBlank(message = "Member CIN is required")
     @Size(max = 11, message = "CIN must be 11 characters")
     private String memberCin;

@@ -3,8 +3,9 @@ package com.bca.byc.controller;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.PreRegisterCreateUpdateRequest;
+import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
+import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
@@ -80,7 +81,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.create')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         // principal
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -107,7 +108,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Update Pre-Register User", description = "Update Pre-Register User")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody PreRegisterCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody PreRegisterUpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
