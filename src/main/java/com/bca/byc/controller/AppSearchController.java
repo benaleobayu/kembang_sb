@@ -45,6 +45,20 @@ public class AppSearchController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list suggested user", service.listSuggestedUser(pages, limit, sortBy, direction, keyword)));
     }
 
+    // search text business child item
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/search")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<OnboardingListUserResponse>>> listSearch(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        log.info("GET " + urlRoute + "/search endpoint hit");
+        // response true
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list suggested business", service.listSearch(pages, limit, sortBy, direction, keyword)));
+    }
+
     @Operation(summary = "Get list result posts", description = "Get list result posts")
     @GetMapping("/post")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SearchResultPostResponse>>> listResultPosts(

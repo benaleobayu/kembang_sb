@@ -4,11 +4,14 @@ import com.bca.byc.converter.AppSearchDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.TreeUserResponse;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppSearchDetailResponse;
 import com.bca.byc.model.SuggestedUserResponse;
+import com.bca.byc.model.search.SearchDTOResponse;
 import com.bca.byc.repository.AppSearchRepository;
+import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -33,6 +36,8 @@ public class AppSearchServiceImpl implements AppSearchService {
     private final AppUserRepository appUserRepository;
     private final AppSearchRepository repository;
     private final PostRepository postRepository;
+    private final BusinessCategoryRepository businessCategoryRepository;
+
     private final AppSearchDTOConverter converter;
     @Value("${app.base.url}")
     private String baseUrl;
@@ -112,6 +117,24 @@ public class AppSearchServiceImpl implements AppSearchService {
         List<SuggestedUserResponse> dtos = pageResult.getContent().stream()
                 .map(user -> TreeUserResponse.convertToCardUser(user, baseUrl)) // Convert AppUser to SuggestedUserResponse
                 .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<SearchDTOResponse> listSearch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+
+        Page<SearchDTOResponse> pageResult = businessCategoryRepository.findBusinessByKeyword(keyword, pageable);
+
+        assert pageResult != null;
+        List<SearchDTOResponse> dtos = pageResult.stream().map((c) -> {
+            SearchDTOResponse dto = new SearchDTOResponse();
+            dto.setName(c.getName());
+            return dto;
+        }).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
     }

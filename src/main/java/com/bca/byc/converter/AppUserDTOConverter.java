@@ -3,10 +3,7 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AppRegisterRequest;
-import com.bca.byc.model.AppUserProfileRequest;
-import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ExpectCategoryUserInfoResponse;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.repository.ExpectCategoryRepository;
@@ -90,9 +87,9 @@ public class AppUserDTOConverter {
                 business.setIsPrimary(b.getIsPrimary());
 
                 int businessChildIdx = 1;
-                List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
+                List<BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
                         .map(bc -> {
-                            BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
+                            BusinessCategoryResponse businessCategoryResponse = new BusinessCategoryResponse();
                             businessCategoryResponse.setId(bc.getBusinessCategoryParent().getSecureId());
                             businessCategoryResponse.setIndex(bc.getBusinessCategoryParent().getId());
                             businessCategoryResponse.setName(bc.getBusinessCategoryParent().getName());
@@ -102,7 +99,7 @@ public class AppUserDTOConverter {
 
                 // Set Line of Business based on the first category's parent name
                 String lineOfBusiness = businessCategoryResponses.stream()
-                        .map(BusinessListResponse.BusinessCategoryResponse::getName)
+                        .map(BusinessCategoryResponse::getName)
                         .findFirst()
                         .orElse("Unknown Business Category");
                 business.setLineOfBusiness(lineOfBusiness);
