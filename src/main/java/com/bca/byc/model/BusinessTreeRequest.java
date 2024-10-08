@@ -12,6 +12,8 @@ public class BusinessTreeRequest {
     @NotBlank(message = "Business Address is required")
     private String businessAddress;
 
+    private Boolean isPrimary;
+
     private List<String> categoryItemIds;
     private List<String> locationIds;
 }

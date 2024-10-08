@@ -45,7 +45,20 @@ public class TreeOnboarding {
         business.setName(businessDto.getBusinessName());
         business.setAddress(businessDto.getBusinessAddress());
         business.setUser(user);
-        business.setIsPrimary(isFirstBusiness);
+        // Determine if this business is primary
+        boolean isPrimary = isFirstBusiness || (businessDto.getIsPrimary() != null && businessDto.getIsPrimary());
+        business.setIsPrimary(isPrimary);
+
+        // If this business is primary, set all other businesses for this user to not primary
+        if (isPrimary) {
+            List<Business> existingBusinesses = businessRepository.findByUser(user);
+            for (Business existingBusiness : existingBusinesses) {
+                if (existingBusiness.getId() != null && existingBusiness.getIsPrimary()) {
+                    existingBusiness.setIsPrimary(false);
+                    businessRepository.save(existingBusiness);
+                }
+            }
+        }
         return businessRepository.save(business);
     }
 

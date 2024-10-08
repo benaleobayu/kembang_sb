@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.model.BusinessDetailResponse;
 import com.bca.byc.model.BusinessTreeRequest;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.response.ApiDataResponse;
@@ -47,7 +48,7 @@ public class BusinessController {
     @GetMapping("/{businessId}")
     public ResponseEntity<?> getBusinessDetail(@PathVariable("businessId") String businessId) {
         try {
-            BusinessListResponse business = businessService.getBusinessBySecureId(businessId);
+            BusinessDetailResponse business = businessService.getBusinessBySecureId(businessId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Success get business detail", business));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResponse(false, e.getMessage()));

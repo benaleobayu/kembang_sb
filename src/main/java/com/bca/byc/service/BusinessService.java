@@ -7,6 +7,7 @@ import com.bca.byc.converter.parsing.TreeOnboardingUpdate;
 import com.bca.byc.converter.parsing.TreeUserResponse;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.ForbiddenException;
+import com.bca.byc.model.BusinessDetailResponse;
 import com.bca.byc.model.BusinessTreeRequest;
 import com.bca.byc.model.data.BusinessListResponse;
 import com.bca.byc.repository.*;
@@ -40,14 +41,14 @@ public class BusinessService {
     private final AppUserRepository appUserRepository;
 
     // Method to get a Business by its secureId
-    public BusinessListResponse getBusinessBySecureId(String secureId) {
+    public BusinessDetailResponse getBusinessBySecureId(String secureId) {
         AppUser user = GlobalConverter.getUserEntity(appUserRepository);
         Business business = HandlerRepository.getEntityBySecureId(secureId, businessRepository, "Business not found");
 
         if (business.getUser().getId() != user.getId()) {
             throw new ForbiddenException("You are not authorized to access this resource");
         }
-        BusinessListResponse dto = new BusinessListResponse();
+        BusinessDetailResponse dto = new BusinessDetailResponse();
         TreeUserResponse.convertSingleBusinesses(business, dto);
         return dto;
     }

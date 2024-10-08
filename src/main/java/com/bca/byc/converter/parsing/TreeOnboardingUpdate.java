@@ -76,7 +76,19 @@ public class TreeOnboardingUpdate {
         existingBusiness.setName(dto.getBusinessName());
         existingBusiness.setAddress(dto.getBusinessAddress());
         existingBusiness.setUser(user);
-        existingBusiness.setIsPrimary(isFirstBusiness); // Update primary status if needed
+        boolean newIsPrimary = isFirstBusiness || (dto.getIsPrimary() != null && dto.getIsPrimary());
+
+        if (newIsPrimary) {
+            List<Business> existingBusinesses = businessRepository.findByUser(user);
+            for (Business business : existingBusinesses) {
+                if (business.getId() != null && business.getIsPrimary() && !business.getId().equals(existingBusiness.getId())) {
+                    business.setIsPrimary(false);
+                    businessRepository.save(business);
+                }
+            }
+        }
+
+        existingBusiness.setIsPrimary(newIsPrimary); // Update primary status
         return businessRepository.save(existingBusiness); // Save updates
     }
 

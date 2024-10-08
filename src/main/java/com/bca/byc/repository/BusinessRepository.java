@@ -1,5 +1,6 @@
 package com.bca.byc.repository;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
@@ -46,4 +47,6 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "WHERE b.user.id = :id " +
             "GROUP BY b")
     List<BusinessCatalogCountsResponse> getBusinessCatalogsCount(Long id);
+
+    List<Business> findByUser(AppUser user);
 }

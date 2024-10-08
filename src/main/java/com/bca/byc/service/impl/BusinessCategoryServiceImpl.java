@@ -109,6 +109,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
             for (String name : dto.getSubCategories()) {
                 BusinessCategory child = new BusinessCategory();
                 child.setName(name);
+                child.setIsParent(false);
                 child.setParentId(savedData);
                 repository.save(child);
             }
