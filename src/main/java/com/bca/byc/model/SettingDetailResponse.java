@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-public class SettingsDetailResponse {
+public class SettingDetailResponse {
 
     private Long id;
     private String name;

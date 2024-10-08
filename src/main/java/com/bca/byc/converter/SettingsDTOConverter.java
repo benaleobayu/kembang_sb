@@ -1,8 +1,9 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.entity.Settings;
+import com.bca.byc.model.SettingIndexResponse;
 import com.bca.byc.model.SettingsCreateRequest;
-import com.bca.byc.model.SettingsDetailResponse;
+import com.bca.byc.model.SettingDetailResponse;
 import com.bca.byc.model.SettingsUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,18 @@ public class SettingsDTOConverter {
 
     private ModelMapper modelMapper;
 
-    // for get data
-    public SettingsDetailResponse convertToListResponse(Settings data) {
+    // for get data index
+    public SettingIndexResponse convertToIndexResponse(Settings data) {
         // mapping Entity with DTO Entity
-        SettingsDetailResponse dto = modelMapper.map(data, SettingsDetailResponse.class);
+        SettingIndexResponse dto = modelMapper.map(data, SettingIndexResponse.class);
+        // return
+        return dto;
+    }
+
+    // for get data
+    public SettingDetailResponse convertToDetailResponse(Settings data) {
+        // mapping Entity with DTO Entity
+        SettingDetailResponse dto = modelMapper.map(data, SettingDetailResponse.class);
         // return
         return dto;
     }
