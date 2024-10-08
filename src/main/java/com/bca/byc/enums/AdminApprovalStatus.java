@@ -7,5 +7,6 @@ public enum AdminApprovalStatus {
     SPV_APPROVED, // 2
     MGR_APPROVED, // 3
     REJECTED, // 4
-    APPROVED // 5
+    APPROVED, // 5
+    DELETED // 6
 }

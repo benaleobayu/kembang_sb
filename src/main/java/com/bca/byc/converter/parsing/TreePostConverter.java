@@ -30,10 +30,7 @@ public class TreePostConverter {
     ) {
         dto.setId(id);
         dto.setName(name);
-        dto.setAvatar(Objects.isNull(avatar) || avatar.isBlank() ? null :
-                avatar.startsWith("uploads/") ?
-                        baseUrl + "/" + avatar :
-                        avatar.startsWith("/uploads/") ? baseUrl + avatar : avatar);
+        dto.setAvatar(GlobalConverter.getParseImage(avatar, baseUrl));
         return dto;
     }
 

@@ -1,9 +1,11 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.parsing.TreeLogUserManagement;
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.Otp;
 import com.bca.byc.enums.ActionType;
 import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppRegisterRequest;
@@ -44,10 +46,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     private final AppUserRepository userRepository;
     private final AppUserDetailRepository userDetailRepository;
-    private final AppUserAttributeRepository userAttributeRepository;
-    private final PreRegisterRepository preRegisterRepository;
-    private final RoleRepository roleRepository;
     private final OtpRepository otpRepository;
+    private final LogUserManagementRepository logUserManagementRepository;
 
     private final TestAutocheckRepository testAutocheckRepository;
     private final AuthenticationManager authenticationManager;
@@ -289,7 +289,11 @@ public class UserAuthServiceImpl implements UserAuthService {
         PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(savedUser.getAppUserDetail().getMemberBankAccount(), AdminApprovalStatus.APPROVED);
 
         if (dataCheck != null) {
-            testAutocheckRepository.delete(dataCheck);
+            dataCheck.setStatusApproval(AdminApprovalStatus.DELETED);
+            TreeLogUserManagement.logUserManagement(
+                    dataCheck, user, LogStatus.USED, "Data used on new user", logUserManagementRepository
+            );
+            testAutocheckRepository.save(dataCheck);
         }
     }
 
