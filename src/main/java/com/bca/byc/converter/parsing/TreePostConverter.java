@@ -122,7 +122,11 @@ public class TreePostConverter {
         dto.setContentId(contentId);
         dto.setContent(GlobalConverter.getParseImage(content, baseUrl));
         dto.setContentType(contentType);
-        dto.setThumbnail(thumbnail);
+        if (contentType.equals("image")){
+            dto.setThumbnail(GlobalConverter.getParseImage(content, baseUrl));
+        } else {
+            dto.setThumbnail(GlobalConverter.getParseImage(thumbnail, baseUrl));
+        }
         dto.setContentTagsUser(tagsUser);
         return dto;
     }

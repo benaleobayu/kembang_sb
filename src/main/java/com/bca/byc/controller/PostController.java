@@ -78,7 +78,8 @@ public class PostController {
     public ResponseEntity<ApiResponse> createPost(
             @RequestPart(value = "post", required = false) String postString,
             @RequestPart(value = "content", required = false) String contentString,
-            @RequestPart("files") List<MultipartFile> files) {
+            @RequestPart("files") List<MultipartFile> files,
+            @RequestPart("thumbnail") MultipartFile thumbnail) {
 
         String email = ContextPrincipal.getPrincipal();
         List<PostContent> contentList = new ArrayList<>();
@@ -112,12 +113,12 @@ public class PostController {
                 if (isVideoFile(file)) {
                     String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
                     String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
-                    PostContent postContent = processFile(file, contentRequest, i);
+                    PostContent postContent = processFile(file, thumbnail, contentRequest, i);
                     postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
                     contentList.add(postContent);
                 } else {
                     // Handle other file types as necessary
-                    PostContent postContent = processFile(file, contentRequest, i);
+                    PostContent postContent = processFile(file, null, contentRequest, i);
                     contentList.add(postContent);
                 }
             }
@@ -210,7 +211,7 @@ public class PostController {
 
 
     // ----------------------------------------- method ---------------------------------------------
-    private PostContent processFile(MultipartFile file, PostContentRequest contentRequest, int index) throws IOException {
+    private PostContent processFile(MultipartFile file, MultipartFile thumbnail, PostContentRequest contentRequest, int index) throws IOException {
         String filePath = saveFile(file, UPLOAD_DIR + "/post/");
         String contentType = file.getContentType();
         String fileType = null;
@@ -242,6 +243,11 @@ public class PostController {
         postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
         postContent.setType(fileType);
         postContent.setOriginalName(contentRequest.getOriginalName());
+
+        if (thumbnail != null) {
+            String thumbnailPath = saveFile(thumbnail, UPLOAD_DIR + "/thumbnail/");
+            postContent.setThumbnail(thumbnailPath.replaceAll("src/main/resources/static/", "/"));
+        }
 
         // Menangani tagUserIds
         Set<AppUser> appUsers = new HashSet<>();
