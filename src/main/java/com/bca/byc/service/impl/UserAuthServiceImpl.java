@@ -290,6 +290,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         if (dataCheck != null) {
             dataCheck.setStatusApproval(AdminApprovalStatus.DELETED);
+            dataCheck.setIsActive(false);
+            dataCheck.setIsDeleted(true);
             TreeLogUserManagement.logUserManagement(
                     dataCheck, user, LogStatus.USED, "Data used on new user", logUserManagementRepository
             );
