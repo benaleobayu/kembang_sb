@@ -17,6 +17,9 @@ public class PostContentRequest {
     @Schema(description = "let this be null", example = "")
     private String type;
 
+    @Schema(description = "let this be null", example = "")
+    private String mediaUrl;
+
     @Schema(description = "tag ids person", example = "'1'', 2', '3','4'")
     private List<String> tagUserIds; // user _id
 

@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.util.FileUploadHelper.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/post")
@@ -52,6 +54,8 @@ public class PostController {
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
+
+    private String VIDEO_PATH = "/post/video/";
 
     @Operation(summary = "Get list post home", description = "Get list post home")
     @GetMapping
@@ -103,10 +107,20 @@ public class PostController {
             for (int i = 0; i < files.size(); i++) {
                 MultipartFile file = files.get(i);
                 PostContentRequest contentRequest = contentRequests.get(i);
-                PostContent postContent = processFile(file, contentRequest, i);
-                contentList.add(postContent);
-            }
 
+                // Check if the file is a video and convert it if necessary
+                if (isVideoFile(file)) {
+                    String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
+                    String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
+                    PostContent postContent = processFile(file, contentRequest, i);
+                    postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads/"));
+                    contentList.add(postContent);
+                } else {
+                    // Handle other file types as necessary
+                    PostContent postContent = processFile(file, contentRequest, i);
+                    contentList.add(postContent);
+                }
+            }
             // Save post and its content
             postService.save(email, dto, contentList);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Post created successfully"));
@@ -117,6 +131,16 @@ public class PostController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+    private PostContent createPostContent(PostContentRequest contentRequest, String m3u8Path) {
+        PostContent postContent = new PostContent();
+
+        // Set mediaUrl ke jalur M3U8
+        postContent.setContent(m3u8Path);
+
+        return postContent; // Mengembalikan objek PostContent yang sudah terisi
+    }
+
 
     // READ (Get a post by ID)
     @Operation(summary = "Get a post by ID", description = "Get a post by ID")
@@ -142,7 +166,7 @@ public class PostController {
         List<String> filePaths = new ArrayList<>();
         try {
             for (MultipartFile file : files) {
-                String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR);
+                String filePath = saveFile(file, UPLOAD_DIR);
                 filePaths.add(filePath);
             }
         } catch (IOException e) {
@@ -187,7 +211,7 @@ public class PostController {
 
     // ----------------------------------------- method ---------------------------------------------
     private PostContent processFile(MultipartFile file, PostContentRequest contentRequest, int index) throws IOException {
-        String filePath = FileUploadHelper.saveFile(file, UPLOAD_DIR + "/post/");
+        String filePath = saveFile(file, UPLOAD_DIR + "/post/");
         String contentType = file.getContentType();
         String fileType = null;
 

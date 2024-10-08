@@ -35,6 +35,9 @@ public class PostContent extends AbstractBaseEntity {
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
+    @Column(name = "media_url", columnDefinition = "text")
+    private String mediaUrl;
+
     @Column(name = "type")
     private String type;
 

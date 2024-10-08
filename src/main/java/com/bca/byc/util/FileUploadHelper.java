@@ -62,5 +62,42 @@ public class FileUploadHelper {
         }
     }
 
+    // Method to check if the file is a video
+    public static boolean isVideoFile(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+
+        return fileName != null && (
+                fileName.endsWith(".mp4") ||
+                        fileName.endsWith(".avi") ||
+                        fileName.endsWith(".mkv") ||
+                        fileName.endsWith(".mov") ||
+                        fileName.endsWith(".wmv") ||
+                        fileName.endsWith(".flv") ||
+                        fileName.endsWith(".mpeg") ||
+                        fileName.endsWith(".3gp")
+        );
+    }
+
+
+    // Method to convert video to M3U8
+    public static String convertVideoToM3U8(String videoPath, String UPLOAD_DIR, String VIDEO_PATH) throws IOException {
+        String outputDir = UPLOAD_DIR + VIDEO_PATH;
+        String m3u8FileName = UUID.randomUUID() + ".m3u8";
+        String command = String.format("ffmpeg -i %s -codec: copy -start_number 0 -hls_time 10 -hls_list_size 0 -f hls %s/%s",
+                videoPath, outputDir, m3u8FileName);
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+        processBuilder.inheritIO();
+        Process process = processBuilder.start();
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            throw new IOException("Video conversion interrupted", e);
+        }
+
+        return outputDir + m3u8FileName; // Return the path to the M3U8 file
+    }
+
 
 }
