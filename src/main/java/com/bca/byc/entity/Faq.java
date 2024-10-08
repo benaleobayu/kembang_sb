@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "faq", indexes = {@Index(name = "idx_faq_secure_id", columnList = "secure_id", unique = true)})
 public class Faq extends AbstractBaseEntityCms implements SecureIdentifiable {
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "question", nullable = false)
     private String question;
 
@@ -25,7 +28,7 @@ public class Faq extends AbstractBaseEntityCms implements SecureIdentifiable {
     private String description;
 
     @Column(name = "orders", columnDefinition = "int default 1")
-    private Integer orders;
+    private Integer orders = 1;
 
     @ManyToOne
     @JoinColumn(name = "faq_category_id", nullable = false)

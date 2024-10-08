@@ -28,10 +28,7 @@ public class FaqCategory extends AbstractBaseEntityCms implements SecureIdentifi
     private String description;
 
     @Column(name = "orders", columnDefinition = "int default 1")
-    private Integer orders;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
+    private Integer orders = 1;
 
     @OneToMany(mappedBy = "faqCategoryId")
     private List<Faq> faqs;
