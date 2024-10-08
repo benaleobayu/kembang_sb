@@ -30,11 +30,9 @@ public class RoleSeeder implements CommandLineRunner {
     public void run(String... args) {
         Map<String, List<String>> actionByResource = new LinkedHashMap<>();
         actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("user", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
         // user management
         actionByResource.put("pre-registration", List.of("view", "create", "read", "update", "delete", "export"));
-        actionByResource.put("user-inquiry", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-active", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-suspended", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-deleted", List.of("view", "read", "update", "delete", "export"));
@@ -42,12 +40,11 @@ public class RoleSeeder implements CommandLineRunner {
         // master data
         actionByResource.put("faq", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("business_category", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("business_category_item", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("expect_item", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("location", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("branch", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("kanwil", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("tag", List.of("view", "create", "read", "update", "delete"));
+        actionByResource.put("blacklist_keyword", List.of("view", "create", "read", "update", "delete", "export"));
         actionByResource.put("setting", List.of("view", "create", "read", "update", "delete"));
 
 
