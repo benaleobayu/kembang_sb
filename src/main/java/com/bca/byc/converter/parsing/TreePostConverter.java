@@ -1,6 +1,7 @@
 package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.*;
+import com.bca.byc.model.PostCategoryResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
@@ -43,6 +44,7 @@ public class TreePostConverter {
         dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+        dto.setPostCategory(convertPostCategory(data.getPostCategory()));
 
         // Check if the post is liked by the user
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), user.getId()).isPresent();
@@ -232,4 +234,11 @@ public class TreePostConverter {
         }).collect(Collectors.toList());
     }
 
+    // Helper post category
+    public PostCategoryResponse convertPostCategory(BusinessCategory data ) {
+        PostCategoryResponse dto = new PostCategoryResponse();
+        dto.setPostCategoryId(data.getSecureId());
+        dto.setPostCategoryName(data.getName());
+        return dto;
+    }
 }

@@ -16,6 +16,7 @@ public class PostHomeResponse {
     private List<PostContentDetailResponse> postContentList;
     private List<String> postTagsList;
     private PostOwnerResponse postOwner;
+    private PostCategoryResponse postCategory;
 
     // ------- attributes -------
     private Boolean isCommentable;
