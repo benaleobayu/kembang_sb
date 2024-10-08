@@ -5,6 +5,7 @@ import com.bca.byc.model.*;
 import com.bca.byc.response.*;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.FaqCategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping(FaqCategoryController.urlRoute)
 @Tag(name = "Faq-Categories API [Masterdata]")
+@SecurityRequirement(name = "Authorization")
 public class FaqCategoryController {
 
     static final String urlRoute = "/cms/v1/ms/faq";

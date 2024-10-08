@@ -41,7 +41,7 @@ public class FaqServiceImpl implements FaqService {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Faq> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        Page<Faq> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable, categoryId);
         List<FaqIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;
