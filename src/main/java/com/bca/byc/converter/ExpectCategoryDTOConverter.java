@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -41,26 +42,32 @@ public class ExpectCategoryDTOConverter {
 
     // for get data public on app
     public PublicExpectCategoryDetailResponse convertToListResponse(ExpectCategory data) {
-        GlobalConverter converter = new GlobalConverter();
         PublicExpectCategoryDetailResponse dto = new PublicExpectCategoryDetailResponse();
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setName(data.getName());
         dto.setIsOther(data.getIsOther() != null && data.getIsOther());
+
         List<PublicExpectItemDetailResponse> subCategories = new ArrayList<>();
         for (ExpectItem expectItem : data.getExpectItems()) {
-//            if (expectItem.getIsDeleted().equals(false) && !expectItem.getName().equals("Other")) {
-                PublicExpectItemDetailResponse sub = new PublicExpectItemDetailResponse();
-                sub.setId(expectItem.getSecureId());
-                sub.setIndex(expectItem.getId());
-                sub.setName(expectItem.getName());
-                sub.setIsOther(expectItem.getIsOther() != null && expectItem.getIsOther());
-                subCategories.add(sub);
-//            }
+            PublicExpectItemDetailResponse sub = new PublicExpectItemDetailResponse();
+            sub.setId(expectItem.getSecureId());
+            sub.setIndex(expectItem.getId());
+            sub.setName(expectItem.getName());
+            sub.setIsOther(expectItem.getIsOther() != null && expectItem.getIsOther());
+            subCategories.add(sub);
         }
+
+        subCategories.sort(Comparator.comparing(
+                PublicExpectItemDetailResponse::getName,
+                Comparator.comparing(name -> "Other".equals(name) ? 1 : 0)
+        ).thenComparing(PublicExpectItemDetailResponse::getName));
+
         dto.setExpectItems(subCategories);
         return dto;
     }
+
+
 
     public ExpectCategoryIndexResponse convertToDetailResponse(ExpectCategory data) {
         GlobalConverter converter = new GlobalConverter();
