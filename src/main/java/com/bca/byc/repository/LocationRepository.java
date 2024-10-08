@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,9 +15,12 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Optional<Location> findById(Long id);
 
-    @Query("select l from Location l where l.secureId = :id")
+    @Query("SELECT l FROM Location l WHERE l.secureId = :id")
     Optional<IdSecureIdProjection> findBySecureId(@Param("id") String id);
 
-    @Query("select l from Location l where l.isDeleted = false and l.secureId = :id")
+    @Query("SELECT l FROM Location l WHERE l.isDeleted = false AND l.secureId = :id")
     Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("id") String id);
+
+    @Query("SELECT l FROM Location l WHERE l.isActive = true AND l.isDeleted = false ORDER BY l.name ASC")
+    List<Location> findAllAndOrderByName();
 }

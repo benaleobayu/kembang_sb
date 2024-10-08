@@ -9,10 +9,11 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface MsLocationService {
+    // --- public ---
+    List<LocationDetailResponse> findAllData();
+    // --- public ---
 
     LocationDetailResponse findDataById(Long id);
-
-    List<LocationDetailResponse> findAllData();
 
     void saveData(@Valid LocationCreateRequest dto) throws BadRequestException;
 

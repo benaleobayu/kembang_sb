@@ -34,7 +34,7 @@ public class LocationServiceImpl implements MsLocationService {
     @Override
     public List<LocationDetailResponse> findAllData() {
         // Get the list
-        List<Location> datas = repository.findAll();
+        List<Location> datas = repository.findAllAndOrderByName();
 
 
         // stream into the list
