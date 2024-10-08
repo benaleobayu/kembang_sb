@@ -33,7 +33,7 @@ public class FaqController {
     private final FaqService service;
 
     @PreAuthorize("hasAuthority('faq.view')")
-    @GetMapping("/{categoryId}")
+    @GetMapping("/{categoryId}/items")
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<FaqIndexResponse>>> listDataFaq(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,

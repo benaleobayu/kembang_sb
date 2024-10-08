@@ -91,11 +91,11 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
 
     @Override
     public void updateData(String id, @Valid FaqCategoryCreateUpdateRequest dto) throws BadRequestException {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         FaqCategory data = HandlerRepository.getEntityBySecureId(id, repository, notFoundMessage);
         // update
         converter.convertToUpdateRequest(data, dto);
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        data.setUpdatedBy(admin);
         // save
         repository.save(data);
     }

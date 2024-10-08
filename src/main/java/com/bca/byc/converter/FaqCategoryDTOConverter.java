@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -54,10 +55,9 @@ public class FaqCategoryDTOConverter {
         dto.setStatus(data.getIsActive());
         GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
 
-        List<String> listFaq = new ArrayList<>();
-        for (Faq faq : data.getFaqs()) {
-            listFaq.add(faq.getName());
-        }
+        List<String> listFaq = data.getFaqs() != null ? data.getFaqs().stream()
+                .map(Faq::getName)
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         dto.setFaqs(listFaq);
         // return
