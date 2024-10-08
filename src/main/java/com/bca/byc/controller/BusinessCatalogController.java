@@ -204,12 +204,12 @@ public class BusinessCatalogController {
 
         // Check if the catalog exists
         if (catalog == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catalog not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Catalog not found."));
         }
 
         // Check if the catalog belongs to the current user by validating the associated business
         if (!catalog.getBusiness().getUser().getId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this catalog.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse(false, "You are not authorized to delete this catalog."));
         }
 
         // Proceed with deletion
@@ -217,9 +217,9 @@ public class BusinessCatalogController {
 
         // Return appropriate response based on the result of deletion
         if (deleted) {
-            return ResponseEntity.status(HttpStatus.OK).body("Catalog successfully deleted.");
+            return ResponseEntity.ok().body(new ApiResponse(true, "Successfully deleted the catalog."));
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete the catalog.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Failed to delete the catalog."));
         }
     }
 
