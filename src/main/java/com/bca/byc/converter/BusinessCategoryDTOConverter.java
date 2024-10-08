@@ -2,6 +2,7 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.BusinessCategory;
+import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.*;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -101,4 +102,12 @@ public class BusinessCategoryDTOConverter {
         data.setIsActive(dto.getStatus());
     }
 
+    public PostCategoryDetailResponse convertToListCategoryPostCreateResponse(BusinessCategory data) {
+        // mapping Entity with DTO Entity
+        PostCategoryDetailResponse dto = new PostCategoryDetailResponse();
+        dto.setId(data.getSecureId());
+        dto.setName(data.getName());
+        // return
+        return dto;
+    }
 }

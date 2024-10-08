@@ -1,10 +1,12 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.data.TagDetailResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.BusinessCategoryService;
 import com.bca.byc.service.PostCategoryService;
 import com.bca.byc.service.TagService;
 import com.bca.byc.service.UserActiveService;
@@ -33,6 +35,7 @@ public class ApiDataController {
     private final TagService tagService;
     private final UserActiveService tagUserService;
     private final PostCategoryService postCategoryService;
+    private final BusinessCategoryService businessCategoryService;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags", description = "Get all tags")
@@ -79,7 +82,7 @@ public class ApiDataController {
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         try {
-            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post category", postCategoryService.listData(pages, limit, sortBy, direction, keyword)));
+            return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post category", businessCategoryService.listDataPostCategory(pages, limit, sortBy, direction, keyword)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new PaginationAppsResponse<>(false, e.getMessage(), null));
         }

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PostCategoryDetailResponse extends AdminModelBaseDTOResponse {
 
+    private String id;
     private String name;
     private String icon;
     private String description;

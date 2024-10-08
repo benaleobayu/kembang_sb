@@ -27,6 +27,7 @@ public class PostDTOConverter {
     private final TagRepository tagRepository;
     private final PostLocationRepository postLocationRepository;
     private final PostCategoryRepository postCategoryRepository;
+    private final BusinessCategoryRepository businessCategoryRepository;
     private final CommentRepository commentRepository;
     private final LikeDislikeRepository likeDislikeRepository;
     @Value("${app.base.url}")
@@ -109,10 +110,10 @@ public class PostDTOConverter {
 
         // Post category
         if (dto.getPostCategoryId() != null) {
-            PostCategory postCategory = HandlerRepository.getIdBySecureId(
+            BusinessCategory postCategory = HandlerRepository.getIdBySecureId(
                     dto.getPostCategoryId(),
-                    postCategoryRepository::findBySecureId,
-                    projection -> postCategoryRepository.findById(projection.getId()),
+                    businessCategoryRepository::findBySecureId,
+                    projection -> businessCategoryRepository.findById(projection.getId()),
                     "Post category not found"
             );
             data.setPostCategory(postCategory);

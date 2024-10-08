@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface PostCategoryService {
 
+    ResultPageResponseDTO<PostCategoryDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
     PostCategoryDetailResponse findDataById(Long id) throws ResourceNotFoundException;
 
     List<PostCategoryDetailResponse> findAllData() throws ResourceNotFoundException;
@@ -20,10 +22,4 @@ public interface PostCategoryService {
     void updateData(Long id, @Valid PostCategoryCreateUpdateRequest dto) throws BadRequestException;
 
     void deleteData(Long id) throws BadRequestException;
-
-    ResultPageResponseDTO<PostCategoryDetailResponse> listData(Integer pages,
-                                                               Integer limit,
-                                                               String sortBy,
-                                                               String direction,
-                                                               String keyword);
 }

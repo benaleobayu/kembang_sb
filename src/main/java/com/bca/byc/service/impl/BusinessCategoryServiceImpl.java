@@ -5,12 +5,10 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
+import com.bca.byc.entity.PostCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.BusinessCategoryIndexResponse;
-import com.bca.byc.model.BusinessCategoryListResponse;
-import com.bca.byc.model.BusinessCategoryParentCreateRequest;
-import com.bca.byc.model.BusinessCategoryUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.BusinessRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -200,6 +198,20 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
             throw new ResourceNotFoundException("Category with ID " + id + " not found");
         }
     }
-    
+
+    @Override
+    public ResultPageResponseDTO<PostCategoryDetailResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<BusinessCategory> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        List<PostCategoryDetailResponse> dtos = pageResult.stream().map((c) -> {
+            PostCategoryDetailResponse dto = converter.convertToListCategoryPostCreateResponse(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
 
 }

@@ -2,10 +2,7 @@ package com.bca.byc.service;
 
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.BusinessCategoryIndexResponse;
-import com.bca.byc.model.BusinessCategoryListResponse;
-import com.bca.byc.model.BusinessCategoryParentCreateRequest;
-import com.bca.byc.model.BusinessCategoryUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
@@ -30,4 +27,7 @@ public interface BusinessCategoryService {
 
     BusinessCategoryIndexResponse findDataBySecureId(String id);
     BusinessCategory getCategoryById(Long id);
+
+    // post category
+    ResultPageResponseDTO<PostCategoryDetailResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

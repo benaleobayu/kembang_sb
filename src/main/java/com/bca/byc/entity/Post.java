@@ -37,9 +37,6 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "description", columnDefinition = "varchar(1000)")
     private String description;
 
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
-
     @Column(name = "is_commentable", columnDefinition = "boolean default true")
     private Boolean isCommentable = true;
 
@@ -63,7 +60,7 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
 
     @ManyToOne
     @JoinColumn(name = "post_category_id")
-    private PostCategory postCategory;
+    private BusinessCategory postCategory;
 
     @ManyToMany
     @JoinTable(name = "post_has_tag",

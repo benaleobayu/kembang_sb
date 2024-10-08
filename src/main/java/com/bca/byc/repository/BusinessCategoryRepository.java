@@ -72,5 +72,12 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
             "bc.isActive = true AND " +
             "bc.parentId is not null")
     Page<SearchDTOResponse> findBusinessByKeyword(String keyword, Pageable pageable);
+
+    @Query("SELECT bc FROM BusinessCategory bc " +
+            "WHERE " +
+            "(LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "bc.isActive = true AND " +
+            "bc.parentId is null")
+    Page<BusinessCategory> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
     // --- search ---
 }
