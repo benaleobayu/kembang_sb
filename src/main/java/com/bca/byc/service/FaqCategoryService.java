@@ -1,22 +1,25 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.FaqCategoryCreateRequest;
+import com.bca.byc.model.FaqCategoryCreateUpdateRequest;
 import com.bca.byc.model.FaqCategoryDetailResponse;
-import com.bca.byc.model.FaqCategoryUpdateRequest;
+import com.bca.byc.model.FaqCategoryIndexResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
 public interface FaqCategoryService {
 
-    FaqCategoryDetailResponse findDataById(Long id) throws BadRequestException;
-
     List<FaqCategoryDetailResponse> findAllData();
 
-    void saveData(@Valid FaqCategoryCreateRequest dto) throws BadRequestException;
+    ResultPageResponseDTO<FaqCategoryIndexResponse> listDataFaqCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
-    void updateData(Long id, @Valid FaqCategoryUpdateRequest dto) throws BadRequestException;
+    FaqCategoryDetailResponse findDataById(String id) throws BadRequestException;
 
-    void deleteData(Long id) throws BadRequestException;
+    void saveData(@Valid FaqCategoryCreateUpdateRequest dto) throws BadRequestException;
+
+    void updateData(String id, @Valid FaqCategoryCreateUpdateRequest dto) throws BadRequestException;
+
+    void deleteData(String id) throws BadRequestException;
 }

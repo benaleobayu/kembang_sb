@@ -25,7 +25,7 @@ import java.net.URI;
 @RestController
 @AllArgsConstructor
 @RequestMapping(FaqController.urlRoute)
-@Tag(name = "Faq API [Masterdata]")
+@Tag(name = "Faq-Items API [Masterdata]")
 @SecurityRequirement(name = "Authorization")
 public class FaqController {
 
