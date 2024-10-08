@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
@@ -178,9 +179,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         List<ListTagUserResponse> dtos = pageResult.stream().map((data) -> {
             ListTagUserResponse dto = new ListTagUserResponse();
 
-            String avatar = data.getAvatar().startsWith("uploads/") ? baseUrl + "/" + data.getAvatar() : data.getAvatar();
-
-            dto.setAvatar(avatar);
+            dto.setAvatar(GlobalConverter.getParseImage(data.getAvatar(), baseUrl));
             dto.setId(data.getId());
             dto.setIndex(data.getIndex());
             dto.setName(data.getName());
