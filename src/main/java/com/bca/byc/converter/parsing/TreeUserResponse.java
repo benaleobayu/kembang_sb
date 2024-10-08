@@ -4,13 +4,12 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.ExpectItem;
 import com.bca.byc.entity.UserHasExpect;
-import com.bca.byc.model.SuggestedUserResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.model.apps.SubExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TreeUserResponse {
@@ -26,9 +25,9 @@ public class TreeUserResponse {
             businessResponse.setIsPrimary(business.getIsPrimary());
             businessResponse.setTotalCatalogs(!business.getBusinessCatalogs().isEmpty() ? business.getBusinessCatalogs().size() : 0);
 
-            List<BusinessListResponse.LocationListResponse> locationListResponses = business.getBusinessHasLocations().stream()
+            List<LocationListResponse> locationListResponses = business.getBusinessHasLocations().stream()
                     .map(bhl -> {
-                        BusinessListResponse.LocationListResponse locationListResponse = new BusinessListResponse.LocationListResponse();
+                        LocationListResponse locationListResponse = new LocationListResponse();
                         locationListResponse.setId(bhl.getLocation().getSecureId());
                         locationListResponse.setIndex(bhl.getLocation().getId());
                         locationListResponse.setName(bhl.getLocation().getName());
@@ -37,9 +36,9 @@ public class TreeUserResponse {
                     .collect(Collectors.toList());
             businessResponse.setLocations(locationListResponses);
 
-            List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = business.getBusinessCategories().stream()
+            List<BusinessCategoryResponse> businessCategoryResponses = business.getBusinessCategories().stream()
                     .map(bc -> {
-                        BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
+                        BusinessCategoryResponse businessCategoryResponse = new BusinessCategoryResponse();
                         businessCategoryResponse.setId(bc.getBusinessCategoryChild().getSecureId());
                         businessCategoryResponse.setIndex(bc.getBusinessCategoryChild().getId());
                         businessCategoryResponse.setName(bc.getBusinessCategoryChild().getName());
@@ -51,38 +50,52 @@ public class TreeUserResponse {
         }).collect(Collectors.toList());
     }
 
-    public static BusinessListResponse convertSingleBusinesses(Business data, BusinessListResponse dto) {
-            dto.setId(data.getSecureId());
-            dto.setIndex(data.getId());
-            dto.setName(data.getName());
-            dto.setAddress(data.getAddress());
-            dto.setLineOfBusiness(data.getBusinessCategories().stream().findFirst().get().getBusinessCategoryParent().getName());
-            dto.setIsPrimary(data.getIsPrimary());
-            dto.setTotalCatalogs(!data.getBusinessCatalogs().isEmpty() ? data.getBusinessCatalogs().size() : 0);
+    public static BusinessDetailResponse convertSingleBusinesses(Business data, BusinessDetailResponse dto) {
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setName(data.getName());
+        dto.setAddress(data.getAddress());
+        dto.setTotalCatalogs(data.getBusinessCatalogs().size());
 
-            List<BusinessListResponse.LocationListResponse> locationListResponses = data.getBusinessHasLocations().stream()
-                    .map(bhl -> {
-                        BusinessListResponse.LocationListResponse locationListResponse = new BusinessListResponse.LocationListResponse();
-                        locationListResponse.setId(bhl.getLocation().getSecureId());
-                        locationListResponse.setIndex(bhl.getLocation().getId());
-                        locationListResponse.setName(bhl.getLocation().getName());
-                        return locationListResponse;
-                    })
-                    .collect(Collectors.toList());
-            dto.setLocations(locationListResponses);
+        // Mapping locations
+        List<LocationListResponse> locationListResponses = data.getBusinessHasLocations().stream()
+                .map(bhl -> {
+                    LocationListResponse locationListResponse = new LocationListResponse();
+                    locationListResponse.setId(bhl.getLocation().getSecureId());
+                    locationListResponse.setIndex(bhl.getLocation().getId());
+                    locationListResponse.setName(bhl.getLocation().getName());
+                    return locationListResponse;
+                })
+                .collect(Collectors.toList());
+        dto.setLocations(locationListResponses);
 
-            List<BusinessListResponse.BusinessCategoryResponse> businessCategoryResponses = data.getBusinessCategories().stream()
-                    .map(bc -> {
-                        BusinessListResponse.BusinessCategoryResponse businessCategoryResponse = new BusinessListResponse.BusinessCategoryResponse();
-                        businessCategoryResponse.setId(bc.getBusinessCategoryChild().getSecureId());
-                        businessCategoryResponse.setIndex(bc.getBusinessCategoryChild().getId());
-                        businessCategoryResponse.setName(bc.getBusinessCategoryChild().getName());
-                        return businessCategoryResponse;
-                    }).collect(Collectors.toList());
-            dto.setSubCategories(businessCategoryResponses);
+        // Mapping categories
+        Map<String, BusinessCategoryParentResponse> parentMap = new HashMap<>();
+        data.getBusinessCategories().forEach(bc -> {
+            String parentId = bc.getBusinessCategoryParent().getSecureId();
+            if (!parentMap.containsKey(parentId)) {
+                BusinessCategoryParentResponse parentResponse = new BusinessCategoryParentResponse();
+                parentResponse.setId(parentId);
+                parentResponse.setIndex(bc.getBusinessCategoryParent().getId());
+                parentResponse.setName(bc.getBusinessCategoryParent().getName());
+                parentResponse.setSubCategories(new ArrayList<>());
+                parentMap.put(parentId, parentResponse);
+            }
+            BusinessCategoryResponse childResponse = new BusinessCategoryResponse();
+            childResponse.setId(bc.getBusinessCategoryChild().getSecureId());
+            childResponse.setIndex(bc.getBusinessCategoryChild().getId());
+            childResponse.setName(bc.getBusinessCategoryChild().getName());
 
-            return dto;
+            parentMap.get(parentId).getSubCategories().add(childResponse);
+        });
+
+        // Assuming we want the first category parent response
+        dto.setCategory(parentMap.values().stream().findFirst().orElse(null));
+
+        return dto;
     }
+
+
 
     public static List<ExpectCategoryList> convertExpectCategories(List<UserHasExpect> userHasExpects) {
         return userHasExpects.stream()

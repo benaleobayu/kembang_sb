@@ -12,7 +12,7 @@ public class BusinessDetailResponse {
     private String name;
     private String address;
 
-    private List<BusinessCategoryParentResponse> category = new ArrayList<>();
+    private BusinessCategoryParentResponse category;
     private List<LocationListResponse> locations = new ArrayList<>();
     private Integer totalCatalogs;
 
