@@ -19,7 +19,7 @@ public interface AppUserService extends UserDetailsService {
 	void updateUserData(String email, AppUserProfileRequest dto);
 
 	ProfilePostResponse getUserPosts(String userId);
-	ResultPageResponseDTO<PostDetailResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+	ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
 	void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception;
 	void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto);

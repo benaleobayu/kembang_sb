@@ -3,7 +3,6 @@ package com.bca.byc.converter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
-import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.*;
@@ -69,13 +68,13 @@ public class PostDTOConverter {
         return dto;
     }
 
-    public PostDetailResponse convertToDetailResponse(Post data) {
+    public PostHomeResponse convertToDetailResponse(Post data) {
         // mapping Entity with DTO Entity
-        PostDetailResponse dto = modelMapper.map(data, PostDetailResponse.class);
+        PostHomeResponse dto = modelMapper.map(data, PostHomeResponse.class);
         TreePostConverter converter = new TreePostConverter(baseUrl);
 
-        dto.setId(data.getSecureId());
-        dto.setDescription(data.getDescription());
+        dto.setPostId(data.getSecureId());
+        dto.setPostDescription(data.getDescription());
         dto.setIsCommentable(data.getIsCommentable());
         dto.setIsShareable(data.getIsShareable());
         dto.setIsShowLikes(data.getIsShowLikes());
@@ -83,8 +82,8 @@ public class PostDTOConverter {
 
         AppUser appUser = data.getUser();
 
-        dto.setContentList(convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(convertOwnerData(converter, appUser));
+        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
 
 //        dto.setCommentList(convertComments(data.getComments(), converter));
 //        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
@@ -193,7 +192,7 @@ public class PostDTOConverter {
         return converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 appUser.getSecureId(),
-                appUser.getName(),
+                appUser.getAppUserDetail().getName(),
                 appUser.getAppUserDetail().getAvatar()
         );
     }

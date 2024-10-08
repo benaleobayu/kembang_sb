@@ -9,7 +9,6 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
-import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
@@ -90,7 +89,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDetailResponse findBySecureId(String secureId) {
+    public PostHomeResponse findBySecureId(String secureId) {
         Post data = getEntityBySecureId(secureId, postRepository, "Post not found");
 
         return converter.convertToDetailResponse(data);

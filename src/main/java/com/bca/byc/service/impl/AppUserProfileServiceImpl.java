@@ -8,16 +8,13 @@ import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.PostDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.AppUserDetailRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.util.FileUploadHelper;
@@ -97,7 +94,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostDetailResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
@@ -121,7 +118,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostDetailResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostHomeResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);

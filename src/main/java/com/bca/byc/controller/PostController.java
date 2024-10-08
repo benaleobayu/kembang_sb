@@ -5,7 +5,7 @@ import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
-import com.bca.byc.model.PostDetailResponse;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.PostRepository;
@@ -59,7 +59,7 @@ public class PostController {
 
     @Operation(summary = "Get list post home", description = "Get list post home")
     @GetMapping
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostHome(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostHome(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,

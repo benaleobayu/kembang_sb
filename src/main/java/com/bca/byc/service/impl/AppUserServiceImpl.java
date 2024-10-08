@@ -140,7 +140,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostDetailResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         String email = ContextPrincipal.getPrincipal();
         IdEmailProjection user = appUserRepository.findByIdInEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 

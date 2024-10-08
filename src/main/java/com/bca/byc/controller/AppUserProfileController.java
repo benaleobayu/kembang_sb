@@ -107,7 +107,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list My Post", description = "Get list My Post")
     @GetMapping("/my-posts")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataMyPost(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataMyPost(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -225,7 +225,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Saved Activity", description = "Get list Post Saved Activity")
     @GetMapping("/post-saved-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostSavedActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostSavedActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -238,7 +238,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Likes Activity", description = "Get list Post Likes Activity")
     @GetMapping("/post-likes-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostDetailResponse>>> listDataPostLikesActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostLikesActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,

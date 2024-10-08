@@ -66,11 +66,11 @@ public class AppSearchController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "tag", required = false) String tag) {
+            @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         String email = ContextPrincipal.getPrincipal();
 
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, tag)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultPosts(email, pages, limit, sortBy, direction, keyword)));
     }
 
     @Operation(summary = "Get list result tags", description = "Get list result tags", hidden = true)

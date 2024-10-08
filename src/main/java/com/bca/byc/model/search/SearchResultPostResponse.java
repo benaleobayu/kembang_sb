@@ -6,12 +6,6 @@ import lombok.Data;
 @Data
 public class SearchResultPostResponse {
 
-    private Long  id;
 
-    private PostContentRequest content;
-
-    private String avatar;
-
-    private String name;
 
 }
