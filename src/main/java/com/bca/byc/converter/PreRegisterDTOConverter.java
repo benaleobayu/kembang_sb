@@ -75,7 +75,7 @@ public class PreRegisterDTOConverter {
     public PreRegister convertToCreateRequest(@Valid PreRegisterCreateRequest dto, AppAdmin admin) {
         // mapping DTO Entity with Entity
         PreRegister data = new PreRegister();
-        CreateUpdateSameConvert(data, dto, null);
+        convertToCreatePreRegister(data, dto);
         data.setCreatedBy(admin);
         AdminType typeEquals = admin.getType();
 
@@ -159,25 +159,14 @@ public class PreRegisterDTOConverter {
 
     }
 
-    private void CreateUpdateSameConvert(PreRegister data,
-                                         @Valid PreRegisterCreateRequest dto,
-                                         PreRegisterRepository repository) {
+    private void convertToCreatePreRegister(PreRegister data,
+                                            @Valid PreRegisterCreateRequest dto) {
         data.setName(StringUtils.capitalize(dto.getName()));
-        if (!data.getEmail().equals(dto.getEmail())) {
-            if (emailExists(dto.getEmail(), repository)) {
-                throw new BadRequestException("Email already exists");
-            }
-            data.setEmail(dto.getEmail().toLowerCase());
-        }
+        data.setEmail(dto.getEmail().toLowerCase());
         data.setPhone(dto.getPhone().replaceAll("[^0-9]", ""));
         data.setMemberBankAccount(dto.getMemberBankAccount() != null ? dto.getMemberBankAccount().replaceAll("[^0-9]", "") : null);
         data.setParentBankAccount(dto.getParentBankAccount() != null ? dto.getParentBankAccount().replaceAll("[^0-9]", "") : null);
-        if (!data.getMemberCin().equals(dto.getMemberCin())) {
-            if (cinExists(dto.getMemberCin(), repository)) {
-                throw new BadRequestException("Cin data already exists");
-            }
-            data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
-        }
+        data.setMemberCin(dto.getMemberCin() != null ? dto.getMemberCin().replaceAll("[^0-9]", "") : null);
         data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
         data.setMemberBirthdate(dto.getMemberBirthdate());
         data.setParentBirthdate(dto.getParentBirthdate());
@@ -188,8 +177,8 @@ public class PreRegisterDTOConverter {
     }
 
     private void convertToUpdate(PreRegister data,
-                                         @Valid PreRegisterUpdateRequest dto,
-                                         PreRegisterRepository repository) {
+                                 @Valid PreRegisterUpdateRequest dto,
+                                 PreRegisterRepository repository) {
         data.setName(StringUtils.capitalize(dto.getName()));
         if (!data.getEmail().equals(dto.getEmail())) {
             if (emailExists(dto.getEmail(), repository)) {
@@ -214,7 +203,6 @@ public class PreRegisterDTOConverter {
         data.setBranchCode(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
     }
-
 
 
     public boolean emailExists(String email, PreRegisterRepository repository) {
