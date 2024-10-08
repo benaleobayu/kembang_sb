@@ -123,9 +123,7 @@ public class TreePostConverter {
             List<OwnerDataResponse> tagsUser
     ) {
         dto.setContentId(contentId);
-        dto.setContent(content != null && (content.startsWith("uploads/") || content.startsWith("/uploads/"))
-                ? baseUrl + content.replaceFirst("^/", "/")
-                : content);
+        dto.setContent(GlobalConverter.getParseImage(content, baseUrl));
         dto.setContentType(contentType);
         dto.setThumbnail(thumbnail);
         dto.setContentTagsUser(tagsUser);
@@ -161,7 +159,7 @@ public class TreePostConverter {
     }
 
     public Post countPostComments(Post post, PostRepository repository, String type) {
-        if (type.equals("add")){
+        if (type.equals("add")) {
             post.setCommentsCount(post.getCommentsCount() + 1);
         } else if (type.equals("delete")) {
             post.setCommentsCount(post.getCommentsCount() - 1);
