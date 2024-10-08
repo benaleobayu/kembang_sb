@@ -56,6 +56,7 @@ public class TreeUserResponse {
         dto.setName(data.getName());
         dto.setAddress(data.getAddress());
         dto.setTotalCatalogs(data.getBusinessCatalogs().size());
+        dto.setIsPrimary(data.getIsPrimary());
 
         // Mapping locations
         List<LocationListResponse> locationListResponses = data.getBusinessHasLocations().stream()

@@ -11,6 +11,7 @@ public class BusinessDetailResponse {
     private Long index;
     private String name;
     private String address;
+    private Boolean isPrimary;
 
     private BusinessCategoryParentResponse category;
     private List<LocationListResponse> locations = new ArrayList<>();
