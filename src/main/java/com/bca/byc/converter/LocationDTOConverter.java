@@ -21,14 +21,13 @@ public class LocationDTOConverter {
 
     // for get data
     public LocationDetailResponse convertToListResponse(Location data) {
-        GlobalConverter converter = new GlobalConverter();
         // mapping Entity with DTO Entity
         LocationDetailResponse dto = new LocationDetailResponse();
         dto.setName(data.getName());
         dto.setAddress(data.getAddress());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
         // return
         return dto;
     }

@@ -36,7 +36,6 @@ public class LocationServiceImpl implements MsLocationService {
         // Get the list
         List<Location> datas = repository.findAllAndOrderByName();
 
-
         // stream into the list
         return datas.stream()
                 .map(converter::convertToListResponse)
