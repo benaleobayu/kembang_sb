@@ -1,5 +1,7 @@
 package com.bca.byc.model.data;
 
+import com.bca.byc.model.BusinessCategoryResponse;
+import com.bca.byc.model.LocationListResponse;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -20,17 +22,4 @@ public class BusinessListResponse {
 
     private Integer totalCatalogs;
 
-    @Data
-    public static class BusinessCategoryResponse {
-        private String id;
-        private Long index;
-        private String name;
-    }
-
-    @Data
-    public static class LocationListResponse {
-        private String id;
-        private Long index;
-        private String name;
-    }
 }
