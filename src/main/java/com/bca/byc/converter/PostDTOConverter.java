@@ -47,9 +47,9 @@ public class PostDTOConverter {
         dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         AppUser appUser = data.getUser();
 
-        dto.setPostTagsList(convertTagList(data.getTags()));
-        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+        dto.setPostTagsList(converter.convertTagList(data.getTags()));
+        dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
 
         // Check if the post is liked by the user
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userId).isPresent();
@@ -82,8 +82,8 @@ public class PostDTOConverter {
 
         AppUser appUser = data.getUser();
 
-        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+        dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
 
 //        dto.setCommentList(convertComments(data.getComments(), converter));
 //        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
@@ -168,25 +168,7 @@ public class PostDTOConverter {
     }
 
     // -----------------
-    private List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter) {
-        return postContentList.stream().map(postContent -> {
-            List<OwnerDataResponse> tagUsers = postContent.getTagUsers().stream()
-                    .map(tagUser -> converter.OwnerDataResponse(
-                            new OwnerDataResponse(),
-                            tagUser.getSecureId(),
-                            tagUser.getName(),
-                            tagUser.getAppUserDetail().getAvatar()
-                    )).collect(Collectors.toList());
-            return converter.PostContentDetailResponse(
-                    new PostContentDetailResponse(),
-                    postContent.getSecureId(),
-                    postContent.getContent(),
-                    postContent.getType(),
-                    postContent.getThumbnail(),
-                    tagUsers
-            );
-        }).collect(Collectors.toList());
-    }
+
 
     private OwnerDataResponse convertOwnerData(TreePostConverter converter, AppUser appUser) {
         return converter.OwnerDataResponse(
@@ -196,30 +178,6 @@ public class PostDTOConverter {
                 appUser.getAppUserDetail().getAvatar()
         );
     }
-
-    private PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser) {
-        return converter.PostOwnerResponse(
-                new PostOwnerResponse(),
-                appUser.getSecureId(),
-                appUser.getAppUserDetail().getName(),
-                appUser.getAppUserDetail().getAvatar(),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .map(Business::getName)
-                        .findFirst().orElse(null),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .map(b -> b.getBusinessCategories().stream()
-                                .map(bc -> bc.getBusinessCategoryParent().getName())
-                                .findFirst().orElse(""))
-                        .findFirst().orElse(null),
-                appUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary)
-                        .map(business -> true)
-                        .findFirst().orElse(false)
-        );
-    }
-
 
     public ProfilePostResponse convertToProfilePostResponse(AppUser data) {
         ProfilePostResponse dto = modelMapper.map(data, ProfilePostResponse.class);
@@ -251,9 +209,6 @@ public class PostDTOConverter {
         return replyResponses;
     }
 
-    // Helper to convert tag list with List String
-    private List<String> convertTagList(Set<Tag> tagList) {
-        return tagList.stream().map(Tag::getName).collect(Collectors.toList());
-    }
+
 
 }

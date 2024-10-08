@@ -52,6 +52,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //    Page<Post> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
     // ------------- show list my post -------------
 
+    // ------------- search -------------
+    @Query("SELECT p FROM Post p " +
+            "LEFT JOIN BusinessCategory bc ON bc.id = p.postCategory.id " +
+            "WHERE " +
+            "((LOWER(p.description) LIKE LOWER(:keyword) ) OR " +
+            "(LOWER(bc.name) LIKE LOWER(:keyword) )) AND " +
+            "p.isActive = true AND " +
+            "bc.parentId is NULL")
+    Page<Post> findPostByLobAndDescription(String keyword, Pageable pageable);
+    // ------------- search -------------
 
 
     @Query("SELECT p FROM Post p WHERE p.secureId = :secureId")

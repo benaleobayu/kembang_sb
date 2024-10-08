@@ -13,6 +13,7 @@ import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
 import com.bca.byc.util.PaginationUtil;
@@ -45,8 +46,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category) {
         // Get user id
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+        AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         Long userId = user.getId();
 
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";

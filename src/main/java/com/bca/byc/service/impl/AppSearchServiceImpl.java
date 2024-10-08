@@ -2,16 +2,18 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppSearchDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.converter.parsing.TreeUserResponse;
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppSearchDetailResponse;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.SuggestedUserResponse;
 import com.bca.byc.model.search.SearchDTOResponse;
 import com.bca.byc.repository.AppSearchRepository;
 import com.bca.byc.repository.BusinessCategoryRepository;
+import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -37,13 +39,14 @@ public class AppSearchServiceImpl implements AppSearchService {
     private final AppSearchRepository repository;
     private final PostRepository postRepository;
     private final BusinessCategoryRepository businessCategoryRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
 
     private final AppSearchDTOConverter converter;
     @Value("${app.base.url}")
     private String baseUrl;
 
     @Override
-    public ResultPageResponseDTO<AppSearchDetailResponse> listResultPosts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<PostHomeResponse> listResultPosts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // get user id
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
@@ -52,11 +55,18 @@ public class AppSearchServiceImpl implements AppSearchService {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+        Page<Post> pageResult = postRepository.findPostByLobAndDescription(keyword, pageable);
 
         assert pageResult != null;
-        List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
-            AppSearchDetailResponse dto = converter.convertToListResponse(c);
+        List<PostHomeResponse> dtos = pageResult.stream().map((data) -> {
+            TreePostConverter treePostConverter = new TreePostConverter(baseUrl);
+            PostHomeResponse dto = treePostConverter.convertToPostHomeResponse(
+                    new PostHomeResponse(),
+                    data,
+                    treePostConverter,
+                    user,
+                    likeDislikeRepository
+            );
             return dto;
         }).collect(Collectors.toList());
 

@@ -1,11 +1,10 @@
 package com.bca.byc.converter.parsing;
 
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.CommentReply;
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostContent;
+import com.bca.byc.entity.*;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
+import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.util.helper.Formatter;
 
@@ -13,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TreePostConverter {
 
@@ -20,6 +21,42 @@ public class TreePostConverter {
 
     public TreePostConverter(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public PostHomeResponse convertToPostHomeResponse(
+            PostHomeResponse dto,
+            Post data,
+            TreePostConverter converter,
+            AppUser user,
+            LikeDislikeRepository likeDislikeRepository
+    ){
+
+        dto.setPostId(data.getSecureId());
+        dto.setPostDescription(data.getDescription());
+        dto.setIsCommentable(data.getIsCommentable());
+        dto.setIsShareable(data.getIsShareable());
+        dto.setIsShowLikes(data.getIsShowLikes());
+        dto.setIsPosted(data.getIsPosted());
+        dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
+        AppUser appUser = data.getUser();
+
+        dto.setPostTagsList(convertTagList(data.getTags()));
+        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
+        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+
+        // Check if the post is liked by the user
+        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLiked(isLiked);
+
+        // Check if the user is following the post owner
+        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
+        dto.setIsFollowed(isFollowing);
+
+        dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
+
+        dto.setLikeCount(data.getLikesCount());
+        dto.setCommentCount(data.getCommentsCount());
+        return dto;
     }
 
     public OwnerDataResponse OwnerDataResponse(
@@ -91,15 +128,30 @@ public class TreePostConverter {
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
         return dto;
     }
-
-    public PostOwnerResponse PostOwnerResponse(
-            PostOwnerResponse dto,
-            String id,
-            String name,
-            String avatar,
-            String businessName,
-            String lineOfBusiness,
-            Boolean isPrimary
+    // Helper owner with business
+    public PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser) {
+        return converter.PostOwnerResponse(
+                new PostOwnerResponse(),
+                appUser.getSecureId(),
+                appUser.getAppUserDetail().getName(),
+                appUser.getAppUserDetail().getAvatar(),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(Business::getName)
+                        .findFirst().orElse(null),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(b -> b.getBusinessCategories().stream()
+                                .map(bc -> bc.getBusinessCategoryParent().getName())
+                                .findFirst().orElse(""))
+                        .findFirst().orElse(null),
+                appUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary)
+                        .map(business -> true)
+                        .findFirst().orElse(false)
+        );
+    }
+    public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto, String id, String name, String avatar, String businessName, String lineOfBusiness, Boolean isPrimary
     ) {
         dto.setId(id);
         dto.setName(name);
@@ -111,13 +163,7 @@ public class TreePostConverter {
         return dto;
     }
 
-    public PostContentDetailResponse PostContentDetailResponse(
-            PostContentDetailResponse dto,
-            String contentId,
-            String content,
-            String contentType,
-            String thumbnail,
-            List<OwnerDataResponse> tagsUser
+    public PostContentDetailResponse PostContentDetailResponse(PostContentDetailResponse dto, String contentId, String content, String contentType, String thumbnail, List<OwnerDataResponse> tagsUser
     ) {
         dto.setContentId(contentId);
         dto.setContent(GlobalConverter.getParseImage(content, baseUrl));
@@ -131,9 +177,7 @@ public class TreePostConverter {
         return dto;
     }
 
-    public void ProfileActivityPostResponseConverter(
-            ProfileActivityPostResponse dto,
-            Post post
+    public void ProfileActivityPostResponseConverter(ProfileActivityPostResponse dto, Post post
     ) {
         List<PostContent> postContents = post.getPostContents();
 
@@ -160,4 +204,32 @@ public class TreePostConverter {
         }
         return repository.save(post);
     }
+
+
+    // Helper tag list
+    public List<String> convertTagList(Set<Tag> tagList) {
+        return tagList.stream().map(Tag::getName).collect(Collectors.toList());
+    }
+
+    // Helper post content
+    public List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter) {
+        return postContentList.stream().map(postContent -> {
+            List<OwnerDataResponse> tagUsers = postContent.getTagUsers().stream()
+                    .map(tagUser -> converter.OwnerDataResponse(
+                            new OwnerDataResponse(),
+                            tagUser.getSecureId(),
+                            tagUser.getAppUserDetail().getName(),
+                            tagUser.getAppUserDetail().getAvatar()
+                    )).collect(Collectors.toList());
+            return converter.PostContentDetailResponse(
+                    new PostContentDetailResponse(),
+                    postContent.getSecureId(),
+                    postContent.getContent(),
+                    postContent.getType(),
+                    postContent.getThumbnail(),
+                    tagUsers
+            );
+        }).collect(Collectors.toList());
+    }
+
 }

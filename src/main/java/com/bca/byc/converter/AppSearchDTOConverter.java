@@ -3,6 +3,7 @@ package com.bca.byc.converter;
 import com.bca.byc.entity.Post;
 import com.bca.byc.model.AppSearchDetailResponse;
 
+import com.bca.byc.model.PostHomeResponse;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,5 +22,9 @@ public class AppSearchDTOConverter {
         return dto;
     }
 
+    public PostHomeResponse convertToListPostResponse(Post data) {
+        PostHomeResponse dto = modelMapper.map(data, PostHomeResponse.class);
+        return dto;
+    }
 }
 
