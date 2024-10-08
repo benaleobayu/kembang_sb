@@ -115,6 +115,7 @@ public class PostController {
                     String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
                     PostContent postContent = processFile(file, thumbnail, contentRequest, i);
                     postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
+                    postContent.setMediaUrl(videoPath.replaceAll(UPLOAD_DIR, "uploads"));
                     contentList.add(postContent);
                 } else {
                     // Handle other file types as necessary
