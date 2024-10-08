@@ -79,7 +79,7 @@ public class PostController {
             @RequestPart(value = "post", required = false) String postString,
             @RequestPart(value = "content", required = false) String contentString,
             @RequestPart("files") List<MultipartFile> files,
-            @RequestPart("thumbnail") MultipartFile thumbnail) {
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
 
         String email = ContextPrincipal.getPrincipal();
         List<PostContent> contentList = new ArrayList<>();
