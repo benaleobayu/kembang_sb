@@ -10,34 +10,28 @@ import java.util.List;
 public class PostHomeResponse {
 
     private String postId;
-
     private String postDescription;
+    private String postAt;
+
+    private List<PostContentDetailResponse> postContentList;
+    private List<String> postTagsList;
+    private PostOwnerResponse postOwner;
 
     // ------- attributes -------
     private Boolean isCommentable;
-
     private Boolean isShareable;
-
     private Boolean isShowLikes;
-
     private Boolean isPosted;
     // ------- attributes -------
 
-    private List<PostContentDetailResponse> postContentList;
-
-    private List<String> postTagsList;
-
-    private PostOwnerResponse postOwner;
-
-    private String postAt;
-
     // ------- added function -------
     private Boolean isLiked;
+    private Boolean isFollowed;
+    private Boolean isOfficial;
     // ------- added function -------
 
     // ------- count -------
     private Long likeCount;
-
     private Long commentCount;
     // ------- count -------
 

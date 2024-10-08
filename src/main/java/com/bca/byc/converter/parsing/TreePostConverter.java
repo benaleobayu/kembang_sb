@@ -103,7 +103,7 @@ public class TreePostConverter {
     ) {
         dto.setId(id);
         dto.setName(name);
-        dto.setAvatar(avatar != null && avatar.startsWith("uploads/") ? baseUrl + "/" + avatar : avatar);
+        dto.setAvatar(GlobalConverter.getParseImage(avatar, baseUrl));
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
@@ -136,14 +136,7 @@ public class TreePostConverter {
         if (!postContents.isEmpty()) {
             PostContent firstContent = postContents.get(0);
             dto.setContentId(firstContent.getSecureId());
-            dto.setContent(
-                    Objects.isNull(firstContent.getContent()) || firstContent.getContent().isBlank() ? null :
-                            firstContent.getContent().startsWith("uploads/") ?
-                                    baseUrl + "/" + firstContent.getContent() :
-                                    firstContent.getContent().startsWith("/uploads/") ?
-                                            baseUrl + firstContent.getContent() :
-                                            firstContent.getContent()
-            );
+            dto.setContent(GlobalConverter.getParseImage(firstContent.getContent(), baseUrl));
             dto.setContentType(firstContent.getType());
             dto.setThumbnail(firstContent.getThumbnail());
         } else {

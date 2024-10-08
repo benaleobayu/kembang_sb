@@ -48,12 +48,19 @@ public class PostDTOConverter {
         dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         AppUser appUser = data.getUser();
 
+        dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
 
         // Check if the post is liked by the user
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userId).isPresent();
         dto.setIsLiked(isLiked);
+
+        // Check if the user is following the post owner
+        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(userId));
+        dto.setIsFollowed(isFollowing);
+
+        dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
 
         dto.setLikeCount(data.getLikesCount());
         dto.setCommentCount(data.getCommentsCount());
@@ -195,7 +202,7 @@ public class PostDTOConverter {
         return converter.PostOwnerResponse(
                 new PostOwnerResponse(),
                 appUser.getSecureId(),
-                appUser.getName(),
+                appUser.getAppUserDetail().getName(),
                 appUser.getAppUserDetail().getAvatar(),
                 appUser.getBusinesses().stream()
                         .filter(Business::getIsPrimary)
@@ -243,6 +250,11 @@ public class PostDTOConverter {
             replyResponses.add(replyResponse);
         }
         return replyResponses;
+    }
+
+    // Helper to convert tag list with List String
+    private List<String> convertTagList(Set<Tag> tagList) {
+        return tagList.stream().map(Tag::getName).collect(Collectors.toList());
     }
 
 }
