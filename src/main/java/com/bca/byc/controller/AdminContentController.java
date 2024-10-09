@@ -12,11 +12,11 @@ import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.ChannelRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
-import com.bca.byc.service.cms.AdminContentService;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.cms.AdminContentService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.*;
 
@@ -53,10 +54,9 @@ public class AdminContentController {
     private final ChannelRepository channelRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
+    static final String VIDEO_PATH = "/post/video/";
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
-    private String VIDEO_PATH = "/post/video/";
 
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AdminContentIndexResponse>>> listDataAdminContentIndex(
@@ -83,18 +83,18 @@ public class AdminContentController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> create(
-            @RequestPart(value = "files") List<MultipartFile> files,
-            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
-            @RequestPart(value = "content") String contentString,
-            @RequestPart("channelId") String channelId,
-            @RequestPart("highlight") List<String> highlight,
-            @RequestPart("description") String description,
-            @RequestPart("tags") List<String> tags,
-            @RequestPart("status") Boolean status,
-            @RequestPart("promotionStatus") String promotionStatus,
-            @RequestPart("promotedAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
-            @RequestPart("promotedUntil") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
-            @RequestPart("postAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+            @ModelAttribute(value = "files") List<MultipartFile> files,
+            @ModelAttribute(value = "thumbnail") MultipartFile thumbnail,
+            @ModelAttribute(value = "content") String contentString,
+            @ModelAttribute("channelId") String channelId,
+            @ModelAttribute("highlight") List<String> highlight,
+            @ModelAttribute("description") String description,
+            @ModelAttribute("tags") List<String> tags,
+            @ModelAttribute("status") Boolean status,
+            @ModelAttribute(value = "promotionStatus") String promotionStatus,
+            @ModelAttribute("promotedAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
+            @ModelAttribute("promotedUntil") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
+            @ModelAttribute(value = "postAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
 
@@ -133,7 +133,7 @@ public class AdminContentController {
                 }
             }
             Post newPost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository);
-            service.saveData(contentList, newPost );
+            service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post content"));
         } catch (BadRequestException e) {
@@ -177,11 +177,19 @@ public class AdminContentController {
                              LocalDateTime promotedUntil,
                              LocalDateTime postAt,
                              ChannelRepository channelRepository,
-                             TagRepository tagRepository){
+                             TagRepository tagRepository) {
         Post post = new Post();
         Channel c = HandlerRepository.getEntityBySecureId(channelId, channelRepository, "channel not found");
         post.setChannel(c);
-        post.setHighlight(String.join(",", highlight));
+
+        List<String> highlightList = null;
+        if (highlight != null) {
+            highlightList = highlight.stream()
+                    .map(s -> s.replaceAll("[^a-zA-Z0-9]", "").trim()).toList();
+        }
+        assert highlightList != null;
+        post.setHighlight(String.join(", ", highlightList));
+
         post.setDescription(description);
         // Set list of Tags
         Set<com.bca.byc.entity.Tag> tags = new HashSet<>();

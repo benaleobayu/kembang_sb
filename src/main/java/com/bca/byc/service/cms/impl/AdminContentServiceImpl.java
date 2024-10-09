@@ -61,12 +61,11 @@ public class AdminContentServiceImpl implements AdminContentService {
     public void saveData(List<PostContent> contentList, Post newPost) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
 
-        newPost.setAdmin(admin); // Contoh, jika Anda perlu menyimpan admin yang membuat post
+        newPost.setAdmin(admin);
+        newPost.setIsAdminPost(true);
 
-        // Simpan post pertama
         Post savedPost = postRepository.save(newPost);
 
-        // Simpan setiap content yang terkait
         for (PostContent postContent : contentList) {
             postContent.setPost(savedPost);
             postContentRepository.save(postContent);
