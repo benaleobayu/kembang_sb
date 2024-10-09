@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
@@ -58,14 +59,8 @@ public class AppUserDTOConverter {
         dto.setType(appUserDetail.getType());
         dto.setTypeName(appUserDetail.getType().equals(UserType.MEMBER_SOLITAIRE) ? "Solitaire" :
                 appUserDetail.getType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
-        dto.setAvatar(Objects.isNull(appUserDetail.getAvatar()) || appUserDetail.getAvatar().isBlank() ? null :
-                appUserDetail.getAvatar().startsWith("uploads/") ?
-                        baseUrl + "/" + appUserDetail.getAvatar() :
-                        appUserDetail.getAvatar().startsWith("/uploads/") ? baseUrl + appUserDetail.getAvatar() : appUserDetail.getAvatar());
-        dto.setCover(Objects.isNull(appUserDetail.getCover()) || appUserDetail.getCover().isBlank() ? null :
-                appUserDetail.getCover().startsWith("uploads/") ?
-                        baseUrl + "/" + appUserDetail.getCover() :
-                        appUserDetail.getCover().startsWith("/uploads/") ? baseUrl + appUserDetail.getCover() : appUserDetail.getCover());
+        dto.setAvatar(GlobalConverter.getParseImage(data.getAppUserDetail().getAvatar(), baseUrl));
+        dto.setCover(GlobalConverter.getParseImage(data.getAppUserDetail().getCover(), baseUrl));
         dto.setBiodata(Objects.equals(appUserDetail.getBiodata(), "") ? null : appUserDetail.getBiodata());
         dto.setCountryCode(appUserDetail.getCountryCode());
         dto.setPhone(appUserDetail.getPhone());
@@ -184,10 +179,10 @@ public class AppUserDTOConverter {
         String userType;
         LocalDate birthdate;
         if (data.getAppUserDetail().getType() == UserType.MEMBER_SOLITAIRE) {
-            userType = "Parent Solitaire / Prioritas";
+            userType = "Solitaire";
             birthdate = userDetail.getMemberBirthdate();
         } else if (data.getAppUserDetail().getType() == UserType.MEMBER_PRIORITY) {
-            userType = "Child Solitaire / Prioritas";
+            userType = "Priority";
             birthdate = userDetail.getParentBirthdate();
         } else {
             userType = "Not Member";
@@ -224,7 +219,9 @@ public class AppUserDTOConverter {
 
         // Update education if present
         if (dto.getEducation() != null) {
-            data.getAppUserDetail().setEducation(String.join(", ", dto.getEducation()));
+            data.getAppUserDetail().setEducation(dto.getEducation().stream()
+                    .map(s -> s.replaceAll(",", "."))
+                    .collect(Collectors.joining(", ")));
         }
 
         // Handle userHasExpects if present
