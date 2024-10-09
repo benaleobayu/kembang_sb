@@ -46,6 +46,9 @@ public class TreePostConverter {
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
         dto.setPostCategory(convertPostCategory(data.getPostCategory()));
 
+        // check is my post or not
+        dto.setIsMyPost(Objects.equals(appUser.getId(), user.getId()));
+
         // Check if the post is liked by the user
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), user.getId()).isPresent();
         dto.setIsLiked(isLiked);
@@ -55,6 +58,9 @@ public class TreePostConverter {
         dto.setIsFollowed(isFollowing);
 
         dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
+
+        String officialUrl = data.getUser().getAppUserAttribute().getOfficialUrl();
+        dto.setOfficialUrl(officialUrl);
 
         dto.setLikeCount(data.getLikesCount());
         dto.setCommentCount(data.getCommentsCount());

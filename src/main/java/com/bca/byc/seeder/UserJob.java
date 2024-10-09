@@ -78,7 +78,8 @@ public class UserJob {
                 faker.random().nextBoolean(),
                 null,
                 faker.random().nextBoolean(),
-                null
+                null,
+                faker.internet().domainWord()
         );
         AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
 

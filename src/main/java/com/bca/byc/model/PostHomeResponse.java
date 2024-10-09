@@ -26,11 +26,12 @@ public class PostHomeResponse {
     // ------- attributes -------
 
     // ------- added function -------
+    private Boolean isMyPost;
     private Boolean isLiked;
     private Boolean isFollowed;
     private Boolean isOfficial;
     // ------- added function -------
-
+    private String officialUrl;
     // ------- count -------
     private Long likeCount;
     private Long commentCount;

@@ -60,4 +60,7 @@ public class AppUserAttribute {
     @Column(name = "official_at")
     private LocalDateTime officialAt;
 
+    @Column(name = "official_url")
+    private String officialUrl;
+
 }
