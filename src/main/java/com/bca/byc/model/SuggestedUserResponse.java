@@ -15,4 +15,6 @@ public class SuggestedUserResponse {
 
     private String businessName;
     private String businessLob;
+
+    private Boolean isFollowed;
 }
