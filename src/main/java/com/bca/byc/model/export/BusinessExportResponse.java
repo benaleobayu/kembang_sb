@@ -16,10 +16,15 @@ public class BusinessExportResponse {
     private String name;
     private String address;
     private String lineOfBusiness;
-    private String isPrimary;
+    private Boolean isPrimary;
     private List<String> locations = new ArrayList<>();
     private List<String> subCategories = new ArrayList<>();
 
-    public BusinessExportResponse(Long id, String name, String address, String lineOfBusiness, String isPrimary) {
+    public BusinessExportResponse(Long id, String name, String address, String lineOfBusiness, Boolean isPrimary) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.lineOfBusiness = lineOfBusiness;
+        this.isPrimary = isPrimary;
     }
 }

@@ -78,7 +78,7 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
             String name = (String) row[1];
             String address = (String) row[2];
             String lineOfBusiness = (String) row[3];
-            String isPrimary = (String) row[4];
+            Boolean isPrimary = (Boolean) row[4];
             String location = (String) row[5];
             String subCategory = (String) row[6];
 
