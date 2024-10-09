@@ -58,5 +58,9 @@ public class GlobalConverter {
                         imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
     }
 
+    public static String replaceImagePath(String imagePath){
+        return imagePath.replace("src/main/resources/static/", "/");
+    }
+
 
 }
