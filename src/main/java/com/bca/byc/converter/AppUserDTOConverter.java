@@ -51,7 +51,7 @@ public class AppUserDTOConverter {
         // Mapping Entity with DTO Entity
         UserInfoResponse dto = modelMapper.map(data, UserInfoResponse.class);
         dto.setId(data.getSecureId());
-        dto.setName(data.getName());
+        dto.setName(data.getAppUserDetail().getName());
         dto.setEmail(data.getEmail());
         AppUserDetail appUserDetail = data.getAppUserDetail();
         dto.setStatus(appUserDetail.getStatus());
