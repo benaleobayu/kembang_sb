@@ -52,7 +52,7 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "post_at")
     private LocalDateTime postAt;
 
-    // relations
+    // relations on post user
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -84,6 +84,32 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserHasSavedPost> savedPosts = new ArrayList<>();
 
+    // relation on admin post
+
+    @ManyToOne
+    @JoinColumn(name = "chanel_id")
+    private Chanel chanel;
+
+    @Column(name = "highlight")
+    private String highlight;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private AppAdmin admin;
+
+    @Column(name = "is_admin_post")
+    private Boolean isAdminPost = false;
+
+    // promoted
+
+    @Column(name = "promotedStatus")
+    private String promotedStatus = "NOT_DEFINED";
+
+    @Column(name = "promoted_at")
+    private LocalDateTime promotedAt;
+
+    @Column(name = "promoted_until")
+    private LocalDateTime promotedUntil;
 
     // stats
 
@@ -95,5 +121,11 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Column(name = "comments_count")
     private Long CommentsCount = 0L;
+
+//    @PrePersist
+//    @PreUpdate
+//    private void prePersistAndUpdate(){
+//        updatePromotedStatus();
+//    }
 
 }
