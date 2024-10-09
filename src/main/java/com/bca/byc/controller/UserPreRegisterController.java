@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.IdsDeleteRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
@@ -121,7 +122,7 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.delete')")
     @Operation(summary = "Delete Pre-Register User", description = "Delete Pre-Register User")
     @DeleteMapping()
-    public ResponseEntity<ApiResponse> delete(@RequestParam("ids") List<Long> ids) {
+    public ResponseEntity<ApiResponse> delete(@RequestBody IdsDeleteRequest ids) {
         log.info("DELETE " + urlRoute + "/ids={ids} endpoint hit");
         try {
             service.deleteData(ids);
