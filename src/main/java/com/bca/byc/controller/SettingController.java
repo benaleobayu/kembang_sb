@@ -34,7 +34,7 @@ import java.net.URI;
 @AllArgsConstructor
 public class SettingController {
 
-    static final String urlRoute = "/v1/settings";
+    static final String urlRoute = "/cms/v1/settings";
     private final SettingService service;
 
     @Qualifier("ageRangeService")
