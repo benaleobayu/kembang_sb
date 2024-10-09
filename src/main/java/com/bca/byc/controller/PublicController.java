@@ -9,6 +9,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.*;
+import com.bca.byc.service.cms.LocationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class PublicController {
     private final SettingService settingsService;
     private final FaqCategoryService faqCategoryService;
     private final BusinessCategoryService businessCategoryService;
-    private final MsLocationService locationService;
+    private final LocationService locationService;
     private final ExpectCategoryService expectCategoryService;
     private final PreRegisterService preRegisterService;
 
