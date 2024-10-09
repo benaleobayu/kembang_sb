@@ -2,6 +2,8 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.Location;
 import com.bca.byc.model.projection.IdSecureIdProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("SELECT l FROM Location l WHERE l.isActive = true AND l.isDeleted = false ORDER BY l.name ASC")
     List<Location> findAllAndOrderByName();
+
+    Page<Location> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
 }

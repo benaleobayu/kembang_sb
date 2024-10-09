@@ -26,9 +26,6 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
     @Column(name = "orders")
     private Integer orders;
 
-    @Column(name = "status", columnDefinition = "boolean default false")
-    private Boolean status;
-
     // relations
     @OneToMany(mappedBy = "location")
     private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();

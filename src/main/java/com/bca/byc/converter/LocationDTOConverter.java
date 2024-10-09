@@ -2,10 +2,9 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Location;
-import com.bca.byc.model.LocationCreateRequest;
+import com.bca.byc.model.LocationCreateUpdateRequest;
 import com.bca.byc.model.LocationDetailResponse;
-import com.bca.byc.model.LocationUpdateRequest;
-import com.bca.byc.util.helper.Formatter;
+import com.bca.byc.model.LocationIndexResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,6 +17,16 @@ import java.time.LocalDateTime;
 public class LocationDTOConverter {
 
     private ModelMapper modelMapper;
+
+    public LocationIndexResponse convertToIndexResponse(Location data) {
+        LocationIndexResponse dto = new LocationIndexResponse();
+        dto.setName(data.getName());
+        dto.setAddress(data.getAddress());
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.getIsActive());
+        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        return dto;
+    }
 
     // for get data
     public LocationDetailResponse convertToListResponse(Location data) {
@@ -33,7 +42,7 @@ public class LocationDTOConverter {
     }
 
     // for create data
-    public Location convertToCreateRequest(@Valid LocationCreateRequest dto) {
+    public Location convertToCreateRequest(@Valid LocationCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         Location data = modelMapper.map(dto, Location.class);
         // return
@@ -41,10 +50,12 @@ public class LocationDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(Location data, @Valid LocationUpdateRequest dto) {
+    public void convertToUpdateRequest(Location data, @Valid LocationCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
     }
+
+
 }
