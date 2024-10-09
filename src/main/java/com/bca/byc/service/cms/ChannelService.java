@@ -7,7 +7,7 @@ import com.bca.byc.model.ChanelIndexResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
-public interface ChanelService {
+public interface ChannelService {
 
     ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -15,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "chanel", indexes = {
+@Table(name = "channel", indexes = {
     @Index(name = "idx_chanel_secure_id", columnList = "secure_id", unique = true)
 })
-public class Chanel extends AbstractBaseEntity implements SecureIdentifiable {
+public class Channel extends AbstractBaseEntity implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +38,7 @@ public class Chanel extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "privacy")
     private String privacy;
 
-    @OneToMany(mappedBy = "chanel")
+    @OneToMany(mappedBy = "channel")
     private List<Post> contents;
 
     @Override

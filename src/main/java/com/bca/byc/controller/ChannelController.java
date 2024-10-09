@@ -7,7 +7,7 @@ import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.cms.ChanelService;
+import com.bca.byc.service.cms.ChannelService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,12 +20,12 @@ import java.net.URI;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping(ChanelController.urlRoute)
-@Tag(name = "Chanel API")
-public class ChanelController {
+@RequestMapping(ChannelController.urlRoute)
+@Tag(name = "Channel API")
+public class ChannelController {
 
     static final String urlRoute = "/cms/v1/chanel";
-    private ChanelService service;
+    private ChannelService service;
 
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ChanelIndexResponse>>> listDataChanelIndex(

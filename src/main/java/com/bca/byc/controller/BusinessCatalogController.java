@@ -104,7 +104,10 @@ public class BusinessCatalogController {
 
     @Operation(summary = "Create a new business catalog entry with image upload")
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<?> createCatalog(@RequestParam("businessSecureId") String businessSecureId, @RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> createCatalog(@RequestParam("businessSecureId") String businessSecureId,
+                                           @RequestParam("title") String title,
+                                           @RequestParam("description") String description,
+                                           @RequestParam("image") MultipartFile image) {
 
 
         Long userId = ContextPrincipal.getId();

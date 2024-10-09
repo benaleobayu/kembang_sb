@@ -1,6 +1,6 @@
 package com.bca.byc.converter;
 
-import com.bca.byc.entity.Chanel;
+import com.bca.byc.entity.Channel;
 import com.bca.byc.model.ChanelCreateUpdateRequest;
 import com.bca.byc.model.ChanelDetailResponse;
 
@@ -20,14 +20,14 @@ public class ChanelDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data index
-    public ChanelIndexResponse convertToIndexResponse(Chanel data) {
+    public ChanelIndexResponse convertToIndexResponse(Channel data) {
         // mapping Entity with DTO Entity
         ChanelIndexResponse dto = modelMapper.map(data, ChanelIndexResponse.class);
         // return
         return dto;
     }
  // for get data
-    public ChanelDetailResponse convertToDetailResponse(Chanel data) {
+    public ChanelDetailResponse convertToDetailResponse(Channel data) {
         // mapping Entity with DTO Entity
         ChanelDetailResponse dto = modelMapper.map(data, ChanelDetailResponse.class);
         // return
@@ -35,15 +35,15 @@ public class ChanelDTOConverter {
     }
 
     // for create data
-    public Chanel convertToCreateRequest(@Valid ChanelCreateUpdateRequest dto) {
+    public Channel convertToCreateRequest(@Valid ChanelCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
-        Chanel data = modelMapper.map(dto, Chanel.class);
+        Channel data = modelMapper.map(dto, Channel.class);
         // return
         return data;
     }
 
     // for update data
-    public void convertToUpdateRequest(Chanel data, @Valid ChanelCreateUpdateRequest dto) {
+    public void convertToUpdateRequest(Channel data, @Valid ChanelCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
         // set updated_at
