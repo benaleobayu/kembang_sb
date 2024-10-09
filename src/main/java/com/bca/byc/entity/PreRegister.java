@@ -50,6 +50,10 @@ public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifi
     @Column(name = "type")
     private UserType type = UserType.MEMBER_SOLITAIRE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "parent_type")
+    private UserType parentType = UserType.MEMBER_SOLITAIRE;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
 

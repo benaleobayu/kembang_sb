@@ -44,6 +44,7 @@ public class PreRegisterJob {
                 faker.phoneNumber().phoneNumber().toString(), // phone
                 memberType[faker.number().numberBetween(0, 3)], // member
                 userType[faker.number().numberBetween(0, 2)], // type
+                userType[faker.number().numberBetween(0, 2)], // type
                 faker.lorem().characters(120), // description
                 cardNumber.toString(), // card number
                 cinNumber.toString(), // cin number

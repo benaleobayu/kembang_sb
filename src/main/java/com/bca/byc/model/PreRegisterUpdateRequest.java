@@ -23,8 +23,11 @@ public class PreRegisterUpdateRequest {
     @NotBlank(message = "Phone is required")
     private String phone;
 
-    @Schema(description = "MEMBER | NOT_MEMBER", example = "MEMBER | NOT_MEMBER")
+    @Schema(description = "MEMBER_SOLITAIRE | MEMBER_PRIORITY | NOT_MEMBER", example = "MEMBER_SOLITAIRE")
     private UserType type;
+
+    @Schema(description = "MEMBER_SOLITAIRE | MEMBER_PRIORITY | NOT_MEMBER", example = "MEMBER_SOLITAIRE")
+    private UserType parentType;
 
     @NotBlank(message = "Member Card Number is required")
     @Size(min = 16, max = 16, message = "Bank Account must be 16 characters")
