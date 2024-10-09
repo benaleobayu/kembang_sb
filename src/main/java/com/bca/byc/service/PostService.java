@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.entity.PostContent;
-import com.bca.byc.exception.InvalidFileTypeException;
+import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -16,7 +16,7 @@ public interface PostService {
 
     PostHomeResponse findBySecureId(String secureId);
 
-    void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeException;
+    void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeImageException;
 
     void update(String secureId, PostCreateUpdateRequest post) throws Exception;
 

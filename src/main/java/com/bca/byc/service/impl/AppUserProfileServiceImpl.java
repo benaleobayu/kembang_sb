@@ -6,7 +6,7 @@ import com.bca.byc.converter.dictionary.TreeProfileActivityConverter;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
-import com.bca.byc.exception.InvalidFileTypeException;
+import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
@@ -54,7 +54,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private String baseUrl;
 
     @Override
-    public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeException {
+    public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(avatar);
 
         AppUser appUser = userRepository.findByEmail(email)
@@ -74,7 +74,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeException {
+    public void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(cover);
 
         AppUser appUser = userRepository.findByEmail(email)
