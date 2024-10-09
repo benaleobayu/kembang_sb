@@ -45,6 +45,9 @@ public class LocationDTOConverter {
     public Location convertToCreateRequest(@Valid LocationCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         Location data = modelMapper.map(dto, Location.class);
+        data.setIsActive(dto.getStatus());
+        data.setCreatedAt(LocalDateTime.now());
+        data.setUpdatedAt(LocalDateTime.now());
         // return
         return data;
     }
@@ -53,7 +56,7 @@ public class LocationDTOConverter {
     public void convertToUpdateRequest(Location data, @Valid LocationCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         modelMapper.map(dto, data);
-        // set updated_at
+        data.setIsActive(dto.getStatus());
         data.setUpdatedAt(LocalDateTime.now());
     }
 
