@@ -49,7 +49,7 @@ public class UserJob {
                 cinNumber.toString(),
                 null,
                 faker.lorem().characters(120),
-                statusTypes[faker.number().numberBetween(0, 3)],
+                StatusType.ACTIVATED,
                 userType[faker.number().numberBetween(0, 2)],
                 memberType[faker.number().numberBetween(0, 2)],
                 "SYSTEM",

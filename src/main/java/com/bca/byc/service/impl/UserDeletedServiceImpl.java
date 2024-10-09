@@ -39,14 +39,7 @@ public class UserDeletedServiceImpl implements UserDeletedService {
     private final UserDeletedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
-                                                                      Integer limit,
-                                                                      String sortBy,
-                                                                      String direction,
-                                                                      String keyword,
-                                                                      Long locationId,
-                                                                      LocalDate startDate,
-                                                                      LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);

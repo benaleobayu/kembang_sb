@@ -18,11 +18,11 @@ import java.util.Set;
 public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT u FROM AppUser u " +
-            "JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
-            "JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "LEFT JOIN Business b ON b.user.id = u.id " +
-            "LEFT JOIN BusinessHasLocation bhl ON bhl.business.id = b.id " +
-            "LEFT JOIN Location loc ON loc.id = bhl.location.id " +
+            "LEFT JOIN u.appUserDetail aud " +
+            "LEFT JOIN aud.branchCode bc " +
+            "LEFT JOIN u.businesses b " +
+            "LEFT JOIN b.businessHasLocations bhl " +
+            "LEFT JOIN bhl.location loc " +
             "WHERE " +
             "(LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
             "LOWER(u.appUserDetail.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
@@ -30,10 +30,9 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "LOWER(u.appUserDetail.memberBankAccount) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
             "(:locationId IS NULL OR loc.id = :locationId) AND " +
             "aud.status = 6 AND " +
-            "aua.isSuspended = false AND " +
-            "aua.isDeleted = false AND " +
-            "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate " +
-            "ORDER BY u.id DESC")
+            "u.appUserAttribute.isSuspended IN (false) AND " +
+            "u.appUserAttribute.isDeleted IN (false) AND " +
+            "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
     Page<AppUser> findByKeywordAndStatusAndCreatedAt(@Param("keyword") String keyword,
                                                      @Param("locationId") Long locationId,
                                                      @Param("startDate") LocalDateTime start,

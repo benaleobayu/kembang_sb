@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
 
 @Service
@@ -73,43 +74,23 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages,
-                                                                      Integer limit,
-                                                                      String sortBy,
-                                                                      String direction,
-                                                                      String keyword,
-                                                                      Long locationId,
-                                                                      LocalDate startDate,
-                                                                      LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
-        // Set date
+        // set date
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        // Fetch data from repository
         Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
+        List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
+            UserManagementListResponse dto = new UserManagementListResponse();
+            IndexResponse(c,dto);
+            return dto;
+        }).collect(Collectors.toList());
 
-        // Convert AppUser entities to UserManagementListResponse DTOs
-        List<UserManagementListResponse> dtos = pageResult.stream()
-                .map(converter::convertToListResponse) // Ensure this method is called
-                .collect(Collectors.toList());
-
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // Total items
-                dtos, // DTOs to return
-                currentPage, // Current page
-                currentPage > 1 ? currentPage - 1 : 1, // Previous page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // Next page
-                1, // First page
-                totalPages - 1, // Last page
-                pageResult.getSize() // Per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override
