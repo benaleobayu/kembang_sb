@@ -4,6 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
+import com.bca.byc.model.export.BusinessExportResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,4 +50,22 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     List<BusinessCatalogCountsResponse> getBusinessCatalogsCount(Long id);
 
     List<Business> findByUser(AppUser user);
+
+    // --- for detail usermanagement ---
+    @Query("SELECT b FROM Business b " +
+            "WHERE " +
+            "(LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
+            "b.user.id = :id")
+    Page<Business> findBusinessOnUser(Long id, String keyword, Pageable pageable);
+
+    @Query("SELECT b.id, b.name, b.address, bc.name, b.isPrimary, loc.name, bci.name " +
+            "FROM Business b " +
+            "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
+            "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
+            "LEFT JOIN BusinessCategory bci ON bci.id = bhc.businessCategoryChild.id " +
+            "LEFT JOIN BusinessHasLocation bhl ON bhl.business.id = b.id " +
+            "LEFT JOIN Location loc ON loc.id = bhl.location.id " +
+            "WHERE b.user.secureId = :userId")
+    List<Object[]> findDataForExportByUserId(String userId);
+    // --- for detail usermanagement ---
 }

@@ -15,6 +15,7 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.util.PaginationUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -150,6 +152,17 @@ public class BusinessService {
 
         converter.handleUpdateBusinessCategories(dto.getCategoryItemIds(), updatedBusiness, businessCategoryRepository, businessHasCategoryRepository);
         converter.handleUpdateBusinessLocations(dto.getLocationIds(), updatedBusiness, locationRepository, businessHasLocationRepository);
+    }
+
+    public ResultPageResponseDTO<BusinessListResponse> listDataBusinessUser(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
+        AppUser user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Business> pageResult = businessRepository.findBusinessOnUser(user.getId(), keyword, pageable);
+        List<BusinessListResponse> dtos = TreeUserResponse.convertListBusinesses(pageResult.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
 }
