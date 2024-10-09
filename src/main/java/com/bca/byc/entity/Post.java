@@ -87,8 +87,8 @@ public class Post extends AbstractBaseEntity implements SecureIdentifiable {
     // relation on admin post
 
     @ManyToOne
-    @JoinColumn(name = "chanel_id")
-    private Chanel chanel;
+    @JoinColumn(name = "channel_id")
+    private Channel channel;
 
     @Column(name = "highlight")
     private String highlight;

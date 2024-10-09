@@ -54,7 +54,6 @@ public class PostController {
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
-
     private String VIDEO_PATH = "/post/video/";
 
     @Operation(summary = "Get list post home", description = "Get list post home")
@@ -78,7 +77,7 @@ public class PostController {
     public ResponseEntity<ApiResponse> createPost(
             @RequestPart(value = "post", required = false) String postString,
             @RequestPart(value = "content", required = false) String contentString,
-            @RequestPart("files") List<MultipartFile> files,
+            @RequestPart(value = "files") List<MultipartFile> files,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
 
         String email = ContextPrincipal.getPrincipal();
@@ -113,13 +112,13 @@ public class PostController {
                 if (isVideoFile(file)) {
                     String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
                     String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
-                    PostContent postContent = processFile(file, thumbnail, contentRequest, i);
+                    PostContent postContent = processFile(file, thumbnail, contentRequest, i, UPLOAD_DIR, userRepository);
                     postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
                     postContent.setMediaUrl(videoPath.replaceAll(UPLOAD_DIR, "uploads"));
                     contentList.add(postContent);
                 } else {
                     // Handle other file types as necessary
-                    PostContent postContent = processFile(file, null, contentRequest, i);
+                    PostContent postContent = processFile(file, null, contentRequest, i, UPLOAD_DIR, userRepository);
                     contentList.add(postContent);
                 }
             }
@@ -208,65 +207,5 @@ public class PostController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
-    }
-
-
-    // ----------------------------------------- method ---------------------------------------------
-    private PostContent processFile(MultipartFile file, MultipartFile thumbnail, PostContentRequest contentRequest, int index) throws IOException {
-        String filePath = saveFile(file, UPLOAD_DIR + "/post/");
-        String contentType = file.getContentType();
-        String fileType = null;
-
-
-        String fileName = file.getOriginalFilename();
-        if (fileName != null) {
-            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") ||
-                    fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
-                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
-                    fileName.endsWith(".svg") || fileName.endsWith(".ico")) {
-                contentType = "image/webp"; // Default to WEBP
-                fileType = "image";
-            } else if (fileName.endsWith(".mp4") || fileName.endsWith(".avi") ||
-                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
-                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
-                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")) {
-                contentType = "video/mp4"; // Default to MP4
-                fileType = "video";
-            } else {
-                throw new RuntimeException("Unsupported file type: " + fileName);
-            }
-        }
-
-
-        // Membuat PostContent dari file dan contentRequest yang sesuai
-        PostContent postContent = new PostContent();
-        postContent.setIndex(index);
-        postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
-        postContent.setType(fileType);
-        postContent.setOriginalName(contentRequest.getOriginalName());
-
-        if (thumbnail != null) {
-            String thumbnailPath = saveFile(thumbnail, UPLOAD_DIR + "/thumbnail/");
-            postContent.setThumbnail(thumbnailPath.replaceAll("src/main/resources/static/", "/"));
-        }
-
-        // Menangani tagUserIds
-        Set<AppUser> appUsers = new HashSet<>();
-        if (contentRequest.getTagUserIds() != null) {
-            for (String userId : contentRequest.getTagUserIds()) {
-                try {
-                    UUID.fromString(userId); // Validate UUID
-                    IdSecureIdProjection gotId = userRepository.findUserBySecureId(userId)
-                            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-                    appUsers.add(gotId.toAppUser());
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Invalid UUID format: " + userId);
-                }
-
-            }
-        }
-        postContent.setTagUsers(appUsers);
-
-        return postContent;
     }
 }

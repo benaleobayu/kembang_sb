@@ -4,16 +4,18 @@ import com.bca.byc.converter.AdminContentDTOConverter;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
+import com.bca.byc.repository.AdminContentRepository;
+import com.bca.byc.repository.PostContentRepository;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.repository.AdminContentRepository;
 import com.bca.byc.service.cms.AdminContentService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 public class AdminContentServiceImpl implements AdminContentService {
 
     private final AppAdminRepository adminRepository;
+    private final PostRepository postRepository;
+    private final PostContentRepository postContentRepository;
 
     private AdminContentRepository repository;
     private AdminContentDTOConverter converter;
@@ -54,13 +58,19 @@ public class AdminContentServiceImpl implements AdminContentService {
     }
 
     @Override
-    public void saveData(@Valid AdminContentCreateUpdateRequest dto) throws BadRequestException {
+    public void saveData(List<PostContent> contentList, Post newPost) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        // set entity to add with model mapper
-        Post data = converter.convertToCreateRequest(dto);
-        data.setAdmin(admin);
-        data.setIsAdminPost(true);
-        repository.save(data);
+
+        newPost.setAdmin(admin); // Contoh, jika Anda perlu menyimpan admin yang membuat post
+
+        // Simpan post pertama
+        Post savedPost = postRepository.save(newPost);
+
+        // Simpan setiap content yang terkait
+        for (PostContent postContent : contentList) {
+            postContent.setPost(savedPost);
+            postContentRepository.save(postContent);
+        }
     }
 
     @Override

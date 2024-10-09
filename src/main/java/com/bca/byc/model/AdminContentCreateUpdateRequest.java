@@ -5,7 +5,7 @@ import java.util.List;
 
 public record AdminContentCreateUpdateRequest(
 
-        ChanelResponse chanel,
+        Long chanel,
 
         List<String> highlight,
 

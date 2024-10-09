@@ -1,5 +1,7 @@
 package com.bca.byc.service.cms;
 
+import com.bca.byc.entity.Post;
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
@@ -17,7 +19,7 @@ public interface AdminContentService {
 
     List<AdminContentDetailResponse> findAllData();
 
-    void saveData(@Valid AdminContentCreateUpdateRequest dto) throws BadRequestException;
+    void saveData(List<PostContent> contentList, Post newPost);
 
     void updateData(String id, @Valid AdminContentCreateUpdateRequest dto) throws BadRequestException;
 

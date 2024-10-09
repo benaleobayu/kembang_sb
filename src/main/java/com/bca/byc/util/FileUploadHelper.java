@@ -1,6 +1,11 @@
 package com.bca.byc.util;
 
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.InvalidFileTypeException;
+import com.bca.byc.model.attribute.PostContentRequest;
+import com.bca.byc.model.projection.IdSecureIdProjection;
+import com.bca.byc.repository.auth.AppUserRepository;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class FileUploadHelper {
@@ -99,5 +106,62 @@ public class FileUploadHelper {
         return outputDir + m3u8FileName; // Return the path to the M3U8 file
     }
 
+    public static PostContent processFile(MultipartFile file, MultipartFile thumbnail, PostContentRequest contentRequest, int index, String UPLOAD_DIR, AppUserRepository userRepository) throws IOException {
+        String filePath = saveFile(file, UPLOAD_DIR + "/post/");
+        String contentType = file.getContentType();
+        String fileType = null;
+
+
+        String fileName = file.getOriginalFilename();
+        if (fileName != null) {
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") ||
+                    fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
+                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
+                    fileName.endsWith(".svg") || fileName.endsWith(".ico")) {
+                contentType = "image/webp"; // Default to WEBP
+                fileType = "image";
+            } else if (fileName.endsWith(".mp4") || fileName.endsWith(".avi") ||
+                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
+                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
+                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")) {
+                contentType = "video/mp4"; // Default to MP4
+                fileType = "video";
+            } else {
+                throw new RuntimeException("Unsupported file type: " + fileName);
+            }
+        }
+
+
+        // Membuat PostContent dari file dan contentRequest yang sesuai
+        PostContent postContent = new PostContent();
+        postContent.setIndex(index);
+        postContent.setContent(filePath.replaceAll("src/main/resources/static/", "/"));
+        postContent.setType(fileType);
+        postContent.setOriginalName(contentRequest.getOriginalName());
+
+        if (thumbnail != null) {
+            String thumbnailPath = saveFile(thumbnail, UPLOAD_DIR + "/thumbnail/");
+            postContent.setThumbnail(thumbnailPath.replaceAll("src/main/resources/static/", "/"));
+        }
+
+        // Menangani tagUserIds
+        Set<AppUser> appUsers = new HashSet<>();
+        if (contentRequest.getTagUserIds() != null) {
+            for (String userId : contentRequest.getTagUserIds()) {
+                try {
+                    UUID.fromString(userId); // Validate UUID
+                    IdSecureIdProjection gotId = userRepository.findUserBySecureId(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                    appUsers.add(gotId.toAppUser());
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Invalid UUID format: " + userId);
+                }
+
+            }
+        }
+        postContent.setTagUsers(appUsers);
+
+        return postContent;
+    }
 
 }
