@@ -16,6 +16,7 @@ import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppSearchService;
 import com.bca.byc.util.PaginationUtil;
@@ -96,22 +97,19 @@ public class AppSearchServiceImpl implements AppSearchService {
     }
 
     @Override
-    public ResultPageResponseDTO<AppSearchDetailResponse> listResultAccounts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<SuggestedUserResponse> listResultAccounts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // get user id
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+        AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         Long userId = user.getId();
-
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+        Page<AppUser> pageResult = appUserRepository.findUserByNameAndLob(userId, keyword, pageable);
 
         assert pageResult != null;
-        List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
-            AppSearchDetailResponse dto = converter.convertToListResponse(c);
-            return dto;
-        }).collect(Collectors.toList());
+        List<SuggestedUserResponse> dtos = pageResult.getContent().stream()
+                .map(data -> TreeUserResponse.convertToCardUser(data, baseUrl)) // Convert AppUser to SuggestedUserResponse
+                .collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
     }

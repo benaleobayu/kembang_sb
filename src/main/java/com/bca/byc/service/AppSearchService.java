@@ -12,7 +12,7 @@ public interface AppSearchService {
 
     ResultPageResponseDTO<AppSearchDetailResponse> listResultTags(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
-    ResultPageResponseDTO<AppSearchDetailResponse> listResultAccounts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<SuggestedUserResponse> listResultAccounts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<SuggestedUserResponse> listSuggestedUser(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

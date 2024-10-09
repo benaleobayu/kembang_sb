@@ -2,7 +2,6 @@ package com.bca.byc.repository.auth;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
-import com.bca.byc.model.SuggestedUserResponse;
 import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
@@ -92,5 +91,22 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
             "ORDER BY function('RANDOM')")
     Page<AppUser> findRandomUsers(@Param("keyword") String keyword, Pageable pageable);
     // --- suggested user ---
+
+    // --- search ---
+    @Query("SELECT u FROM AppUser u " +
+            "LEFT JOIN AppUserDetail detail ON detail.id = u.appUserDetail.id " +
+            "LEFT JOIN AppUserAttribute attribute ON attribute.id = u.appUserAttribute.id " +
+            "LEFT JOIN Business b ON b.user.id = u.id " +
+            "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
+            "LEFT JOIN BusinessCategory bbc ON bbc.id = bhc.businessCategoryParent.id " +
+            "WHERE " +
+            "(LOWER(u.appUserDetail.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(bbc.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND " +
+            "detail.status = 6 AND " +
+            "attribute.isSuspended = false AND " +
+            "attribute.isDeleted = false AND " +
+            "u.id != :id) ")
+    Page<AppUser> findUserByNameAndLob(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
+    // --- search ---
 }
 
