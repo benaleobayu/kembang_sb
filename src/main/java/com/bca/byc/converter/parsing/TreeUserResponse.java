@@ -140,6 +140,8 @@ public class TreeUserResponse {
                 .flatMap(b-> b.getBusinessCategories().stream()
                         .map(bc -> bc.getBusinessCategoryParent().getName()))
                 .findFirst().orElse(null));
+        boolean isFollowed = user.getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
+        response.setIsFollowed(isFollowed);
         return response;
     }
 }
