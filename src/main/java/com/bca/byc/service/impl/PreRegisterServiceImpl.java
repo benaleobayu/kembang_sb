@@ -2,15 +2,19 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PreRegisterDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.enums.AdminType;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.IdsDeleteRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -28,7 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +44,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     private PreRegisterDTOConverter converter;
 
     private AppAdminService adminService;
+    private AppAdminRepository adminRepository;
 
     @Override
     public PreRegisterDetailResponse findDataById(Long id) throws BadRequestException {
@@ -62,6 +67,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
                                                                      AdminApprovalStatus status,
                                                                      LocalDate startDate,
                                                                      LocalDate endDate) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -70,14 +76,33 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<PreRegister> pageResult = repository.searchByKeywordAndDateRange(keyword, status, start, end, pageable);
+        int s0 = AdminApprovalStatus.PENDING.ordinal(); // 0
+        int s1 = AdminApprovalStatus.OPT_APPROVED.ordinal(); // 1
+        int s4 = AdminApprovalStatus.REJECTED.ordinal(); // 4
+        int s5 = AdminApprovalStatus.APPROVED.ordinal(); // 5
+        int s6 = AdminApprovalStatus.DELETED.ordinal(); // 6
+        List<Integer> listStatus;
+        Page<PreRegister> pageResult = null;
+        if (admin.getType().equals(AdminType.SUPERADMIN)) {
+            listStatus = List.of(s0, s1, s4, s5);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+        }
+        if (admin.getType().equals(AdminType.OPERATIONAL)) {
+            listStatus = List.of(s0, s5);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+        }
+        if (admin.getType().equals(AdminType.SUPERVISOR)) {
+            listStatus = List.of(s1, s5);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+        }
 
+        assert pageResult != null;
         List<PreRegisterDetailResponse> dtos = pageResult.stream().map((c) -> {
             PreRegisterDetailResponse dto = converter.convertToListResponse(c);
             return dto;
         }).collect(Collectors.toList());
 
-       return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
     @Override
@@ -123,12 +148,20 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void deleteData(List<Long> ids) throws BadRequestException {
-        List<PreRegister> users = repository.findAllById(ids);
+    public void deleteData(IdsDeleteRequest dto) throws BadRequestException {
+        List<String> ids = dto.getIds();
+        List<PreRegister> users = repository.findBySecureIdIn(ids);
         if (users.isEmpty()) {
             throw new BadRequestException("user on pre-register not found");
         }
-        repository.deleteAll(users);
+        users.forEach((c) -> {
+            c.setIsDeleted(true);
+            c.setIsActive(false);
+            c.setStatusApproval(AdminApprovalStatus.DELETED);
+            c.setEmail(c.getEmail() + "_deleted");
+            c.setMemberCin(c.getMemberCin() + "_deleted");
+        });
+        repository.saveAll(users);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> {
@@ -16,6 +17,7 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
     @Query("SELECT p FROM PreRegister p WHERE p.secureId = :id" )
     Optional<PreRegister> findBySecureId(@Param("id") String id);
 
+    // --- index pre-register ---
     @Query("SELECT p FROM PreRegister p " +
             "WHERE " +
             "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
@@ -23,13 +25,18 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             "LOWER(p.phone) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
             "LOWER(p.memberBankAccount) LIKE CONCAT('%', :keyword, '%')) AND " +
             "( :status IS NULL OR p.statusApproval = :status  ) AND " +
-            "p.createdAt BETWEEN :startDate AND :endDate ")
-    Page<PreRegister> searchByKeywordAndDateRange(
+            "p.createdAt BETWEEN :startDate AND :endDate AND " +
+            "p.statusApproval IN :listStatus")
+    Page<PreRegister> FindAllDataByKeywordAndStatus(
+            @Param("listStatus") List<Integer> listStatus,
             @Param("keyword") String keyword,
             @Param("status") AdminApprovalStatus status,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
+
+
+    // --- index pre-register ---
 
 
 
@@ -40,4 +47,5 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
     boolean existsByMemberCin(String cin);
 
 
+    List<PreRegister> findBySecureIdIn(List<String> collect);
 }
