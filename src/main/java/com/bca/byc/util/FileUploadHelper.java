@@ -2,7 +2,8 @@ package com.bca.byc.util;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.PostContent;
-import com.bca.byc.exception.InvalidFileTypeException;
+import com.bca.byc.exception.InvalidFileTypeImageException;
+import com.bca.byc.exception.InvalidFileTypeImageVideoException;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -54,19 +56,56 @@ public class FileUploadHelper {
         }
     }
 
-    public static void validateFileTypeImage(MultipartFile file) throws InvalidFileTypeException, IOException {
-        // Create a Tika instance
-        Tika tika = new Tika();
+    public static void validateFileTypeImage(MultipartFile file) throws InvalidFileTypeImageException, IOException {
+        String filename = file.getOriginalFilename();
+        List<String> validExtensions = List.of("jpg", "jpeg", "png", "heic");
 
-        // Detect the MIME type of the uploaded file
+        if (filename != null && !isValidExtension(filename, validExtensions)) {
+            throw new InvalidFileTypeImageVideoException("Only " + validExtensions + " files are allowed.");
+        }
+
+        Tika tika = new Tika();
         String mimeType = tika.detect(file.getInputStream());
 
         System.out.println("Detected MIME type: " + mimeType);
 
-        // Validate the MIME type
-        if (!mimeType.startsWith("image/")) {
-            throw new InvalidFileTypeException("Only image files are allowed.");
+        // Validate the MIME type for images
+        if (mimeType.startsWith("image/") || mimeType.equals("video/mp4")) {
+            return;
         }
+
+        throw new InvalidFileTypeImageVideoException("Only image and MP4 files are allowed.");
+
+    }
+
+    public static void validateFileTypePost(MultipartFile file) throws InvalidFileTypeImageException, IOException {
+        String filename = file.getOriginalFilename();
+        List<String> validExtensions = List.of("jpg", "jpeg", "png", "heic", "mp4");
+
+        if (filename != null && !isValidExtension(filename, validExtensions)) {
+            throw new InvalidFileTypeImageVideoException("Only " + validExtensions + " files are allowed.");
+        }
+
+        Tika tika = new Tika();
+        String mimeType = tika.detect(file.getInputStream());
+
+        System.out.println("Detected MIME type: " + mimeType);
+
+        // Validate the MIME type for images
+        if (mimeType.startsWith("image/") || mimeType.equals("video/mp4")) {
+            return;
+        }
+
+        throw new InvalidFileTypeImageVideoException("Only image and MP4 files are allowed.");
+    }
+
+    // mime validations
+    private static boolean isValidExtension(String filename, List<String> validExtensions) {
+        if (filename == null) {
+            return false;
+        }
+        String lowerCaseName = filename.toLowerCase();
+        return validExtensions.stream().anyMatch(lowerCaseName::endsWith);
     }
 
     // Method to check if the file is a video
@@ -114,16 +153,19 @@ public class FileUploadHelper {
 
         String fileName = file.getOriginalFilename();
         if (fileName != null) {
-            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") ||
-                    fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
-                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
-                    fileName.endsWith(".svg") || fileName.endsWith(".ico")) {
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")
+//                    || fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
+//                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
+//                    fileName.endsWith(".svg") || fileName.endsWith(".ico")
+            ) {
                 contentType = "image/webp"; // Default to WEBP
                 fileType = "image";
-            } else if (fileName.endsWith(".mp4") || fileName.endsWith(".avi") ||
-                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
-                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
-                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")) {
+            } else if (fileName.endsWith(".mp4")
+//                    || fileName.endsWith(".avi") ||
+//                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
+//                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
+//                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")
+            ) {
                 contentType = "video/mp4"; // Default to MP4
                 fileType = "video";
             } else {
