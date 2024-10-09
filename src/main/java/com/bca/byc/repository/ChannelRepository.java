@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
-    Page<Channel> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
+    Page<Channel> findByNameLikeIgnoreCaseOrderByOrders(String keyword, Pageable pageable);
 }

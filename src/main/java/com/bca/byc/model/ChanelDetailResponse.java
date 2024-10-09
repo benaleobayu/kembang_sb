@@ -6,7 +6,7 @@ public record ChanelDetailResponse(
 
         String name,
 
-        String orders,
+        Integer orders,
 
         String updatedAt,
 

@@ -1,20 +1,27 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.converter.parsing.TreeChannel;
+import com.bca.byc.entity.Channel;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ChanelCreateUpdateRequest;
 import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
-import com.bca.byc.response.*;
+import com.bca.byc.model.ChannelCreateUpdateRequest;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationCmsResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.ChannelService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Slf4j
@@ -22,9 +29,10 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping(ChannelController.urlRoute)
 @Tag(name = "Channel API")
+@SecurityRequirement(name = "Authorization")
 public class ChannelController {
 
-    static final String urlRoute = "/cms/v1/chanel";
+    static final String urlRoute = "/cms/v1/channel";
     private ChannelService service;
 
     @GetMapping
@@ -50,26 +58,48 @@ public class ChannelController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody ChanelCreateUpdateRequest item) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> create(
+            @ModelAttribute(value = "logo") MultipartFile logo,
+            @ModelAttribute(value = "name") String name,
+            @ModelAttribute(value = "orders") Integer orders,
+            @ModelAttribute(value = "description") String description,
+            @ModelAttribute(value = "status") Boolean status,
+            @ModelAttribute(value = "privacy") String privacy
+    ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            service.saveData(item);
+            Channel data = TreeChannel.savedChannel(name, orders, logo, description, privacy, status);
+            service.saveData(data, logo);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created chanel"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to upload image"));
         }
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody ChanelCreateUpdateRequest item) {
-        log.info("PUT " + urlRoute + "/{id} endpoint hit");
+    @PutMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable("id") String id,
+            @ModelAttribute(value = "logo") MultipartFile logo,
+            @ModelAttribute(value = "name") String name,
+            @ModelAttribute(value = "orders") Integer orders,
+            @ModelAttribute(value = "description") String description,
+            @ModelAttribute(value = "status") Boolean status,
+            @ModelAttribute(value = "privacy") String privacy
+    ) {
+        log.info("PUT " + urlRoute + " endpoint hit");
         try {
-            service.updateData(id, item);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully updated chanel"));
+            ChannelCreateUpdateRequest data = TreeChannel.ChannelPartDTO(name, orders, logo, description, privacy, status);
+            service.updateData(id, data);
+            return ResponseEntity.created(URI.create(urlRoute))
+                    .body(new ApiResponse(true, "Successfully created chanel"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to upload image"));
         }
     }
 

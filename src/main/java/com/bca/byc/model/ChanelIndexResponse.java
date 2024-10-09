@@ -1,12 +1,14 @@
 package com.bca.byc.model;
 
+import java.io.Serializable;
+
 public record ChanelIndexResponse(
 
         String id,
 
         String name,
 
-        String orders,
+        Integer orders,
 
         String updatedAt,
 
@@ -15,5 +17,5 @@ public record ChanelIndexResponse(
         String logo,
 
         String privacy
-) {
+)  implements Serializable {
 }

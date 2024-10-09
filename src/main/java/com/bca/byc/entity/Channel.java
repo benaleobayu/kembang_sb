@@ -17,13 +17,13 @@ import java.util.List;
 @Table(name = "channel", indexes = {
     @Index(name = "idx_chanel_secure_id", columnList = "secure_id", unique = true)
 })
-public class Channel extends AbstractBaseEntity implements SecureIdentifiable {
+public class Channel extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "description", columnDefinition = "text")
