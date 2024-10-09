@@ -24,10 +24,10 @@ public class FaqCategoryDTOConverter {
     public FaqCategoryDetailResponse convertToListResponse(FaqCategory data) {
         // mapping Entity with DTO Entity
         FaqCategoryDetailResponse dto = new FaqCategoryDetailResponse();
-        dto.setName(data.getName());
-        dto.setDescription(data.getDescription());
-        dto.setOrders(data.getOrders());
-        dto.setStatus(data.getIsActive());
+        dto.setName(data.getName() != null ? data.getName() : null);
+        dto.setDescription(data.getDescription() != null ? data.getDescription() : null);
+        dto.setOrders(data.getOrders() != null ? data.getOrders() : null);
+        dto.setStatus(data.getIsActive() != null ? data.getIsActive() : null);
         GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
 
         List<FaqDetailResponse> listFaq = new ArrayList<>();
