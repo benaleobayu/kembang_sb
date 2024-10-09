@@ -219,6 +219,16 @@ public class TreePostConverter {
         return tagList.stream().map(Tag::getName).collect(Collectors.toList());
     }
 
+    // Helper highlight list to array
+    public List<String> convertListToArray(String lists) {
+        List<String> data = new ArrayList<>();
+        String[] listArray = lists != null ? lists.split(",") : new String[0];
+        for (String list : listArray) {
+            data.add(list.trim());
+        }
+        return data;
+    }
+
     // Helper post content
     public List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter) {
         return postContentList.stream().map(postContent -> {

@@ -13,8 +13,10 @@ public class PostHomeResponse {
     private String postDescription;
     private String postAt;
 
-    private List<PostContentDetailResponse> postContentList;
     private List<String> postTagsList;
+    private List<String> postHighlightsList; // new
+
+    private List<PostContentDetailResponse> postContentList;
     private PostOwnerResponse postOwner;
     private PostCategoryResponse postCategory;
 

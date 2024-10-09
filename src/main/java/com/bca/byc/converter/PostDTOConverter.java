@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -48,6 +47,7 @@ public class PostDTOConverter {
         AppUser appUser = data.getUser();
 
         dto.setPostTagsList(converter.convertTagList(data.getTags()));
+        dto.setPostHighlightsList(converter.convertListToArray(data.getHighlight()));
         dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
 
@@ -154,6 +154,7 @@ public class PostDTOConverter {
         data.setIsShareable(dto.getIsShareable());
         data.setIsShowLikes(dto.getIsShowLikes());
 
+        data.setPostAt(LocalDateTime.now());
         data.setCreatedAt(LocalDateTime.now());
 
         return data;
