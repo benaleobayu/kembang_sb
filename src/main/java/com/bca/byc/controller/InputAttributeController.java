@@ -10,7 +10,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -59,8 +62,17 @@ public class InputAttributeController {
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataBranch(pages, limit, sortBy, direction, keyword)));
     }
 
-
-
+    @GetMapping("kanwil")
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse>>> listDataKanwil(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + " endpoint hit");
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataKanwil(pages, limit, sortBy, direction, keyword)));
+    }
 
 
 }

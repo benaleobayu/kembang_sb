@@ -10,4 +10,6 @@ public interface InputAttributeService {
     ResultPageResponseDTO<AttributeNameResponse> listDataSubCategoryExpect(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<AttributeResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    ResultPageResponseDTO<AttributeResponse> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }
