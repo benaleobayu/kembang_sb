@@ -36,21 +36,10 @@ public class OnboardingController {
     @PostMapping
     public ResponseEntity<ApiResponse> createOnboarding(@RequestBody OnboardingCreateRequest dto) {
 
-        // Get email from security context
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        String email;
-        if (principal instanceof AppUser) {
-            email = ((AppUser) principal).getEmail();
-        } else if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid authentication principal."));
-        }
 
-        log.debug("Hit /api/v1/onboarding endpoint with email: {}", email);
+        log.debug("Hit /api/v1/onboarding endpoint ");
         try {
-            service.createData(email, dto);
+            service.createData(dto);
             return ResponseEntity.ok(new ApiResponse(true, "Onboarding created successfully."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Onboarding creation failed: " + e.getMessage()));

@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.OnboardingDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
@@ -52,10 +53,9 @@ public class OnboardingServiceImpl implements OnboardingService {
 
     @Override
     @Transactional
-    public void createData(String email, @Valid OnboardingCreateRequest dto) throws BadRequestException {
+    public void createData(@Valid OnboardingCreateRequest dto) throws BadRequestException {
         try {
-            AppUser user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new BadRequestException("User not found"));
+            AppUser user = GlobalConverter.getUserEntity(userRepository);
 
             // Create Businesses
             boolean isFirstBusiness = true;

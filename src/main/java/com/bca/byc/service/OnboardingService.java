@@ -7,7 +7,7 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
 public interface OnboardingService {
-    void createData(String email,@Valid OnboardingCreateRequest dto) throws BadRequestException;
+    void createData(@Valid OnboardingCreateRequest dto) throws BadRequestException;
 
     ResultPageResponseDTO<OnboardingListUserResponse> listFollowUser(Integer pages, Integer limit, String sortBy, String direction, String userName);
 
