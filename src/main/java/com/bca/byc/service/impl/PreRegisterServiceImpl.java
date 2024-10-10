@@ -7,11 +7,9 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.IdsDeleteRequest;
-import com.bca.byc.model.PreRegisterCreateRequest;
-import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -35,12 +33,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
+
 @Service
 @AllArgsConstructor
 public class PreRegisterServiceImpl implements PreRegisterService {
 
     private PreRegisterRepository repository;
-    private LogUserManagementRepository logRepository;
+    private LogUserManagementRepository logUserManagementRepository;
     private PreRegisterDTOConverter converter;
 
     private AppAdminService adminService;
@@ -190,6 +190,19 @@ public class PreRegisterServiceImpl implements PreRegisterService {
                 .orElseThrow(() -> new BadRequestException("data pre register not found"));
         // update on converter
         converter.convertToRejectRequest(data, reason, admin);
+
+        LogUserManagementRequest dto = new LogUserManagementRequest(
+                "REJECT",
+                reason.message()
+        );
+        logUserManagement(
+                data,
+                null,
+                admin,
+                LogStatus.REJECT,
+                dto,
+                logUserManagementRepository
+        );
         // save
         repository.save(data);
     }

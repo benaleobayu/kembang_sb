@@ -9,6 +9,7 @@ import com.bca.byc.enums.LogStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppRegisterRequest;
+import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.repository.*;
@@ -37,6 +38,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
 
 @Service
 @AllArgsConstructor
@@ -292,8 +295,17 @@ public class UserAuthServiceImpl implements UserAuthService {
             dataCheck.setStatusApproval(AdminApprovalStatus.DELETED);
             dataCheck.setIsActive(false);
             dataCheck.setIsDeleted(true);
-            TreeLogUserManagement.logUserManagement(
-                    dataCheck, user, LogStatus.USED, "Data used on new user", logUserManagementRepository
+            LogUserManagementRequest newLog = new LogUserManagementRequest(
+                    "USED",
+                    "Data used on new user"
+            );
+            logUserManagement(
+                    dataCheck,
+                    user,
+                    null,
+                    LogStatus.USED,
+                    newLog,
+                    logUserManagementRepository
             );
             testAutocheckRepository.save(dataCheck);
         }

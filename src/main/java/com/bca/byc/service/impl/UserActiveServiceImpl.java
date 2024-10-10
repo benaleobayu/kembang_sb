@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
 import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
 
@@ -132,7 +133,14 @@ public class UserActiveServiceImpl implements UserActiveService {
         attribute.setIsSuspended(!attribute.getIsSuspended().equals(true));
         // save
         user.setAppUserAttribute(attribute);
-        LogUserManagement(user,dto, admin);
+        logUserManagement(
+                null,
+                user,
+                admin,
+                LogStatus.SUSPENDED,
+                dto,
+                logUserManagementRepository
+        );
         repository.save(user);
     }
 
@@ -185,19 +193,6 @@ public class UserActiveServiceImpl implements UserActiveService {
                 pageable,
                 userList.getTotalElements()
         );
-    }
-
-    // -------------------------------------------------------------------
-
-    private void LogUserManagement(AppUser data, LogUserManagementRequest dto, AppAdmin admin) {
-        UserManagementLog log = new UserManagementLog();
-        log.setType(dto.getType());
-        log.setUser(data);
-        log.setMessage(dto.getReason());
-        log.setStatus(LogStatus.SUSPENDED);
-        log.setUpdatedBy(admin);
-
-        logUserManagementRepository.save(log);
     }
 
 }
