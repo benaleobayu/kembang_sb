@@ -3,9 +3,11 @@ package com.bca.byc.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserManagementListResponse extends AdminModelBaseDTOResponse {
+public class UserManagementListResponse extends AdminModelBaseDTOResponse<Long> implements Serializable {
 
     private String branchCode;
     private String name;

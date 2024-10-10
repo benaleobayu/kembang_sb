@@ -10,7 +10,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
+public class UserManagementDetailResponse extends AdminModelBaseDTOResponse<Long> {
 
     private String name;
     private String birthDate;
@@ -22,16 +22,17 @@ public class UserManagementDetailResponse extends AdminModelBaseDTOResponse {
     private String memberType;
     private String parentCin;
     private String parentBankAccount;
+    private String parentType;
     private BranchCodeResponse branchCode;
     private String picName;
 
     private List<BusinessListResponse> businesses = new ArrayList<>();
-
     private List<ExpectCategoryList> expectCategory = new ArrayList<>();
 
     private Integer orders;
     private String status;
     private String suspendedReason;
+    private String deletedReason;
 
 }
 
