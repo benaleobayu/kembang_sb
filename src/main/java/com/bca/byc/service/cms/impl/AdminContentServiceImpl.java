@@ -18,28 +18,25 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.AdminContentService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.bca.byc.util.PaginationUtil;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AdminContentServiceImpl implements AdminContentService {
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     private final AppAdminRepository adminRepository;
     private final PostRepository postRepository;
@@ -55,7 +52,7 @@ public class AdminContentServiceImpl implements AdminContentService {
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<Post> pageResult = repository.findDataPostByAdmin(keyword, pageable);
         List<AdminContentIndexResponse<Long>> dtos = pageResult.stream().map((c) -> {
-            AdminContentIndexResponse<Long> dto = converter.convertToIndexResponse(c);
+            AdminContentIndexResponse<Long> dto = converter.convertToIndexResponse(c, baseUrl);
             return dto;
         }).collect(Collectors.toList());
 
@@ -66,18 +63,7 @@ public class AdminContentServiceImpl implements AdminContentService {
     public AdminContentDetailResponse findDataById(String id) throws BadRequestException {
         Post data = HandlerRepository.getEntityBySecureId(id, repository, "Admin Content not found");
 
-        return converter.convertToListResponse(data);
-    }
-
-    @Override
-    public List<AdminContentDetailResponse> findAllData() {
-        // Get the list
-        List<Post> datas = repository.findAll();
-
-        // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
-                .collect(Collectors.toList());
+        return converter.convertToDetailResponse(data, baseUrl);
     }
 
     @Override

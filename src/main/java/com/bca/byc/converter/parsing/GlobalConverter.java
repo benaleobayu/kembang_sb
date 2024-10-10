@@ -11,6 +11,8 @@ import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GlobalConverter {
@@ -78,6 +80,16 @@ public class GlobalConverter {
 
     public static String replaceImagePath(String imagePath) {
         return imagePath.replace("src/main/resources/static/", "/");
+    }
+
+    // Helper highlight list to array
+    public static List<String> convertListToArray(String lists) {
+        List<String> data = new ArrayList<>();
+        String[] listArray = lists != null ? lists.split(",") : new String[0];
+        for (String list : listArray) {
+            data.add(list.trim());
+        }
+        return data;
     }
 
 

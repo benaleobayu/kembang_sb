@@ -17,8 +17,6 @@ public interface AdminContentService {
 
     AdminContentDetailResponse findDataById(String id) throws BadRequestException;
 
-    List<AdminContentDetailResponse> findAllData();
-
     void saveData(List<PostContent> contentList, Post newPost);
 
     void updateData(String id, @Valid AdminContentCreateUpdateRequest dto) throws BadRequestException;

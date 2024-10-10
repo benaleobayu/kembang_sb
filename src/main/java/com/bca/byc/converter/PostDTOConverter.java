@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
@@ -47,7 +48,7 @@ public class PostDTOConverter {
         AppUser appUser = data.getUser();
 
         dto.setPostTagsList(converter.convertTagList(data.getTags()));
-        dto.setPostHighlightsList(converter.convertListToArray(data.getHighlight()));
+        dto.setPostHighlightsList(GlobalConverter.convertListToArray(data.getHighlight()));
         dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
         dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
 

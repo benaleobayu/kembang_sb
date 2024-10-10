@@ -16,8 +16,6 @@ public record AdminContentIndexResponse<S>(
 
         List<String> tags,
 
-        String createdBy,
-
         String updatedBy,
 
         Boolean status,

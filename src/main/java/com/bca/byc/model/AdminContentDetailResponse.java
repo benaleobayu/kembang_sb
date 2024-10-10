@@ -6,8 +6,6 @@ public record AdminContentDetailResponse(
 
         String id,
 
-        ChanelResponse chanel,
-
         List<String> highlight,
 
         String thumbnail,
@@ -15,8 +13,6 @@ public record AdminContentDetailResponse(
         String description,
 
         List<String> tags,
-
-        String createdBy,
 
         String updatedBy,
 
