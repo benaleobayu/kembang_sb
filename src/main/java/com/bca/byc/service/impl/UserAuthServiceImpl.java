@@ -284,6 +284,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         if (userDetail.getStatus().equals(StatusType.VERIFIED)) {
             userDetail.setStatus(StatusType.PRE_ACTIVATED);
+        } else if (userDetail.getStatus().equals(StatusType.ACTIVATED)) {
+            userDetail.setStatus(StatusType.ACTIVATED);
         } else {
             userDetail.setStatus(userDetail.getStatus());
         }
