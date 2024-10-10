@@ -42,6 +42,9 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "type")
     private AdminType type = AdminType.GENERAL;
 
+    @Column(name = "account_type")
+    private String accountType = "Official";
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
