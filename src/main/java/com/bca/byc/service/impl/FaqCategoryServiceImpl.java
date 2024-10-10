@@ -13,11 +13,7 @@ import com.bca.byc.repository.FaqCategoryRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.FaqCategoryService;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,10 +24,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
