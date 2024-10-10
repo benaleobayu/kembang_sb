@@ -1,6 +1,5 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.parsing.TreeLogUserManagement;
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.Otp;
 import com.bca.byc.enums.ActionType;
@@ -142,13 +141,16 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (dto.parent_bank_account() == null && member ||
                 dto.parent_bank_account().isEmpty() && member ||
                 child) {
-            userDetail.setStatus(StatusType.APPROVED);
             user.setAppUserDetail(userDetail);
-            userDetail.setMemberCin(dataCheck.getMemberCin());// set cin member
+            userDetail.setStatus(StatusType.APPROVED);
+            userDetail.setType(dataCheck.getType() != null ? dataCheck.getType() : null); // set type
+            userDetail.setMemberCin(dataCheck.getMemberCin()); // set cin member
+            userDetail.setMemberType(dataCheck.getMemberType() != null ? dataCheck.getMemberType() : null); // set member type
             if (dto.parent_bank_account() == null) {
                 userDetail.setUserAs("member");
             } else {
                 userDetail.setParentCin(dataCheck.getParentCin()); // set child cin
+                userDetail.setParentType(dataCheck.getParentType()); // set parent type
                 userDetail.setParentBankAccount(dataCheck.getParentBankAccount()); // set child bank account
                 userDetail.setUserAs("child");
             }
@@ -159,6 +161,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             user.setAppUserDetail(userDetail);
 
             userAttribute.setIsApproved(true);
+            userAttribute.setApprovedAt(LocalDateTime.now());
             user.setAppUserAttribute(userAttribute);
 
             AppUser savedUser = userRepository.save(user);
