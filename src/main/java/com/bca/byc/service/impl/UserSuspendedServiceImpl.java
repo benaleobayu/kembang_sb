@@ -2,20 +2,27 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.UserSuspendedDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.model.projection.CMSBulkSuspendProjection;
+import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserSuspendedRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -30,12 +37,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
 import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexResponse;
 
 
 @Service
 @AllArgsConstructor
 public class UserSuspendedServiceImpl implements UserSuspendedService {
+
+    private final AppAdminRepository adminRepository;
+    private final LogUserManagementRepository logUserManagementRepository;
 
     private final UserSuspendedRepository repository;
 
@@ -73,11 +84,22 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserIsDeletedTrue(String id) {
+    public void makeUserIsDeletedTrue(String id, @Valid LogUserManagementRequest dto) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = user.getAppUserAttribute();
         userAttribute.setIsDeleted(true);
         user.setAppUserAttribute(userAttribute);
+
+        logUserManagement(
+                null,
+                user,
+                admin,
+                LogStatus.DELETED,
+                dto,
+                logUserManagementRepository
+        );
+
         repository.save(user);
     }
 
@@ -87,6 +109,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
         AppUserAttribute userAttribute = user.getAppUserAttribute();
         userAttribute.setIsSuspended(false);
         user.setAppUserAttribute(userAttribute);
+
         repository.save(user);
     }
 

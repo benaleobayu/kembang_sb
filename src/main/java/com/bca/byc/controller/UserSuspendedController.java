@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BulkByIdRequest;
+import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserManagementExportService;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -69,10 +71,10 @@ public class UserSuspendedController {
 
     @Operation(summary = "Delete user suspended by id", description = "Delete user suspended by id")
     @PutMapping("/{id}/delete")
-    public ResponseEntity<?> delete(@PathVariable("id") String id) {
+    public ResponseEntity<?> delete(@PathVariable("id") String id, @Valid @RequestBody LogUserManagementRequest dto) {
         log.info("PUT " + urlRoute + "/{id}/delete endpoint hit");
         try {
-            service.makeUserIsDeletedTrue(id);
+            service.makeUserIsDeletedTrue(id, dto);
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully deleted user", null));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
