@@ -4,7 +4,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.response.*;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.FaqCategoryService;
+import com.bca.byc.service.cms.FaqCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
