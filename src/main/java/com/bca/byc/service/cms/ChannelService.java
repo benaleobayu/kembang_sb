@@ -3,6 +3,7 @@ package com.bca.byc.service.cms;
 import com.bca.byc.entity.Channel;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeImageException;
+import com.bca.byc.model.ChanelListContentResponse;
 import com.bca.byc.model.ChannelCreateUpdateRequest;
 import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
@@ -22,5 +23,7 @@ public interface ChannelService {
     void updateData(String id, ChannelCreateUpdateRequest dto) throws IOException, InvalidFileTypeImageException;
 
     void deleteData(String id) throws BadRequestException;
+
+    ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }
 

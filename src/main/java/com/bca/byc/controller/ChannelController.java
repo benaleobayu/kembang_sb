@@ -6,6 +6,7 @@ import com.bca.byc.entity.Channel;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
+import com.bca.byc.model.ChanelListContentResponse;
 import com.bca.byc.model.ChannelCreateUpdateRequest;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
@@ -112,5 +113,19 @@ public class ChannelController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    // ------------------------------------------------------------------
+
+    @GetMapping("/{chennelId}/content")
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ChanelListContentResponse<Long>>>> listDataContentIndex(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + " endpoint hit");
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list chanel", service.listDataContentChannel(pages, limit, sortBy, direction, keyword)));
     }
 }

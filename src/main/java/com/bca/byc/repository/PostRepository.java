@@ -79,4 +79,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     void deleteBySecureId(String secureId);
 
+    // ------------- post on channel -------------
+    @Query("SELECT p " +
+            "FROM Post p " +
+            "LEFT JOIN p.postContents pc " +
+            "LEFT JOIN p.user u " +
+            "WHERE " +
+            "p.isAdminPost = true")
+    Page<Post> findPostOnChannel(String keyword, Pageable pageable);
+    // ------------- post on channel -------------
+
 }

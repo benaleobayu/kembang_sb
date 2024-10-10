@@ -1,17 +1,18 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Channel;
-import com.bca.byc.model.ChannelCreateUpdateRequest;
+import com.bca.byc.entity.Post;
 import com.bca.byc.model.ChanelDetailResponse;
-
 import com.bca.byc.model.ChanelIndexResponse;
+import com.bca.byc.model.ChanelListContentResponse;
+import com.bca.byc.model.ChannelCreateUpdateRequest;
 import com.bca.byc.util.helper.Formatter;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
-import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
@@ -34,7 +35,8 @@ public class ChanelDTOConverter {
                 data.getPrivacy()
         );
     }
- // for get data
+
+    // for get data
     public ChanelDetailResponse convertToDetailResponse(Channel data, String baseUrl) {
         // mapping Entity with DTO Entity
         // return
@@ -75,6 +77,32 @@ public class ChanelDTOConverter {
 
         // set updated_at
         data.setUpdatedAt(LocalDateTime.now());
+    }
+
+    public ChanelListContentResponse<Long> convertListContentResponse(Post data, String baseUrl) {
+
+        String firstTypeContent = data.getPostContents().getFirst().getType();
+        String firstContentThumbnail;
+        if (firstTypeContent != null && firstTypeContent.equals("image")) {
+            firstContentThumbnail = GlobalConverter.getParseImage(data.getPostContents().getFirst().getThumbnail(), baseUrl);
+        } else {
+            firstContentThumbnail = GlobalConverter.getParseImage(data.getPostContents().getFirst().getThumbnail(), baseUrl);
+        }
+
+        AppAdmin admin = data.getAdmin();
+
+        return new ChanelListContentResponse<Long>(
+                data.getSecureId(),
+                data.getId(),
+                firstContentThumbnail,
+                data.getDescription(),
+                admin.getName(),
+                GlobalConverter.getParseImage(admin.getAvatar(), baseUrl),
+                admin.getAccountType() != null ? admin.getAccountType() : null,
+                data.getLikesCount(),
+                data.getCommentsCount(),
+                data.getSharesCount()
+        );
     }
 }
 

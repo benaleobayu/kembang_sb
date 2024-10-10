@@ -6,12 +6,15 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeChannel;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Channel;
+import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeImageException;
+import com.bca.byc.model.ChanelListContentResponse;
 import com.bca.byc.model.ChannelCreateUpdateRequest;
 import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
 import com.bca.byc.repository.ChannelRepository;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -42,8 +45,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     private final AppAdminRepository adminRepository;
 
-    private ChannelRepository repository;
-    private ChanelDTOConverter converter;
+    private final ChannelRepository repository;
+    private final ChanelDTOConverter converter;
+
+    private final PostRepository postRepository;
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
@@ -114,5 +119,19 @@ public class ChannelServiceImpl implements ChannelService {
         } else {
             repository.deleteById(data.getId());
         }
+    }
+
+    @Override
+    public ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Post> pageResult = postRepository.findPostOnChannel(keyword, pageable);
+        List<ChanelListContentResponse<Long>> dtos = pageResult.stream().map((c) -> {
+            ChanelListContentResponse<Long> dto = converter.convertListContentResponse(c, baseUrl);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
     }
 }
