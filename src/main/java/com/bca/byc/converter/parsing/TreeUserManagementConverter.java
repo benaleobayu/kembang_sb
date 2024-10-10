@@ -1,6 +1,7 @@
 package com.bca.byc.converter.parsing;
 
 import com.bca.byc.entity.*;
+import com.bca.byc.enums.LogStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
@@ -80,7 +81,18 @@ public class TreeUserManagementConverter {
                         : "Inactive"
         );
         if (data.getAppUserAttribute().getIsSuspended()){
-            dto.setSuspendedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream().findFirst().get().getMessage() : null);
+            dto.setSuspendedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream()
+                    .filter(l -> l.getStatus().equals(LogStatus.SUSPENDED))
+                    .reduce((first, second) -> second)
+                    .map(UserManagementLog::getMessage)
+                    .orElse(null) : null);
+        }
+        if (data.getAppUserAttribute().getIsDeleted()){
+            dto.setDeletedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream()
+                    .filter(l -> l.getStatus().equals(LogStatus.DELETED))
+                    .reduce((first, second) -> second)
+                    .map(UserManagementLog::getMessage)
+                    .orElse(null) : null);
         }
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getAppUserDetail().getUpdatedAt()));
