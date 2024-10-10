@@ -15,4 +15,6 @@ public interface KanwilRepository extends JpaRepository<Kanwil, Long> {
             "WHERE " +
             "(LOWER(k.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) )")
     Page<Kanwil> findDataByKeyword(String keyword, Pageable pageable);
+
+    Page<Kanwil> findIdAndName(String keyword, Pageable pageable);
 }
