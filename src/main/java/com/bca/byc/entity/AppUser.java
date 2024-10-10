@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "app_user", indexes = {@Index(name = "uk_app_user_secure_id", columnList = "secure_id", unique = true)})
-public class AppUser extends AbstractBaseEntity implements UserDetails , SecureIdentifiable {
+public class AppUser extends AbstractBaseEntityCms implements UserDetails , SecureIdentifiable {
 
     /**
      *

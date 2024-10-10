@@ -4,10 +4,7 @@ import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.AppUserAttribute;
-import com.bca.byc.entity.UserManagementLog;
+import com.bca.byc.entity.*;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
@@ -16,10 +13,11 @@ import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.projection.CMSBulkSuspendProjection;
-import com.bca.byc.repository.AdminRepository;
+import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserActiveRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActiveService;
@@ -37,7 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.naming.Context;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,16 +49,14 @@ import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecure
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
 
+    private final AppAdminRepository adminRepository;
+    private final UserActiveRepository repository;
+    private final UserActiveElasticRepository elasticRepository;
+    private final UserActiveDTOConverter converter;
+    private final BranchRepository branchRepository;
+    private final LogUserManagementRepository logUserManagementRepository;
     @Value("${app.base.url}")
     private String baseUrl;
-
-    private final AdminRepository adminRepository;
-
-    private UserActiveRepository repository;
-    private UserActiveElasticRepository elasticRepository;
-    private UserActiveDTOConverter converter;
-
-    private final LogUserManagementRepository logUserManagementRepository;
 
     @Override
     public UserManagementDetailResponse findBySecureId(String id) throws BadRequestException {
@@ -87,7 +82,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(keyword, locationId, start, end, pageable);
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
-            IndexResponse(c,dto);
+            IndexResponse(c, dto);
             return dto;
         }).collect(Collectors.toList());
 
@@ -97,16 +92,12 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Override
     @Transactional
     public void updateData(String id, UserActiveUpdateRequest dto) throws BadRequestException {
-        // check exist and get
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         AppUser data = getEntityBySecureId(id, repository, "user not found");
+        Branch branch = getEntityBySecureId(dto.getBranchId(), branchRepository, "branch not found");
+        converter.convertToUpdateRequest(data, dto, branch);
 
-        // update
-        converter.convertToUpdateRequest(data, dto);
-
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-
-        // save
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
     }
 

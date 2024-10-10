@@ -2,7 +2,9 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.entity.AppUserDetail;
+import com.bca.byc.entity.Branch;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.service.UserActiveUpdateRequest;
@@ -58,22 +60,24 @@ public class UserActiveDTOConverter {
     }
 
     // for update data
-    public void convertToUpdateRequest(AppUser data, @Valid UserActiveUpdateRequest dto) {
+    public void convertToUpdateRequest(AppUser data, @Valid UserActiveUpdateRequest dto, Branch branch) {
         // mapping DTO Entity with Entity
-        modelMapper.map(dto, data);
         AppUserDetail userDetail = data.getAppUserDetail();
-        userDetail.setName(dto.getName());
-        userDetail.setMemberBirthdate(dto.getBirthDate());
+        userDetail.setName(dto.getName()); // name
+        data.setEmail(dto.getEmail()); // email
         userDetail.setPhone(dto.getPhone());
+        userDetail.setMemberBirthdate(dto.getBirthDate());
         userDetail.setMemberCin(dto.getMemberCin());
-        userDetail.setParentCin(dto.getParentCin());
         userDetail.setMemberBankAccount(dto.getMemberBankAccount());
+        userDetail.setMemberType(dto.getMemberType());
+        userDetail.setParentCin(dto.getParentCin());
         userDetail.setParentBankAccount(dto.getParentBankAccount());
-        userDetail.setBranchCode(dto.getBranchCode());
+        userDetail.setParentType(dto.getParentType());
+        userDetail.setBranchCode(branch);
         userDetail.setPicName(dto.getPicName());
+        userDetail.setIsActive(dto.getStatus());
 
-        // set updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        data.setAppUserDetail(userDetail);
     }
 
 }

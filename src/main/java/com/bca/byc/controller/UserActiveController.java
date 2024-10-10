@@ -75,7 +75,6 @@ public class UserActiveController {
                 userManagementService.listAttributeUserManagement()));
     }
 
-
     @GetMapping("{id}")
     public ResponseEntity<ApiDataResponse> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");

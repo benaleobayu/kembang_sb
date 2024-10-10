@@ -1,6 +1,6 @@
 package com.bca.byc.service;
 
-import com.bca.byc.entity.Branch;
+import com.bca.byc.enums.UserType;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,20 +10,28 @@ public class UserActiveUpdateRequest {
 
     private String name;
 
-    private LocalDate birthDate;
+    private String email;
 
     private String phone;
 
-    private String memberCin;
+    private LocalDate birthDate;
 
-    private String parentCin;
+    private String memberCin;
 
     private String memberBankAccount;
 
+    private UserType memberType;
+
+    private String parentCin;
+
     private String parentBankAccount;
 
-    private Branch branchCode;
+    private UserType parentType;
+
+    private String branchId;
 
     private String picName;
+
+    private Boolean status;
 
 }

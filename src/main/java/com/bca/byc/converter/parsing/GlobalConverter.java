@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class GlobalConverter {
 
-    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsAdminCreateAtBy(
+    public static <D extends AbstractBaseEntityCms> void CmsAdminCreateAtBy(
             D data, AppAdmin admin
     ) {
         data.setCreatedAt(LocalDateTime.now());
@@ -23,7 +23,7 @@ public class GlobalConverter {
         data.setCreatedBy(admin);
     }
 
-    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsAdminUpdateAtBy(
+    public static <D extends AbstractBaseEntityCms> void CmsAdminUpdateAtBy(
             D data, AppAdmin admin
     ) {
         data.setUpdatedAt(LocalDateTime.now());
