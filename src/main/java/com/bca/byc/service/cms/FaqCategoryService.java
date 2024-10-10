@@ -1,4 +1,4 @@
-package com.bca.byc.service;
+package com.bca.byc.service.cms;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.FaqCategoryCreateUpdateRequest;

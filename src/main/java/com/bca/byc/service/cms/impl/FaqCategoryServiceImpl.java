@@ -1,4 +1,4 @@
-package com.bca.byc.service.impl;
+package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.FaqCategoryDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
@@ -13,7 +13,7 @@ import com.bca.byc.repository.FaqCategoryRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.service.FaqCategoryService;
+import com.bca.byc.service.cms.FaqCategoryService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
