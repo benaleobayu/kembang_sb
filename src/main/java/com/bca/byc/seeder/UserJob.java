@@ -51,6 +51,7 @@ public class UserJob {
                 faker.lorem().characters(120),
                 StatusType.ACTIVATED,
                 userType[faker.number().numberBetween(0, 2)],
+                userType[faker.number().numberBetween(0, 2)],
                 memberType[faker.number().numberBetween(0, 2)],
                 "SYSTEM",
                 LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),

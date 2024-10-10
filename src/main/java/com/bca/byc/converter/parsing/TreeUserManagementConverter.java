@@ -45,8 +45,8 @@ public class TreeUserManagementConverter {
         dto.setPhone(data.getAppUserDetail().getPhone());
         dto.setMemberCin(data.getAppUserDetail().getMemberCin());
         dto.setMemberCardNumber(data.getAppUserDetail().getMemberBankAccount());
-        dto.setType(data.getAppUserDetail().getType().toString());
-        dto.setMemberType(data.getAppUserDetail().getMemberType());
+        dto.setType(data.getAppUserDetail().getMemberType().toString());
+        dto.setMemberType(data.getAppUserDetail().getAccountType());
         dto.setParentCin(data.getAppUserDetail().getParentCin());
         dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
         dto.setOrders(data.getAppUserDetail().getOrders());

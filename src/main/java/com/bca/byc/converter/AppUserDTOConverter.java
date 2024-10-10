@@ -56,9 +56,9 @@ public class AppUserDTOConverter {
         dto.setEmail(data.getEmail());
         AppUserDetail appUserDetail = data.getAppUserDetail();
         dto.setStatus(appUserDetail.getStatus());
-        dto.setType(appUserDetail.getType());
-        dto.setTypeName(appUserDetail.getType().equals(UserType.MEMBER_SOLITAIRE) ? "Solitaire" :
-                appUserDetail.getType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
+        dto.setType(appUserDetail.getMemberType());
+        dto.setTypeName(appUserDetail.getMemberType().equals(UserType.MEMBER_SOLITAIRE) ? "Solitaire" :
+                appUserDetail.getMemberType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
         dto.setAvatar(GlobalConverter.getParseImage(data.getAppUserDetail().getAvatar(), baseUrl));
         dto.setCover(GlobalConverter.getParseImage(data.getAppUserDetail().getCover(), baseUrl));
         dto.setBiodata(Objects.equals(appUserDetail.getBiodata(), "") ? null : appUserDetail.getBiodata());
@@ -178,10 +178,10 @@ public class AppUserDTOConverter {
 
         String userType;
         LocalDate birthdate;
-        if (data.getAppUserDetail().getType() == UserType.MEMBER_SOLITAIRE) {
+        if (data.getAppUserDetail().getMemberType() == UserType.MEMBER_SOLITAIRE) {
             userType = "Solitaire";
             birthdate = userDetail.getMemberBirthdate();
-        } else if (data.getAppUserDetail().getType() == UserType.MEMBER_PRIORITY) {
+        } else if (data.getAppUserDetail().getMemberType() == UserType.MEMBER_PRIORITY) {
             userType = "Priority";
             birthdate = userDetail.getParentBirthdate();
         } else {

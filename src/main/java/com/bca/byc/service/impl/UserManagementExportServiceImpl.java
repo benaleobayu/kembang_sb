@@ -10,11 +10,9 @@ import com.bca.byc.service.UserManagementExportService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -58,8 +56,8 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(0).setCellValue(data.getName());
             dataRow.createCell(1).setCellValue(data.getEmail());
             dataRow.createCell(2).setCellValue(data.getPhone());
-            dataRow.createCell(3).setCellValue(data.getMemberType());
-            dataRow.createCell(4).setCellValue(data.getType().toString());
+            dataRow.createCell(3).setCellValue(data.getAccountType());
+            dataRow.createCell(4).setCellValue(data.getMemberType().toString());
             dataRow.createCell(5).setCellValue(data.getMemberBankAccount());
             dataRow.createCell(6).setCellValue(data.getMemberCin());
             dataRow.createCell(7).setCellValue(data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));

@@ -143,9 +143,9 @@ public class UserAuthServiceImpl implements UserAuthService {
                 child) {
             user.setAppUserDetail(userDetail);
             userDetail.setStatus(StatusType.APPROVED);
-            userDetail.setType(dataCheck.getType() != null ? dataCheck.getType() : null); // set type
+            userDetail.setMemberType(dataCheck.getMemberType() != null ? dataCheck.getMemberType() : null); // set type
             userDetail.setMemberCin(dataCheck.getMemberCin()); // set cin member
-            userDetail.setMemberType(dataCheck.getMemberType() != null ? dataCheck.getMemberType() : null); // set member type
+            userDetail.setAccountType(dataCheck.getAccountType() != null ? dataCheck.getAccountType() : null); // set member type
             if (dto.parent_bank_account() == null) {
                 userDetail.setUserAs("member");
             } else {
@@ -156,7 +156,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             }
             user.setName(dataCheck.getName());
             userDetail.setName(dataCheck.getName());
-            userDetail.setMemberType(dataCheck.getMemberType()); // set member type soli / prio
+            userDetail.setAccountType(dataCheck.getAccountType()); // set member type soli / prio
             userDetail.setApprovedBy("SYSTEM");
             user.setAppUserDetail(userDetail);
 

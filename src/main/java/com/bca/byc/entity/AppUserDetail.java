@@ -78,15 +78,15 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     private StatusType status = StatusType.PENDING;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private UserType type = UserType.MEMBER_SOLITAIRE;
+    @Column(name = "type_member")
+    private UserType memberType = UserType.MEMBER_SOLITAIRE;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "type_parent")
     private UserType parentType = UserType.MEMBER_SOLITAIRE;
 
-    @Column(name = "member_type", length = 50)
-    private String memberType;
+    @Column(name = "type", length = 50)
+    private String accountType;
 
     @Column(name = "approved_by")
     private String approvedBy;
