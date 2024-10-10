@@ -204,7 +204,13 @@ public class UserAuthServiceImpl implements UserAuthService {
                     otpRepository.save(otp);
 
                     AppUserDetail userDetail = user.getAppUserDetail();
-                    userDetail.setStatus(StatusType.VERIFIED); // Enable the user TODO if forgot password, set status to pending
+                    if (userDetail.getStatus().equals(StatusType.PRE_ACTIVATED)) {
+                        userDetail.setStatus(StatusType.PRE_ACTIVATED);
+                    } else if (userDetail.getStatus().equals(StatusType.ACTIVATED)) {
+                        userDetail.setStatus(StatusType.ACTIVATED);
+                    } else {
+                        userDetail.setStatus(StatusType.VERIFIED); // Enable the user TODO if forgot password, set status to pending
+                    }
 
                     user.setAppUserDetail(userDetail);
                     userRepository.save(user);
