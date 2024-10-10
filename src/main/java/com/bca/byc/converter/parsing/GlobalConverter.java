@@ -10,11 +10,28 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.util.helper.Formatter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class GlobalConverter {
 
-    public static <T extends AdminModelBaseDTOResponse, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponse(
+    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsAdminCreateAtBy(
+            D data, AppAdmin admin
+    ) {
+        data.setCreatedAt(LocalDateTime.now());
+        data.setUpdatedAt(LocalDateTime.now());
+        data.setCreatedBy(admin);
+    }
+
+    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsAdminUpdateAtBy(
+            D data, AppAdmin admin
+    ) {
+        data.setUpdatedAt(LocalDateTime.now());
+        data.setUpdatedBy(admin);
+    }
+
+
+    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponse(
             T dto, D data
     ) {
         dto.setId(data.getSecureId());
@@ -24,6 +41,7 @@ public class GlobalConverter {
         dto.setCreatedBy(data.getCreatedBy() != null ? data.getCreatedBy().getName() : null);
         dto.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy().getName() : null);
     }
+
 
     public static String getUuidUser(
             AppUserRepository userRepository
@@ -58,7 +76,7 @@ public class GlobalConverter {
                         imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
     }
 
-    public static String replaceImagePath(String imagePath){
+    public static String replaceImagePath(String imagePath) {
         return imagePath.replace("src/main/resources/static/", "/");
     }
 
