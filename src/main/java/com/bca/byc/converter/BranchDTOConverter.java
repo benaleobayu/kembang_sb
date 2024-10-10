@@ -1,7 +1,6 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Branch;
 import com.bca.byc.model.BranchCreateUpdateRequest;
 import com.bca.byc.model.BranchDetailResponse;
@@ -44,24 +43,22 @@ public class BranchDTOConverter {
     }
 
     // for create data
-    public Branch convertToCreateRequest(@Valid BranchCreateUpdateRequest dto, AppAdmin admin) {
-        // mapping DTO Entity with Entity
-        Branch data = modelMapper.map(dto, Branch.class);
-        // set created_at
-        data.setCreatedAt(LocalDateTime.now());
-        data.setCreatedBy(admin);
-        // return
+    public Branch convertToCreateRequest(@Valid BranchCreateUpdateRequest dto) {
+        Branch data = new Branch();
+        data.setCode(dto.code());
+        data.setName(dto.name());
+        data.setAddress(dto.address());
+        data.setPhone(dto.phone());
+        data.setIsActive(dto.status());
         return data;
     }
 
     // for update data
-    public void convertToUpdateRequest(Branch data, @Valid BranchCreateUpdateRequest dto, AppAdmin admin) {
-        // mapping DTO Entity with Entity
-        modelMapper.map(dto, data);
-
-        data.setIsActive(dto.getStatus());
-        // set updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-        data.setUpdatedBy(admin);
+    public void convertToUpdateRequest(Branch data, @Valid BranchCreateUpdateRequest dto) {
+        data.setCode(dto.code());
+        data.setName(dto.name());
+        data.setAddress(dto.address());
+        data.setPhone(dto.phone());
+        data.setIsActive(dto.status());
     }
 }

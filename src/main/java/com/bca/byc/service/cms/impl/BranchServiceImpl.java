@@ -1,12 +1,18 @@
 package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.BranchDTOConverter;
+import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Branch;
+import com.bca.byc.entity.Kanwil;
+import com.bca.byc.entity.Location;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BranchCreateUpdateRequest;
 import com.bca.byc.model.BranchDetailResponse;
 import com.bca.byc.repository.BranchRepository;
+import com.bca.byc.repository.KanwilRepository;
+import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -34,6 +40,8 @@ public class BranchServiceImpl implements BranchService {
     private final AppAdminRepository adminRepository;
     private final BranchRepository repository;
     private final BranchDTOConverter converter;
+    private final LocationRepository locationRepository;
+    private final KanwilRepository kanwilRepository;
 
     @Override
     public ResultPageResponseDTO<BranchDetailResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -46,19 +54,7 @@ public class BranchServiceImpl implements BranchService {
             return dto;
         }).collect(Collectors.toList());
 
-        int currentPage = pageResult.getNumber() + 1;
-        int totalPages = pageResult.getTotalPages();
-
-        return PaginationUtil.createResultPageDTO(
-                pageResult.getTotalElements(), // total items
-                dtos,
-                currentPage, // current page
-                currentPage > 1 ? currentPage - 1 : 1, // prev page
-                currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1, // next page
-                1, // first page
-                totalPages - 1, // last page
-                pageResult.getSize() // per page
-        );
+        return PageCreateReturn.create(pageResult, dtos);
     }
 
 
@@ -71,24 +67,30 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public void saveData(@Valid BranchCreateUpdateRequest dto) throws BadRequestException {
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin" + notFound);
-        // set entity to add with model mapper
-        Branch data = converter.convertToCreateRequest(dto, admin);
-        // save data
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Location location = HandlerRepository.getEntityBySecureId(dto.locationId(), locationRepository, "Location not found");
+        Kanwil kanwil = HandlerRepository.getEntityBySecureId(dto.kanwilId(), kanwilRepository, "Kanwil not found");
+
+        Branch data = converter.convertToCreateRequest(dto);
+        data.setLocation(location);
+        data.setKanwil(kanwil);
+
+        GlobalConverter.CmsAdminCreateAtBy(data, admin);
         repository.save(data);
     }
 
     @Override
     public void updateData(String id, BranchCreateUpdateRequest dto) throws BadRequestException {
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin" + notFound);
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Branch data = HandlerRepository.getEntityBySecureId(id, repository, "Branch" + notFound);
+        Location location = HandlerRepository.getEntityBySecureId(dto.locationId(), locationRepository, "Location not found");
+        Kanwil kanwil = HandlerRepository.getEntityBySecureId(dto.kanwilId(), kanwilRepository, "Kanwil not found");
 
-        // update
-        converter.convertToUpdateRequest(data, dto, admin);
+        converter.convertToUpdateRequest(data, dto);
+        data.setLocation(location);
+        data.setKanwil(kanwil);
 
-        // save
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
     }
 

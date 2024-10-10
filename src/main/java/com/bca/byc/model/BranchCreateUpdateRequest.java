@@ -1,21 +1,19 @@
 package com.bca.byc.model;
 
-import com.bca.byc.entity.Location;
-import lombok.Data;
+public record BranchCreateUpdateRequest(
+        String code,
 
-@Data
-public class BranchCreateUpdateRequest {
+        String name,
 
-    private String code;
+        String address,
 
-    private String name;
+        String phone,
 
-    private String address;
+        Boolean status,
 
-    private String phone;
+        String locationId,
 
-    private Long location;
+        String kanwilId
 
-    private Boolean status;
-
+) {
 }
