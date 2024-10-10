@@ -28,6 +28,10 @@ public class Kanwil extends AbstractBaseEntityCms implements SecureIdentifiable,
         return super.getIsActive();
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "code")
     private String code;
 
