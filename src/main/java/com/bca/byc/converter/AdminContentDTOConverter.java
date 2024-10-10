@@ -4,6 +4,7 @@ import com.bca.byc.entity.Post;
 import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 
+import com.bca.byc.model.AdminContentIndexResponse;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,14 @@ public class AdminContentDTOConverter {
 
     private ModelMapper modelMapper;
 
-    // for get data
+    // for get data index
+    public AdminContentIndexResponse<Long> convertToIndexResponse(Post data) {
+        // mapping Entity with DTO Entity
+        AdminContentIndexResponse<Long> dto = modelMapper.map(data, AdminContentIndexResponse.class);
+        // return
+        return dto;
+    }
+  // for get data
     public AdminContentDetailResponse convertToListResponse(Post data) {
         // mapping Entity with DTO Entity
         AdminContentDetailResponse dto = modelMapper.map(data, AdminContentDetailResponse.class);

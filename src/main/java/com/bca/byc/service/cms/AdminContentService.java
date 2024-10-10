@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface AdminContentService {
 
-    ResultPageResponseDTO<AdminContentIndexResponse> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<AdminContentIndexResponse<Long>> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     AdminContentDetailResponse findDataById(String id) throws BadRequestException;
 
