@@ -2,17 +2,11 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.InputAttributeDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
-import com.bca.byc.entity.Branch;
-import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.ExpectItem;
-import com.bca.byc.entity.Kanwil;
+import com.bca.byc.entity.*;
 import com.bca.byc.model.AttributeNameResponse;
 import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
-import com.bca.byc.repository.BranchRepository;
-import com.bca.byc.repository.BusinessCategoryRepository;
-import com.bca.byc.repository.ExpectItemRepository;
-import com.bca.byc.repository.KanwilRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.InputAttributeService;
 import com.bca.byc.util.PaginationUtil;
@@ -35,6 +29,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     private final ExpectItemRepository expectItemRepository;
     private final BranchRepository branchRepository;
     private final KanwilRepository kanwilRepository;
+    private final LocationRepository locationRepository;
 
     private final InputAttributeDTOConverter converter;
 
@@ -65,7 +60,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     }
 
     @Override
-    public ResultPageResponseDTO<AttributeResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<AttributeResponse<Long>> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
@@ -78,11 +73,24 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     }
 
     @Override
-    public ResultPageResponseDTO<AttributeResponse> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<AttributeResponse<Long>> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
         Page<Kanwil> pageResult = kanwilRepository.findIdAndName(keyword, pageable);
+        List<AttributeResponse> dtos = pageResult.stream()
+                .map(this::convertToListAttribute)
+                .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<AttributeResponse<Long>> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        Page<Location> pageResult = locationRepository.findIdAndName(keyword, pageable);
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());

@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.entity.impl.SecureIdentifiable;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,7 +13,11 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "locations")
-public class Location extends AbstractBaseEntityCms implements SecureIdentifiable {
+public class Location extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;

@@ -27,4 +27,15 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findAllAndOrderByName();
 
     Page<Location> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
+
+
+    // --- input attribute ---
+    @Query("SELECT l FROM Location l " +
+            "WHERE " +
+            "(LOWER(l.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(l.province) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(l.address) LIKE LOWER(CONCAT('%', :keyword, '%'))) ")
+    Page<Location> findIdAndName(String keyword, Pageable pageable);
+    // --- input attribute ---
+
 }
