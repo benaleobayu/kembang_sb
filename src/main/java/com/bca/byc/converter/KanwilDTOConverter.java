@@ -16,12 +16,13 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
+import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponse;
+
 @Component
 @AllArgsConstructor
 public class KanwilDTOConverter {
 
     private ModelMapper modelMapper;
-    private AppAdminRepository adminRepository;
 
     // for get data
     public KanwilListResponse convertToListResponse(Kanwil data) {
@@ -30,7 +31,7 @@ public class KanwilDTOConverter {
         mapKanwilToDto(data, dto);
 
         GlobalConverter converter = new GlobalConverter();
-        converter.CmsIDTimeStampResponse(dto, data);
+        CmsIDTimeStampResponse(dto, data);
         // return
         return dto;
     }
@@ -41,8 +42,7 @@ public class KanwilDTOConverter {
         KanwilDetailResponse dto = new KanwilDetailResponse();
         mapKanwilToDto(data, dto);
 
-        GlobalConverter converter = new GlobalConverter();
-        converter.CmsIDTimeStampResponse(dto, data);
+        GlobalConverter.CmsIDTimeStampResponse(dto, data);
         // return
         return dto;
     }
@@ -50,12 +50,12 @@ public class KanwilDTOConverter {
     // for create data
     public Kanwil convertToCreateRequest(@Valid KanwilCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
-        Kanwil data = modelMapper.map(dto, Kanwil.class);
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "admin not found");
-        // set created_at
-        data.setCreatedAt(LocalDateTime.now());
-        data.setCreatedBy(admin);
+        Kanwil data = new Kanwil();
+        data.setName(dto.getName());
+        data.setCode(dto.getCode());
+        data.setAddress(dto.getAddress());
+        data.setPhone(dto.getPhone());
+        data.setIsActive(dto.getStatus());
         // return
         return data;
     }
@@ -63,12 +63,11 @@ public class KanwilDTOConverter {
     // for update data
     public void convertToUpdateRequest(Kanwil data, @Valid KanwilCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
-        modelMapper.map(dto, data);
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "admin not found");
-        // set updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-        data.setUpdatedBy(admin);
+        data.setName(dto.getName());
+        data.setCode(dto.getCode());
+        data.setAddress(dto.getAddress());
+        data.setPhone(dto.getPhone());
+        data.setIsActive(dto.getStatus());
     }
 
     private <T> void mapKanwilToDto(Kanwil data, T dto) {

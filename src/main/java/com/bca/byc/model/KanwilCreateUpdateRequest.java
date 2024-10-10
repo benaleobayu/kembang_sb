@@ -19,7 +19,7 @@ public class KanwilCreateUpdateRequest {
     private String phone;
 
     @Schema(example = "1")
-    private Long location;
+    private String locationId;
 
     @Schema(example = "true | false")
     private Boolean status;

@@ -2,12 +2,17 @@ package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.KanwilDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Kanwil;
+import com.bca.byc.entity.Location;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.KanwilCreateUpdateRequest;
 import com.bca.byc.model.KanwilDetailResponse;
 import com.bca.byc.model.KanwilListResponse;
 import com.bca.byc.repository.KanwilRepository;
+import com.bca.byc.repository.LocationRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.KanwilService;
@@ -30,8 +35,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class KanwilServiceImpl implements KanwilService {
 
-    private KanwilRepository repository;
-    private KanwilDTOConverter converter;
+    private final AppAdminRepository adminRepository;
+
+    private final KanwilRepository repository;
+    private final KanwilDTOConverter converter;
+
+    private final LocationRepository locationRepository;
 
     private static String notFoundMessage = "Kanwil not found";
 
@@ -61,24 +70,27 @@ public class KanwilServiceImpl implements KanwilService {
     @Transactional
     public void saveData(@Valid KanwilCreateUpdateRequest dto) throws BadRequestException {
         // set entity to add with model mapper
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Location location = HandlerRepository.getEntityBySecureId(dto.getLocationId(), locationRepository, "");
+
         Kanwil data = converter.convertToCreateRequest(dto);
-        // save data
+        data.setLocation(location);
+
+        GlobalConverter.CmsAdminCreateAtBy(data, admin);
         repository.save(data);
     }
 
     @Override
     @Transactional
     public void updateData(String id, KanwilCreateUpdateRequest dto) throws BadRequestException {
-        // check exist and get
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Kanwil data = HandlerRepository.getEntityBySecureId(id, repository, notFoundMessage);
+        Location location = HandlerRepository.getEntityBySecureId(dto.getLocationId(), locationRepository, "");
 
-        // update
         converter.convertToUpdateRequest(data, dto);
+        data.setLocation(location);
 
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-
-        // save
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
     }
 
