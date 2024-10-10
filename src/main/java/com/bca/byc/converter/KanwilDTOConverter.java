@@ -71,21 +71,20 @@ public class KanwilDTOConverter {
     }
 
     private <T> void mapKanwilToDto(Kanwil data, T dto) {
-        if (dto instanceof KanwilListResponse) {
-            KanwilListResponse listDto = (KanwilListResponse) dto;
+        if (dto instanceof KanwilListResponse listDto) {
             listDto.setCode(data.getCode());
             listDto.setName(data.getName());
             listDto.setAddress(data.getAddress());
             listDto.setPhone(data.getPhone());
             listDto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
             listDto.setStatus(data.getIsActive());
-        } else if (dto instanceof KanwilDetailResponse) {
-            KanwilDetailResponse detailDto = (KanwilDetailResponse) dto;
+        } else if (dto instanceof KanwilDetailResponse detailDto) {
             detailDto.setCode(data.getCode());
             detailDto.setName(data.getName());
             detailDto.setAddress(data.getAddress());
             detailDto.setPhone(data.getPhone());
-            detailDto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
+            detailDto.setLocationId(data.getLocation() != null ? data.getLocation().getSecureId() : null);
+            detailDto.setLocationName(data.getLocation() != null ? data.getLocation().getName() : null);
             detailDto.setStatus(data.getIsActive());
         }
     }

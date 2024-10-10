@@ -31,8 +31,10 @@ public class BranchDTOConverter {
         dto.setPhone(data.getPhone());
         dto.setStatus(data.getIsActive());
 
-        dto.setLocation(data.getLocation() != null ? data.getLocation().getName() : null);
-        dto.setKanwil(data.getKanwil() != null ? data.getKanwil().getName() : null);
+        dto.setLocationId(data.getLocation() != null ? data.getLocation().getSecureId() : null);
+        dto.setLocationName(data.getLocation() != null ? data.getLocation().getName() : null);
+        dto.setKanwilId(data.getKanwil() != null ? data.getKanwil().getSecureId() : null);
+        dto.setKanwilName(data.getKanwil() != null ? data.getKanwil().getName() : null);
 
         // Use DataFormatter here
         GlobalConverter conv = new GlobalConverter();

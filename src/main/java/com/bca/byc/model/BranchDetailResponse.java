@@ -1,9 +1,11 @@
 package com.bca.byc.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class BranchDetailResponse extends AdminModelBaseDTOResponse{
+public class BranchDetailResponse extends AdminModelBaseDTOResponse<Long>{
 
     private String code;
 
@@ -13,9 +15,13 @@ public class BranchDetailResponse extends AdminModelBaseDTOResponse{
 
     private String phone;
 
-    private String location;
+    private String locationId;
 
-    private String kanwil;
+    private String locationName;
+
+    private String kanwilId;
+
+    private String kanwilName;
 
     private Boolean status;
 }
