@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserDeletedDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.exception.BadRequestException;
@@ -12,6 +13,7 @@ import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.UserDeletedRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
@@ -37,6 +39,7 @@ import static com.bca.byc.converter.parsing.TreeUserManagementConverter.IndexRes
 @RequiredArgsConstructor
 public class UserDeletedServiceImpl implements UserDeletedService {
 
+    private final AppAdminRepository adminRepository;
     private final UserDeletedRepository repository;
 
     private final UserDeletedDTOConverter converter;
@@ -72,24 +75,30 @@ public class UserDeletedServiceImpl implements UserDeletedService {
 
     @Override
     public void makeUserIsDeletedFalse(String id) {
-        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
-        AppUserAttribute userAttribute = user.getAppUserAttribute();
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUserAttribute userAttribute = data.getAppUserAttribute();
         userAttribute.setIsDeleted(false);
-        user.setAppUserAttribute(userAttribute);
-        repository.save(user);
+        data.setAppUserAttribute(userAttribute);
+
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+        repository.save(data);
     }
 
     @Override
     public void makeUserBulkRestoreTrue(Set<String> ids) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Set<CMSBulkDeleteProjection> userProjections = repository.findBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
-            AppUser user = repository.findById(projection.getId())
+            AppUser data = repository.findById(projection.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            AppUserAttribute userAttribute = data.getAppUserAttribute();
             userAttribute.setIsDeleted(false);
-            user.setAppUserAttribute(userAttribute);
-            repository.save(user);
+            data.setAppUserAttribute(userAttribute);
+
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            repository.save(data);
         });
     }
 

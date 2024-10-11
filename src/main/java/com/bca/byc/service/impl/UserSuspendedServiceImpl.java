@@ -90,58 +90,67 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     @Override
     public void makeUserIsDeletedTrue(String id, @Valid LogUserManagementRequest dto) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
-        AppUserAttribute userAttribute = user.getAppUserAttribute();
+        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUserAttribute userAttribute = data.getAppUserAttribute();
         userAttribute.setIsDeleted(true);
-        user.setAppUserAttribute(userAttribute);
+        data.setAppUserAttribute(userAttribute);
 
         logUserManagement(
                 null,
-                user,
+                data,
                 admin,
                 LogStatus.DELETED,
                 dto,
                 logUserManagementRepository
         );
 
-        repository.save(user);
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+        repository.save(data);
     }
 
     @Override
     public void makeUserIsSuspendedFalse(String id) {
-        AppUser user = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
-        AppUserAttribute userAttribute = user.getAppUserAttribute();
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUserAttribute userAttribute = data.getAppUserAttribute();
         userAttribute.setIsSuspended(false);
-        user.setAppUserAttribute(userAttribute);
+        data.setAppUserAttribute(userAttribute);
 
-        repository.save(user);
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+        repository.save(data);
     }
 
     @Override
     public void makeUserBulkDeleteTrue(Set<String> ids) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Set<CMSBulkDeleteProjection> userProjections = repository.findToDeleteBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
-            AppUser user = repository.findById(projection.getId())
+            AppUser data = repository.findById(projection.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            AppUserAttribute userAttribute = data.getAppUserAttribute();
             userAttribute.setIsDeleted(true);
-            user.setAppUserAttribute(userAttribute);
-            repository.save(user);
+            data.setAppUserAttribute(userAttribute);
+
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            repository.save(data);
         });
     }
 
     @Override
     public void makeUserBulkSuspendedFalse(Set<String> ids) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Set<CMSBulkSuspendProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
-            AppUser user = repository.findById(projection.getId())
+            AppUser data = repository.findById(projection.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            AppUserAttribute userAttribute = user.getAppUserAttribute();
+            AppUserAttribute userAttribute = data.getAppUserAttribute();
             userAttribute.setIsSuspended(false);
-            user.setAppUserAttribute(userAttribute);
-            repository.save(user);
+            data.setAppUserAttribute(userAttribute);
+
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            repository.save(data);
         });
     }
 }
