@@ -97,12 +97,10 @@ public class CommentServiceImpl implements CommentService {
         // save data
         Comment savedComment = commentRepository.save(data);
 
-        int totalComments = savedComment.getCommentsCount().intValue();
-        long countReplies = savedComment.getCommentReply().stream().map(CommentReply::getCommentsCount).count();
-        int totalReplies = (int) countReplies;
+        int totalComments = savedComment.getPost().getCommentsCount().intValue();
 
         TotalCountResponse message = new TotalCountResponse();
-        message.setTotal(totalComments + totalReplies);
+        message.setTotal(totalComments);
         return message;
     }
 

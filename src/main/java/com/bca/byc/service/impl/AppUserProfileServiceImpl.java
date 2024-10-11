@@ -190,7 +190,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         firstBusiness.getIsPrimary()
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
-                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Menambahkan balasan ke komentar
+//                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Menambahkan balasan ke komentar
             }
 
             return dto;

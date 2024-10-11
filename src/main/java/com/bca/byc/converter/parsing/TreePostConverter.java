@@ -10,10 +10,7 @@ import com.bca.byc.repository.PostRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TreePostConverter {
@@ -93,17 +90,21 @@ public class TreePostConverter {
         dto.setIndex(index);
         dto.setComment(comment);
         List<ListCommentReplyResponse> commentReplyResponse = new ArrayList<>();
-        for (CommentReply data : commentReply) {
-            commentReplyResponse.add(convertToListCommentReplyResponse(
-                    new ListCommentReplyResponse(),
-                    data.getSecureId(),
-                    data.getId(),
-                    data.getComment(),
-                    data.getUser(),
-                    data.getCreatedAt()
-            ));
-        }
-        dto.setCommentReply(commentReplyResponse);
+//        commentReply.stream()
+//                .sorted(Comparator.comparing(CommentReply::getCreatedAt).reversed())
+//                .limit(3)
+//                .forEach(data -> commentReplyResponse.add(convertToListCommentReplyResponse(
+//                        new ListCommentReplyResponse(),
+//                        data.getSecureId(),
+//                        data.getId(),
+//                        data.getComment(),
+//                        data.getUser(),
+//                        data.getCreatedAt()
+//                )));
+//        dto.setCommentReply(commentReplyResponse);
+//        int lastPage = (int) Math.floor(commentReply.size() / 10.0);
+//        int page = commentReply.size() < 10 ? 0 : lastPage;
+//        dto.setCommentReplyLastPage(page);
 
         Business firstBusiness = owner.getBusinesses().stream()
                 .filter(Business::getIsPrimary).findFirst().orElse(null);
@@ -111,7 +112,6 @@ public class TreePostConverter {
         BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
                 .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
         assert firstBusinessCategory != null;
-
         dto.setOwner(PostOwnerResponse(
                 new PostOwnerResponse(),
                 owner.getSecureId(),
@@ -122,6 +122,12 @@ public class TreePostConverter {
                 firstBusiness.getIsPrimary()
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : null);
+
+        // TODO : integrate data
+        dto.setIsOwnerPost(false);
+        dto.setIsLike(false);
+        dto.setLikeCount(0);
+
         return dto;
     }
 

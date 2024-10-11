@@ -4,6 +4,7 @@ package com.bca.byc.controller;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
+import com.bca.byc.model.apps.ListCommentReplyResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.response.ApiDataResponse;
@@ -36,6 +37,25 @@ public class PostCommentReplyController {
 
     static final String urlRoute = "/api/v1/post";
     private CommentServiceReply service;
+
+
+    @Operation(summary = "Get list comment", description = "Get list comment")
+    @GetMapping("/{postId}/comments/{parentCommentId}/replies")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListCommentReplyResponse>>> listDataComment(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @PathVariable("postId") String postId,
+            @PathVariable("parentCommentId") String parentCommentId) {
+        // response true
+        String email = ContextPrincipal.getPrincipal();
+        log.info("GET " + urlRoute + " endpoint hit, email = {} ", email);
+
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list comment", service.listDataCommentReplies(pages, limit, sortBy, direction, keyword, postId, parentCommentId)));
+    }
+
 
     @Operation(summary = "Create comment reply", description = "Create comment reply")
     @PostMapping("/{postId}/comments/{parentCommentId}/replies")

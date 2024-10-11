@@ -13,15 +13,15 @@ public class ListCommentResponse {
 
     private String comment;
 
-    private List<ListCommentReplyResponse> commentReply;
+//    private List<ListCommentReplyResponse> commentReply;
 
     private PostOwnerResponse owner;
 
-    private Boolean isLike = false;
+    private Boolean isLike = false; // TODO : integrate data
 
-    private Boolean isOwnerPost = false;
+    private Boolean isOwnerPost = false; // TODO : integrate data
 
-    private Integer likeCount = 0;
+    private Integer likeCount = 0; // TODO : integrate data
 
     private String createdAt;
 }
