@@ -103,13 +103,13 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
             dataRow.createCell(0).setCellValue(dataRowIndex);
-            dataRow.createCell(1).setCellValue(data.getBranch());
-            dataRow.createCell(2).setCellValue(data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(4).setCellValue(data.getEmail());
-            dataRow.createCell(5).setCellValue(data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
+            dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
+            dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
+            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -138,13 +138,13 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
             dataRow.createCell(0).setCellValue(dataRowIndex);
-            dataRow.createCell(1).setCellValue(data.getBranch());
-            dataRow.createCell(2).setCellValue(data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(4).setCellValue(data.getEmail());
-            dataRow.createCell(5).setCellValue(data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
+            dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
+            dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
+            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -173,13 +173,13 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
             dataRow.createCell(0).setCellValue(dataRowIndex);
-            dataRow.createCell(1).setCellValue(data.getBranch());
-            dataRow.createCell(2).setCellValue(data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(4).setCellValue(data.getEmail());
-            dataRow.createCell(5).setCellValue(data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
+            dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
+            dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
+            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
