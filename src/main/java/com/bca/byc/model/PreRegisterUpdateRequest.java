@@ -1,8 +1,6 @@
 package com.bca.byc.model;
 
 import com.bca.byc.enums.UserType;
-import com.bca.byc.validator.annotation.UniqueCinPreRegister;
-import com.bca.byc.validator.annotation.UniqueEmailPreRegister;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -51,10 +49,8 @@ public class PreRegisterUpdateRequest {
     @Size(max = 11, message = "CIN must be 11 characters")
     private String parentCin;
 
-    @NotBlank(message = "Branch Code is required")
     private String branchCode;
 
-    @NotBlank(message = "Pic Name is required")
     private String picName;
 
     private Boolean status;

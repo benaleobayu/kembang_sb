@@ -53,10 +53,8 @@ public class PreRegisterCreateRequest {
     @Size(max = 11, message = "CIN must be 11 characters")
     private String parentCin;
 
-    @NotBlank(message = "Branch Code is required")
     private String branchCode;
 
-    @NotBlank(message = "Pic Name is required")
     private String picName;
 
     private Boolean status;
