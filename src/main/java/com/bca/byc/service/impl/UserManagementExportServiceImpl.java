@@ -1,6 +1,6 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.entity.PreRegister;
+import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.repository.PreRegisterRepository;
@@ -31,7 +31,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
     private final UserDeletedRepository userDeletedRepository;
 
     @Override
-    public void exportExcelPreRegister(HttpServletResponse response) throws IOException {
+    public void exportExcelPreRegister(HttpServletResponse response, ExportFilterRequest filter) throws IOException {
         List<PreRegisterExportResponse> datas = preRegisterRepository.findDataForExport();
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Pre-Register");

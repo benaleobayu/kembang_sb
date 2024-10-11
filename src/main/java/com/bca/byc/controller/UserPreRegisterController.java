@@ -7,6 +7,7 @@ import com.bca.byc.model.IdsDeleteRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
@@ -52,18 +53,60 @@ public class UserPreRegisterController {
     @PreAuthorize("hasAuthority('pre-registration.view')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<PreRegisterDetailResponse>>> listData(
+    public ResponseEntity<?> listData(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "status", required = false) AdminApprovalStatus status,
-            @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        // response true
+            @RequestParam(name = "startDate", required = false) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) LocalDate endDate,
+            @RequestParam(name = "export", required = false) Boolean export, // New parameter to trigger export
+            HttpServletResponse response // Add HttpServletResponse as a parameter for export
+    ) {
         log.info("GET " + urlRoute + " list endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate), userManagementService.listAttributePreRegister()));
+
+        if (Boolean.TRUE.equals(export)) {
+            // Export logic
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=pre-register.xls";
+            response.setHeader(headerKey, headerValue);
+
+            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, status);
+            try {
+                exportService.exportExcelPreRegister(response, filter);
+            } catch (IOException e) {
+                log.error("Error exporting data", e);
+                return ResponseEntity.internalServerError().body("Error exporting data");
+            }
+            return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
+        } else {
+            // List data logic
+            ResultPageResponseDTO<PreRegisterDetailResponse> result = service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate);
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", result, userManagementService.listAttributePreRegister()));
+        }
+    }
+
+
+    @PreAuthorize("hasAuthority('pre-registration.export')")
+    @GetMapping("/export")
+    public void exportExcel(HttpServletResponse response,
+                            @RequestParam(value = "start", required = false) LocalDate start,
+                            @RequestParam(value = "end", required = false) LocalDate end,
+                            @RequestParam(value = "status", required = false) AdminApprovalStatus status
+    ) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=pre-register.xls";
+        response.setHeader(headerKey, headerValue);
+        ExportFilterRequest filter = new ExportFilterRequest(
+                start,
+                end,
+                status
+        );
+        exportService.exportExcelPreRegister(response,filter);
     }
 
     @PreAuthorize("hasAuthority('pre-registration.read')")
@@ -131,8 +174,8 @@ public class UserPreRegisterController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
     // patch approve
+
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Approve Pre-Register User", description = "Approve Pre-Register User")
     @PutMapping("{id}/approve")
@@ -146,8 +189,8 @@ public class UserPreRegisterController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
     // patch approve
+
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Reject Pre-Register User", description = "Reject Pre-Register User")
     @PutMapping("{id}/reject")
@@ -163,16 +206,6 @@ public class UserPreRegisterController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
-    }
-
-    @PreAuthorize("hasAuthority('pre-registration.export')")
-    @GetMapping("/export")
-    public void exportExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pre-register.xls";
-        response.setHeader(headerKey, headerValue);
-        exportService.exportExcelPreRegister(response);
     }
 
     @GetMapping("/attribute")
