@@ -15,6 +15,15 @@ public class Formatter {
         return formatDate != null ? formatDate.format(formatterApps) : null;
     }
 
+    // apps formater with second
+    private static final DateTimeFormatter formatterAppsWithSeconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static String formatterAppsWithSeconds(LocalDateTime formatDate) {
+        return formatDate != null ? formatDate.format(formatterAppsWithSeconds) : null;
+    }
+
+
+
     // cms formatter
     private static final DateTimeFormatter formatterLocalDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

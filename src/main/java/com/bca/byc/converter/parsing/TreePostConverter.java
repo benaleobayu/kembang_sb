@@ -121,7 +121,7 @@ public class TreePostConverter {
                 firstBusinessCategory.getName(),
                 firstBusiness.getIsPrimary()
         ));
-        dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : null);
+        dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : null);
         return dto;
     }
 
@@ -153,7 +153,7 @@ public class TreePostConverter {
                 firstBusinessCategory.getName(),
                 firstBusiness.getIsPrimary()
         ));
-        dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
+        dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : "No data");
         return dto;
     }
     // Helper owner with business
