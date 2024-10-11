@@ -103,7 +103,7 @@ public class ChannelServiceImpl implements ChannelService {
         String newLogo = saveFile(dto.logo(), UPLOAD_DIR + "/images/channel");
         data.setLogo(GlobalConverter.replaceImagePath(newLogo));
         if (!oldLogo.equals(newLogo)) {
-            FileUploadHelper.deleteFile(oldLogo);
+            FileUploadHelper.deleteFile(oldLogo, UPLOAD_DIR);
         }
         repository.save(data);
 

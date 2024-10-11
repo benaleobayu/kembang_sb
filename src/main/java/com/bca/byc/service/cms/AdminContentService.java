@@ -19,8 +19,8 @@ public interface AdminContentService {
 
     void saveData(List<PostContent> contentList, Post newPost);
 
-    void updateData(String id, @Valid AdminContentCreateUpdateRequest dto) throws BadRequestException;
-
     void deleteData(String id) throws BadRequestException;
+
+    void updateData(Post updatePost);
 }
 

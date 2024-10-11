@@ -1,8 +1,6 @@
 package com.bca.byc.model.apps;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -17,7 +15,13 @@ public class ListCommentResponse {
 
     private List<ListCommentReplyResponse> commentReply;
 
-    private OwnerDataResponse owner;
+    private PostOwnerResponse owner;
+
+    private Boolean isLike = false;
+
+    private Boolean isOwnerPost = false;
+
+    private Integer likeCount = 0;
 
     private String createdAt;
 }

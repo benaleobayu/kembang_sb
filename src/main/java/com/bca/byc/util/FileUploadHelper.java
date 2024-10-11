@@ -44,9 +44,9 @@ public class FileUploadHelper {
         return filePath.toString();
     }
 
-    public static void deleteFile(String filePath) {
+    public static void deleteFile(String filePath, String UPLOAD_DIR) {
         try {
-            Path path = Paths.get(filePath.replaceAll("/uploads", "src/main/resources/static/uploads"));
+            Path path = Paths.get(filePath.replaceAll("/uploads", UPLOAD_DIR));
             if (Files.exists(path)) {
                 Files.delete(path); // Delete the file if it exists
                 System.out.println("File deleted: " + path);

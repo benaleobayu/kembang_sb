@@ -10,6 +10,7 @@ import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.ChannelRepository;
+import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ApiDataResponse;
@@ -17,7 +18,9 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.AdminContentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,9 +55,10 @@ public class AdminContentController {
     private final AdminContentService service;
     private final TagRepository tagRepository;
     private final ChannelRepository channelRepository;
+    private final PostRepository postRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    static final String VIDEO_PATH = "/post/video/";
+    static final String VIDEO_PATH = "/post/admin-content/";
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
@@ -84,17 +88,17 @@ public class AdminContentController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> create(
             @ModelAttribute(value = "files") List<MultipartFile> files,
-            @ModelAttribute(value = "thumbnail") MultipartFile thumbnail,
+            @ModelAttribute(value = "thumbnail", binding = false) MultipartFile thumbnail,
             @ModelAttribute(value = "content") String contentString,
             @ModelAttribute("channelId") String channelId,
             @ModelAttribute("highlight") List<String> highlight,
             @ModelAttribute("description") String description,
             @ModelAttribute("tags") List<String> tags,
             @ModelAttribute("status") Boolean status,
-            @ModelAttribute(value = "promotionStatus") String promotionStatus,
-            @ModelAttribute("promotedAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
-            @ModelAttribute("promotedUntil") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
-            @ModelAttribute(value = "postAt") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+            @ModelAttribute(value = "promotionStatus", binding = false) String promotionStatus,
+            @ModelAttribute(value = "promotedAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
+            @ModelAttribute(value = "promotedUntil", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
+            @ModelAttribute(value = "postAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
 
@@ -132,7 +136,8 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post newPost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository);
+            Post post = new Post();
+            Post newPost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
             service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post content"));
@@ -144,14 +149,70 @@ public class AdminContentController {
         }
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody AdminContentCreateUpdateRequest item) {
+    @PutMapping(value = "{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable("postId") String id,
+            @ModelAttribute(value = "files") List<MultipartFile> files,
+            @ModelAttribute(value = "thumbnail", binding = false) MultipartFile thumbnail,
+            @ModelAttribute(value = "content") String contentString,
+            @ModelAttribute("channelId") String channelId,
+            @ModelAttribute("highlight") List<String> highlight,
+            @ModelAttribute("description") String description,
+            @ModelAttribute("tags") List<String> tags,
+            @ModelAttribute("status") Boolean status,
+            @ModelAttribute(value = "promotionStatus") String promotionStatus,
+            @ModelAttribute(value = "promotedAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
+            @ModelAttribute(value = "promotedUntil", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
+            @ModelAttribute(value = "postAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+    ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            service.updateData(id, item);
+            Post existingPost = HandlerRepository.getEntityBySecureId(id, postRepository, "Post not found");
+            for (PostContent existingContent : existingPost.getPostContents()) {
+                String filePath = existingContent.getContent();
+                deleteFile(filePath, UPLOAD_DIR);
+            }
+
+            List<PostContent> contentList = new ArrayList<>();
+
+            // Validate contentString
+            if (contentString == null || contentString.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Content data is missing"));
+            }
+            List<PostContentRequest> contentRequests = objectMapper.readValue(contentString,
+                    new TypeReference<List<PostContentRequest>>() {
+                    });
+            // Validate if contentRequests and files match in size
+            if (files.size() != contentRequests.size()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "Mismatch between files and content data"));
+            }
+
+            // Process files and content
+            for (int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                PostContentRequest contentRequest = contentRequests.get(i);
+
+                // Check if the file is a video and convert it if necessary
+                if (isVideoFile(file)) {
+                    String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
+                    String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
+                    PostContent postContent = processFile(file, thumbnail, contentRequest, i, UPLOAD_DIR, null);
+                    postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
+                    postContent.setMediaUrl(videoPath.replaceAll(UPLOAD_DIR, "uploads"));
+                    contentList.add(postContent);
+                } else {
+                    // Handle other file types as necessary
+                    PostContent postContent = processFile(file, null, contentRequest, i, UPLOAD_DIR, null);
+                    contentList.add(postContent);
+                }
+            }
+            Post updatePost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
+            service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -177,8 +238,9 @@ public class AdminContentController {
                              LocalDateTime promotedUntil,
                              LocalDateTime postAt,
                              ChannelRepository channelRepository,
-                             TagRepository tagRepository) {
-        Post post = new Post();
+                             TagRepository tagRepository,
+                             Post post
+                             ) {
         Channel c = HandlerRepository.getEntityBySecureId(channelId, channelRepository, "channel not found");
         post.setChannel(c);
 
@@ -205,10 +267,10 @@ public class AdminContentController {
         }
         post.setTags(tags);
         post.setIsActive(status);
-        post.setPromotedStatus(promotionStatus);
+        post.setPromotedStatus(promotionStatus != null ? promotionStatus : "False");
         post.setPromotedAt(promotedAt);
         post.setPromotedUntil(promotedUntil);
-        post.setPostAt(postAt);
+        post.setPostAt(postAt != null ? postAt : LocalDateTime.now());
         return post;
     }
 }

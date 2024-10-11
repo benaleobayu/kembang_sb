@@ -69,7 +69,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         userRepository.save(appUser);
 
         if (oldAvatar != null && !oldAvatar.isEmpty()) {
-            FileUploadHelper.deleteFile(oldAvatar);
+            FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
         }
     }
 
@@ -89,7 +89,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         userRepository.save(appUser);
 
         if (oldCover != null && !oldCover.isEmpty()) {
-            FileUploadHelper.deleteFile(oldCover);
+            FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
         }
     }
 
@@ -173,11 +173,21 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                 ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
                 replyResponse.setId(commentReply.getSecureId());
                 replyResponse.setComment(commentReply.getComment());
-                replyResponse.setOwner(postConverter.OwnerDataResponse(
-                        new OwnerDataResponse(),
+
+                Business firstBusiness = replyUser.getBusinesses().stream()
+                        .filter(Business::getIsPrimary).findFirst().orElse(null);
+                assert firstBusiness != null;
+                BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
+                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+                assert firstBusinessCategory != null;
+                replyResponse.setOwner(postConverter.PostOwnerResponse(
+                        new PostOwnerResponse(),
                         replyUser.getSecureId(),
                         replyUser.getAppUserDetail().getName(),
-                        replyUser.getAppUserDetail().getAvatar()
+                        replyUser.getAppUserDetail().getAvatar(),
+                        firstBusiness.getName(),
+                        firstBusinessCategory.getName(),
+                        firstBusiness.getIsPrimary()
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
                 dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Menambahkan balasan ke komentar

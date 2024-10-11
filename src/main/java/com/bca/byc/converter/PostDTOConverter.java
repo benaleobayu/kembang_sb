@@ -199,11 +199,21 @@ public class PostDTOConverter {
             ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
             replyResponse.setId(reply.getSecureId());
             replyResponse.setComment(reply.getComment());
-            replyResponse.setOwner(converter.OwnerDataResponse(
-                    new OwnerDataResponse(),
+
+            Business firstBusiness = reply.getUser().getBusinesses().stream()
+                    .filter(Business::getIsPrimary).findFirst().orElse(null);
+            assert firstBusiness != null;
+            BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
+                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+            assert firstBusinessCategory != null;
+            replyResponse.setOwner(converter.PostOwnerResponse(
+                    new PostOwnerResponse(),
                     reply.getUser().getSecureId(),
                     reply.getUser().getName(),
-                    reply.getUser().getAppUserDetail().getAvatar()
+                    reply.getUser().getAppUserDetail().getAvatar(),
+                    firstBusiness.getName(),
+                    firstBusinessCategory.getName(),
+                    firstBusiness.getIsPrimary()
             )); // Ensure correct conversion of the owner
             replyResponse.setCreatedAt(reply.getCreatedAt().toString()); // Convert LocalDateTime to String if needed
             replyResponses.add(replyResponse);

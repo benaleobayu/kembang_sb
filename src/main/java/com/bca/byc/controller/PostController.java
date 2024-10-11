@@ -198,7 +198,7 @@ public class PostController {
                 String[] filePaths = content.split(",");
                 for (String filePath : filePaths) {
                     String getFilePaths = filePath.replaceAll("\"", "").replaceAll("[\\[\\]]", "");
-                    FileUploadHelper.deleteFile(getFilePaths.trim());
+                    FileUploadHelper.deleteFile(getFilePaths.trim(), UPLOAD_DIR);
                 }
             }
 

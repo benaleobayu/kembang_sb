@@ -82,20 +82,6 @@ public class AdminContentServiceImpl implements AdminContentService {
     }
 
     @Override
-    public void updateData(String id, AdminContentCreateUpdateRequest dto) throws BadRequestException {
-        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Post data = HandlerRepository.getEntityBySecureId(id, repository, "Admin Content not found");
-
-        // update
-        converter.convertToUpdateRequest(data, dto);
-
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
-        // save
-        repository.save(data);
-    }
-
-    @Override
     public void deleteData(String id) throws BadRequestException {
         Post data = HandlerRepository.getEntityBySecureId(id, repository, "Admin Content not found");
         // delete data
@@ -104,5 +90,15 @@ public class AdminContentServiceImpl implements AdminContentService {
         } else {
             repository.deleteById(data.getId());
         }
+    }
+
+    @Override
+    public void updateData(Post updatePost) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+
+        // update the updated_at
+        GlobalConverter.CmsAdminUpdateAtBy(updatePost, admin);
+        // save
+        repository.save(updatePost);
     }
 }

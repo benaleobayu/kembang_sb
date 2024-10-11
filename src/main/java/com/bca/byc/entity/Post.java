@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "post", indexes = {
     @Index(name = "idx_secure_id", columnList = "secure_id", unique = true)
 })
-public class Post extends AbstractBaseEntity implements SecureIdentifiable {
+public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

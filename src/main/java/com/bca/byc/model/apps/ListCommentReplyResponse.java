@@ -11,7 +11,13 @@ public class ListCommentReplyResponse {
 
     private String comment;
 
-    private OwnerDataResponse owner;
+    private PostOwnerResponse owner;
+
+    private Boolean isLike = false;
+
+    private Boolean isOwnerPost = false;
+
+    private Integer likeCount = 0;
 
     private String createdAt;
 

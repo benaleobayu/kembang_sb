@@ -105,11 +105,21 @@ public class TreePostConverter {
         }
         dto.setCommentReply(commentReplyResponse);
 
-        dto.setOwner(OwnerDataResponse(
-                new OwnerDataResponse(),
+        Business firstBusiness = owner.getBusinesses().stream()
+                .filter(Business::getIsPrimary).findFirst().orElse(null);
+        assert firstBusiness != null;
+        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+        assert firstBusinessCategory != null;
+
+        dto.setOwner(PostOwnerResponse(
+                new PostOwnerResponse(),
                 owner.getSecureId(),
                 owner.getAppUserDetail().getName(),
-                owner.getAppUserDetail().getAvatar()
+                owner.getAppUserDetail().getAvatar(),
+                firstBusiness.getName(),
+                firstBusinessCategory.getName(),
+                firstBusiness.getIsPrimary()
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : null);
         return dto;
@@ -127,11 +137,21 @@ public class TreePostConverter {
         dto.setId(secureId);
         dto.setIndex(index);
         dto.setComment(comment);
-        dto.setOwner(OwnerDataResponse(
-                new OwnerDataResponse(),
+
+        Business firstBusiness = owner.getBusinesses().stream()
+                .filter(Business::getIsPrimary).findFirst().orElse(null);
+        assert firstBusiness != null;
+        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+        assert firstBusinessCategory != null;
+        dto.setOwner(PostOwnerResponse(
+                new PostOwnerResponse(),
                 owner.getSecureId(),
                 owner.getAppUserDetail().getName(),
-                owner.getAppUserDetail().getAvatar()
+                owner.getAppUserDetail().getAvatar(),
+                firstBusiness.getName(),
+                firstBusinessCategory.getName(),
+                firstBusiness.getIsPrimary()
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatDateTimeApps(createdAt) : "No data");
         return dto;

@@ -1,10 +1,7 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.TreePostConverter;
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Comment;
-import com.bca.byc.entity.CommentReply;
-import com.bca.byc.entity.Post;
+import com.bca.byc.entity.*;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -36,11 +33,21 @@ public class CommentDTOConverter {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setComment(data.getComment());
-        OwnerDataResponse owner = converter.OwnerDataResponse(
-                new OwnerDataResponse(),
+
+        Business firstBusiness = data.getUser().getBusinesses().stream()
+                .filter(Business::getIsPrimary).findFirst().orElse(null);
+        assert firstBusiness != null;
+        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+        assert firstBusinessCategory != null;
+        PostOwnerResponse owner = converter.PostOwnerResponse(
+                new PostOwnerResponse(),
                 data.getUser().getSecureId(),
                 data.getUser().getName(),
-                data.getUser().getAppUserDetail().getAvatar()
+                data.getUser().getAppUserDetail().getAvatar(),
+                firstBusiness.getName(),
+                firstBusinessCategory.getName(),
+                firstBusiness.getIsPrimary()
         );
         dto.setOwner(owner);
 //        dto.setOwner(owner);
@@ -50,11 +57,20 @@ public class CommentDTOConverter {
             replyResponse.setId(reply.getSecureId());
             replyResponse.setIndex(reply.getId());
             replyResponse.setComment(reply.getComment());
-            OwnerDataResponse replyOwner = converter.OwnerDataResponse(
-                    new OwnerDataResponse(),
-                    reply.getUser().getSecureId(),
-                    reply.getUser().getName(),
-                    reply.getUser().getAppUserDetail().getAvatar()
+            Business firstBusinessOnReply = data.getUser().getBusinesses().stream()
+                    .filter(Business::getIsPrimary).findFirst().orElse(null);
+            assert firstBusinessOnReply != null;
+            BusinessCategory firstBusinessCategoryOnReply = firstBusiness.getBusinessCategories().stream()
+                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+            assert firstBusinessCategoryOnReply != null;
+            PostOwnerResponse replyOwner = converter.PostOwnerResponse(
+                    new PostOwnerResponse(),
+                    data.getUser().getSecureId(),
+                    data.getUser().getName(),
+                    data.getUser().getAppUserDetail().getAvatar(),
+                    firstBusinessOnReply.getName(),
+                    firstBusinessCategoryOnReply.getName(),
+                    firstBusinessOnReply.getIsPrimary()
             );
             replyResponse.setOwner(replyOwner);
             commentReplyResponse.add(replyResponse);
