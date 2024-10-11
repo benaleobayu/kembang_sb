@@ -78,17 +78,13 @@ public class TreePostConverter {
 
     public ListCommentResponse convertToListCommentResponse(
             ListCommentResponse dto,
-            String secureId,
-            Long index,
-            String comment,
-            List<CommentReply> commentReply,
-            AppUser owner,
-            LocalDateTime createdAt
-
+            AppUser user,
+            Comment data,
+            LikeDislikeRepository likeDislikeRepository
     ) {
-        dto.setId(secureId);
-        dto.setIndex(index);
-        dto.setComment(comment);
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setComment(data.getComment());
         List<ListCommentReplyResponse> commentReplyResponse = new ArrayList<>();
 //        commentReply.stream()
 //                .sorted(Comparator.comparing(CommentReply::getCreatedAt).reversed())
@@ -106,28 +102,30 @@ public class TreePostConverter {
 //        int page = commentReply.size() < 10 ? 0 : lastPage;
 //        dto.setCommentReplyLastPage(page);
 
+        AppUser owner = data.getUser();
         Business firstBusiness = owner.getBusinesses().stream()
                 .filter(Business::getIsPrimary).findFirst().orElse(null);
         assert firstBusiness != null;
-        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
-                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+        BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
         assert firstBusinessCategory != null;
         dto.setOwner(PostOwnerResponse(
                 new PostOwnerResponse(),
                 owner.getSecureId(),
                 owner.getAppUserDetail().getName(),
                 owner.getAppUserDetail().getAvatar(),
-                firstBusiness.getName(),
-                firstBusinessCategory.getName(),
-                firstBusiness.getIsPrimary()
+                firstBusiness != null ? firstBusiness.getName() : null,
+                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null
         ));
-        dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : null);
+        dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : null);
 
-        // TODO : integrate data
-        dto.setIsOwnerPost(false);
-        dto.setIsLike(false);
-        dto.setLikeCount(0);
-        dto.setRepliesCount(0);
+        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        dto.setIsOwnerPost(isOwner);
+        boolean isLike = likeDislikeRepository.findByCommentIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLike(isLike);
+        dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
+        dto.setRepliesCount(data.getCommentReply().size());
 
         return dto;
     }
@@ -148,17 +146,17 @@ public class TreePostConverter {
         Business firstBusiness = owner.getBusinesses().stream()
                 .filter(Business::getIsPrimary).findFirst().orElse(null);
         assert firstBusiness != null;
-        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
-                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+        BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
         assert firstBusinessCategory != null;
         dto.setOwner(PostOwnerResponse(
                 new PostOwnerResponse(),
                 owner.getSecureId(),
                 owner.getAppUserDetail().getName(),
                 owner.getAppUserDetail().getAvatar(),
-                firstBusiness.getName(),
-                firstBusinessCategory.getName(),
-                firstBusiness.getIsPrimary()
+                firstBusiness != null ? firstBusiness.getName() : null,
+                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null
         ));
         dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : "No data");
         return dto;

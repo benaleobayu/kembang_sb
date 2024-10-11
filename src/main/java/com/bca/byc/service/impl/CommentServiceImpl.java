@@ -16,6 +16,7 @@ import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
+import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -46,15 +47,20 @@ public class CommentServiceImpl implements CommentService {
     @Value("${app.base.url}")
     private final String baseUrl;
 
+    private final AppUserRepository appUserRepository;
+
     private final CommentRepository commentRepository;
     private final CommentReplyRepository commentReplyRepository;
     private final PostRepository postRepository;
     private final AppUserRepository userRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
 
     private CommentDTOConverter converter;
 
     @Override
     public ResultPageResponseDTO<ListCommentResponse> listDataComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId) {
+        AppUser user = GlobalConverter.getUserEntity(appUserRepository);
+
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
@@ -65,15 +71,11 @@ public class CommentServiceImpl implements CommentService {
             TreePostConverter dataConverter = new TreePostConverter(baseUrl);
             ListCommentResponse dto = new ListCommentResponse();
 
-
             dataConverter.convertToListCommentResponse(
                     dto,
-                    c.getSecureId(),
-                    c.getId(),
-                    c.getComment(),
-                    c.getCommentReply(),
-                    c.getUser(),
-                    c.getCreatedAt()
+                    user,
+                    c,
+                    likeDislikeRepository
             );
             return dto;
         }).collect(Collectors.toList());

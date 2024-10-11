@@ -9,7 +9,10 @@ import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.apps.*;
+import com.bca.byc.model.apps.ListCommentReplyResponse;
+import com.bca.byc.model.apps.PostOwnerResponse;
+import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
+import com.bca.byc.model.apps.SimplePostResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserDetailRepository;
@@ -20,20 +23,14 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.util.FileUploadHelper;
-import com.bca.byc.util.PaginationUtil;
 import com.bca.byc.util.helper.Formatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +43,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private final LikeDislikeRepository likeDislikeRepository;
     private final UserHasSavedPostRepository userHasSavedPostRepository;
     private final CommentRepository commentRepository;
-    
+
     private final PostDTOConverter postConverter;
 
     @Value("${upload.dir}")
@@ -156,24 +153,24 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
         String userId = GlobalConverter.getUuidUser(userRepository);
 
-        // Mengambil data komentar dan pengguna dari query
+        // Get comment form user
         Page<Object[]> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
         TreePostConverter postConverter = new TreePostConverter(baseUrl);
 
         List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
-            Comment comment = (Comment) result[0]; // Ambil comment
-            AppUser commentUser = (AppUser) result[1]; // Ambil user yang membuat comment
-            CommentReply commentReply = (CommentReply) result[2]; // Ambil commentReply
-            AppUser replyUser = (AppUser) result[3]; // Ambil user yang membuat commentReply
-            Post post = comment.getPost(); // Ambil post dari komentar
+            Comment comment = (Comment) result[0]; // Get comment
+            AppUser commentUser = (AppUser) result[1]; // Get user create comment
+            CommentReply commentReply = (CommentReply) result[2]; // Get commentReply
+            AppUser replyUser = (AppUser) result[3]; // Get user create commentReply
+            Post post = comment.getPost(); // Get post dari comment src
 
             ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
 
-            // Menggunakan TreeProfileActivityConverter untuk mengonversi data
+            // Use TreeProfileActivityConverter for convert data
             SimplePostResponse postDto = new SimplePostResponse();
-            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl);
+            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl, likeDislikeRepository);
 
             // Set data untuk balasan jika ada
             if (commentReply != null) {
@@ -197,7 +194,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         firstBusiness.getIsPrimary()
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
-//                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Menambahkan balasan ke komentar
+//                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Add reply
             }
 
             return dto;
@@ -205,8 +202,6 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
         return PageCreateReturn.create(pageResult, dtos);
     }
-
-
 
 
 }
