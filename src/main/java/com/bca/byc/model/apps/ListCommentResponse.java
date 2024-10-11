@@ -21,6 +21,8 @@ public class ListCommentResponse {
 
     private Boolean isOwnerPost = false; // TODO : integrate data
 
+    private Integer repliesCount = 0; // TODO : integrate data
+
     private Integer likeCount = 0; // TODO : integrate data
 
     private String createdAt;

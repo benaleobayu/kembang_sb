@@ -127,6 +127,7 @@ public class TreePostConverter {
         dto.setIsOwnerPost(false);
         dto.setIsLike(false);
         dto.setLikeCount(0);
+        dto.setRepliesCount(0);
 
         return dto;
     }
