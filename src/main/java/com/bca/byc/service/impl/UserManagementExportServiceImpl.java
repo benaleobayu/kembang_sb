@@ -58,7 +58,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (PreRegisterExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getName() == null ? null : data.getName());
             dataRow.createCell(2).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(3).setCellValue(data.getPhone() == null ? null : data.getPhone());
@@ -102,7 +102,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -137,7 +137,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -172,7 +172,7 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
