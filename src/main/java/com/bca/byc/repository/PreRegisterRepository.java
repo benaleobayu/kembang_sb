@@ -2,6 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.model.export.PreRegisterExportResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,4 +49,20 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
 
 
     List<PreRegister> findBySecureIdIn(List<String> collect);
+
+
+    // -- export --
+    @Query("SELECT new com.bca.byc.model.export.PreRegisterExportResponse(" +
+            "p.name, p.email, p.phone, p.accountType, " +
+            "p.memberType, p.memberBankAccount, p.memberCin, " +
+            "p.parentType, p.parentBankAccount, p.parentCin, " +
+            "p.memberBirthdate, p.parentBirthdate, " +
+            "branch.code, p.picName, " +
+            "p.statusApproval , p.createdAt, user.name " +
+            ") " +
+            "FROM PreRegister p " +
+            "LEFT JOIN p.branchCode branch " +
+            "LEFT JOIN p.createdBy user ")
+    List<PreRegisterExportResponse> findDataForExport();
+    // -- export --
 }

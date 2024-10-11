@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.entity.PreRegister;
+import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.UserActiveRepository;
@@ -31,41 +32,49 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
 
     @Override
     public void exportExcelPreRegister(HttpServletResponse response) throws IOException {
-        List<PreRegister> datas = preRegisterRepository.findAll();
+        List<PreRegisterExportResponse> datas = preRegisterRepository.findDataForExport();
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Pre-Register");
 
         HSSFRow headerRow = sheet.createRow(0);
-        createRow(sheet, headerRow, 0, "Name");
-        createRow(sheet, headerRow, 1, "Email");
-        createRow(sheet, headerRow, 2, "Phone");
-        createRow(sheet, headerRow, 3, "Member");
-        createRow(sheet, headerRow, 4, "Type");
-        createRow(sheet, headerRow, 5, "Member Bank Account");
-        createRow(sheet, headerRow, 6, "Member CIN");
-        createRow(sheet, headerRow, 7, "Member Birthdate");
-        createRow(sheet, headerRow, 8, "Child Bank Account");
-        createRow(sheet, headerRow, 9, "Child CIN");
-        createRow(sheet, headerRow, 10, "Child Birthdate");
-        createRow(sheet, headerRow, 11, "Admin Approval Status");
-        createRow(sheet, headerRow, 12, "Created At");
+        createRow(sheet, headerRow, 0, "ID");
+        createRow(sheet, headerRow, 1, "Name");
+        createRow(sheet, headerRow, 2, "Email");
+        createRow(sheet, headerRow, 3, "Phone");
+        createRow(sheet, headerRow, 4, "Member");
+        createRow(sheet, headerRow, 5, "Type");
+        createRow(sheet, headerRow, 6, "Member Bank Account");
+        createRow(sheet, headerRow, 7, "Member CIN");
+        createRow(sheet, headerRow, 8, "Member Birthdate");
+        createRow(sheet, headerRow, 9, "Child Bank Account");
+        createRow(sheet, headerRow, 10, "Child CIN");
+        createRow(sheet, headerRow, 11, "Child Birthdate");
+        createRow(sheet, headerRow, 12, "Branch Code");
+        createRow(sheet, headerRow, 13, "Pic Name");
+        createRow(sheet, headerRow, 14, "Admin Approval Status");
+        createRow(sheet, headerRow, 15, "Created At");
+        createRow(sheet, headerRow, 16, "Created By");
 
         int dataRowIndex = 1;
-        for (PreRegister data : datas) {
+        for (PreRegisterExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(data.getName());
-            dataRow.createCell(1).setCellValue(data.getEmail());
-            dataRow.createCell(2).setCellValue(data.getPhone());
-            dataRow.createCell(3).setCellValue(data.getAccountType());
-            dataRow.createCell(4).setCellValue(data.getMemberType().toString());
-            dataRow.createCell(5).setCellValue(data.getMemberBankAccount());
-            dataRow.createCell(6).setCellValue(data.getMemberCin());
-            dataRow.createCell(7).setCellValue(data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(8).setCellValue(data.getParentBankAccount());
-            dataRow.createCell(9).setCellValue(data.getParentCin());
-            dataRow.createCell(10).setCellValue(data.getParentBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(11).setCellValue(data.getStatusApproval() == null ? null : data.getStatusApproval().toString());
-            dataRow.createCell(12).setCellValue(data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(1).setCellValue(data.getName() == null ? null : data.getName());
+            dataRow.createCell(2).setCellValue(data.getEmail() == null ? null : data.getEmail());
+            dataRow.createCell(3).setCellValue(data.getPhone() == null ? null : data.getPhone());
+            dataRow.createCell(4).setCellValue(data.getType() == null ? null : data.getType());
+            dataRow.createCell(5).setCellValue(data.getMemberType() == null ? null : data.getMemberType().name());
+            dataRow.createCell(6).setCellValue(data.getMemberBankAccount() == null ? null : data.getMemberBankAccount());
+            dataRow.createCell(7).setCellValue(data.getMemberCin() == null ? null : data.getMemberCin());
+            dataRow.createCell(8).setCellValue(data.getMemberBirthdate() == null ? null : data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(9).setCellValue(data.getParentBankAccount() == null ? null : data.getParentBankAccount());
+            dataRow.createCell(10).setCellValue(data.getParentCin() == null ? null : data.getParentCin());
+            dataRow.createCell(11).setCellValue(data.getParentBirthdate() == null ? null : data.getParentBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(12).setCellValue(data.getAdminApprovalStatus() == null ? null : data.getAdminApprovalStatus().name());
+            dataRow.createCell(13).setCellValue(data.getBranch() == null ? null : data.getBranch());
+            dataRow.createCell(14).setCellValue(data.getAdminApprovalStatus() == null ? null : data.getAdminApprovalStatus().name());
+            dataRow.createCell(15).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(16).setCellValue(data.getCreatedBy() == null ? null : data.getCreatedBy());
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -93,8 +102,8 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(dataRowIndex++);
-            dataRow.createCell(1).setCellValue(data.getBranchCode());
+            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(1).setCellValue(data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail());
@@ -128,8 +137,8 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(data.getId());
-            dataRow.createCell(1).setCellValue(data.getBranchCode());
+            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(1).setCellValue(data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail());
@@ -163,8 +172,8 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(data.getId());
-            dataRow.createCell(1).setCellValue(data.getBranchCode());
+            dataRow.createCell(0).setCellValue(dataRowIndex);
+            dataRow.createCell(1).setCellValue(data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName());
             dataRow.createCell(3).setCellValue(data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail());

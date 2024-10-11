@@ -58,7 +58,7 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
                                                                  Pageable pageable);
 
     @Query("SELECT new com.bca.byc.model.export.UserActiveExportResponse(" +
-            "u.id, loc.name, aud.name, " +
+            "branch.name, aud.name, " +
             "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberBirthdate ELSE aud.parentBirthdate END, " +
             "u.email, " +
             "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberCin ELSE aud.parentCin END, " +
@@ -66,7 +66,7 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "FROM AppUser u " +
             "LEFT JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "LEFT JOIN Location loc ON loc.id = u.location.id " +
+            "LEFT JOIN aud.branchCode branch " +
             "WHERE " +
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
