@@ -45,6 +45,9 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public ResultPageResponseDTO<BranchDetailResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        if (keyword != null) {
+            pages = 0;
+        }
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
