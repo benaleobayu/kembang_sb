@@ -13,6 +13,8 @@ import com.bca.byc.model.ChanelListContentResponse;
 import com.bca.byc.model.ChannelCreateUpdateRequest;
 import com.bca.byc.model.ChanelDetailResponse;
 import com.bca.byc.model.ChanelIndexResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ChannelRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -57,10 +59,12 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Channel> pageResult = repository.findByNameLikeIgnoreCaseOrderByOrders(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Channel> pageResult = repository.findByNameLikeIgnoreCaseOrderByOrders(set.keyword(), set.pageable());
         List<ChanelIndexResponse> dtos = pageResult.stream().map((c) -> {
             ChanelIndexResponse dto = converter.convertToIndexResponse(c, baseUrl);
             return dto;
@@ -123,10 +127,12 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findPostOnChannel(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findPostOnChannel(set.keyword(), set.pageable());
         List<ChanelListContentResponse<Long>> dtos = pageResult.stream().map((c) -> {
             ChanelListContentResponse<Long> dto = converter.convertListContentResponse(c, baseUrl);
             return dto;

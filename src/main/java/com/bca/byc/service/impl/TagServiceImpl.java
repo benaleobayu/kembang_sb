@@ -1,10 +1,13 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.TagDTOConverter;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Tag;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.data.TagCreateUpdateRequest;
 import com.bca.byc.model.data.TagDetailResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.TagRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.TagService;
@@ -31,10 +34,12 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public ResultPageResponseDTO<TagDetailResponse> listDataTag(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Tag> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Tag> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<TagDetailResponse> dtos = pageResult.stream().map((c) -> {
             TagDetailResponse dto = converter.convertToListResponse(c);
             return dto;

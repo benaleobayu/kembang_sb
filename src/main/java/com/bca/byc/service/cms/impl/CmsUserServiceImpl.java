@@ -1,9 +1,12 @@
 package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.AppUserDTOConverter;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.Elastic.AppUserElastic;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.Elastic.AppUserElasticRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -51,11 +54,13 @@ public class CmsUserServiceImpl implements CmsUserService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName) {
-        userName = StringUtils.isEmpty(userName) ? "%" : userName + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCase(userName, pageable);
+    public ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<AppUser> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<UserManagementDetailResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementDetailResponse dto = converter.convertToListInquiry(c);
             return dto;

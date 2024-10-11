@@ -10,6 +10,8 @@ import com.bca.byc.model.BlacklistKeywordCreateUpdateRequest;
 import com.bca.byc.model.BlacklistKeywordDetailResponse;
 import com.bca.byc.model.export.BlacklistKeywordExportResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BlacklistKeywordRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -48,10 +50,12 @@ public class BlacklistKeywordServiceImpl implements BlacklistKeywordService {
 
     @Override
     public ResultPageResponseDTO<BlacklistIndexResponse> listDataBlacklist(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<BlacklistKeyword> pageResult = repository.findByKeywordLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<BlacklistKeyword> pageResult = repository.findByKeywordLikeIgnoreCase(set.keyword(), set.pageable());
         List<BlacklistIndexResponse> dtos = pageResult.stream().map((c) -> {
             BlacklistIndexResponse dto = converter.convertToListResponse(c);
             return dto;

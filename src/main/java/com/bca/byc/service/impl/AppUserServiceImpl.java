@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserNotification;
 import com.bca.byc.entity.AppUserRequestContact;
@@ -14,6 +15,8 @@ import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.model.data.UserProfileActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.PostRepository;
@@ -144,10 +147,12 @@ public class AppUserServiceImpl implements AppUserService {
         String email = ContextPrincipal.getPrincipal();
         IdEmailProjection user = appUserRepository.findByIdInEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findMyPost(user.getId(), keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findMyPost(user.getId(), set.keyword(), set.pageable());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
             PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());

@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.RoleDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Permission;
 import com.bca.byc.entity.Role;
@@ -11,6 +12,8 @@ import com.bca.byc.model.PrivilegeRoleCreateUpdateRequest;
 import com.bca.byc.model.RoleCreateUpdateRequest;
 import com.bca.byc.model.RoleDetailResponse;
 import com.bca.byc.model.RoleListResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
@@ -105,10 +108,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : (keyword + "%");
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<RoleListResponse> dtos = pageResult.stream().map((c) -> {
             RoleListResponse dto = converter.convertToListResponse(c);
             return dto;

@@ -2,10 +2,13 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.InputAttributeDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.AttributeNameResponse;
 import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.InputAttributeService;
@@ -35,10 +38,12 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeNameResponse> listDataSubCategoryBusiness(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<BusinessCategory> pageResult = businessCategoryRepository.findIdAndName(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<BusinessCategory> pageResult = businessCategoryRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeNameResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttributeOnName)
                 .collect(Collectors.toList());
@@ -48,10 +53,12 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeNameResponse> listDataSubCategoryExpect(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<ExpectItem> pageResult = expectItemRepository.findIdAndName(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<ExpectItem> pageResult = expectItemRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeNameResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttributeOnName)
                 .collect(Collectors.toList());
@@ -61,10 +68,11 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeResponse<Long>> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Branch> pageResult = branchRepository.findIdAndName(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<Branch> pageResult = branchRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
@@ -74,10 +82,11 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeResponse<Long>> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Kanwil> pageResult = kanwilRepository.findIdAndName(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<Kanwil> pageResult = kanwilRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
@@ -87,10 +96,11 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeResponse<Long>> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Location> pageResult = locationRepository.findIdAndName(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<Location> pageResult = locationRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());

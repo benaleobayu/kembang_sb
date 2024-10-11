@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppSearchDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.converter.parsing.TreeUserResponse;
 import com.bca.byc.entity.AppUser;
@@ -10,6 +11,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AppSearchDetailResponse;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.SuggestedUserResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.model.search.SearchDTOResponse;
 import com.bca.byc.repository.AppSearchRepository;
 import com.bca.byc.repository.BusinessCategoryRepository;
@@ -53,10 +56,12 @@ public class AppSearchServiceImpl implements AppSearchService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
         Long userId = user.getId();
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = postRepository.findPostByLobAndDescription(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findPostByLobAndDescription(set.keyword(), set.pageable());
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((data) -> {
@@ -81,11 +86,12 @@ public class AppSearchServiceImpl implements AppSearchService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
         Long userId = user.getId();
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-//        Page<Post> pageResult = postRepository.findByTitleLikeIgnoreCase(keyword, pageable);
-        Page<Post> pageResult = postRepository.findRandomPosts(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findRandomPosts(set.keyword(), set.pageable());
 
         assert pageResult != null;
         List<AppSearchDetailResponse> dtos = pageResult.stream().map((c) -> {
@@ -101,10 +107,12 @@ public class AppSearchServiceImpl implements AppSearchService {
         // get user id
         AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         Long userId = user.getId();
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<AppUser> pageResult = appUserRepository.findUserByNameAndLob(userId, keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<AppUser> pageResult = appUserRepository.findUserByNameAndLob(userId, keyword, set.pageable());
 
         assert pageResult != null;
         List<SuggestedUserResponse> dtos = pageResult.getContent().stream()
@@ -116,11 +124,12 @@ public class AppSearchServiceImpl implements AppSearchService {
 
     @Override
     public ResultPageResponseDTO<SuggestedUserResponse> listSuggestedUser(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<AppUser> pageResult = appUserRepository.findRandomUsers(keyword, pageable);
+        Page<AppUser> pageResult = appUserRepository.findRandomUsers(set.keyword(), set.pageable());
 
         List<SuggestedUserResponse> dtos = pageResult.getContent().stream()
                 .map(user -> TreeUserResponse.convertToCardUser(user, baseUrl)) // Convert AppUser to SuggestedUserResponse

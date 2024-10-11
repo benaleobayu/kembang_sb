@@ -14,6 +14,8 @@ import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.model.projection.CMSBulkSuspendProjection;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserSuspendedRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -54,15 +56,17 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
 
     @Override
     public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword,
+                startDate,
+                endDate
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
         // set date
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndSuspendedAndCreatedAt(keyword, locationId, start, end, pageable);
+        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndSuspendedAndCreatedAt(set.keyword(), locationId, start, end, set.pageable());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
             IndexResponse(c,dto);

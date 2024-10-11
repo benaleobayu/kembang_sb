@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.ExpectCategoryDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ExpectItem;
@@ -9,6 +10,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ExpectCategoryCreateUpdateRequest;
 import com.bca.byc.model.ExpectCategoryIndexResponse;
 import com.bca.byc.model.PublicExpectCategoryDetailResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ExpectCategoryRepository;
 import com.bca.byc.repository.ExpectItemRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -44,10 +47,12 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
 
     @Override
     public ResultPageResponseDTO<ExpectCategoryIndexResponse> listDataExpectCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<ExpectCategory> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<ExpectCategory> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<ExpectCategoryIndexResponse> dtos = pageResult.stream().map((c) -> {
             ExpectCategoryIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

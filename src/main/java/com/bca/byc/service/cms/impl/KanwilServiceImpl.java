@@ -10,6 +10,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.KanwilCreateUpdateRequest;
 import com.bca.byc.model.KanwilDetailResponse;
 import com.bca.byc.model.KanwilListResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.KanwilRepository;
 import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -46,10 +48,15 @@ public class KanwilServiceImpl implements KanwilService {
 
     @Override
         public ResultPageResponseDTO<KanwilListResponse> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-            keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-            Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-            Pageable pageable = PageRequest.of(pages, limit, sort);
-            Page<Kanwil> pageResult = repository.findDataByKeyword(keyword, pageable);
+        if(keyword != null ) {
+            pages = 0;
+        }
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Kanwil> pageResult = repository.findDataByKeyword(set.keyword(), set.pageable());
             List<KanwilListResponse> dtos = pageResult.stream().map((c) -> {
                 KanwilListResponse dto = converter.convertToListResponse(c);
                 return dto;

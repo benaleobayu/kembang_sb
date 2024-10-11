@@ -10,6 +10,8 @@ import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -59,18 +61,15 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages,
-                                                                     Integer limit,
-                                                                     String sortBy,
-                                                                     String direction,
-                                                                     String keyword,
-                                                                     AdminApprovalStatus status,
-                                                                     LocalDate startDate,
-                                                                     LocalDate endDate) {
+    public ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword,
+                startDate,
+                endDate,
+                status
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         // set date
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
@@ -85,15 +84,15 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         Page<PreRegister> pageResult = null;
         if (admin.getType().equals(AdminType.SUPERADMIN)) {
             listStatus = List.of(s0, s1, s4, s5);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getType().equals(AdminType.OPERATIONAL)) {
             listStatus = List.of(s0, s5);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getType().equals(AdminType.SUPERVISOR)) {
             listStatus = List.of(s1, s5);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, keyword, status, start, end, pageable);
+            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
 
         assert pageResult != null;

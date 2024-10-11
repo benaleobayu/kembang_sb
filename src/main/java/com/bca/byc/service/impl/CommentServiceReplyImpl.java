@@ -1,6 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
@@ -12,6 +13,8 @@ import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
@@ -49,16 +52,18 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
 
     @Override
     public ResultPageResponseDTO<ListCommentReplyResponse> listDataCommentReplies(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId, String parentCommentId) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Comment comment = HandlerRepository.getIdBySecureId(
                 parentCommentId,
                 commentRepository::findBySecureId,
                 projection -> commentRepository.findById(projection.getId()),
                 "Comment not found"
         );
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<CommentReply> pageResult = commentReplyRepository.findListDataCommentUser(comment.getId(), pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<CommentReply> pageResult = commentReplyRepository.findListDataCommentUser(comment.getId(), set.pageable());
         List<ListCommentReplyResponse> dtos = pageResult.stream().map((c) -> {
             TreePostConverter dataConverter = new TreePostConverter(baseUrl);
             ListCommentReplyResponse dto = new ListCommentReplyResponse();

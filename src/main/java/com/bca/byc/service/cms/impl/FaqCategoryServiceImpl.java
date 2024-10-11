@@ -9,6 +9,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.FaqCategoryCreateUpdateRequest;
 import com.bca.byc.model.FaqCategoryDetailResponse;
 import com.bca.byc.model.FaqCategoryIndexResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.FaqCategoryRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -58,10 +60,12 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
 
     @Override
     public ResultPageResponseDTO<FaqCategoryIndexResponse> listDataFaqCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<FaqCategory> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<FaqCategory> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<FaqCategoryIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqCategoryIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

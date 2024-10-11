@@ -2,11 +2,14 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.BusinessCategoryDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BusinessCategoryItemCreateRequest;
 import com.bca.byc.model.BusinessCategoryItemListResponse;
 import com.bca.byc.model.BusinessCategoryUpdateRequest;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -33,10 +36,12 @@ public class BusinessCategoryItemServiceImpl implements BusinessCategoryItemServ
 
     @Override
     public ResultPageResponseDTO<BusinessCategoryItemListResponse> listDataBusinessCategoryItem(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<BusinessCategory> pageResult = repository.findDataItemByKeyword(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<BusinessCategory> pageResult = repository.findDataItemByKeyword(set.keyword(), set.pageable());
         List<BusinessCategoryItemListResponse> dtos = pageResult.stream().map((c) -> {
             BusinessCategoryItemListResponse dto = converter.convertToListItemResponse(c);
             return dto;

@@ -8,6 +8,8 @@ import com.bca.byc.entity.BusinessCatalog;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
 import com.bca.byc.model.BusinessCatalogDetailResponse;
 import com.bca.byc.model.BusinessCatalogListResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BusinessCatalogRepository;
 import com.bca.byc.repository.BusinessRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -40,10 +42,12 @@ public class BusinessCatalogService {
     public ResultPageResponseDTO<BusinessCatalogListResponse> listDataBusinessCatalog(String businessId, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         Business business = HandlerRepository.getEntityBySecureId(businessId, businessRepository, "Business not found");
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<BusinessCatalog> pageResult = businessCatalogRepository.findByTitleLikeIgnoreCase(business.getId(), keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<BusinessCatalog> pageResult = businessCatalogRepository.findByTitleLikeIgnoreCase(business.getId(), set.keyword(), set.pageable());
         List<BusinessCatalogListResponse> dtos = pageResult.stream().map((c) -> {
             BusinessCatalogListResponse<Long> dto = new BusinessCatalogListResponse<>();
             dto.setId(c.getSecureId());

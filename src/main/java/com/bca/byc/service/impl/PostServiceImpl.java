@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
@@ -10,6 +11,8 @@ import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -49,19 +52,20 @@ public class PostServiceImpl implements PostService {
         AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         Long userId = user.getId();
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<Post> pageResult = null;
         if (Objects.equals(category, "top-picks")) {
-            pageResult = postRepository.findRandomPosts(keyword, pageable);
+            pageResult = postRepository.findRandomPosts(set.keyword(), set.pageable());
         }
         if (Objects.equals(category, "following")) {
-            pageResult = postRepository.findPostByFollowingUsers(userId, keyword, pageable);
+            pageResult = postRepository.findPostByFollowingUsers(userId, set.keyword(), set.pageable());
         }
         if (Objects.equals(category, "discovery")) {
-            pageResult = postRepository.findPostByOfficialUsers(keyword, pageable);
+            pageResult = postRepository.findPostByOfficialUsers(set.keyword(), set.pageable());
         }
 
         assert pageResult != null;

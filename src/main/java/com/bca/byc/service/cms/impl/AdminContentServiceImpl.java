@@ -10,6 +10,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminContentRepository;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
@@ -47,10 +49,16 @@ public class AdminContentServiceImpl implements AdminContentService {
 
     @Override
     public ResultPageResponseDTO<AdminContentIndexResponse<Long>> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Post> pageResult = repository.findDataPostByAdmin(keyword, pageable);
+
+        if(keyword != null ) {
+            pages = 0;
+        }
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = repository.findDataPostByAdmin(set.keyword(), set.pageable());
         List<AdminContentIndexResponse<Long>> dtos = pageResult.stream().map((c) -> {
             AdminContentIndexResponse<Long> dto = converter.convertToIndexResponse(c, baseUrl);
             return dto;

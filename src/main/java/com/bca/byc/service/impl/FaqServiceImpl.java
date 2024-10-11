@@ -1,11 +1,14 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.entity.FaqCategory;
 import com.bca.byc.model.FaqCreateUpdateRequest;
 import com.bca.byc.model.FaqDetailResponse;
 import com.bca.byc.model.FaqIndexResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.FaqCategoryRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -38,10 +41,12 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public ResultPageResponseDTO<FaqIndexResponse> listDataFaq(Integer pages, Integer limit, String sortBy, String direction, String keyword, String categoryId) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Faq> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable, categoryId);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Faq> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable(), categoryId);
         List<FaqIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

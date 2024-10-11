@@ -4,11 +4,18 @@ import com.bca.byc.entity.AbstractBaseEntityCms;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.AdminModelBaseDTOResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.security.util.ContextPrincipal;
+import com.bca.byc.util.PaginationUtil;
 import com.bca.byc.util.helper.Formatter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -90,6 +97,30 @@ public class GlobalConverter {
             data.add(list.trim());
         }
         return data;
+    }
+
+    // Helper pagination
+    public static SavedKeywordAndPageable createPageable(
+            Integer pages, Integer limit, String sortBy, String direction, String keyword, ListOfFilterPagination discardList
+    ) {
+        // Check if any of the fields in discardList are not null or empty
+        if (discardList.getKeyword() != null) {
+            pages = 0;
+        }
+        if (discardList.getStartDate() != null) {
+            pages = 0;
+        }
+        if (discardList.getEndDate() != null) {
+            pages = 0;
+        }
+        if (discardList.getAdminApprovalStatus() != null) {
+            pages = 0;
+        }
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        return new SavedKeywordAndPageable(keyword, pageable);
     }
 
 

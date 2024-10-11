@@ -10,6 +10,8 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.LocationCreateUpdateRequest;
 import com.bca.byc.model.LocationDetailResponse;
 import com.bca.byc.model.LocationIndexResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -53,10 +55,12 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public ResultPageResponseDTO<LocationIndexResponse> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Location> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Location> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<LocationIndexResponse> dtos = pageResult.stream().map((c) -> {
             LocationIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

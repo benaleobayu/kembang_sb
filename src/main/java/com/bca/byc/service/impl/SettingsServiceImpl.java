@@ -2,12 +2,15 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.SettingsDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Settings;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.SettingDetailResponse;
 import com.bca.byc.model.SettingIndexResponse;
 import com.bca.byc.model.SettingsCreateRequest;
 import com.bca.byc.model.SettingsUpdateRequest;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.SettingsRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -35,10 +38,12 @@ public class SettingsServiceImpl implements SettingService {
 
     @Override
     public ResultPageResponseDTO<SettingIndexResponse> listDataSetting(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Settings> pageResult = repository.findByNameLikeIgnoreCase(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Settings> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<SettingIndexResponse> dtos = pageResult.stream().map((c) -> {
             SettingIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

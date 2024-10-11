@@ -10,6 +10,8 @@ import com.bca.byc.entity.Location;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BranchCreateUpdateRequest;
 import com.bca.byc.model.BranchDetailResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.KanwilRepository;
 import com.bca.byc.repository.LocationRepository;
@@ -48,10 +50,12 @@ public class BranchServiceImpl implements BranchService {
         if (keyword != null) {
             pages = 0;
         }
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Branch> pageResult = repository.findDataByKeyword(keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Branch> pageResult = repository.findDataByKeyword(set.keyword(), set.pageable());
         List<BranchDetailResponse> dtos = pageResult.stream().map((c) -> {
             BranchDetailResponse dto = converter.convertToListResponse(c);
             return dto;

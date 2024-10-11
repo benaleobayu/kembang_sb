@@ -10,6 +10,8 @@ import com.bca.byc.exception.ForbiddenException;
 import com.bca.byc.model.BusinessDetailResponse;
 import com.bca.byc.model.BusinessTreeRequest;
 import com.bca.byc.model.data.BusinessListResponse;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -119,10 +121,12 @@ public class BusinessService {
 
     public ResultPageResponseDTO<BusinessListResponse> listDataBusiness(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         AppUser user = GlobalConverter.getUserEntity(appUserRepository);
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Business> pageResult = businessRepository.findBusinessByKeyword(user.getId(), keyword, pageable);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Business> pageResult = businessRepository.findBusinessByKeyword(user.getId(), set.keyword(), set.pageable());
         List<BusinessListResponse> dtos = TreeUserResponse.convertListBusinesses(pageResult.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
@@ -156,10 +160,13 @@ public class BusinessService {
 
     public ResultPageResponseDTO<BusinessListResponse> listDataBusinessUser(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
         AppUser user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
-        Page<Business> pageResult = businessRepository.findBusinessOnUser(user.getId(), keyword, pageable);
+
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Business> pageResult = businessRepository.findBusinessOnUser(user.getId(), set.keyword(), set.pageable());
         List<BusinessListResponse> dtos = TreeUserResponse.convertListBusinesses(pageResult.toList());
 
         return PageCreateReturn.create(pageResult, dtos);

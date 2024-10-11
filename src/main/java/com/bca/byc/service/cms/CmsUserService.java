@@ -14,5 +14,5 @@ public interface CmsUserService {
 
     Long getElasticCount();
 
-    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    ResultPageResponseDTO<UserManagementDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

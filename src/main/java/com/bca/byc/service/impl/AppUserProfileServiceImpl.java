@@ -10,6 +10,8 @@ import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
+import com.bca.byc.model.search.ListOfFilterPagination;
+import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserDetailRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
@@ -96,15 +98,17 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
 
         String userId = GlobalConverter.getUuidUser(userRepository);
         AppUser user = GlobalConverter.getUserEntity(userRepository);
 
         // Retrieve likes for the user
-        Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, pageable);
+        Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, set.pageable());
 
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(savedPost -> {
@@ -120,15 +124,16 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // Set up pagination and sorting
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(PaginationUtil.getSortBy(direction), sortBy);
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         String userId = GlobalConverter.getUuidUser(userRepository);
         AppUser user = GlobalConverter.getUserEntity(userRepository);
 
         // Retrieve likes for the user
-        Page<LikeDislike> likesPage = likeDislikeRepository.findLikesByUserId(userId, pageable);
+        Page<LikeDislike> likesPage = likeDislikeRepository.findLikesByUserId(userId, set.pageable());
 
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(likeDislike -> {
@@ -143,14 +148,16 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public ResultPageResponseDTO<ProfileActivityPostCommentsResponse> listDataPostCommentsActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
-        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
-        Pageable pageable = PageRequest.of(pages, limit, sort);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
 
         String userId = GlobalConverter.getUuidUser(userRepository);
 
         // Mengambil data komentar dan pengguna dari query
-        Page<Object[]> pageResult = commentRepository.findAllActivityCommentByUser(userId, pageable);
+        Page<Object[]> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
         TreePostConverter postConverter = new TreePostConverter(baseUrl);
