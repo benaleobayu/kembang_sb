@@ -10,7 +10,7 @@ import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.*;
-import com.bca.byc.model.projection.IdSecureIdProjection;
+import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
@@ -18,7 +18,6 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.CommentService;
 import com.bca.byc.util.PaginationUtil;
-import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,17 +84,26 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException {
+    public TotalCountResponse saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
 
         // set entity to add with model mapper
         Comment data = converter.convertToCreateRequest(post, dto, email);
-        TreePostConverter postConverter = new TreePostConverter(baseUrl);
-
         // add count comment
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
         postConverter.countPostComments(post, postRepository, "add");
+        data.setCommentsCount(data.getCommentsCount() + 1);
+
         // save data
-        commentRepository.save(data);
+        Comment savedComment = commentRepository.save(data);
+
+        int totalComments = savedComment.getCommentsCount().intValue();
+        long countReplies = savedComment.getCommentReply().stream().map(CommentReply::getCommentsCount).count();
+        int totalReplies = (int) countReplies;
+
+        TotalCountResponse message = new TotalCountResponse();
+        message.setTotal(totalComments + totalReplies);
+        return message;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
+import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
@@ -38,15 +39,15 @@ public class PostCommentReplyController {
 
     @Operation(summary = "Create comment reply", description = "Create comment reply")
     @PostMapping("/{postId}/comments/{parentCommentId}/replies")
-    public ResponseEntity<ApiResponse> createReply(
+    public ResponseEntity<?> createReply(
             @PathVariable("postId") String postId,
             @PathVariable("parentCommentId") String commentId,
             @Valid @RequestBody CommentCreateUpdateRequest dto) {
         log.info("POST " + urlRoute + "/{}/comments/{}/replies", postId, commentId);
         try {
-            service.saveDataCommentReply(postId, dto, commentId);
+            TotalCountResponse total = service.saveDataCommentReply(postId, dto, commentId);
             return ResponseEntity.created(URI.create(urlRoute))
-                    .body(new ApiResponse(true, "Successfully created comments"));
+                    .body(new ApiDataResponse<>(true, "Successfully created comments", total));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

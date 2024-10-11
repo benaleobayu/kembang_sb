@@ -8,6 +8,7 @@ import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
+import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
@@ -29,7 +30,7 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
     private final AppUserRepository userRepository;
 
     @Override
-    public void saveDataCommentReply(String postId, CommentCreateUpdateRequest dto, String parentCommentId) {
+    public TotalCountResponse saveDataCommentReply(String postId, CommentCreateUpdateRequest dto, String parentCommentId) {
         String secureId = ContextPrincipal.getSecureUserId();
         AppUser user = userRepository.findBySecureId(secureId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
@@ -47,9 +48,18 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
         // incrase comment post
         TreePostConverter postConverter = new TreePostConverter(null);
         postConverter.countPostComments(post, postRepository, "add");
+        data.setCommentsCount(data.getCommentsCount() + 1);
 
         // save data
-        commentReplyRepository.save(data);
+        CommentReply savedReply = commentReplyRepository.save(data);
+
+        int totalComments = savedReply.getParentComment().getCommentsCount().intValue();
+        long countReplies = savedReply.getCommentsCount();
+        int totalReplies = (int) countReplies;
+
+        TotalCountResponse message = new TotalCountResponse();
+        message.setTotal(totalComments + totalReplies);
+        return message;
     }
 
     @Override

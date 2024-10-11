@@ -5,6 +5,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
+import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
@@ -65,13 +66,13 @@ public class PostCommentController {
 
     @Operation(summary = "Create comment", description = "Create comment")
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<ApiResponse> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateUpdateRequest item) {
+    public ResponseEntity<?> create(@PathVariable("postId") String postId, @Valid @RequestBody CommentCreateUpdateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         String email = ContextPrincipal.getPrincipal();
         try {
-            service.saveData(postId, item, email);
+            TotalCountResponse total = service.saveData(postId, item, email);
             return ResponseEntity.created(URI.create(urlRoute))
-                    .body(new ApiResponse(true, "Successfully created post comments"));
+                    .body(new ApiDataResponse<>(true, "Successfully created post comments", total));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
