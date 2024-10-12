@@ -72,7 +72,7 @@ public class TreePostConverter {
     ) {
         dto.setId(id);
         dto.setName(name);
-        dto.setAvatar(GlobalConverter.getParseImage(avatar, baseUrl));
+        dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
         return dto;
     }
 

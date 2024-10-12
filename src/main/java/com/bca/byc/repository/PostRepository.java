@@ -16,10 +16,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // ------------- show list post home -------------
     @Query("SELECT p FROM Post p " +
             "WHERE " +
-            "p.user.id IN " +
-            "(SELECT u.appUserAttribute.id FROM AppUser u WHERE u.appUserAttribute.id IN " +
-            "(SELECT ua.id FROM AppUserAttribute ua)) AND " +
-            "LOWER(p.description) LIKE LOWER(:keyword) " +
+            "LOWER(p.description) LIKE LOWER(:keyword) AND " +
+            "p.isActive = true AND " +
+            "p.isDeleted = false AND " +
+            "p.isPosted = true AND " +
+            "p.isAdminPost = false " +
             "ORDER BY function('RANDOM') ")
     Page<Post> findRandomPosts(@Param("keyword") String keyword, Pageable pageable);
 
