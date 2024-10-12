@@ -47,9 +47,6 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public ResultPageResponseDTO<BranchDetailResponse> listDataBranch(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        if (keyword != null) {
-            pages = 0;
-        }
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );

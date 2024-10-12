@@ -114,16 +114,16 @@ public class GlobalConverter {
             Integer pages, Integer limit, String sortBy, String direction, String keyword, ListOfFilterPagination discardList
     ) {
         // Check if any of the fields in discardList are not null or empty
-        if (discardList.getKeyword() != null) {
+        if (discardList.getKeyword() != null && discardList.getKeyword().length() >= 3) {
             pages = 0;
         }
-        if (discardList.getStartDate() != null) {
+        if (discardList.getStartDate() != null && discardList.getStartDate().toString().length() >= 3) {
             pages = 0;
         }
-        if (discardList.getEndDate() != null) {
+        if (discardList.getEndDate() != null && discardList.getEndDate().toString().length() >= 3) {
             pages = 0;
         }
-        if (discardList.getAdminApprovalStatus() != null) {
+        if (discardList.getAdminApprovalStatus() != null ) {
             pages = 0;
         }
 
