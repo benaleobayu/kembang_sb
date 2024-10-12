@@ -4,7 +4,7 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
-import com.bca.byc.model.projection.ReportContentIndexProjection;
+import com.bca.byc.model.projection.ReportContentProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PostRepository;
@@ -12,12 +12,15 @@ import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportContentService;
 import com.bca.byc.util.helper.Formatter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,17 +39,17 @@ public class ReportContentServiceImpl implements ReportContentService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportContent(set.keyword(), set.pageable());
+        Page<ReportContentProjection> pageResult = reportRepository.getDataReportContent(null, set.keyword(), set.pageable());
         List<ReportContentIndexResponse> dtos = pageResult.stream().map((c) -> new ReportContentIndexResponse(
                 c.getId(),
                 GlobalConverter.convertListToArray(c.getHighlight()),
                 GlobalConverter.getParseImage(c.getThumbnail(), baseUrl),
-                c.getDescription(),
+                c.getPostDescription(),
                 c.getTags(),
                 c.getCreator(),
                 c.getStatusReport(),
                 c.getTotalReport(),
-                Formatter.formatterAppsWithSeconds(c.getLastReportAt())
+                Formatter.formatLocalDateTime(c.getLastReportAt())
         )).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
@@ -54,6 +57,31 @@ public class ReportContentServiceImpl implements ReportContentService {
 
     @Override
     public ReportContentDetailResponse findDataById(String id) {
-        return null;
+        Page<ReportContentProjection> pageResult = reportRepository.getDataReportContent(id, null, null);
+        if (pageResult.isEmpty()) {
+            throw new EntityNotFoundException("Report content not found for ID: " + id);
+        }
+
+        ReportContentProjection data = pageResult.getContent().get(0);
+
+        List<Map<String, String>> postContent = data.getPost().getPostContents().stream()
+                .map(pc -> {
+                    Map<String, String> contentMap = new HashMap<>();
+                    contentMap.put("content", GlobalConverter.getParseImage(pc.getContent(), baseUrl));
+                    return contentMap;
+                })
+                .collect(Collectors.toList());
+
+        return new ReportContentDetailResponse(
+                data.getId(),
+                data.getCreator(),
+                Formatter.formatLocalDateTime(data.getLastReportAt()),
+                data.getChannelName(),
+                data.getPost().getIsActive(),
+                data.getPostDescription(),
+                GlobalConverter.convertListToArray(data.getHighlight()),
+                GlobalConverter.convertListToArray(data.getTags()),
+                postContent
+        );
     }
 }

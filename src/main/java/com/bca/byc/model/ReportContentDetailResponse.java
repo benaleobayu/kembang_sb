@@ -3,6 +3,7 @@ package com.bca.byc.model;
 import com.bca.byc.model.apps.PostContentDetailResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public record ReportContentDetailResponse(
         String id,
@@ -13,6 +14,6 @@ public record ReportContentDetailResponse(
         String description,
         List<String> highlight,
         List<String> tags,
-        List<PostContentDetailResponse> content
+        List<Map<String, String>> contents
 ) {
 }
