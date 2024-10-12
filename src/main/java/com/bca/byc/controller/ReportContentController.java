@@ -6,6 +6,7 @@ import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ReportContentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping(ReportContentController.urlRoute)
-@Tag(name = "ReportContent API")
+@Tag(name = "Report API")
+@SecurityRequirement(name = "Authorization")
 public class ReportContentController {
 
     static final String urlRoute = "/cms/v1/report/content";
