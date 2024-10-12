@@ -84,6 +84,16 @@ public class GlobalConverter {
                         baseUrl + "/" + imageUrl :
                         imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
     }
+    public static String getAvatarImage(
+            String imageUrl,
+            String baseUrl
+    ) {
+        return Objects.isNull(imageUrl) || imageUrl.isBlank() ? baseUrl + "/uploads/images/avatar.png" :
+                imageUrl.startsWith("uploads/") ?
+                        baseUrl + "/" + imageUrl :
+                        imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
+    }
+
 
     public static String replaceImagePath(String imagePath) {
         return imagePath.replace("src/main/resources/static/", "/");
