@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ReportRequest;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
@@ -26,29 +27,38 @@ public class RepostServiceImpl implements RepostService {
     private final ReportRepository reportRepository;
 
     @Override
-    public void SendReport (ReportRequest dto) throws Exception {
-        AppUser UserId = GlobalConverter.getUserEntity(appUserRepository);
+    public String SendReport(ReportRequest dto) throws Exception {
+        AppUser userId = GlobalConverter.getUserEntity(appUserRepository);
 
         Report report = new Report();
         report.setType(dto.getType());
-        report.setReporterUser(UserId);
+        report.setReporterUser(userId);
         report.setReport(dto.getReason());
+        report.setStatus("DRAFT");
 
+        String message;
         switch (dto.getType()) {
             case "POST":
                 report.setPost(getEntityBySecureId(dto.getReportedId(), postRepository, "Post not found"));
+                message = "Post reported successfully";
                 break;
             case "COMMENT":
                 report.setComment(getEntityBySecureId(dto.getReportedId(), commentRepository, "Comment not found"));
+                message = "Comment reported successfully";
                 break;
             case "COMMENT_REPLY":
                 report.setCommentReply(getEntityBySecureId(dto.getReportedId(), commentReplyRepository, "Comment not found"));
+                message = "Comment reply reported successfully";
                 break;
             case "USER":
                 report.setReportedUser(getEntityBySecureId(dto.getReportedId(), appUserRepository, "User not found"));
+                message = "User reported successfully";
                 break;
+            default:
+                throw new BadRequestException("Invalid type");
         }
-
         reportRepository.save(report);
+
+        return message;
     }
 }
