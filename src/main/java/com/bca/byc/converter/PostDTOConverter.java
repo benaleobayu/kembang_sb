@@ -100,6 +100,7 @@ public class PostDTOConverter {
         data.setDescription(dto.getDescription());
         data.setId(null);
         data.setUser(user);
+        data.setPostAt(dto.getIsPosted().equals(true) ? LocalDateTime.now() : null);
 
         // Set list of Tags
         Set<Tag> tags = new HashSet<>();
