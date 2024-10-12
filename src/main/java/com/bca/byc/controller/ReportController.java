@@ -27,13 +27,13 @@ public class ReportController {
     private final RepostService service;
 
     // Report Comment
-    @PostMapping("/report-comment")
-    public ResponseEntity<ApiResponse> reportComment(@Valid @RequestBody ReportRequest dto) {
-        log.info("POST " + urlRoute + "/report-comment endpoint hit");
+    @PostMapping("/send-report")
+    public ResponseEntity<ApiResponse> sendReport(@Valid @RequestBody ReportRequest dto) {
+        log.info("POST " + urlRoute + "/send-report endpoint hit");
 
         try{
-            service.SendReport(dto);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully reported comment"));
+            String message = service.SendReport(dto);
+            return ResponseEntity.ok(new ApiResponse(true, message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
