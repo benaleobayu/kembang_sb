@@ -70,7 +70,7 @@ public class PostServiceImpl implements PostService {
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = converter.convertToListResponse(post, userId);
+            PostHomeResponse dto = converter.convertToDetailResponse(post, userId);
             return dto;
         }).collect(Collectors.toList());
 
@@ -94,9 +94,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostHomeResponse findBySecureId(String secureId) {
+        AppUser user = GlobalConverter.getUserEntity(appUserRepository);
         Post data = getEntityBySecureId(secureId, postRepository, "Post not found");
 
-        return converter.convertToDetailResponse(data);
+        return converter.convertToDetailResponse(data, user.getId());
     }
 
     @Override

@@ -110,7 +110,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(savedPost -> {
                     Post post = savedPost.getPost();
-                    PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
+                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -135,7 +135,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(likeDislike -> {
                     Post post = likeDislike.getPost();
-                    PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
+                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
                     return dto;
                 })
                 .collect(Collectors.toList());

@@ -155,7 +155,7 @@ public class AppUserServiceImpl implements AppUserService {
         Page<Post> pageResult = postRepository.findMyPost(user.getId(), set.keyword(), set.pageable());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = postConverter.convertToListResponse(post, user.getId());
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
             return dto;
         }).collect(Collectors.toList());
 

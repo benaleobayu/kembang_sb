@@ -32,8 +32,7 @@ public class PostDTOConverter {
     @Value("${app.base.url}")
     private String baseUrl;
 
-    // for get data
-    public PostHomeResponse convertToListResponse(Post data, Long userId) {
+    public PostHomeResponse convertToDetailResponse(Post data, Long userId) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
         TreePostConverter converter = new TreePostConverter(baseUrl);
@@ -64,32 +63,6 @@ public class PostDTOConverter {
 
         dto.setLikeCount(data.getLikesCount());
         dto.setCommentCount(data.getCommentsCount());
-
-        // return
-        return dto;
-    }
-
-    public PostHomeResponse convertToDetailResponse(Post data) {
-        // mapping Entity with DTO Entity
-        PostHomeResponse dto = modelMapper.map(data, PostHomeResponse.class);
-        TreePostConverter converter = new TreePostConverter(baseUrl);
-
-        dto.setPostId(data.getSecureId());
-        dto.setPostDescription(data.getDescription());
-        dto.setIsCommentable(data.getIsCommentable());
-        dto.setIsShareable(data.getIsShareable());
-        dto.setIsShowLikes(data.getIsShowLikes());
-        dto.setIsPosted(data.getIsPosted());
-
-        AppUser appUser = data.getUser();
-
-        dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
-
-//        dto.setCommentList(convertComments(data.getComments(), converter));
-//        dto.setIsLiked(data.getLikeDislikes().stream().anyMatch(l -> l.getUser().getId().equals(appUser.getId())));
-
-        // return
         return dto;
     }
 
