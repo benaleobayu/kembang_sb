@@ -13,6 +13,7 @@ import com.bca.byc.model.apps.ListCommentReplyResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.SimplePostResponse;
+import com.bca.byc.model.projection.PostCommentActivityProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserDetailRepository;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,16 +156,16 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         String userId = GlobalConverter.getUuidUser(userRepository);
 
         // Get comment form user
-        Page<Object[]> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
+        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
         TreePostConverter postConverter = new TreePostConverter(baseUrl);
 
         List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
-            Comment comment = (Comment) result[0]; // Get comment
-            AppUser commentUser = (AppUser) result[1]; // Get user create comment
-            CommentReply commentReply = (CommentReply) result[2]; // Get commentReply
-            AppUser replyUser = (AppUser) result[3]; // Get user create commentReply
+            Comment comment = result.getComment(); // Get comment
+            AppUser commentUser = result.getCommentUser(); // Get user create comment
+            CommentReply commentReply = result.getCommentReply(); // Get commentReply
+            AppUser replyUser = result.getReplyUser(); // Get user create commentReply
             Post post = comment.getPost(); // Get post dari comment src
 
             ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
@@ -181,20 +183,19 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                 Business firstBusiness = replyUser.getBusinesses().stream()
                         .filter(Business::getIsPrimary).findFirst().orElse(null);
                 assert firstBusiness != null;
-                BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
-                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
+                BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
                 assert firstBusinessCategory != null;
                 replyResponse.setOwner(postConverter.PostOwnerResponse(
                         new PostOwnerResponse(),
                         replyUser.getSecureId(),
                         replyUser.getAppUserDetail().getName(),
                         replyUser.getAppUserDetail().getAvatar(),
-                        firstBusiness.getName(),
-                        firstBusinessCategory.getName(),
-                        firstBusiness.getIsPrimary()
+                        firstBusiness != null ? firstBusiness.getName() : null,
+                        firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
+                        firstBusiness != null ? firstBusiness.getIsPrimary() : null
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
-//                dto.getComments().get(0).setCommentReply(Collections.singletonList(replyResponse)); // Add reply
             }
 
             return dto;
