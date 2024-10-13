@@ -11,7 +11,7 @@ public class CommentDetailResponse {
 
     private Boolean status;
 
-    private OwnerDataResponse owner;
+    private PostOwnerResponse owner;
 
     private String createdAt;
 

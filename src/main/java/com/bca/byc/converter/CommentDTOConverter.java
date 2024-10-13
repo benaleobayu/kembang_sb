@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.apps.*;
@@ -85,17 +86,29 @@ public class CommentDTOConverter {
 
     // for get data
     public CommentDetailResponse convertToListResponse(Comment data) {
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
         TreePostConverter converter = new TreePostConverter(baseUrl,userRepository);
-        OwnerDataResponse owner = converter.OwnerDataResponse(
-                new OwnerDataResponse(),
-                data.getUser().getSecureId(),
-                data.getUser().getName(),
-                data.getUser().getAppUserDetail().getAvatar()
-        );
-        dto.setOwner(owner);
+
+        AppUser owner = data.getUser();
+        Business firstBusiness = owner.getBusinesses().stream()
+                .filter(Business::getIsPrimary).findFirst().orElse(null);
+        assert firstBusiness != null;
+        BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
+        assert firstBusinessCategory != null;
+        dto.setOwner(converter.PostOwnerResponse(
+                new PostOwnerResponse(),
+                owner.getSecureId(),
+                owner.getAppUserDetail().getName(),
+                owner.getAppUserDetail().getAvatar(),
+                firstBusiness != null ? firstBusiness.getName() : null,
+                firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                user
+        ));
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
         // return
         return dto;

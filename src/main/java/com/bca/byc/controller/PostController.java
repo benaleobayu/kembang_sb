@@ -1,13 +1,11 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
-import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.response.ApiDataResponse;
@@ -33,7 +31,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.*;
