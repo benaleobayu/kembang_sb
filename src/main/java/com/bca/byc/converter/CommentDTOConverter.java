@@ -27,7 +27,7 @@ public class CommentDTOConverter {
 
     // for get data
     public ListCommentResponse convertToPageListResponse(Comment data) {
-        TreePostConverter converter = new TreePostConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
         // mapping Entity with DTO Entity
         ListCommentResponse dto = new ListCommentResponse();
         dto.setId(data.getSecureId());
@@ -88,7 +88,7 @@ public class CommentDTOConverter {
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
-        TreePostConverter converter = new TreePostConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl,userRepository);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 data.getUser().getSecureId(),
@@ -106,7 +106,7 @@ public class CommentDTOConverter {
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
-        TreePostConverter converter = new TreePostConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
         OwnerDataResponse owner = converter.OwnerDataResponse(
                 new OwnerDataResponse(),
                 data.getUser().getSecureId(),

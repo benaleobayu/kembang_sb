@@ -7,6 +7,7 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.*;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -29,13 +30,14 @@ public class PostDTOConverter {
     private final BusinessCategoryRepository businessCategoryRepository;
     private final CommentRepository commentRepository;
     private final LikeDislikeRepository likeDislikeRepository;
+    private final AppUserRepository userRepository;
     @Value("${app.base.url}")
     private String baseUrl;
 
     public PostHomeResponse convertToDetailResponse(Post data, Long userId) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
-        TreePostConverter converter = new TreePostConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
 
         dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());

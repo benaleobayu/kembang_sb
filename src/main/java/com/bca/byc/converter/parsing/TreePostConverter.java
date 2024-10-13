@@ -7,6 +7,8 @@ import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.LocalDateTime;
@@ -17,8 +19,11 @@ public class TreePostConverter {
 
     private final String baseUrl;
 
-    public TreePostConverter(String baseUrl) {
+    private final AppUserRepository userRepository;
+
+    public TreePostConverter(String baseUrl, AppUserRepository userRepository) {
         this.baseUrl = baseUrl;
+        this.userRepository = userRepository;
     }
 
     public PostHomeResponse convertToPostHomeResponse(
@@ -192,12 +197,18 @@ public class TreePostConverter {
     }
     public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto, String id, String name, String avatar, String businessName, String lineOfBusiness, Boolean isPrimary, AppUser user
     ) {
+        AppUser owner = HandlerRepository.getIdBySecureId(
+                id,
+                userRepository::findBySecureId,
+                projection -> userRepository.findById(projection.getId()),
+                "User not found"
+        );
         dto.setId(id);
         dto.setName(name);
         dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
         boolean isMyAccount = Objects.equals(user.getSecureId(), id);
         dto.setIsMyAccount(isMyAccount);
-        boolean isFollowing = user.getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
+        boolean isFollowing = user.getFollows().stream().anyMatch(f -> f.getId().equals(owner.getId()));
         dto.setIsFollowed(isFollowing);
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);

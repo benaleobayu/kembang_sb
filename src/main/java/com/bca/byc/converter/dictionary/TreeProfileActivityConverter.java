@@ -8,6 +8,7 @@ import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.SimplePostResponse;
 import com.bca.byc.repository.LikeDislikeRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.util.Collections;
@@ -34,14 +35,15 @@ public class TreeProfileActivityConverter {
             Comment comment,
             SimplePostResponse postDto,
             String baseUrl,
-            LikeDislikeRepository likeDislikeRepository
+            LikeDislikeRepository likeDislikeRepository,
+            AppUserRepository userRepository
 
     ) {
         dto.setUserId(user.getSecureId());
         dto.setUserName(user.getAppUserDetail().getName());
         dto.setUserAvatar(getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
         dto.setPost(convertPostData(postDto, user, baseUrl));
-        TreePostConverter converter = new TreePostConverter(baseUrl);
+        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
         dto.setComments(Collections.singletonList(converter.convertToListCommentResponse(
                 new ListCommentResponse(),
                 user,

@@ -160,7 +160,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
-        TreePostConverter postConverter = new TreePostConverter(baseUrl);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl, userRepository);
 
         List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
             Comment comment = result.getComment(); // Get comment
@@ -173,7 +173,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
             // Use TreeProfileActivityConverter for convert data
             SimplePostResponse postDto = new SimplePostResponse();
-            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl, likeDislikeRepository);
+            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl, likeDislikeRepository, userRepository);
 
             // Set data untuk balasan jika ada
             if (commentReply != null) {
