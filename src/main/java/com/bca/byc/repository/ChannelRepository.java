@@ -12,8 +12,8 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
     Page<Channel> findByNameLikeIgnoreCaseOrderByOrders(String keyword, Pageable pageable);
 
-    @Query("SELECT l.secureId AS secureId, l.name AS name FROM Location l " +
+    @Query("SELECT c.secureId AS secureId, c.name AS name FROM Channel c " +
             "WHERE " +
-            "(LOWER(l.name) LIKE LOWER(CONCAT('%', :keyword, '%')) )")
+            "(LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) )")
     Page<CastSecureIdAndNameProjection> findIdAndName(String keyword, Pageable pageable);
 }
