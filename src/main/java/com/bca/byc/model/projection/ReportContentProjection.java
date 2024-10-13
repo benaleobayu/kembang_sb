@@ -1,30 +1,24 @@
 package com.bca.byc.model.projection;
 
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostContent;
+import com.bca.byc.entity.*;
 
 import java.time.LocalDateTime;
 
 public interface ReportContentProjection {
-    String getId();
 
-    String getHighlight();
-
-    String getThumbnail();
-
-    String getTags();
-
-    String getCreator();
-
-    String getStatusReport();
-
-    Long getTotalReport();
-
-    LocalDateTime getLastReportAt();
+    Report getReport();
 
     Post getPost();
 
-    String getChannelName();
+    PostContent getPostContent();
 
-    String getPostDescription();
+    AppUser getUser();
+
+    AppUserDetail getUserDetail();
+
+    AppUserAttribute getAppUserAttribute();
+
+    Tag getTag();
+
+    Channel getChannel();
 }

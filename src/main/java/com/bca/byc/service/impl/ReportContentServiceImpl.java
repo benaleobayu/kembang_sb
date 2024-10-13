@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,26 +32,39 @@ public class ReportContentServiceImpl implements ReportContentService {
 
     @Override
     public ResultPageResponseDTO<ReportContentIndexResponse> listDataReportContent(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<ReportContentProjection> pageResult = reportRepository.getDataReportContent(null, set.keyword(), set.pageable());
-        List<ReportContentIndexResponse> dtos = pageResult.stream().map((c) -> new ReportContentIndexResponse(
-                c.getId(),
-                GlobalConverter.convertListToArray(c.getHighlight()),
-                GlobalConverter.getParseImage(c.getThumbnail(), baseUrl),
-                c.getPostDescription(),
-                c.getTags(),
-                c.getCreator(),
-                c.getStatusReport(),
-                c.getTotalReport(),
-                Formatter.formatLocalDateTime(c.getLastReportAt())
-        )).collect(Collectors.toList());
+
+        Map<String, ReportContentIndexResponse> responseMap = new HashMap<>();
+
+        pageResult.forEach(c -> {
+            String postId = c.getPost().getSecureId();
+            if (!responseMap.containsKey(postId)) {
+                responseMap.put(postId, new ReportContentIndexResponse(
+                        c.getReport().getSecureId(),
+                        GlobalConverter.convertListToArray(c.getPost().getHighlight()),
+                        GlobalConverter.getParseImage(
+                                Objects.equals(c.getPostContent().getType(), "video") ?
+                                        c.getPostContent().getThumbnail() :
+                                        c.getPostContent().getContent(),
+                                baseUrl),
+                        c.getPost().getDescription(),
+                        c.getTag() != null ? c.getTag().getName() : null,
+                        c.getUser() != null ? c.getUser().getName() : null,
+                        c.getReport().getStatus(),
+                        reportRepository.countByPostId(c.getReport().getPost().getId()),
+                        Formatter.formatLocalDateTime(c.getReport().getCreatedAt())
+                ));
+            }
+        });
+
+        List<ReportContentIndexResponse> dtos = new ArrayList<>(responseMap.values());
 
         return PageCreateReturn.create(pageResult, dtos);
     }
+
 
     @Override
     public ReportContentDetailResponse findDataById(String id) {
@@ -73,14 +84,14 @@ public class ReportContentServiceImpl implements ReportContentService {
                 .collect(Collectors.toList());
 
         return new ReportContentDetailResponse(
-                data.getId(),
-                data.getCreator(),
-                Formatter.formatLocalDateTime(data.getLastReportAt()),
-                data.getChannelName(),
+                data.getReport().getSecureId(),
+                data.getUserDetail().getName(),
+                Formatter.formatLocalDateTime(data.getReport().getCreatedAt()),
+                data.getChannel() != null ? data.getChannel().getName() : null,
                 data.getPost().getIsActive(),
-                data.getPostDescription(),
-                GlobalConverter.convertListToArray(data.getHighlight()),
-                GlobalConverter.convertListToArray(data.getTags()),
+                data.getPost().getDescription(),
+                GlobalConverter.convertListToArray(data.getPost().getHighlight()),
+                GlobalConverter.convertListToArray(data.getTag().getName()),
                 postContent
         );
     }
