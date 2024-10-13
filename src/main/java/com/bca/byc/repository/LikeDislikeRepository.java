@@ -17,7 +17,7 @@ public interface LikeDislikeRepository extends JpaRepository<LikeDislike, Long> 
 
     LikeDislike findByCommentReplyAndUser(CommentReply comment, AppUser user);
 
-    @Query("SELECT ld FROM LikeDislike ld WHERE ld.user.secureId = :userId")
+    @Query("SELECT ld FROM LikeDislike ld WHERE ld.user.secureId = :userId AND ld.post IS NOT NULL ")
     Page<LikeDislike> findLikesByUserId(@Param("userId") String userId, Pageable pageable);
 
 
