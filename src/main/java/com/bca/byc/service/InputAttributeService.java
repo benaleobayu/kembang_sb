@@ -14,4 +14,6 @@ public interface InputAttributeService {
     ResultPageResponseDTO<AttributeResponse<Long>> listDataKanwil(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<AttributeResponse<Long>> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    ResultPageResponseDTO<AttributeResponse<Long>> listDataChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

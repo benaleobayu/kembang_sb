@@ -7,6 +7,7 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.AttributeNameResponse;
 import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
+import com.bca.byc.model.projection.CastSecureIdAndNameProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
@@ -33,6 +34,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     private final BranchRepository branchRepository;
     private final KanwilRepository kanwilRepository;
     private final LocationRepository locationRepository;
+    private final ChannelRepository channelRepository;
 
     private final InputAttributeDTOConverter converter;
 
@@ -101,6 +103,20 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
         Page<Location> pageResult = locationRepository.findIdAndName(set.keyword(), set.pageable());
+        List<AttributeResponse> dtos = pageResult.stream()
+                .map(this::convertToListAttribute)
+                .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<AttributeResponse<Long>> listDataChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<CastSecureIdAndNameProjection> pageResult = channelRepository.findIdAndName(set.keyword(), set.pageable());
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
