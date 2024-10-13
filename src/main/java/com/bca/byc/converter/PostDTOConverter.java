@@ -187,7 +187,8 @@ public class PostDTOConverter {
                     reply.getUser().getAppUserDetail().getAvatar(),
                     firstBusiness.getName(),
                     firstBusinessCategory.getName(),
-                    firstBusiness.getIsPrimary()
+                    firstBusiness.getIsPrimary(),
+                    null
             )); // Ensure correct conversion of the owner
             replyResponse.setCreatedAt(reply.getCreatedAt().toString()); // Convert LocalDateTime to String if needed
             replyResponses.add(replyResponse);

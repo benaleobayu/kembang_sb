@@ -47,7 +47,8 @@ public class CommentDTOConverter {
                 data.getUser().getAppUserDetail().getAvatar(),
                 firstBusiness.getName(),
                 firstBusinessCategory.getName(),
-                firstBusiness.getIsPrimary()
+                firstBusiness.getIsPrimary(),
+                null
         );
         dto.setOwner(owner);
 //        dto.setOwner(owner);
@@ -70,7 +71,8 @@ public class CommentDTOConverter {
                     data.getUser().getAppUserDetail().getAvatar(),
                     firstBusinessOnReply.getName(),
                     firstBusinessCategoryOnReply.getName(),
-                    firstBusinessOnReply.getIsPrimary()
+                    firstBusinessOnReply.getIsPrimary(),
+                    null
             );
             replyResponse.setOwner(replyOwner);
             commentReplyResponse.add(replyResponse);

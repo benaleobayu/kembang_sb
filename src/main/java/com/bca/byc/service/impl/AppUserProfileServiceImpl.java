@@ -153,7 +153,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
 
-        String userId = GlobalConverter.getUuidUser(userRepository);
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
+        String userId = user.getSecureId();
 
         // Get comment form user
         Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
@@ -193,7 +194,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         replyUser.getAppUserDetail().getAvatar(),
                         firstBusiness != null ? firstBusiness.getName() : null,
                         firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
-                        firstBusiness != null ? firstBusiness.getIsPrimary() : null
+                        firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                        user
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
             }

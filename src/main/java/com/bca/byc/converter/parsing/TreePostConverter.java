@@ -116,7 +116,8 @@ public class TreePostConverter {
                 owner.getAppUserDetail().getAvatar(),
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
-                firstBusiness != null ? firstBusiness.getIsPrimary() : null
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                user
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : null);
 
@@ -154,7 +155,8 @@ public class TreePostConverter {
                 owner.getAppUserDetail().getAvatar(),
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
-                firstBusiness != null ? firstBusiness.getIsPrimary() : null
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                user
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : "No data");
         boolean isOwner = Objects.equals(user.getId(), owner.getId());
@@ -184,14 +186,19 @@ public class TreePostConverter {
                 appUser.getBusinesses().stream()
                         .filter(Business::getIsPrimary)
                         .map(business -> true)
-                        .findFirst().orElse(false)
+                        .findFirst().orElse(false),
+                appUser
         );
     }
-    public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto, String id, String name, String avatar, String businessName, String lineOfBusiness, Boolean isPrimary
+    public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto, String id, String name, String avatar, String businessName, String lineOfBusiness, Boolean isPrimary, AppUser user
     ) {
         dto.setId(id);
         dto.setName(name);
         dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
+        boolean isMyAccount = Objects.equals(user.getSecureId(), id);
+        dto.setIsMyAccount(isMyAccount);
+        boolean isFollowing = user.getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
+        dto.setIsFollowed(isFollowing);
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
