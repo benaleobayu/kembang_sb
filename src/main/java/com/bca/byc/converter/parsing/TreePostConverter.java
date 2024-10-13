@@ -132,17 +132,15 @@ public class TreePostConverter {
 
     public ListCommentReplyResponse convertToListCommentReplyResponse(
             ListCommentReplyResponse dto,
-            String secureId,
-            Long index,
-            String comment,
-            AppUser owner,
-            LocalDateTime createdAt
-
+            CommentReply data,
+            AppUser user,
+            LikeDislikeRepository likeDislikeRepository
     ) {
-        dto.setId(secureId);
-        dto.setIndex(index);
-        dto.setComment(comment);
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setComment(data.getComment());
 
+        AppUser owner = data.getUser();
         Business firstBusiness = owner.getBusinesses().stream()
                 .filter(Business::getIsPrimary).findFirst().orElse(null);
         assert firstBusiness != null;
@@ -158,7 +156,12 @@ public class TreePostConverter {
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null
         ));
-        dto.setCreatedAt(createdAt != null ? Formatter.formatterAppsWithSeconds(createdAt) : "No data");
+        dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : "No data");
+        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        dto.setIsOwnerPost(isOwner);
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLike(isLike);
+        dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
         return dto;
     }
     // Helper owner with business

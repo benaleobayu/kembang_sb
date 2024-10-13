@@ -17,6 +17,7 @@ import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
+import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -50,8 +51,11 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
     private final PostRepository postRepository;
     private final AppUserRepository userRepository;
 
+    private final LikeDislikeRepository likeDislikeRepository;
+
     @Override
     public ResultPageResponseDTO<ListCommentReplyResponse> listDataCommentReplies(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId, String parentCommentId) {
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
         Comment comment = HandlerRepository.getIdBySecureId(
                 parentCommentId,
                 commentRepository::findBySecureId,
@@ -70,11 +74,10 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
 
             dataConverter.convertToListCommentReplyResponse(
                     dto,
-                    c.getSecureId(),
-                    c.getId(),
-                    c.getComment(),
-                    c.getUser(),
-                    c.getCreatedAt()
+                    c,
+                    user,
+                    likeDislikeRepository
+
             );
             return dto;
         }).collect(Collectors.toList());

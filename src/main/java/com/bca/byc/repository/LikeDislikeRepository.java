@@ -36,6 +36,8 @@ public interface LikeDislikeRepository extends JpaRepository<LikeDislike, Long> 
 
     Optional<LikeDislike> findByCommentIdAndUserId(Long commentId, Long userId);
 
+    Optional<LikeDislike> findByCommentReplyIdAndUserId(Long commentReplyId, Long userId);
+
     // ---- get boolean like and dislike ---
 
 }
