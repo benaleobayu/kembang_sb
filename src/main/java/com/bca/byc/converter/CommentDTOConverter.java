@@ -99,6 +99,23 @@ public class CommentDTOConverter {
         return dto;
     }
 
+     // for get data replies
+    public CommentDetailResponse convertToListRepliesResponse(CommentReply data) {
+        // mapping Entity with DTO Entity
+        CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
+        dto.setComment(data.getComment());
+        TreePostConverter converter = new TreePostConverter(baseUrl);
+        OwnerDataResponse owner = converter.OwnerDataResponse(
+                new OwnerDataResponse(),
+                data.getUser().getSecureId(),
+                data.getUser().getName(),
+                data.getUser().getAppUserDetail().getAvatar()
+        );
+        dto.setOwner(owner);
+        dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
+        // return
+        return dto;
+    }
 
     // for create data
     public Comment convertToCreateRequest(Post postData, @Valid CommentCreateUpdateRequest dto, String email) {

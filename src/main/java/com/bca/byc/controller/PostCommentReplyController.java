@@ -3,17 +3,14 @@ package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
-import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
-import com.bca.byc.model.apps.ListCommentResponse;
-import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
-import com.bca.byc.service.CommentService;
-import com.bca.byc.service.CommentServiceReply;
+import com.bca.byc.service.CommentReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +33,7 @@ import java.net.URI;
 public class PostCommentReplyController {
 
     static final String urlRoute = "/api/v1/post";
-    private CommentServiceReply service;
+    private CommentReplyService service;
 
 
     @Operation(summary = "Get list comment", description = "Get list comment")
@@ -65,7 +62,7 @@ public class PostCommentReplyController {
             @Valid @RequestBody CommentCreateUpdateRequest dto) {
         log.info("POST " + urlRoute + "/{}/comments/{}/replies", postId, commentId);
         try {
-            TotalCountResponse total = service.saveDataCommentReply(postId, dto, commentId);
+            ReturnCommentResponse total = service.saveDataCommentReply(postId, dto, commentId);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiDataResponse<>(true, "Successfully created comments", total));
         } catch (BadRequestException e) {

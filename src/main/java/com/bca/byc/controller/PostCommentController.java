@@ -6,6 +6,7 @@ import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
@@ -70,7 +71,7 @@ public class PostCommentController {
         log.info("POST " + urlRoute + " endpoint hit");
         String email = ContextPrincipal.getPrincipal();
         try {
-            TotalCountResponse total = service.saveData(postId, item, email);
+            ReturnCommentResponse total = service.saveData(postId, item, email);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiDataResponse<>(true, "Successfully created post comments", total));
         } catch (BadRequestException e) {

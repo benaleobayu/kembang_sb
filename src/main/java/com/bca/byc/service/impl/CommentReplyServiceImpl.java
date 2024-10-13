@@ -1,5 +1,6 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.CommentDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
@@ -11,8 +12,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
-import com.bca.byc.model.apps.ListCommentResponse;
-import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.CommentReplyRepository;
@@ -23,16 +23,11 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
-import com.bca.byc.service.CommentServiceReply;
-import com.bca.byc.util.PaginationUtil;
+import com.bca.byc.service.CommentReplyService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +36,7 @@ import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecure
 
 @Service
 @AllArgsConstructor
-public class CommentServiceReplyImpl implements CommentServiceReply {
+public class CommentReplyServiceImpl implements CommentReplyService {
 
     @Value("${app.base.url}")
     private final String baseUrl;
@@ -52,6 +47,8 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
     private final AppUserRepository userRepository;
 
     private final LikeDislikeRepository likeDislikeRepository;
+
+    private CommentDTOConverter converter;
 
     @Override
     public ResultPageResponseDTO<ListCommentReplyResponse> listDataCommentReplies(Integer pages, Integer limit, String sortBy, String direction, String keyword, String postId, String parentCommentId) {
@@ -86,7 +83,7 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
     }
 
     @Override
-    public TotalCountResponse saveDataCommentReply(String postId, CommentCreateUpdateRequest dto, String parentCommentId) {
+    public ReturnCommentResponse saveDataCommentReply(String postId, CommentCreateUpdateRequest dto, String parentCommentId) {
         String secureId = ContextPrincipal.getSecureUserId();
         AppUser user = userRepository.findBySecureId(secureId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
@@ -111,7 +108,8 @@ public class CommentServiceReplyImpl implements CommentServiceReply {
 
         int totalComments = savedReply.getParentComment().getPost().getCommentsCount().intValue();
 
-        TotalCountResponse message = new TotalCountResponse();
+        ReturnCommentResponse message = new ReturnCommentResponse();
+        message.setCommentDetail(converter.convertToListRepliesResponse(savedReply));
         message.setTotal(totalComments);
         return message;
     }

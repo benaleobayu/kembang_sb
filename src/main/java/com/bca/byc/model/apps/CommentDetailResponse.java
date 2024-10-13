@@ -15,10 +15,10 @@ public class CommentDetailResponse {
 
     private String createdAt;
 
-    private Long likesCount;
+    private Long likesCount = 0L;
 
-    private Long sharesCount;
+    private Long sharesCount = 0L;
 
-    private Long commentRepliesCount;
+    private Long commentRepliesCount = 0L;
 
 }
