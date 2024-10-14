@@ -115,6 +115,9 @@ public class AppUserProfileController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "userId", required = false) String userId
             ) {
+        if (userId == null || userId.isEmpty()) {
+            userId = ContextPrincipal.getSecureUserId();
+        }
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list My Post", userService.listDataMyPost(pages, limit, sortBy, direction, keyword, userId)));

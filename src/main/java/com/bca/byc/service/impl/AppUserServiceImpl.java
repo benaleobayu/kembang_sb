@@ -140,12 +140,6 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
-        AppUser userLogin = HandlerRepository.getIdBySecureId(
-                userId,
-                appUserRepository::findBySecureId,
-                projection -> appUserRepository.findById(projection.getId()),
-                "User not found"
-        );
         AppUser creatorId = HandlerRepository.getIdBySecureId(
                 userId,
                 appUserRepository::findBySecureId,
@@ -158,7 +152,7 @@ public class AppUserServiceImpl implements AppUserService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Post> pageResult = postRepository.findMyPost(set.keyword(), set.pageable(), creatorId.getId(), userLogin.getId());
+        Page<Post> pageResult = postRepository.findMyPost(set.keyword(), set.pageable(), creatorId.getId());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
             PostHomeResponse dto = postConverter.convertToDetailResponse(post, creatorId.getId());
