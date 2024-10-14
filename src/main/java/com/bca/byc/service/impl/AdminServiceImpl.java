@@ -13,17 +13,13 @@ import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AdminService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -46,9 +42,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AdminDetailResponse findDataById(Long id) throws BadRequestException {
-        AppAdmin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Admin not found"));
+    public AdminDetailResponse findDataById(String id) throws BadRequestException {
+        AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
 
         return converter.convertToListResponse(data);
     }
@@ -95,10 +90,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updateData(Long id, AdminUpdateRequest dto) throws BadRequestException {
+    public void updateData(String id, AdminUpdateRequest dto) throws BadRequestException {
         // check exist and get
-        AppAdmin data = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("INVALID Admin ID"));
+        AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
 
         // update
         converter.convertToUpdateRequest(data, dto);
@@ -111,12 +105,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteData(Long id) throws BadRequestException {
+    public void deleteData(String id) throws BadRequestException {
+        AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
+
         // delete data
-        if (!repository.existsById(id)) {
+        if (!repository.existsById(data.getId())) {
             throw new BadRequestException("Admin not found");
         } else {
-            repository.deleteById(id);
+            repository.deleteById(data.getId());
         }
     }
 

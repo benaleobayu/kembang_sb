@@ -15,15 +15,15 @@ public interface AdminService {
 
     AppAdmin findByEmail(String email);
 
-    AdminDetailResponse findDataById(Long id) throws Exception;
+    AdminDetailResponse findDataById(String id) throws Exception;
 
     List<AdminDetailResponse> findAllData();
 
     void saveData(@Valid AdminCreateRequest dto) throws Exception;
 
-    void updateData(Long id, @Valid AdminUpdateRequest dto) throws Exception;
+    void updateData(String id, @Valid AdminUpdateRequest dto) throws Exception;
 
-    void deleteData(Long id) throws Exception;
+    void deleteData(String id) throws Exception;
 
     ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
 

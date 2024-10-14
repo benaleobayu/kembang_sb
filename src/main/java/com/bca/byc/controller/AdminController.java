@@ -53,7 +53,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.view')")
     @Operation(summary = "Get Admin Detail", description = "Get Admin Detail")
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             AdminDetailResponse item = service.findDataById(id);
@@ -80,7 +80,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.update')")
     @Operation(summary = "Update Admin", description = "Update Admin")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @Valid @RequestBody AdminUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody AdminUpdateRequest item) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             service.updateData(id, item);
@@ -93,7 +93,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.delete')")
     @Operation(summary = "Delete Admin", description = "Delete Admin")
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
         try {
             service.deleteData(id);
