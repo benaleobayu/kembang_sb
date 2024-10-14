@@ -1,11 +1,14 @@
 package com.bca.byc.model;
 
+import com.bca.byc.enums.AdminType;
+
 public record AdminUpdateRequest(
-        Long id,
+        String email,
+        String password,
         String name,
-        String description,
-        Integer orders,
-        Boolean status
+        Boolean status,
+        AdminType type,
+        String roleId
 ) {
 }
 

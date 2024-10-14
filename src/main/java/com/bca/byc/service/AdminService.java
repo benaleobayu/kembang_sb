@@ -8,6 +8,7 @@ import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,19 +16,19 @@ public interface AdminService {
 
     AppAdmin findByEmail(String email);
 
-    AdminDetailResponse findDataById(String id) throws Exception;
+    ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
+    AdminDetailResponse FindAdminById(String id) throws Exception;
 
     List<AdminDetailResponse> findAllData();
 
-    void saveData(@Valid AdminCreateRequest dto) throws Exception;
+    void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar) throws Exception;
 
-    void updateData(String id, @Valid AdminUpdateRequest dto) throws Exception;
+    void UpdateAdmin(String id, @Valid AdminUpdateRequest dto, MultipartFile avatar) throws Exception;
 
-    void deleteData(String id) throws Exception;
+    void DeleteAdmin(String id) throws Exception;
 
-    ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String userName);
+    AdminCmsDetailResponse InfoAdmin(String email);
 
-    AdminCmsDetailResponse getAdminDetail(String email);
-
-    AdminPermissionResponse getPermissionDetail(String email);
+    AdminPermissionResponse DetailAdmin(String email);
 }

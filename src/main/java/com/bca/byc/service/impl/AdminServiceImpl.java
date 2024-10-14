@@ -4,6 +4,7 @@ import com.bca.byc.converter.AdminDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminCmsDetailResponse;
@@ -13,16 +14,22 @@ import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminRepository;
+import com.bca.byc.repository.PreRegisterRepository;
+import com.bca.byc.repository.RoleRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AdminService;
+import com.bca.byc.util.FileUploadHelper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +38,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    private AdminRepository repository;
-    private AdminDTOConverter converter;
+    private final AppAdminRepository appAdminRepository;
+    private final AdminRepository repository;
+    private final RoleRepository roleRepository;
+
+    private final AdminDTOConverter converter;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
+
+    @Value("${upload.dir}")
+    private String UPLOAD_DIR;
 
     @Override
     public AppAdmin findByEmail(String email) {
@@ -42,14 +58,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AdminDetailResponse findDataById(String id) throws BadRequestException {
+    public AdminDetailResponse FindAdminById(String id) throws BadRequestException {
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
 
         return converter.convertToListResponse(data);
     }
 
     @Override
-    public AdminPermissionResponse getPermissionDetail(String email) {
+    public AdminPermissionResponse DetailAdmin(String email) {
         AppAdmin data = repository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
 
@@ -82,30 +98,57 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void saveData(@Valid AdminCreateRequest dto) throws BadRequestException {
+    public void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar) throws BadRequestException, IOException {
+        FileUploadHelper.validateFileTypeImage(avatar);
         // set entity to add with model mapper
-        AppAdmin data = converter.convertToCreateRequest(dto);
+        AppAdmin data = new AppAdmin();
+        data.setName(dto.name());
+        data.setEmail(dto.email());
+        data.setPassword(dto.password());
+        data.setType(dto.type());
+        Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
+        data.setRole(role);
+        data.setIsActive(dto.status());
+
+        String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
+        data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
         // save data
         repository.save(data);
     }
 
     @Override
-    public void updateData(String id, AdminUpdateRequest dto) throws BadRequestException {
-        // check exist and get
-        AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
+    public void UpdateAdmin(String id, AdminUpdateRequest dto, MultipartFile avatar) throws BadRequestException, IOException {
+        FileUploadHelper.validateFileTypeImage(avatar);
 
-        // update
-        converter.convertToUpdateRequest(data, dto);
+        // Create a new AppAdmin instance to update
+        AppAdmin data = new AppAdmin();
+        data.setName(dto.name());
 
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        // Check if the email has changed and if it exists
+        String newEmail = dto.email() != null ? dto.email().toLowerCase() : null;
+        if (!newEmail.equals(data.getEmail())) {
+            if (emailExists(newEmail, appAdminRepository)) {
+                return;
+            }
+            data.setEmail(newEmail);
+        }
 
-        // save
+        data.setPassword(dto.password() != null ? dto.password() : null);
+        data.setType(dto.type());
+        Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
+        data.setRole(role);
+        data.setIsActive(dto.status());
+
+        String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
+        data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
+
+        // Save the updated admin data
         repository.save(data);
     }
 
+
     @Override
-    public void deleteData(String id) throws BadRequestException {
+    public void DeleteAdmin(String id) throws BadRequestException {
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
 
         // delete data
@@ -117,13 +160,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResultPageResponseDTO<AdminDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<AppAdmin> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
+        Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable());
         List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
             AdminDetailResponse dto = converter.convertToListResponse(c);
             return dto;
@@ -133,10 +176,18 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AdminCmsDetailResponse getAdminDetail(String email) {
+    public AdminCmsDetailResponse InfoAdmin(String email) {
         AppAdmin data = repository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Admin not found"));
 
         return converter.convertToInfoResponse(data);
     }
+
+
+    // ------
+
+    public boolean emailExists(String email, AppAdminRepository repository) {
+        return repository.existsByEmail(email);
+    }
+
 }

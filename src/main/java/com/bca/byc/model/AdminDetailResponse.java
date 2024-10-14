@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminDetailResponse {
-    private Long id;
+    private String id;
+    private Long index;
     private String avatar;
     private String name;
     private String email;

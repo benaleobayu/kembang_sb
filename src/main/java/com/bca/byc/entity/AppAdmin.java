@@ -32,9 +32,6 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
-
     @Column(name = "avatar")
     private String avatar;
 

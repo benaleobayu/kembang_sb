@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeRolePermissionConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Role;
@@ -31,21 +32,17 @@ public class AdminDTOConverter {
     public AdminDetailResponse convertToListResponse(AppAdmin data) {
         // mapping Entity with DTO Entity
         AdminDetailResponse dto = modelMapper.map(data, AdminDetailResponse.class);
-        dto.setAvatar(data.getAvatar() != null && data.getAvatar().startsWith("uploads/") ? baseUrl + "/" + data.getAvatar() : data.getAvatar());
+        dto.setAvatar(GlobalConverter.getAvatarImage(data.getAvatar(), baseUrl));
         // get role name
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setStatus(data.getActive());
+
         dto.setRoleName(data.getRole().getName());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
         // return
         return dto;
-    }
-
-    // for create data
-    public AppAdmin convertToCreateRequest(@Valid AdminCreateRequest dto) {
-        // mapping DTO Entity with Entity
-        AppAdmin data = modelMapper.map(dto, AppAdmin.class);
-        // return
-        return data;
     }
 
     // for update data

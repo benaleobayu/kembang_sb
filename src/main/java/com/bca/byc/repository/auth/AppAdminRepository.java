@@ -10,4 +10,6 @@ public interface AppAdminRepository extends JpaRepository<AppAdmin, Long> {
     Optional<AppAdmin> findByEmail(String email);
 
     Optional<AppAdmin> findBySecureId(String secureId);
+
+    boolean existsByEmail(String email);
 }

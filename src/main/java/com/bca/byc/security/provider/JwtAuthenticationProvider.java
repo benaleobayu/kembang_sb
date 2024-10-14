@@ -45,7 +45,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         if (scopes != null && !scopes.isEmpty()) {
             // Jika "scopes" ada, proses sebagai admin
-            AdminPermissionResponse permissions = adminService.getPermissionDetail(subject);
+            AdminPermissionResponse permissions = adminService.DetailAdmin(subject);
             List<GrantedAuthority> authorities = permissions.getPermissions().stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
