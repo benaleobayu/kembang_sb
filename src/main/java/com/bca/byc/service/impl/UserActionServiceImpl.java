@@ -66,6 +66,7 @@ public class UserActionServiceImpl implements UserActionService {
     public TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto) {
         AppUser user = GlobalConverter.getUserEntity(userRepository);
         LikeDislike existingLikeDislike = null;
+        TotalCountResponse response = new TotalCountResponse();
 
         if ("POST".equals(dto.getType())) {
             Post post = postRepository.findBySecureId(dto.getTargetId())
@@ -84,30 +85,28 @@ public class UserActionServiceImpl implements UserActionService {
         // Logic toggle
         if (existingLikeDislike != null) {
             likeDislikeRepository.delete(existingLikeDislike);
-            TotalCountResponse message = new TotalCountResponse();
             // decrease like count
             if ("POST".equals(dto.getType())) {
                 Post post = postRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
                 post.setLikesCount(post.getLikesCount() - 1);
                 Post savedData = postRepository.save(post);
-                message.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             } else if ("COMMENT".equals(dto.getType())) {
                 Comment comment = commentRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
                 comment.setLikesCount(comment.getLikesCount() - 1);
                 Comment savedData = commentRepository.save(comment);
-                message.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             } else if ("COMMENT_REPLY".equals(dto.getType())) {
                 CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
                 commentReply.setLikesCount(commentReply.getLikesCount() - 1);
                 CommentReply savedData = commentReplyRepository.save(commentReply);
-                message.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             }
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
-            TotalCountResponse message = new TotalCountResponse();
             if ("POST".equals(dto.getType())) {
                 Post post = postRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
@@ -115,8 +114,8 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
                 post.setLikesCount(post.getLikesCount() + 1);
-                postRepository.save(post);
-                message.setTotal(likeDislikeRepository.countByPostId(post.getId()));
+                Post savedData = postRepository.save(post);
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             } else if ("COMMENT".equals(dto.getType())) {
                 Comment comment = commentRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
@@ -124,8 +123,8 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
                 comment.setLikesCount(comment.getLikesCount() + 1);
-                commentRepository.save(comment);
-                message.setTotal(likeDislikeRepository.countByCommentId(comment.getId()));
+                Comment savedData = commentRepository.save(comment);
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             } else if ("COMMENT_REPLY".equals(dto.getType())) {
                 CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
@@ -133,13 +132,13 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setUser(user);
                 likeDislikeRepository.save(newLikeDislike);
                 commentReply.setLikesCount(commentReply.getLikesCount() + 1);
-                commentReplyRepository.save(commentReply);
-                message.setTotal(likeDislikeRepository.countByCommentReplyId(commentReply.getId()));
+                CommentReply savedData = commentReplyRepository.save(commentReply);
+                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             }
-            return message;
+            return response;
         }
 
-        return null;
+        return response;
     }
 
 
