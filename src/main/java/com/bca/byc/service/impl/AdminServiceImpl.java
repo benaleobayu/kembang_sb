@@ -139,11 +139,16 @@ public class AdminServiceImpl implements AdminService {
         data.setRole(role);
         data.setIsActive(dto.status());
 
+        String oldCover = data.getAvatar();
         String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
         data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
 
         // Save the updated admin data
         repository.save(data);
+
+        if (oldCover != null && !oldCover.isEmpty()) {
+            FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
+        }
     }
 
 
