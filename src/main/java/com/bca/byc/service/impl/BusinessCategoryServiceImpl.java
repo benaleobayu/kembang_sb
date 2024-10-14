@@ -4,12 +4,11 @@ import com.bca.byc.converter.BusinessCategoryDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.PostCategory;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.*;
+import com.bca.byc.model.projection.CastSecureIdAndNameProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BusinessCategoryRepository;
@@ -19,16 +18,11 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.BusinessCategoryService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -205,15 +199,17 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostCategoryDetailResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<SecureIdAndNameResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<BusinessCategory> pageResult = repository.findByNameLikeIgnoreCase(keyword, set.pageable());
-        List<PostCategoryDetailResponse> dtos = pageResult.stream().map((c) -> {
-            PostCategoryDetailResponse dto = converter.convertToListCategoryPostCreateResponse(c);
+        Page<CastSecureIdAndNameProjection> pageResult = repository.findPostCategoryOnCreatePost(set.keyword(), set.pageable());
+        List<SecureIdAndNameResponse> dtos = pageResult.stream().map((c) -> {
+            SecureIdAndNameResponse dto = new SecureIdAndNameResponse();
+            dto.setId(c.getSecureId());
+            dto.setName(c.getName());
             return dto;
         }).collect(Collectors.toList());
 

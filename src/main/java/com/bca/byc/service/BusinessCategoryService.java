@@ -29,5 +29,5 @@ public interface BusinessCategoryService {
     BusinessCategory getCategoryById(Long id);
 
     // post category
-    ResultPageResponseDTO<PostCategoryDetailResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<SecureIdAndNameResponse> listDataPostCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 }

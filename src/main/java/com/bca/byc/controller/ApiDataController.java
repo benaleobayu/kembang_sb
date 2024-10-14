@@ -2,6 +2,7 @@ package com.bca.byc.controller;
 
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.PostCategory;
+import com.bca.byc.model.SecureIdAndNameResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.data.TagDetailResponse;
 import com.bca.byc.response.PaginationAppsResponse;
@@ -40,7 +41,7 @@ public class ApiDataController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags", description = "Get all tags")
     @GetMapping("/tag")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<TagDetailResponse>>> listDataTag(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<TagDetailResponse>>> TagList(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -57,7 +58,7 @@ public class ApiDataController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags user", description = "Get all tags user")
     @GetMapping("/tag-user")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListTagUserResponse>>> listDataTagUser(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ListTagUserResponse>>> TagUserList(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
@@ -74,7 +75,7 @@ public class ApiDataController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all post categories", description = "Get all post categories")
     @GetMapping("/post-category")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostCategory>>> listData(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<SecureIdAndNameResponse>>> PostCategoryList(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,

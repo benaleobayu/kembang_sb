@@ -1,8 +1,7 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.model.attribute.AttributeResponse;
-import com.bca.byc.model.data.InputAttributeResponse;
+import com.bca.byc.model.projection.CastSecureIdAndNameProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.model.search.SearchDTOResponse;
 import org.springframework.data.domain.Page;
@@ -73,11 +72,11 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
             "bc.parentId is not null")
     Page<SearchDTOResponse> findBusinessByKeyword(String keyword, Pageable pageable);
 
-    @Query("SELECT bc FROM BusinessCategory bc " +
+    @Query("SELECT bc.secureId AS secureId, bc.name AS name FROM BusinessCategory bc " +
             "WHERE " +
-            "(LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "(LOWER(bc.name) LIKE LOWER(:keyword) ) AND " +
             "bc.isActive = true AND " +
             "bc.parentId is null")
-    Page<BusinessCategory> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
+    Page<CastSecureIdAndNameProjection> findPostCategoryOnCreatePost(String keyword, Pageable pageable);
     // --- search ---
 }
