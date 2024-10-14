@@ -41,10 +41,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p " +
             "FROM Post p JOIN p.postContents pc " +
             "WHERE " +
-            "p.user.id = :creatorId " +
+            "(:creatorId IS NOT NULL OR p.user.id = :creatorId OR p.user.id = :userId)" +
             "AND LOWER(p.description) LIKE LOWER(:keyword) " +
             "GROUP BY p.id, p.secureId")
-    Page<Post> findMyPost(@Param("keyword") String keyword, Pageable pageable,@Param("creatorId") Long id);
+    Page<Post> findMyPost(@Param("keyword") String keyword, Pageable pageable, @Param("creatorId") Long id, @Param("userId") Long userLoginId);
 
 //    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
 //            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
