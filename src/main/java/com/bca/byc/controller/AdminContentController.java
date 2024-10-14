@@ -5,7 +5,6 @@ import com.bca.byc.entity.Channel;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
@@ -18,13 +17,10 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.AdminContentService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +35,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.*;
 
@@ -94,7 +89,7 @@ public class AdminContentController {
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
-            @RequestParam("status") Boolean status,
+            @RequestParam("isSchedule") Boolean isSchedule,
             @RequestParam(value = "promotedActive", required = false) Boolean promotedActive,
             @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
             @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
@@ -140,7 +135,7 @@ public class AdminContentController {
                 }
             }
             Post post = new Post();
-            Post newPost = parseToPost(channelId, highlight, description, tags, status, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
+            Post newPost = parseToPost(channelId, highlight, description, tags, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
             service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post content"));
@@ -162,7 +157,7 @@ public class AdminContentController {
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
-            @RequestParam("status") Boolean status,
+            @RequestParam("isSchedule") Boolean isSchedule,
             @RequestParam(value = "promotedActive") Boolean promotedActive,
             @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
             @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
@@ -209,7 +204,7 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post updatePost = parseToPost(channelId, highlight, description, tags, status, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
+            Post updatePost = parseToPost(channelId, highlight, description, tags, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
             service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
         } catch (BadRequestException e) {
