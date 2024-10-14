@@ -105,6 +105,9 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @Column(name = "promotedStatus")
     private String promotedStatus = "NOT_DEFINED";
 
+    @Column(name = "promoted_active")
+    private Boolean promotedActive = false;
+
     @Column(name = "promoted_at")
     private LocalDateTime promotedAt;
 

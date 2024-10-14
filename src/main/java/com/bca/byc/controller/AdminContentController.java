@@ -87,23 +87,26 @@ public class AdminContentController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> create(
-            @ModelAttribute(value = "files") List<MultipartFile> files,
-            @ModelAttribute(value = "thumbnail", binding = false) MultipartFile thumbnail,
-            @ModelAttribute(value = "content") String contentString,
-            @ModelAttribute("channelId") String channelId,
-            @ModelAttribute("highlight") List<String> highlight,
-            @ModelAttribute("description") String description,
-            @ModelAttribute("tags") List<String> tags,
-            @ModelAttribute("status") Boolean status,
-            @ModelAttribute(value = "promotionStatus", binding = false) String promotionStatus,
-            @ModelAttribute(value = "promotedAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
-            @ModelAttribute(value = "promotedUntil", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
-            @ModelAttribute(value = "postAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestPart(value = "content") String contentString,
+            @RequestParam("channelId") String channelId,
+            @RequestParam("highlight") List<String> highlight,
+            @RequestParam("description") String description,
+            @RequestParam("tags") List<String> tags,
+            @RequestParam("status") Boolean status,
+            @RequestParam(value = "promotedActive", required = false) Boolean promotedActive,
+            @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
+            @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
+            @RequestParam(value = "postAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
 
         try {
             List<PostContent> contentList = new ArrayList<>();
+            if (postAt == null){
+                postAt = LocalDateTime.now();
+            }
 
             // Validate contentString
             if (contentString == null || contentString.isEmpty()) {
@@ -137,7 +140,7 @@ public class AdminContentController {
                 }
             }
             Post post = new Post();
-            Post newPost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
+            Post newPost = parseToPost(channelId, highlight, description, tags, status, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
             service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post content"));
@@ -152,18 +155,18 @@ public class AdminContentController {
     @PutMapping(value = "{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
             @PathVariable("postId") String id,
-            @ModelAttribute(value = "files") List<MultipartFile> files,
-            @ModelAttribute(value = "thumbnail", binding = false) MultipartFile thumbnail,
-            @ModelAttribute(value = "content") String contentString,
-            @ModelAttribute("channelId") String channelId,
-            @ModelAttribute("highlight") List<String> highlight,
-            @ModelAttribute("description") String description,
-            @ModelAttribute("tags") List<String> tags,
-            @ModelAttribute("status") Boolean status,
-            @ModelAttribute(value = "promotionStatus") String promotionStatus,
-            @ModelAttribute(value = "promotedAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
-            @ModelAttribute(value = "promotedUntil", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
-            @ModelAttribute(value = "postAt", binding = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestPart(value = "content") String contentString,
+            @RequestParam("channelId") String channelId,
+            @RequestParam("highlight") List<String> highlight,
+            @RequestParam("description") String description,
+            @RequestParam("tags") List<String> tags,
+            @RequestParam("status") Boolean status,
+            @RequestParam(value = "promotedActive") Boolean promotedActive,
+            @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
+            @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
+            @RequestParam(value = "postAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
@@ -206,7 +209,7 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post updatePost = parseToPost(channelId, highlight, description, tags, status, promotionStatus, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
+            Post updatePost = parseToPost(channelId, highlight, description, tags, status, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
             service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
         } catch (BadRequestException e) {
@@ -233,7 +236,7 @@ public class AdminContentController {
                              String description,
                              List<String> taglist,
                              Boolean status,
-                             String promotionStatus,
+                             Boolean promotedActive,
                              LocalDateTime promotedAt,
                              LocalDateTime promotedUntil,
                              LocalDateTime postAt,
@@ -267,7 +270,8 @@ public class AdminContentController {
         }
         post.setTags(tags);
         post.setIsActive(status);
-        post.setPromotedStatus(promotionStatus != null ? promotionStatus : "False");
+        post.setPromotedActive(promotedActive != null ? promotedActive : false);
+        post.setPromotedStatus(promotedActive != null ? "SCHEDULED" : "NOT_DEFINED");
         post.setPromotedAt(promotedAt);
         post.setPromotedUntil(promotedUntil);
         post.setPostAt(postAt != null ? postAt : LocalDateTime.now());
