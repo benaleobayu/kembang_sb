@@ -41,7 +41,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p " +
             "FROM Post p JOIN p.postContents pc " +
             "WHERE " +
-            "(:creatorId IS NOT NULL OR p.user.id = :creatorId)" +
+            "p.user.id = :creatorId " +
             "AND LOWER(p.description) LIKE LOWER(:keyword) " +
             "GROUP BY p.id, p.secureId")
     Page<Post> findMyPost(@Param("keyword") String keyword, Pageable pageable, @Param("creatorId") Long id);
