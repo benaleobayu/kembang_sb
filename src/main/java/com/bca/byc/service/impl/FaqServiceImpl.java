@@ -12,17 +12,11 @@ import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.FaqCategoryRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,13 +34,19 @@ public class FaqServiceImpl implements FaqService {
     private final FaqDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<FaqIndexResponse> listDataFaq(Integer pages, Integer limit, String sortBy, String direction, String keyword, String categoryId) {
+    public ResultPageResponseDTO<FaqIndexResponse> FaqItemIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String categoryId) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Faq> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable(), categoryId);
+        FaqCategory faqCategoryId = HandlerRepository.getIdBySecureId(
+                categoryId,
+                faqCategoryRepository::findByIdAndSecureId,
+                projection -> faqCategoryRepository.findById(projection.getId()),
+                "Category not found"
+        );
+        Page<Faq> pageResult = repository.getFaqItemIndex(set.keyword(), set.pageable(), faqCategoryId.getId());
         List<FaqIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;
@@ -56,7 +56,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public FaqDetailResponse findDataById(String categoryId, String itemId) throws BadRequestException {
+    public FaqDetailResponse DetailFaqItem(String categoryId, String itemId) throws BadRequestException {
         Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
         if (!item.getFaqCategoryId().equals(category.getId())) {
@@ -67,7 +67,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void saveData(String categoryId, @Valid FaqCreateUpdateRequest dto) throws BadRequestException {
+    public void CreateFaqItem(String categoryId, @Valid FaqCreateUpdateRequest dto) throws BadRequestException {
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
         // set entity to add with model mapper
         Faq data = converter.convertToCreateRequest(dto);
@@ -77,7 +77,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void updateData(String categoryId, String itemId, FaqCreateUpdateRequest dto) throws BadRequestException {
+    public void UpdateFaqItem(String categoryId, String itemId, FaqCreateUpdateRequest dto) throws BadRequestException {
         // check exist and get
         Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
@@ -94,7 +94,7 @@ public class FaqServiceImpl implements FaqService {
     }
 
     @Override
-    public void deleteData(String categoryId, String itemId) throws BadRequestException {
+    public void DeleteFaqItem(String categoryId, String itemId) throws BadRequestException {
         Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
 

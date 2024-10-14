@@ -1,5 +1,6 @@
 package com.bca.byc.converter;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.model.FaqCreateUpdateRequest;
 import com.bca.byc.model.FaqDetailResponse;
@@ -22,7 +23,16 @@ public class FaqDTOConverter {
     // for get data index
     public FaqIndexResponse convertToIndexResponse(Faq data) {
         // mapping Entity with DTO Entity
-        FaqIndexResponse dto = modelMapper.map(data, FaqIndexResponse.class);
+        FaqIndexResponse dto = new FaqIndexResponse();
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setName(data.getName());
+        dto.setQuestion(data.getQuestion());
+        dto.setAnswer(data.getAnswer());
+        dto.setStatus(data.getIsActive());
+        dto.setOrders(data.getOrders());
+
+        GlobalConverter.CmsIDTimeStampResponse(dto, data);
         // return
         return dto;
     }

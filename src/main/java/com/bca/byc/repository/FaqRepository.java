@@ -14,6 +14,6 @@ public interface FaqRepository extends JpaRepository<Faq, Long> {
             "(LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
             "f.isDeleted = false AND " +
             "f.isActive = true AND " +
-            "f.faqCategoryId = :categoryId")
-    Page<Faq> findByNameLikeIgnoreCase(@Param("keyword") String keyword, Pageable pageable, @Param("categoryId") String categoryId);
+            "f.faqCategoryId.id = :categoryId")
+    Page<Faq> getFaqItemIndex(@Param("keyword") String keyword, Pageable pageable, @Param("categoryId") Long categoryId);
 }

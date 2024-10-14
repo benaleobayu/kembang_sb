@@ -12,7 +12,7 @@ public class FaqIndexResponse extends AdminModelBaseDTOResponse {
     private String name;
     private String question;
     private String answer;
-    private String status;
+    private Boolean status;
     private Integer orders;
 
 }
