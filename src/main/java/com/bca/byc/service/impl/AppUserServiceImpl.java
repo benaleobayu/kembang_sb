@@ -21,15 +21,14 @@ import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserService;
-import com.bca.byc.util.PaginationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
@@ -37,9 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -143,19 +139,24 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        String email = ContextPrincipal.getPrincipal();
-        IdEmailProjection user = appUserRepository.findByIdInEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
+
+        AppUser creatorId = HandlerRepository.getIdBySecureId(
+                userId,
+                appUserRepository::findBySecureId,
+                projection -> appUserRepository.findById(projection.getId()),
+                "User not found"
+        );
 
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Post> pageResult = postRepository.findMyPost(user.getId(), set.keyword(), set.pageable());
+        Page<Post> pageResult = postRepository.findMyPost(set.keyword(), set.pageable(), creatorId.getId());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, creatorId.getId());
             return dto;
         }).collect(Collectors.toList());
 

@@ -2,7 +2,6 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.Post;
 import com.bca.byc.model.projection.IdSecureIdProjection;
-import com.bca.byc.model.projection.PostContentProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,9 +40,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // ------------- show list my post -------------
     @Query("SELECT p " +
             "FROM Post p JOIN p.postContents pc " +
-            "WHERE p.user.id = :userId AND LOWER(p.description) LIKE LOWER(:keyword) " +
+            "WHERE " +
+            "p.user.id = :creatorId " +
+            "AND LOWER(p.description) LIKE LOWER(:keyword) " +
             "GROUP BY p.id, p.secureId")
-    Page<Post> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+    Page<Post> findMyPost(@Param("keyword") String keyword, Pageable pageable,@Param("creatorId") Long id);
 
 //    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
 //            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +

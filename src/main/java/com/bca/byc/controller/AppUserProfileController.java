@@ -112,10 +112,12 @@ public class AppUserProfileController {
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "userId", required = false) String userId
+            ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list My Post", userService.listDataMyPost(pages, limit, sortBy, direction, keyword)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list My Post", userService.listDataMyPost(pages, limit, sortBy, direction, keyword, userId)));
     }
 
     @Operation(summary = "Change user password", description = "Change user password")
