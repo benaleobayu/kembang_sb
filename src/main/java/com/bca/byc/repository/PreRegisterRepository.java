@@ -3,6 +3,7 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.model.export.PreRegisterExportResponse;
+import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> {
 
@@ -48,7 +50,7 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
     boolean existsByMemberCin(String cin);
 
 
-    List<PreRegister> findBySecureIdIn(List<String> collect);
+    Set<PreRegister> findBySecureIdIn(Set<String> collect);
 
 
     // -- export --
@@ -64,5 +66,11 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             "LEFT JOIN p.branchCode branch " +
             "LEFT JOIN p.createdBy user ")
     List<PreRegisterExportResponse> findDataForExport();
+
     // -- export --
+
+    @Query("SELECT pr.id AS id, pr.secureId AS secureId " +
+            "FROM PreRegister pr " +
+            "WHERE pr.secureId IN :ids")
+    Set<CmsGetIdFromSecureIdProjection> findIdBySecureIdIn(Set<String> ids);
 }

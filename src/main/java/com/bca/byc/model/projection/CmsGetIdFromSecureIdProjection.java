@@ -1,6 +1,6 @@
 package com.bca.byc.model.projection;
 
-public interface CMSBulkSuspendProjection {
+public interface CmsGetIdFromSecureIdProjection {
     Long getId();
     String getSecureId();
     boolean getIsSuspended();

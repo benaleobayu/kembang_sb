@@ -2,7 +2,6 @@ package com.bca.byc.service;
 
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.IdsDeleteRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
@@ -12,6 +11,7 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface PreRegisterService {
 
@@ -25,7 +25,7 @@ public interface PreRegisterService {
 
     void updateData(String id, @Valid PreRegisterUpdateRequest dto) throws BadRequestException;
 
-    void deleteData(IdsDeleteRequest id) throws BadRequestException;
+    void bulkDelete(Set<String> ids) throws BadRequestException;
 
     ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate);
 

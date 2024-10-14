@@ -3,10 +3,7 @@ package com.bca.byc.controller;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.IdsDeleteRequest;
-import com.bca.byc.model.PreRegisterCreateRequest;
-import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
@@ -19,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.List;
 
 import static com.bca.byc.controller.UserPreRegisterController.urlRoute;
 
@@ -163,18 +158,17 @@ public class UserPreRegisterController {
     }
 
     @PreAuthorize("hasAuthority('pre-registration.delete')")
-    @Operation(summary = "Delete Pre-Register User", description = "Delete Pre-Register User")
-    @DeleteMapping()
-    public ResponseEntity<ApiResponse> delete(@RequestBody IdsDeleteRequest ids) {
-        log.info("DELETE " + urlRoute + "/ids={ids} endpoint hit");
+    @Operation(summary = "Bulk Delete user by id", description = "Bulk Delete user by id")
+    @PostMapping("/delete")
+    public ResponseEntity<ApiResponse> bulkDelete(@RequestBody BulkByIdRequest dto) {
+        log.info("POST " + urlRoute + "/delete endpoint hit");
         try {
-            service.deleteData(ids);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted pre-register user"));
+            service.bulkDelete(dto.getIds());
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted user"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-    // patch approve
 
     @PreAuthorize("hasAuthority('pre-registration.update')")
     @Operation(summary = "Approve Pre-Register User", description = "Approve Pre-Register User")

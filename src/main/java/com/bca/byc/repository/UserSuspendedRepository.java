@@ -4,7 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
-import com.bca.byc.model.projection.CMSBulkSuspendProjection;
+import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,7 +31,7 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
             "FROM AppUser u " +
             "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
             "WHERE u.secureId IN :ids")
-    Set<CMSBulkSuspendProjection> findToSuspendBySecureIdIn(@Param("ids") Set<String> ids);
+    Set<CmsGetIdFromSecureIdProjection> findToSuspendBySecureIdIn(@Param("ids") Set<String> ids);
 
 
     @Query("SELECT u FROM AppUser u " +

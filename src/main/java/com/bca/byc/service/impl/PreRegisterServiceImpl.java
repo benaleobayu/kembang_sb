@@ -10,6 +10,7 @@ import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
+import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.LogUserManagementRepository;
@@ -20,23 +21,25 @@ import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppAdminService;
 import com.bca.byc.service.PreRegisterService;
-import com.bca.byc.util.PaginationUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PreRegisterServiceImpl implements PreRegisterService {
@@ -116,8 +119,8 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
+    @Transactional
     public void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException {
-        // Check if email exists and return error
         if (repository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
@@ -126,41 +129,38 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         if (admin == null) {
             throw new BadRequestException("Admin not found");
         }
-
-        // Set entity to add with model mapper
         PreRegister data = converter.convertToCreateRequest(dto, admin);
-
-        // Save data
         repository.save(data);
     }
 
 
     @Override
+    @Transactional
     public void updateData(String id, PreRegisterUpdateRequest dto) throws BadRequestException {
         PreRegister data = HandlerRepository.getEntityBySecureId(id, repository, "Data not found");
-
         converter.convertToUpdateRequest(data, dto);
-
         data.setUpdatedAt(LocalDateTime.now());
-
         repository.save(data);
     }
 
     @Override
-    public void deleteData(IdsDeleteRequest dto) throws BadRequestException {
-        List<String> ids = dto.getIds();
-        List<PreRegister> users = repository.findBySecureIdIn(ids);
-        if (users.isEmpty()) {
-            throw new BadRequestException("user on pre-register not found");
-        }
-        users.forEach((c) -> {
-            c.setIsDeleted(true);
-            c.setIsActive(false);
-            c.setStatusApproval(AdminApprovalStatus.DELETED);
-            c.setEmail(c.getEmail() + "_deleted");
-            c.setMemberCin(c.getMemberCin() + "_deleted");
+    @Transactional(rollbackOn = Exception.class)
+    public void bulkDelete(Set<String> ids) throws BadRequestException {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Set<CmsGetIdFromSecureIdProjection> userProjections = repository.findIdBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            PreRegister data = repository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            data.setAccountType(data.getAccountType());
+            data.setIsDeleted(true);
+            data.setIsActive(false);
+            data.setStatusApproval(AdminApprovalStatus.DELETED);
+            data.setEmail(data.getEmail() + "_deleted");
+            data.setMemberCin(data.getMemberCin() + "_deleted");
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            repository.saveAndFlush(data);
         });
-        repository.saveAll(users);
     }
 
     @Override

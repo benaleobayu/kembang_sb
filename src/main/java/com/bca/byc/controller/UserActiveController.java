@@ -6,7 +6,6 @@ import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
@@ -121,7 +120,7 @@ public class UserActiveController {
 
     @Operation(summary = "Bulk Suspend user by id", description = "Bulk Suspend user by id")
     @PostMapping("/suspend")
-    public ResponseEntity<?> suspend(@RequestBody BulkByIdRequest dto) {
+    public ResponseEntity<?> bulkSuspend(@RequestBody BulkByIdRequest dto) {
         log.info("POST " + urlRoute + "/suspend endpoint hit");
         try {
             service.makeUserBulkSuspendedTrue(dto.getIds());

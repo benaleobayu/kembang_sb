@@ -13,7 +13,7 @@ import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
-import com.bca.byc.model.projection.CMSBulkSuspendProjection;
+import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.LogUserManagementRepository;
@@ -22,15 +22,10 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserSuspendedService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -140,7 +135,7 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     @Override
     public void makeUserBulkSuspendedFalse(Set<String> ids) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Set<CMSBulkSuspendProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
+        Set<CmsGetIdFromSecureIdProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
             AppUser data = repository.findById(projection.getId())

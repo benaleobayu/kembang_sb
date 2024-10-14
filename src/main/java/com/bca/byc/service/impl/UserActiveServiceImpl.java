@@ -12,7 +12,7 @@ import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
-import com.bca.byc.model.projection.CMSBulkSuspendProjection;
+import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BranchRepository;
@@ -150,7 +150,7 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Override
     public void makeUserBulkSuspendedTrue(Set<String> ids) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Set<CMSBulkSuspendProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
+        Set<CmsGetIdFromSecureIdProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
             AppUser data = repository.findById(projection.getId())
