@@ -27,6 +27,7 @@ public class DevApplication {
 //        SshTunnelUtil.setupSshTunnel("root", "45.32.122.20", 22, "8kF*b*6jDH3buK69", "localhost", 5432, 5432);
 //        SshTunnelUtil.setupSshTunnel("root", "45.32.122.20", 22, "8kF*b*6jDH3buK69", "localhost", 9200, 9200);
 
+
         SpringApplication.run(DevApplication.class, args);
     }
 
