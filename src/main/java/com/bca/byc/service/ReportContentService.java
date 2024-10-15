@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -25,4 +26,6 @@ public interface ReportContentService {
                                                                          String direction,
                                                                          String keyword,
                                                                          String reportId);
+
+    void updateReportStatus(ChangeStatusRequest dto);
 }

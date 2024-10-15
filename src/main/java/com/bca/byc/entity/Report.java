@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Report extends AbstractBaseEntity implements SecureIdentifiable {
+public class Report extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

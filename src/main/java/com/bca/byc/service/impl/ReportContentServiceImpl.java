@@ -2,7 +2,9 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Report;
+import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.model.ReportListDetailResponse;
@@ -12,6 +14,7 @@ import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.ReportRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportContentService;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ReportContentServiceImpl implements ReportContentService {
+
+    private final AppAdminRepository adminRepository;
 
     private final ReportRepository reportRepository;
     private final PostRepository postRepository;
@@ -138,6 +143,17 @@ public class ReportContentServiceImpl implements ReportContentService {
                 }).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, data);
+    }
+
+    @Override
+    public void updateReportStatus(ChangeStatusRequest dto) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Report report = HandlerRepository.getEntityBySecureId(dto.reportedId(), reportRepository, "Report not found");
+
+        report.setStatus(dto.status());
+        report.setUpdatedAt(LocalDateTime.now());
+        report.setUpdatedBy(admin);
+        reportRepository.save(report);
     }
 
 }

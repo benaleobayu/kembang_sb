@@ -1,6 +1,7 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.response.ApiDataResponse;
@@ -8,6 +9,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportContentService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -70,5 +72,19 @@ public class ReportContentController {
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list report content", service.listReportOnDetail(pages, limit, sortBy, direction, keyword, reportId)));
     }
+
+    // update report status
+    @Operation(summary = "Update report status", description = "Update report status")
+    @PutMapping("/status")
+    public ResponseEntity<ApiResponse> updateReportStatus(@RequestBody ChangeStatusRequest dto) {
+        log.info("PUT " + urlRoute + " endpoint hit");
+        try {
+            service.updateReportStatus(dto);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully update report status"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
 
 }
