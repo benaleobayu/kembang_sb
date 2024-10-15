@@ -169,6 +169,7 @@ public class TreePostConverter {
         boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
         dto.setIsLike(isLike);
         dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
+        dto.setParentId(data.getParentComment().getSecureId());
         return dto;
     }
     // Helper owner with business

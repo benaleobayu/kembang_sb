@@ -21,4 +21,6 @@ public class ListCommentReplyResponse {
 
     private String createdAt;
 
+    private String parentId;
+
 }
