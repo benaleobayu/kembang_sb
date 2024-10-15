@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "business_categories", indexes = {
-        @Index(name = "idx_business_category_secure_id", columnList = "secure_id", unique = true)
+        @Index(name = "business_category_secure_id", columnList = "secure_id", unique = true)
 })
 public class BusinessCategory extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
 
@@ -40,7 +40,7 @@ public class BusinessCategory extends AbstractBaseEntityCms implements SecureIde
     private BusinessCategory parentId;
 
     // show data as child in this entity
-    @OneToMany(mappedBy = "parentId", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<BusinessCategory> children = new ArrayList<>();
 

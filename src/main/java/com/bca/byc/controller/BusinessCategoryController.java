@@ -30,7 +30,6 @@ public class BusinessCategoryController {
 
     static final String urlRoute = "/cms/v1/ms/business-category";
     private BusinessCategoryService service;
-    private final UserManagementService attrService;
 
     @PreAuthorize("hasAuthority('business_category.view')")
     @Operation(summary = "Get list Business Category", description = "Get list Business Category")

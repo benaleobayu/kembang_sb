@@ -12,6 +12,7 @@ import com.bca.byc.model.projection.CastSecureIdAndNameProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BusinessCategoryRepository;
+import com.bca.byc.repository.BusinessHasCategoryRepository;
 import com.bca.byc.repository.BusinessRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -20,6 +21,7 @@ import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.BusinessCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class BusinessCategoryServiceImpl implements BusinessCategoryService {
@@ -37,8 +40,9 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
     private final AppAdminRepository adminRepository;
 
     private final BusinessRepository businessRepository;
-    private BusinessCategoryRepository repository;
-    private BusinessCategoryDTOConverter converter;
+    private final BusinessHasCategoryRepository businessHasCategoryRepository;
+    private final BusinessCategoryRepository repository;
+    private final BusinessCategoryDTOConverter converter;
 
 
     @Override
@@ -164,29 +168,29 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         }
     }
 
-
-
-
     @Override
     public void deleteData(String id) throws BadRequestException {
+        // Fetch the BusinessCategory; if not found, an exception is thrown
         BusinessCategory data = HandlerRepository.getEntityBySecureId(
                 id, repository, "Business category not found"
         );
 
-        // Check if the BusinessCategory exists
-        if (!repository.existsById(data.getId())) {
-            throw new BadRequestException("Business category not found");
+        // Check if any BusinessHasCategory is using this BusinessCategory
+        boolean isUsedAsParent = businessHasCategoryRepository.existsByBusinessCategoryParent(data);
+        boolean isUsedAsChild = businessHasCategoryRepository.existsByBusinessCategoryChild(data);
+
+        if (isUsedAsParent || isUsedAsChild) {
+            throw new BadRequestException("Cannot delete category with Name " + data.getName() + " because it is used in a business");
         }
 
-        // Check if any Business is using this BusinessCategory
-        boolean isUsed = businessRepository.existsByBusinessCategories(data);
-        if (isUsed) {
-            throw new BadRequestException("Cannot delete category because it is used in a business");
-        }
+        // Log the deletion action
+        log.info("Deleting BusinessCategory with ID: {}", data.getId());
 
         // Delete the BusinessCategory
         repository.deleteById(data.getId());
     }
+
+
 
     @Override
     public BusinessCategory getCategoryById(Long id) {

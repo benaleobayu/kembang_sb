@@ -9,6 +9,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.TagService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RequestMapping(TagController.urlRoute)
 @Tag(name = "Tag API [Masterdata]")
+@SecurityRequirement(name = "Authorization")
 public class TagController {
 
     static final String urlRoute = "/cms/v1/ms/tag";

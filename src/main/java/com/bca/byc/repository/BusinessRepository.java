@@ -3,6 +3,7 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.entity.BusinessCategory;
+import com.bca.byc.entity.BusinessHasCategory;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
 import com.bca.byc.model.export.BusinessExportResponse;
 import org.springframework.data.domain.Page;
@@ -14,12 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
-
-    // Check if a business exists by its categories
-    boolean existsByBusinessCategories(BusinessCategory category);
 
     // Find a Business by secure ID
     Optional<Business> findBySecureId(String secureId);
