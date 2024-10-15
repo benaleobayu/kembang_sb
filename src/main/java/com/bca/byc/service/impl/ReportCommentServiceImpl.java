@@ -1,15 +1,16 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.model.ReportCommentDetailResponse;
 import com.bca.byc.model.ReportCommentIndexResponse;
+import com.bca.byc.model.projection.ReportCommentIndexProjection;
 import com.bca.byc.model.projection.ReportDataProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportCommentService;
+import com.bca.byc.util.PaginationUtil;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,35 +44,43 @@ public class ReportCommentServiceImpl implements ReportCommentService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<ReportDataProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
+        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
+        List<ReportCommentIndexResponse> dtos = new ArrayList<>(pageResult.stream()
+                .map(data -> new ReportCommentIndexResponse(
+                        data.getId(),
+                        data.getIndex(),
+                        data.getThumbnail(),
+                        data.getComment(),
+                        data.getCommentOwner(),
+                        data.getStatusReport(),
+                        data.getTotalReports(),
+                        Formatter.formatLocalDateTime(data.getLastReport())
+                ))
+                .collect(Collectors.toMap(
+                        ReportCommentIndexResponse::id,
+                        dto -> dto,
+                        (existing, replacement) -> existing
+                ))
+                .values());
 
-        Map<String, ReportCommentIndexResponse> responseMap = new HashMap<>();
+        dtos.forEach(dto -> System.out.println(dto.id()));
 
-        pageResult.forEach(c -> {
-            String postId = c.getPost().getSecureId();
-            if (!responseMap.containsKey(postId)) {
-                responseMap.put(postId, new ReportCommentIndexResponse(
-                        c.getReport().getSecureId(),
-                        c.getReport().getId(),
-                        GlobalConverter.convertListToArray(c.getPost().getHighlight()),
-                        GlobalConverter.getParseImage(
-                                Objects.equals(c.getPostContent().getType(), "video") ?
-                                        c.getPostContent().getThumbnail() :
-                                        c.getPostContent().getContent(),
-                                baseUrl),
-                        c.getPost().getDescription(),
-                        c.getTag() != null ? c.getTag().getName() : null,
-                        c.getUser() != null ? c.getUser().getName() : null,
-                        c.getReport().getStatus(),
-                        reportRepository.countByPostId(c.getReport().getPost().getId()),
-                        Formatter.formatLocalDateTime(c.getReport().getCreatedAt())
-                ));
-            }
-        });
 
-        List<ReportCommentIndexResponse> dtos = new ArrayList<>(responseMap.values());
+        int currentPage = pageResult.getNumber() + 1; // Halaman saat ini (1-based)
+        long totalItems = pageResult.getTotalElements(); // Total items dari query
+        int totalPages = (int) Math.ceil((double) totalItems / pageResult.getSize()); // Total halaman
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PaginationUtil.createResultPageDTO(
+                totalItems, // total items
+                dtos, // data yang ditampilkan
+                currentPage, // current page
+                currentPage > 1 ? currentPage - 1 : 1, // prev page
+                currentPage < totalPages ? currentPage + 1 : totalPages, // next page
+                1, // first page
+                totalPages, // last page
+                pageResult.getSize() // per page
+        );
+
     }
 
 

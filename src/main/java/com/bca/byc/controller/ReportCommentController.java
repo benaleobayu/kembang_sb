@@ -1,7 +1,6 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportCommentDetailResponse;
 import com.bca.byc.model.ReportCommentIndexResponse;
 import com.bca.byc.response.ApiDataResponse;
@@ -9,7 +8,6 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportCommentService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
