@@ -142,12 +142,11 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
-                .requestMatchers("/auth/login").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-               // .requestMatchers("/api/chat/**").permitAll()
-                .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
+                .anyRequest().authenticated() // Pastikan permintaan lainnya membutuhkan otentikasi
+        );
 
         http.formLogin(formLogin -> formLogin
                 .loginPage("/auth/login")
@@ -155,23 +154,21 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/swagger/index.html")
                 .failureUrl("/auth/login?error=true")
                 .usernameParameter("email")
-                .permitAll());
+                .permitAll()
+        );
 
         http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
-                .accessDeniedHandler(customAccessDeniedHandler));
-
+                .accessDeniedHandler(customAccessDeniedHandler)
+        );
 
         http.sessionManagement(sessionManagement -> sessionManagement
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
 
-        // Add JwtTokenFilter before authentication filters
+        // Add filters
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // Add authentication filters
-        http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
