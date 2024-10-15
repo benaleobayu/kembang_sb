@@ -21,6 +21,7 @@ import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppAdminService;
 import com.bca.byc.service.PreRegisterService;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -168,7 +169,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
-    public void approveData(String id, String email) throws BadRequestException {
+    public void approveData(String id, String email) throws BadRequestException, MessagingException {
         AppAdmin admin = adminService.findByEmail(email);
         if (admin == null) {
             throw new BadRequestException("Invalid email admin");

@@ -7,6 +7,7 @@ import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.response.RejectRequest;
 import com.bca.byc.response.ResultPageResponseDTO;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public interface PreRegisterService {
 
     ResultPageResponseDTO<PreRegisterDetailResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate);
 
-    void approveData(String id, String email) throws BadRequestException;
+    void approveData(String id, String email) throws BadRequestException, MessagingException;
 
     void rejectData(String id, RejectRequest reason, String email) throws BadRequestException;
 }

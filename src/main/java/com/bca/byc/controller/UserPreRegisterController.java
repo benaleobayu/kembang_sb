@@ -12,6 +12,7 @@ import com.bca.byc.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -179,7 +180,7 @@ public class UserPreRegisterController {
             String email = userDetails.getUsername();
             service.approveData(id, email);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully approved pre-register user"));
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | MessagingException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }

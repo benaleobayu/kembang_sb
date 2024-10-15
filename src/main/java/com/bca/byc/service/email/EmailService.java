@@ -89,5 +89,26 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
+    public void sendApprovalPreRegister(EmailDTORequest dto) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
+
+        Context context = new Context();
+        context.setVariable("name", dto.getName());
+        context.setVariable("email", dto.getEmail());
+        context.setVariable("cardNumber", dto.getCardNumber());
+        String html = templateEngine.process("emails/preregister-approval", context);
+
+        helper.setTo(dto.getEmail());
+        helper.setText(html, true);
+        helper.setSubject(dto.getSubject());
+        helper.setFrom(fromEmail);
+
+        javaMailSender.send(message);
+    }
+
+
+
 
 }

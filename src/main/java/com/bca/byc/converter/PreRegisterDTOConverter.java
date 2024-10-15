@@ -1,10 +1,7 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Branch;
-import com.bca.byc.entity.PreRegister;
-import com.bca.byc.entity.UserManagementLog;
+import com.bca.byc.entity.*;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
@@ -17,7 +14,10 @@ import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
+import com.bca.byc.service.email.EmailDTORequest;
+import com.bca.byc.service.email.EmailService;
 import com.bca.byc.util.helper.Formatter;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +25,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -32,7 +33,10 @@ public class PreRegisterDTOConverter {
 
     private final BranchRepository branchRepository;
     private final PreRegisterRepository repository;
+    private final EmailService emailService;
+
     private LogUserManagementRepository logRepository;
+
     private ModelMapper modelMapper;
 
     // for get data
@@ -117,7 +121,7 @@ public class PreRegisterDTOConverter {
     }
 
 
-    public void convertToApprovalRequest(PreRegister data, AppAdmin admin) {
+    public void convertToApprovalRequest(PreRegister data, AppAdmin admin) throws MessagingException {
         UserManagementLog log = new UserManagementLog();
         log.setStatus(LogStatus.APPROVED);
         log.setPreRegister(data);
@@ -125,19 +129,27 @@ public class PreRegisterDTOConverter {
         log.setUpdatedBy(admin);
         logRepository.save(log);
 
+        EmailDTORequest emailData = new EmailDTORequest();
+        emailData.setEmail(data.getEmail());
+        emailData.setSubject("Pre-Register Approval");
+        emailData.setCardNumber(data.getMemberBankAccount());
+        emailData.setName(data.getName());
+
         AdminType typeAdmin = admin.getType();
         switch (typeAdmin) {
             case SUPERADMIN:
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
+                emailService.sendApprovalPreRegister(emailData);
                 break;
             case OPERATIONAL:
                 data.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
                 break;
             case SUPERVISOR:
-                data.setStatusApproval(AdminApprovalStatus.SPV_APPROVED);
+                data.setStatusApproval(AdminApprovalStatus.APPROVED);
+                emailService.sendApprovalPreRegister(emailData);
                 break;
             case MANAGER:
-                data.setStatusApproval(AdminApprovalStatus.MGR_APPROVED);
+                data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
             default:
                 data.setStatusApproval(AdminApprovalStatus.PENDING);
@@ -212,4 +224,5 @@ public class PreRegisterDTOConverter {
     public boolean cinExists(String cin, PreRegisterRepository repository) {
         return repository.existsByMemberCin(cin);
     }
+
 }
