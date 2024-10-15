@@ -162,6 +162,28 @@ public class AppUserServiceImpl implements AppUserService {
         return PageCreateReturn.create(pageResult, dtos);
     }
 
+    @Override
+    public ResultPageResponseDTO<PostHomeResponse> listDataTagPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
+        AppUser creator = HandlerRepository.getIdBySecureId(
+                userId,
+                appUserRepository::findBySecureId,
+                projection -> appUserRepository.findById(projection.getId()),
+                "User not found"
+        );
+
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findTaggedPost( creator.getId(), set.pageable());
+        assert pageResult != null;
+        List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, creator.getId());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
     public void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception {
         // Fetch user by secure ID and handle missing user using Optional
         AppUser user = appUserRepository.findBySecureId(userSecureId)

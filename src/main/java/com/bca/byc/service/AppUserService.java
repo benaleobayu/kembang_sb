@@ -20,13 +20,15 @@ public interface AppUserService extends UserDetailsService {
 
 	ProfilePostResponse getUserPosts(String userId);
 	ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId);
+	ResultPageResponseDTO<PostHomeResponse> listDataTagPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId);
 
 	void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception;
 	void saveNotificationSettings(String userSecureId, NotificationSettingsRequest dto);
 	NotificationSettingsResponse getNotificationSettings(String userSecureId);
+
 	AppUserRequestContactResponse  createRequestContact(String userSecureId, String messageString);
 
-
 	ProfileActivityCounts getActivityCounts();
+
 	UserProfileActivityCounts getProfileActivityCounts();
 }

@@ -107,7 +107,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list My Post", description = "Get list My Post")
     @GetMapping("/my-posts")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataMyPost(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> PostUserOnProfile(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -122,6 +122,26 @@ public class AppUserProfileController {
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list My Post", userService.listDataMyPost(pages, limit, sortBy, direction, keyword, userId)));
     }
+
+    @Operation(summary = "Get list Tag Post", description = "Get list Tag Post")
+    @GetMapping("/my-tags")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> TagPostUserOnProfile(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "userId", required = false) String userId
+            ) {
+        if (userId == null || userId.isEmpty()) {
+            userId = ContextPrincipal.getSecureUserId();
+        }
+        // response true
+        log.info("GET " + urlRoute + " endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list Tagged Post", userService.listDataTagPost(pages, limit, sortBy, direction, keyword, userId)));
+    }
+
+
 
     @Operation(summary = "Change user password", description = "Change user password")
     @PutMapping("/profile/change-password")

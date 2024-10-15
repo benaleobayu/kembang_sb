@@ -46,6 +46,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "GROUP BY p.id, p.secureId")
     Page<Post> findMyPost(@Param("keyword") String keyword, Pageable pageable, @Param("creatorId") Long id);
 
+    @Query("SELECT p FROM Post p " +
+            "JOIN p.postContents pc " +
+            "JOIN pc.tagUsers tu " +
+            "WHERE tu.id = :creatorId")
+    Page<Post> findTaggedPost(@Param("creatorId") Long creatorId, Pageable pageable);
+
+
 //    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
 //            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
 //            "FROM Post p JOIN p.postContents pc " +
@@ -89,6 +96,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE " +
             "p.isAdminPost = true")
     Page<Post> findPostOnChannel(String keyword, Pageable pageable);
+
     // ------------- post on channel -------------
 
 }
