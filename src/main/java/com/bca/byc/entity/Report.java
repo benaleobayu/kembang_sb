@@ -51,8 +51,11 @@ public class Report extends AbstractBaseEntity implements SecureIdentifiable {
     @JoinColumn(name = "reporter_id")
     private AppUser reporterUser;
 
-    @Column(name = "report")
-    private String report;
+    @Column(name = "reason", columnDefinition = "text")
+    private String reason;
+
+    @Column(name = "other_reason", columnDefinition = "text")
+    private String otherReason;
 
     @Override
     public String getSecureId() {

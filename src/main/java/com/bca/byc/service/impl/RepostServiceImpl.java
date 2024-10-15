@@ -33,7 +33,7 @@ public class RepostServiceImpl implements RepostService {
         Report report = new Report();
         report.setType(dto.getType());
         report.setReporterUser(userId);
-        report.setReport(dto.getReason());
+        report.setReason(dto.getReason());
         report.setStatus("DRAFT");
 
         String message;

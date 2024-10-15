@@ -11,6 +11,8 @@ public class ListOfFilterPagination {
     private LocalDate startDate;
     private LocalDate endDate;
     private AdminApprovalStatus adminApprovalStatus;
+    private String reportStatus;
+    private String reportType;
 
     public ListOfFilterPagination(String keyword) {
         this.keyword = keyword;
@@ -27,5 +29,13 @@ public class ListOfFilterPagination {
         this.startDate = startDate;
         this.endDate = endDate;
         this.adminApprovalStatus = adminApprovalStatus;
+    }
+
+    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, String reportStatus, String reportType) {
+        this.keyword = keyword;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.reportStatus = reportStatus;
+        this.reportType = reportType;
     }
 }
