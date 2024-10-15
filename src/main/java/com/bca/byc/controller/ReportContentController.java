@@ -59,32 +59,5 @@ public class ReportContentController {
         }
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ReportContentIndexResponse>>> ListReportOnDetail(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @PathVariable("id") String reportId
-    ) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list report content", service.listReportOnDetail(pages, limit, sortBy, direction, keyword, reportId)));
-    }
-
-    // update report status
-    @Operation(summary = "Update report status", description = "Update report status")
-    @PutMapping("/status")
-    public ResponseEntity<ApiResponse> updateReportStatus(@RequestBody ChangeStatusRequest dto) {
-        log.info("PUT " + urlRoute + " endpoint hit");
-        try {
-            service.updateReportStatus(dto);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully update report status"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        }
-    }
-
 
 }

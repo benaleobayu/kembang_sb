@@ -2,13 +2,11 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Report;
-import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.model.ReportListDetailResponse;
-import com.bca.byc.model.projection.ReportContentProjection;
+import com.bca.byc.model.projection.ReportDataProjection;
 import com.bca.byc.model.projection.ReportListDetailProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -50,7 +48,7 @@ public class ReportContentServiceImpl implements ReportContentService {
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<ReportContentProjection> pageResult = reportRepository.getDataReportContent(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
+        Page<ReportDataProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
 
         Map<String, ReportContentIndexResponse> responseMap = new HashMap<>();
 
@@ -59,6 +57,7 @@ public class ReportContentServiceImpl implements ReportContentService {
             if (!responseMap.containsKey(postId)) {
                 responseMap.put(postId, new ReportContentIndexResponse(
                         c.getReport().getSecureId(),
+                        c.getReport().getId(),
                         GlobalConverter.convertListToArray(c.getPost().getHighlight()),
                         GlobalConverter.getParseImage(
                                 Objects.equals(c.getPostContent().getType(), "video") ?
@@ -86,12 +85,12 @@ public class ReportContentServiceImpl implements ReportContentService {
         // set date
         LocalDateTime start = LocalDateTime.of(1970, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
-        Page<ReportContentProjection> pageResult = reportRepository.getDataReportContent(id, null, null, start, end, null, null);
+        Page<ReportDataProjection> pageResult = reportRepository.getDataReportIndex(id, null, null, start, end, null, null);
         if (pageResult.isEmpty()) {
             throw new EntityNotFoundException("Report content not found for ID: " + id);
         }
 
-        ReportContentProjection data = pageResult.getContent().get(0);
+        ReportDataProjection data = pageResult.getContent().get(0);
 
         List<Map<String, String>> postContent = data.getPost().getPostContents().stream()
                 .map(pc -> {
@@ -114,46 +113,5 @@ public class ReportContentServiceImpl implements ReportContentService {
         );
     }
 
-    @Override
-    public ResultPageResponseDTO<ReportContentIndexResponse> listReportOnDetail(
-            Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId) {
-
-        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-
-        Report report = HandlerRepository.getIdBySecureId(
-                reportId,
-                reportRepository::findBySecureId,
-                projection -> reportRepository.findById(projection.getId()),
-                "Report not found"
-        );
-
-        Page<ReportListDetailProjection> pageResult = reportRepository.getListReportOnDetail(
-                report.getId(), set.keyword(), set.pageable()
-        );
-
-        List<ReportListDetailResponse> data = pageResult.getContent().stream()
-                .map(d -> {
-                    ReportListDetailResponse dto = new ReportListDetailResponse();
-                    dto.setReporterName(d.getReporterName());
-                    dto.setReason(d.getReason());
-                    dto.setOtherReason(d.getOtherReason());
-                    dto.setCreatedAt(Formatter.formatDateTimeApps(d.getCreatedAt()));
-                    return dto;
-                }).collect(Collectors.toList());
-
-        return PageCreateReturn.create(pageResult, data);
-    }
-
-    @Override
-    public void updateReportStatus(ChangeStatusRequest dto) {
-        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Report report = HandlerRepository.getEntityBySecureId(dto.reportedId(), reportRepository, "Report not found");
-
-        report.setStatus(dto.status());
-        report.setUpdatedAt(LocalDateTime.now());
-        report.setUpdatedBy(admin);
-        reportRepository.save(report);
-    }
 
 }
