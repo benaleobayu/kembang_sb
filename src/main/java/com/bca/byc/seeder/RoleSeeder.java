@@ -37,6 +37,18 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("user-suspended", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("user-deleted", List.of("view", "read", "update", "delete", "export"));
 
+        // content management
+        actionByResource.put("channel_management", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("content_management", List.of("view", "read", "update", "delete", "export"));
+        // report
+        actionByResource.put("report_content", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("report_comment", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("report_user", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("report_chat", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("report_request", List.of("view", "read", "update", "delete", "export"));
+
+        actionByResource.put("broadcast", List.of("view", "read", "update", "delete", "export"));
+
         // master data
         actionByResource.put("faq", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("business_category", List.of("view", "create", "read", "update", "delete"));

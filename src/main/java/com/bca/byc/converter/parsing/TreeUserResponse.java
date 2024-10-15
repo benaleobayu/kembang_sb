@@ -107,12 +107,19 @@ public class TreeUserResponse {
                     expectCategoryDetailResponse.setIndex(ue.getExpectCategory().getOrders());
                     expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
 
-                    List<ExpectItem> expectItems = ue.getExpectCategory().getExpectItems().stream()
-                            .sorted(Comparator.comparing(ExpectItem::getOrders))
-                            .limit(3)
-                            .collect(Collectors.toList());
+                    List<ExpectItem> expectItems = ue.getExpectCategory().getExpectItems();
 
-                    expectCategoryDetailResponse.setSubCategories(expectItems.stream()
+                    // Check if expectItems is not null before sorting
+                    if (expectItems != null) {
+                        expectItems = expectItems.stream()
+                                .filter(Objects::nonNull) // Filter out null ExpectItem
+                                .sorted(Comparator.comparing(ExpectItem::getOrders, Comparator.nullsLast(Comparator.naturalOrder())))
+                                .limit(3)
+                                .collect(Collectors.toList());
+                    }
+
+                    // Setting subCategories
+                    expectCategoryDetailResponse.setSubCategories(expectItems == null ? new ArrayList<>() : expectItems.stream()
                             .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))
                             .map(ei -> {
                                 SubExpectCategoryList expectItem = new SubExpectCategoryList();
@@ -125,6 +132,7 @@ public class TreeUserResponse {
                     return expectCategoryDetailResponse;
                 }).collect(Collectors.toList());
     }
+
 
     public static SuggestedUserResponse convertToCardUser(AppUser user, String baseUrl) {
         SuggestedUserResponse response = new SuggestedUserResponse();

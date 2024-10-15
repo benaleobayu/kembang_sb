@@ -56,6 +56,7 @@ public class TreeUserManagementConverter {
         if (branch != null) {
             branchCodeResponse.setId(branch.getSecureId());
             branchCodeResponse.setName(branch.getName());
+            branchCodeResponse.setCode(branch.getCode());
         }
         dto.setBranchCode(branchCodeResponse);
         dto.setPicName(data.getAppUserDetail().getPicName());
@@ -65,7 +66,7 @@ public class TreeUserManagementConverter {
         // business
         List<Business> businesses = data.getBusinesses();
         dto.setBusinesses(treeUserResponse.convertListBusinesses(businesses));
-
+//
         // expect
         List<ExpectCategoryList> expectCategories = treeUserResponse.convertExpectCategories(data.getUserHasExpects());
         dto.setExpectCategory(expectCategories);
