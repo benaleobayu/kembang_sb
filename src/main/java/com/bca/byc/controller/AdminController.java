@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -129,6 +130,8 @@ public class AdminController {
     @Operation(summary = "Get Admin Detail", description = "Get Admin Detail")
     @GetMapping("/info")
     public ResponseEntity<?> InfoAdmin(@AuthenticationPrincipal UserDetails userDetails) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Access-Control-Allow-Origin", "https://admin-byc2024.kelolain.id");
         if (userDetails != null) {
             String email = userDetails.getUsername(); // Assuming email is used as the username
             log.info("GET " + urlRoute + "/info endpoint hit on email : {}", userDetails.getUsername());
