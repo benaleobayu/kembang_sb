@@ -12,5 +12,7 @@ public enum LogStatus {
     SUSPENDED,
     DELETED,
     RESTORED,
-    PENDING
+    PENDING,
+    SAVED,
+    UPDATED
 }

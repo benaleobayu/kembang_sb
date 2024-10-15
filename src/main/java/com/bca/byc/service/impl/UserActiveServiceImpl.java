@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserActiveDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeLogUserManagement;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.LogStatus;
@@ -101,6 +102,20 @@ public class UserActiveServiceImpl implements UserActiveService {
         AppUser data = getEntityBySecureId(id, repository, "user not found");
         Branch branch = getEntityBySecureId(dto.getBranchId(), branchRepository, "branch not found");
         converter.convertToUpdateRequest(data, dto, branch);
+
+        LogUserManagementRequest logDto = new LogUserManagementRequest(
+                "UPDATED",
+                "Updated user active"
+        );
+
+        TreeLogUserManagement.logUserManagement(
+                null,
+                data,
+                admin,
+                LogStatus.UPDATED,
+                logDto,
+                logUserManagementRepository
+        );
 
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
