@@ -4,6 +4,7 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.apps.*;
+import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @AllArgsConstructor
 public class CommentDTOConverter {
 
     private final AppUserRepository userRepository;
+    private final LikeDislikeRepository likeDislikeRepository;
     @Value("${app.base.url}")
     private String baseUrl;
     private ModelMapper modelMapper;
@@ -140,6 +143,10 @@ public class CommentDTOConverter {
                 user
         ));
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
+        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        dto.setIsOwnerPost(isOwner);
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLike(isLike);
         // return
         return dto;
     }
