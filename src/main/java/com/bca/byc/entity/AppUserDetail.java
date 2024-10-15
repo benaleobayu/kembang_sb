@@ -113,4 +113,8 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     @Column(name = "orders")
     private Integer orders;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private AppAdmin updatedBy;
+
 }

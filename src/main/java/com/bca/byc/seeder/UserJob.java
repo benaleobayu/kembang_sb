@@ -1,5 +1,6 @@
 package com.bca.byc.seeder;
 
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.entity.AppUserDetail;
@@ -7,6 +8,7 @@ import com.bca.byc.enums.StatusType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.repository.AppUserAttributeRepository;
 import com.bca.byc.repository.AppUserDetailRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 public class UserJob {
 
     private final AppUserRepository appUserRepository;
+    private final AppAdminRepository adminRepository;
     private final AppUserDetailRepository appUserDetailRepository;
     private final AppUserAttributeRepository appUserAttributeRepository;
 
@@ -36,6 +39,8 @@ public class UserJob {
         Long cardNumber = faker.number().randomNumber(16, true);
         Long cinNumber = faker.number().randomNumber(11, true);
         String[] memberAs = {"member", "child"};
+
+        AppAdmin admin = adminRepository.findByEmail("admin-opt@unictive.net").orElse(null);
         AppUserDetail userDetail = new AppUserDetail(
                 null,
                 faker.name().fullName(),
@@ -60,7 +65,8 @@ public class UserJob {
                 memberAs[faker.number().numberBetween(0, 2)],
                 null,
                 faker.name().firstName(),
-                faker.number().randomDigit()
+                faker.number().randomDigit(),
+                admin
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
 
