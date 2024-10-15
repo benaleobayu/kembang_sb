@@ -5,7 +5,6 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
-import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;

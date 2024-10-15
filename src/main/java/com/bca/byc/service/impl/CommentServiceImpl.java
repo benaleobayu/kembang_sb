@@ -1,7 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.CommentDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
@@ -9,7 +9,9 @@ import com.bca.byc.entity.Comment;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.model.apps.*;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
+import com.bca.byc.model.apps.CommentDetailResponse;
+import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -32,7 +34,8 @@ import java.util.stream.Collectors;
 
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOnPost;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
-import static com.bca.byc.repository.handler.HandlerRepository.*;
+import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
+import static com.bca.byc.repository.handler.HandlerRepository.getUserByEmail;
 
 @Service
 @AllArgsConstructor
@@ -74,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override

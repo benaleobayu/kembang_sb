@@ -1,7 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.dictionary.TreeProfileActivityConverter;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,7 +116,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                 })
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(likesPage, dtos);
+        return PageCreateReturnApps.create(likesPage, dtos);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                 })
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(likesPage, dtos);
+        return PageCreateReturnApps.create(likesPage, dtos);
     }
 
     @Override
@@ -193,7 +192,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         replyUser.getAppUserDetail().getName(),
                         replyUser.getAppUserDetail().getAvatar(),
                         firstBusiness != null ? firstBusiness.getName() : null,
-                        firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
+                        firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                         firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                         user
                 ));
@@ -203,7 +202,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
 

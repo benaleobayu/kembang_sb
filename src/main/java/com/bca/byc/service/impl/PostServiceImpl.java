@@ -1,7 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.PostDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
@@ -69,7 +69,7 @@ public class PostServiceImpl implements PostService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
