@@ -2,8 +2,9 @@ package com.bca.byc.controller;
 
 import com.bca.byc.model.ReportRequest;
 import com.bca.byc.response.ApiResponse;
-import com.bca.byc.service.RepostService;
+import com.bca.byc.service.ReportService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +21,19 @@ import static com.bca.byc.controller.ReportController.urlRoute;
 @RequestMapping(urlRoute)
 @SecurityRequirement(name = "Authorization")
 @AllArgsConstructor
+@Tag(name = "Report API")
 public class ReportController {
 
     static final String urlRoute = "/api/v1/report";
 
-    private final RepostService service;
+    private final ReportService service;
 
     // Report Comment
     @PostMapping("/send-report")
     public ResponseEntity<ApiResponse> sendReport(@Valid @RequestBody ReportRequest dto) {
         log.info("POST " + urlRoute + "/send-report endpoint hit");
 
-        try{
+        try {
             String message = service.SendReport(dto);
             return ResponseEntity.ok(new ApiResponse(true, message));
         } catch (Exception e) {

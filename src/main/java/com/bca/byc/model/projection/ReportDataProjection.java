@@ -2,9 +2,7 @@ package com.bca.byc.model.projection;
 
 import com.bca.byc.entity.*;
 
-import java.time.LocalDateTime;
-
-public interface ReportContentProjection {
+public interface ReportDataProjection {
 
     Report getReport();
 

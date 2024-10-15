@@ -1,7 +1,7 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.Report;
-import com.bca.byc.model.projection.ReportContentProjection;
+import com.bca.byc.model.projection.ReportDataProjection;
 import com.bca.byc.model.projection.ReportListDetailProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +14,26 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+    // -- general --
+
+    @Query("SELECT " +
+            "r.reporterUser.name AS reporterName," +
+            "r.reason AS reason, " +
+            "r.otherReason AS otherReason, " +
+            "r.createdAt AS createdAt " +
+            "FROM Report r " +
+            "WHERE r.id = :id AND " +
+            "(LOWER(r.reason) LIKE LOWER(:keyword) OR " +
+            "LOWER(r.otherReason) LIKE LOWER(:keyword) )" )
+    Page<ReportListDetailProjection> getListReportOnDetail(Long id, String keyword, Pageable pageable);
+
+    Long countByPostId(Long id);
+
+    Optional<Report> findBySecureId(String id);
+
+    // -- general --
+
+    // ----- report content ----
     @Query("SELECT " +
             "r AS report, " +
             "p AS post, " +
@@ -39,30 +59,15 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "(:reportType IS NULL OR r.type = :reportType)" +
             "GROUP BY p.id, r.id, u.id, u.appUserDetail.id, u.appUserAttribute.id, t.id, c.id , pc.id " +
             "ORDER BY r.createdAt DESC")
-    Page<ReportContentProjection> getDataReportContent(@Param("reportId") String reportId,
-                                                       @Param("keyword") String keyword,
-                                                       Pageable pageable,
-                                                       @Param("startDate") LocalDateTime start,
-                                                       @Param("endDate") LocalDateTime end,
-                                                       @Param("reportStatus") String reportStatus,
-                                                       @Param("reportType") String reportType);
+    Page<ReportDataProjection> getDataReportIndex(@Param("reportId") String reportId,
+                                                  @Param("keyword") String keyword,
+                                                  Pageable pageable,
+                                                  @Param("startDate") LocalDateTime start,
+                                                  @Param("endDate") LocalDateTime end,
+                                                  @Param("reportStatus") String reportStatus,
+                                                  @Param("reportType") String reportType);
+    // ----- report content ----
 
 
-
-    @Query("SELECT " +
-            "r.reporterUser.name AS reporterName," +
-            "r.reason AS reason, " +
-            "r.otherReason AS otherReason, " +
-            "r.createdAt AS createdAt " +
-            "FROM Report r " +
-            "WHERE r.id = :id AND " +
-            "(LOWER(r.reason) LIKE LOWER(:keyword) OR " +
-            "LOWER(r.otherReason) LIKE LOWER(:keyword) )" )
-    Page<ReportListDetailProjection> getListReportOnDetail(Long id, String keyword, Pageable pageable);
-
-
-    Long countByPostId(Long id);
-
-    Optional<Report> findBySecureId(String id);
 }
 
