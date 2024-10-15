@@ -27,7 +27,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private static final String PUBLIC_URL_APPS = "/api/v1/public/.*";
     private static final String LOGIN_URL_CMS = "/cms/auth/.*";
     private static final Set<String> PERMIT_ENDPOINT_LIST = Set.of(LOGIN_URL_APPS, PUBLIC_URL_APPS, LOGIN_URL_CMS,
-            "/cms/v1/.*",
             "/static/.*",
             "/uploads/.*",
             "/swagger-ui.html",
