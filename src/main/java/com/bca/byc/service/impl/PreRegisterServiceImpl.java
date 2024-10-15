@@ -90,11 +90,11 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getType().equals(AdminType.OPERATIONAL)) {
-            listStatus = List.of(s0, s5);
+            listStatus = List.of(s0, s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getType().equals(AdminType.SUPERVISOR)) {
-            listStatus = List.of(s1, s5);
+            listStatus = List.of(s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
 
@@ -130,6 +130,8 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             throw new BadRequestException("Admin not found");
         }
         PreRegister data = converter.convertToCreateRequest(dto, admin);
+        AdminApprovalStatus isSaved = dto.getStatus() ? AdminApprovalStatus.OPT_APPROVED : AdminApprovalStatus.PENDING;
+        data.setStatusApproval(isSaved);
         repository.save(data);
     }
 
@@ -140,6 +142,8 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         PreRegister data = HandlerRepository.getEntityBySecureId(id, repository, "Data not found");
         converter.convertToUpdateRequest(data, dto);
         data.setUpdatedAt(LocalDateTime.now());
+        AdminApprovalStatus isSaved = dto.getStatus() ? AdminApprovalStatus.OPT_APPROVED : AdminApprovalStatus.PENDING;
+        data.setStatusApproval(isSaved);
         repository.save(data);
     }
 

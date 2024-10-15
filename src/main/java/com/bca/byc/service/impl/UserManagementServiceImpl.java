@@ -1,12 +1,16 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.Location;
 import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LocationRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,32 +22,46 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserManagementServiceImpl implements UserManagementService {
 
+    private final AppAdminRepository adminRepository;
+
     private final LocationRepository locationRepository;
     private final BusinessCategoryRepository businessCategoryRepository;
 
 
     @Override
     public List<Map<String, List<?>>> listAttributePreRegister() {
-        // status approval
-//        List<String> statuses = Arrays.stream(AdminApprovalStatus.values())
-//                .map(Enum::name)
-//                .collect(Collectors.toList());
-//        List<AttributeResponse> listStatusResponse = statuses.stream()
-//                .map((c) -> {
-//                    AttributeResponse<Integer> response = new AttributeResponse<>();
-//                    response.setId( statuses.indexOf(c));
-//                    response.setName(c);
-//                    return response;
-//                })
-//                .collect(Collectors.toList());
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+
         List<Map<String, List<?>>> attributes = new ArrayList<>();
-        List<AttributeResponse<AdminApprovalStatus>> listStatusResponse = Arrays.asList(
-                new AttributeResponse<>( AdminApprovalStatus.PENDING, "Draft"),
-                new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
-                new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
-                new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved"),
-                new AttributeResponse<>( AdminApprovalStatus.DELETED, "Deleted")
-        );
+
+        List<AttributeResponse<AdminApprovalStatus>> listStatusResponse = null;
+
+        if (admin.getType().equals(AdminType.SUPERADMIN)) {
+            listStatusResponse = Arrays.asList(
+                    new AttributeResponse<>( null, "All"),
+                    new AttributeResponse<>( AdminApprovalStatus.PENDING, "Draft"),
+                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
+                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved"),
+                    new AttributeResponse<>( AdminApprovalStatus.DELETED, "Deleted")
+            );
+        }
+        if (admin.getType().equals(AdminType.OPERATIONAL)) {
+            listStatusResponse = Arrays.asList(
+                    new AttributeResponse<>( null, "All"),
+                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
+                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved")
+            );
+        }
+        if (admin.getType().equals(AdminType.SUPERVISOR)) {
+            listStatusResponse = Arrays.asList(
+                    new AttributeResponse<>( null, "All"),
+                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
+                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved")
+            );
+        }
 
         Map<String, List<?>> listStatus = new HashMap<>();
         listStatus.put("status", listStatusResponse);
