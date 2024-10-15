@@ -19,14 +19,9 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
-import com.bca.byc.util.PaginationUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -77,13 +72,24 @@ public class PostServiceImpl implements PostService {
         return PageCreateReturn.create(pageResult, dtos);
     }
 
-
     @Override
     public void save(String email, PostCreateUpdateRequest dto, List<PostContent> contentList) throws Exception, InvalidFileTypeImageException {
         AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
         Post data = converter.convertToCreateRequest(user, dto);
+        String contentType = "text";
+
+        boolean hasImage = contentList.stream().anyMatch(pc -> pc.getType().contains("image"));
+        boolean hasVideo = contentList.stream().anyMatch(pc -> pc.getType().contains("video"));
+
+        if (hasImage) {
+            contentType = "image";
+        } else if (hasVideo) {
+            contentType = "video";
+        }
+
+        data.setContentType(contentType);
         Post savedPost = postRepository.save(data);
 
         for (PostContent postContent : contentList) {

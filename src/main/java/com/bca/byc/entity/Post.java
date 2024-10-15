@@ -52,6 +52,9 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @Column(name = "post_at")
     private LocalDateTime postAt;
 
+    @Column(name = "content_type")
+    private String contentType = "IMAGE";
+
     // relations on post user
 
     @ManyToOne
