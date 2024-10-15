@@ -99,10 +99,12 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(data);
 
         int totalComments = savedComment.getPost().getCommentsCount().intValue();
+        int totalReplies = savedComment.getCommentReply().size();
 
         ReturnCommentResponse message = new ReturnCommentResponse();
         message.setCommentDetail(converter.convertToListResponse(savedComment));
-        message.setTotal(totalComments);
+        message.setTotalComments(totalComments);
+        message.setTotalReplies(totalReplies);
         return message;
     }
 

@@ -8,14 +8,19 @@ public class ReturnCommentResponse {
 
     private CommentDetailResponse commentDetail;
 
-    private Integer total = 0;
+    private Integer totalComments = 0;
+
+    private Integer totalReplies = 0;
 
     public ReturnCommentResponse() {
     }
 
-    public ReturnCommentResponse(Integer total) {
-        if (total != null) {
-            this.total = total;
+    public ReturnCommentResponse(Integer totalComments, Integer totalReplies) {
+        if (totalComments != null) {
+            this.totalComments = totalComments;
+        }
+         if (totalReplies != null) {
+            this.totalReplies = totalReplies;
         }
     }
 

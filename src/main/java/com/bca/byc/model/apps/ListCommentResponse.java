@@ -17,13 +17,13 @@ public class ListCommentResponse {
 
     private PostOwnerResponse owner;
 
-    private Boolean isLike = false; // TODO : integrate data
+    private Boolean isLike = false;
 
-    private Boolean isOwnerPost = false; // TODO : integrate data
+    private Boolean isOwnerPost = false;
 
-    private Integer repliesCount = 0; // TODO : integrate data
+    private Integer repliesCount = 0;
 
-    private Integer likeCount = 0; // TODO : integrate data
+    private Integer likeCount = 0;
 
     private String createdAt;
 }

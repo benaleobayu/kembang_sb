@@ -53,7 +53,6 @@ public class PostCommentReplyController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list comment", service.listDataCommentReplies(pages, limit, sortBy, direction, keyword, postId, parentCommentId)));
     }
 
-
     @Operation(summary = "Create comment reply", description = "Create comment reply")
     @PostMapping("/{postId}/comments/{parentCommentId}/replies")
     public ResponseEntity<?> createReply(
