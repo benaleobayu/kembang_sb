@@ -37,7 +37,8 @@ public class DevApplication {
         corsConfiguration.setAllowedOrigins(Arrays.asList(
                 "https://admin-byc2024.kelolain.id",
                 "http://localhost:4200",
-                "http://localhost"
+                "http://localhost",
+                "https://cms-byc2024.kelolain.id/"
         ));
 
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
