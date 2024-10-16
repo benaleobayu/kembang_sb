@@ -36,7 +36,7 @@ public class ExpectCategoryDTOConverter {
             }
         }
         dto.setSubCategories(subCategories);
-        converter.CmsIDTimeStampResponse(dto, data);
+        converter.CmsIDTimeStampResponseAndId(dto, data);
         return dto;
     }
 
@@ -82,7 +82,7 @@ public class ExpectCategoryDTOConverter {
             }
         }
         dto.setSubCategories(subCategories);
-        converter.CmsIDTimeStampResponse(dto, data);
+        converter.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }

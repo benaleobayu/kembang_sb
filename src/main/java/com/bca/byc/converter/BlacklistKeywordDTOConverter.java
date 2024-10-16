@@ -9,11 +9,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
-import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponse;
+import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponseAndId;
 
 @Component
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class BlacklistKeywordDTOConverter {
         dto.setKeyword(data.getKeyword());
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
-        CmsIDTimeStampResponse(dto, data);
+        CmsIDTimeStampResponseAndId(dto, data);
 
         // return
         return dto;

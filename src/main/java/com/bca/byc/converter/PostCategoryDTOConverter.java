@@ -31,7 +31,7 @@ public class PostCategoryDTOConverter {
         dto.setName(data.getName());
         dto.setIcon(data.getIcon());
         // format
-        converter.CmsIDTimeStampResponse(dto, data);
+        converter.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }

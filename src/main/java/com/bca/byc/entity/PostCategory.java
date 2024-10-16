@@ -42,7 +42,7 @@ public class PostCategory extends AbstractBaseEntityCms implements SecureIdentif
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 }

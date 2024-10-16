@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponse;
+import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponseAndId;
 
 @Component
 @AllArgsConstructor
@@ -33,7 +33,7 @@ public class BusinessCategoryDTOConverter {
             }
         }
         dto.setSubCategories(subCategories);
-        CmsIDTimeStampResponse(dto, data);
+        CmsIDTimeStampResponseAndId(dto, data);
         return dto;
     }
 
@@ -44,7 +44,7 @@ public class BusinessCategoryDTOConverter {
         dto.setDescription(data.getDescription() != null ? Formatter.formatDescription(data.getDescription()) : null);
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        CmsIDTimeStampResponse(dto, data); // timestamp and id
+        CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
 
         List<BusinessCategoryItemListResponse> listBusiness = new ArrayList<>();
         for (BusinessCategory businessCategory : data.getChildren()) {
@@ -53,7 +53,7 @@ public class BusinessCategoryDTOConverter {
             child.setDescription(businessCategory.getDescription() != null ? Formatter.formatDescription(businessCategory.getDescription()) : null);
             child.setOrders(businessCategory.getOrders());
             child.setStatus(businessCategory.getIsActive());
-            CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
+            CmsIDTimeStampResponseAndId(child, businessCategory); // timestamp and id
             listBusiness.add(child);
         }
         dto.setSubCategories(listBusiness);
@@ -68,7 +68,7 @@ public class BusinessCategoryDTOConverter {
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        CmsIDTimeStampResponse(dto, data); // timestamp and id
+        CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         return dto;
     }
     // for create data parent

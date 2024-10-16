@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 import jakarta.validation.Valid;
 
-import java.time.LocalDateTime;
-
 @Component
 @AllArgsConstructor
 public class BranchDTOConverter {
@@ -37,7 +35,7 @@ public class BranchDTOConverter {
 
         // Use DataFormatter here
         GlobalConverter conv = new GlobalConverter();
-        conv.CmsIDTimeStampResponse(dto, data);
+        conv.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }

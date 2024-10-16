@@ -75,7 +75,7 @@ public class Business extends AbstractBaseEntity implements SecureIdentifiable {
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
      // Optional: You can add a method to directly get the user ID for convenience

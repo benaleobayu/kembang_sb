@@ -27,7 +27,7 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

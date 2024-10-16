@@ -43,7 +43,7 @@ public class Channel extends AbstractBaseEntityCms implements SecureIdentifiable
     private List<Post> contents;
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

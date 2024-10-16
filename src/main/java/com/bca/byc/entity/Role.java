@@ -47,7 +47,7 @@ public class Role extends AbstractBaseEntityCms implements Serializable, SecureI
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

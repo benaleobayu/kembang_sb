@@ -26,7 +26,7 @@ public class CommentReply extends AbstractBaseEntity implements SecureIdentifiab
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

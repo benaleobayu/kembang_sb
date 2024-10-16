@@ -30,7 +30,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

@@ -28,7 +28,7 @@ public class FaqCategoryDTOConverter {
         dto.setDescription(data.getDescription() != null ? data.getDescription() : null);
         dto.setOrders(data.getOrders() != null ? data.getOrders() : null);
         dto.setStatus(data.getIsActive() != null ? data.getIsActive() : null);
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
 
         List<FaqDetailResponse> listFaq = new ArrayList<>();
         for (Faq faq : data.getFaqs()) {
@@ -37,7 +37,7 @@ public class FaqCategoryDTOConverter {
             faqDetailResponse.setAnswer(faq.getAnswer());
             faqDetailResponse.setOrders(faq.getOrders());
             faqDetailResponse.setStatus(faq.getIsActive());
-            GlobalConverter.CmsIDTimeStampResponse(faqDetailResponse, faq); // timestamp and id
+            GlobalConverter.CmsIDTimeStampResponseAndId(faqDetailResponse, faq); // timestamp and id
             listFaq.add(faqDetailResponse);
         }
         dto.setFaqs(listFaq);
@@ -52,7 +52,7 @@ public class FaqCategoryDTOConverter {
         dto.setDescription(data.getDescription());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
 
         List<String> listFaq = data.getFaqs() != null ? data.getFaqs().stream()
                 .map(Faq::getName)
@@ -70,7 +70,7 @@ public class FaqCategoryDTOConverter {
         dto.setDescription(data.getDescription());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
 
         List<FaqDetailResponse> listFaq = new ArrayList<>();
         for (Faq faq : data.getFaqs()) {
@@ -79,7 +79,7 @@ public class FaqCategoryDTOConverter {
             faqDetailResponse.setAnswer(faq.getAnswer());
             faqDetailResponse.setOrders(faq.getOrders());
             faqDetailResponse.setStatus(faq.getIsActive());
-            GlobalConverter.CmsIDTimeStampResponse(faqDetailResponse, faq); // timestamp and id
+            GlobalConverter.CmsIDTimeStampResponseAndId(faqDetailResponse, faq); // timestamp and id
             listFaq.add(faqDetailResponse);
         }
         dto.setFaqs(listFaq);

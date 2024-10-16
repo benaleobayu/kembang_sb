@@ -39,7 +39,7 @@ public class BusinessCatalog  extends AbstractBaseEntity implements SecureIdenti
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 }

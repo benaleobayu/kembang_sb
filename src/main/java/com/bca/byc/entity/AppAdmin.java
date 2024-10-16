@@ -84,7 +84,7 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 }

@@ -25,7 +25,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -70,7 +69,7 @@ public class PreRegisterDTOConverter {
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));
         // Use DataFormatter here
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         // return
         return dto;
     }

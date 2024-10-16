@@ -30,7 +30,7 @@ public class FaqDTOConverter {
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
 
-        GlobalConverter.CmsIDTimeStampResponse(dto, data);
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }
@@ -45,7 +45,7 @@ public class FaqDTOConverter {
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
 
-        GlobalConverter.CmsIDTimeStampResponse(dto, data);
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }

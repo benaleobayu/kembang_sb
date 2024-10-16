@@ -40,7 +40,7 @@ public class GlobalConverter {
     }
 
 
-    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponse(
+    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponseAndId(
             T dto, D data
     ) {
         dto.setId(data.getSecureId());
@@ -51,6 +51,14 @@ public class GlobalConverter {
         dto.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy().getName() : null);
     }
 
+    public static <T extends AdminModelBaseDTOResponse<Integer>, D extends AbstractBaseEntityCms> void CmsTimeStampResponse(
+            T dto, D data
+    ) {
+        dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
+        dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
+        dto.setCreatedBy(data.getCreatedBy() != null ? data.getCreatedBy().getName() : null);
+        dto.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy().getName() : null);
+    }
 
     public static String getUuidUser(
             AppUserRepository userRepository

@@ -27,7 +27,7 @@ public class BlacklistKeyword extends AbstractBaseEntityCms implements SecureIde
         return super.getSecureId();
     }
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

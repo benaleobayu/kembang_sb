@@ -44,7 +44,7 @@ public class RoleDTOConverter {
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponse(dto, data);
+        converter.CmsIDTimeStampResponseAndId(dto, data);
 
         // return the DTO
         return dto;

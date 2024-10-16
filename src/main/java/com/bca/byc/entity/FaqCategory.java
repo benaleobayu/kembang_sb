@@ -34,7 +34,7 @@ public class FaqCategory extends AbstractBaseEntityCms implements SecureIdentifi
     private List<Faq> faqs;
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

@@ -24,7 +24,7 @@ public class Kanwil extends AbstractBaseEntityCms implements SecureIdentifiable,
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

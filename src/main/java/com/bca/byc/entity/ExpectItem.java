@@ -27,7 +27,7 @@ public class ExpectItem extends AbstractBaseEntityCms implements SecureIdentifia
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

@@ -1,22 +1,16 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Kanwil;
 import com.bca.byc.model.*;
 
-import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
-import com.bca.byc.security.util.ContextPrincipal;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import jakarta.validation.Valid;
 
-import java.time.LocalDateTime;
-
-import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponse;
+import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponseAndId;
 
 @Component
 @AllArgsConstructor
@@ -31,7 +25,7 @@ public class KanwilDTOConverter {
         mapKanwilToDto(data, dto);
 
         GlobalConverter converter = new GlobalConverter();
-        CmsIDTimeStampResponse(dto, data);
+        CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }
@@ -42,7 +36,7 @@ public class KanwilDTOConverter {
         KanwilDetailResponse dto = new KanwilDetailResponse();
         mapKanwilToDto(data, dto);
 
-        GlobalConverter.CmsIDTimeStampResponse(dto, data);
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data);
         // return
         return dto;
     }

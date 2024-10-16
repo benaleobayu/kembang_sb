@@ -24,7 +24,7 @@ public class LocationDTOConverter {
         dto.setAddress(data.getAddress());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         return dto;
     }
 
@@ -36,7 +36,7 @@ public class LocationDTOConverter {
         dto.setAddress(data.getAddress());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         // return
         return dto;
     }

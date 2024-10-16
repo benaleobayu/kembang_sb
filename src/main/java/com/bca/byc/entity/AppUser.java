@@ -31,7 +31,7 @@ public class AppUser extends AbstractBaseEntityCms implements UserDetails , Secu
     }
 
     @Override
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return super.getIsActive();
     }
 

@@ -249,15 +249,12 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser user = appUserRepository.findBySecureId(userSecureId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Create a new AppUserRequestContact object and set its fields
         AppUserRequestContact requestContact = new AppUserRequestContact();
         requestContact.setAppUserId(user.getId());
         requestContact.setMessages(messageString);
 
-        // Simpan request contact ke database melalui repository
         AppUserRequestContact savedContact = appUserRequestContactRepository.save(requestContact);
 
-        // Buat response dari entity yang baru disimpan
         return new AppUserRequestContactResponse(savedContact.getId(), savedContact.getMessages());
     }
 
