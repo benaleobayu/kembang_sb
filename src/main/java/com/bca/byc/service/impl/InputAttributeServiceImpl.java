@@ -4,6 +4,7 @@ import com.bca.byc.converter.InputAttributeDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.enums.UserType;
 import com.bca.byc.model.AttributeNameResponse;
 import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.model.attribute.AttributeResponse;
@@ -17,7 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,6 +134,22 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         return PageCreateReturn.create(pageResult, dtos);
     }
 
+    @Override
+    public List<Map<String, List<?>>> listReportDetailOf(String detailOf) {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        // Data UserTypes
+        List<AttributeResponse<String>> listUserTypes = Arrays.asList(
+                new AttributeResponse<>( "POST" , "Solitaire")
+        );
+        Map<String, List<?>> userTypeMap = new HashMap<>();
+        userTypeMap.put("segmentation", listUserTypes);
+        attributes.add(userTypeMap);
+
+        return attributes;
+    }
+
+
+    // ------
     public AttributeNameResponse convertToListAttributeOnName(AttrIdentificable dto) {
         AttributeNameResponse response = new AttributeNameResponse();
         response.setName(dto.getName());
