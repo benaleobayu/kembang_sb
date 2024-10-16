@@ -83,7 +83,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "ELSE caud.name END AS commentOwner, " +
             "r.status AS statusReport, " +
             "CASE WHEN c.id IS NULL THEN COUNT(cr.id) ELSE COUNT(c.id) END AS totalReports, " +
-            "MAX(r.createdAt) AS lastReport " +
+            "MAX(r.createdAt) AS lastReport, " +
+            "r AS report " +
             "FROM Report r " +
             "LEFT JOIN r.comment c " +
             "LEFT JOIN r.commentReply cr " +
@@ -98,7 +99,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "r.createdAt BETWEEN :startDate AND :endDate AND " +
             "(:reportStatus IS NULL OR r.status = :reportStatus) AND " +
             "(:reportType IS NULL OR r.type = :reportType) " +
-            "GROUP BY r, c, cr, rpc, crpc, caud, craud, c.id, cr.comment, craud.name, caud.name")
+            "GROUP BY r, c, cr, rpc, crpc, caud, craud, c.id, cr.comment, craud.name, caud.name ")
     Page<ReportCommentIndexProjection> getDataReportCommentIndex(@Param("reportId") String reportId,
                                                                  @Param("keyword") String keyword,
                                                                  Pageable pageable,

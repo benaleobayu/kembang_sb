@@ -1,10 +1,10 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.Post;
 import com.bca.byc.model.ReportCommentDetailResponse;
 import com.bca.byc.model.ReportCommentIndexResponse;
 import com.bca.byc.model.projection.ReportCommentIndexProjection;
-import com.bca.byc.model.projection.ReportDataProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ReportRepository;
@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +54,7 @@ public class ReportCommentServiceImpl implements ReportCommentService {
                         Formatter.formatLocalDateTime(data.getLastReport())
                 ))
                 .collect(Collectors.toMap(
-                        ReportCommentIndexResponse::id,
+                        ReportCommentIndexResponse::comment,
                         dto -> dto,
                         (existing, replacement) -> existing
                 ))
@@ -89,30 +86,20 @@ public class ReportCommentServiceImpl implements ReportCommentService {
         // set date
         LocalDateTime start = LocalDateTime.of(1970, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
-        Page<ReportDataProjection> pageResult = reportRepository.getDataReportIndex(id, null, null, start, end, null, null);
+        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(id, null, null, start, end, null, null);
         if (pageResult.isEmpty()) {
             throw new EntityNotFoundException("Report Comment not found for ID: " + id);
         }
 
-        ReportDataProjection data = pageResult.getContent().get(0);
-
-        List<Map<String, String>> postComment = data.getPost().getPostContents().stream()
-                .map(pc -> {
-                    Map<String, String> CommentMap = new HashMap<>();
-                    CommentMap.put("Comment", GlobalConverter.getParseImage(pc.getContent(), baseUrl));
-                    return CommentMap;
-                })
+        ReportCommentIndexProjection data = pageResult.getContent().get(0);
+        Post post = data.getReport().getComment() != null ? data.getReport().getComment().getPost() : data.getReport().getCommentReply().getParentComment().getPost();
+        List<Map<String, String>> postComment = post.getPostContents().stream()
+                .map(pc -> Collections.singletonMap("Content", GlobalConverter.getParseImage(pc.getContent(), baseUrl)))
                 .collect(Collectors.toList());
 
         return new ReportCommentDetailResponse(
                 data.getReport().getSecureId(),
-                data.getUserDetail().getName(),
-                Formatter.formatLocalDateTime(data.getReport().getCreatedAt()),
-                data.getChannel() != null ? data.getChannel().getName() : null,
-                data.getPost().getIsActive(),
-                data.getPost().getDescription(),
-                GlobalConverter.convertListToArray(data.getPost().getHighlight()),
-                GlobalConverter.convertListToArray(data.getTag().getName()),
+                data.getReport().getComment() != null ? data.getReport().getComment().getComment() : data.getReport().getCommentReply().getComment(),
                 postComment
         );
     }

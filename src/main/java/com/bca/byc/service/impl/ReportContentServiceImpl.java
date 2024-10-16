@@ -2,18 +2,14 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.Report;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
-import com.bca.byc.model.ReportListDetailResponse;
 import com.bca.byc.model.projection.ReportDataProjection;
-import com.bca.byc.model.projection.ReportListDetailProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportContentService;
 import com.bca.byc.util.helper.Formatter;

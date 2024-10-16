@@ -5,13 +5,7 @@ import java.util.Map;
 
 public record ReportCommentDetailResponse(
         String id,
-        String creator,
-        String createAt,
-        String chanelName,
-        Boolean isPublished,
-        String description,
-        List<String> highlight,
-        List<String> tags,
+        String reportedComments,
         List<Map<String, String>> contents
 ) {
 }

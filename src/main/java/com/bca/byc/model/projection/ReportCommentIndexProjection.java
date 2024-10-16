@@ -1,5 +1,7 @@
 package com.bca.byc.model.projection;
 
+import com.bca.byc.entity.Report;
+
 import java.time.LocalDateTime;
 
 public interface ReportCommentIndexProjection {
@@ -19,5 +21,7 @@ public interface ReportCommentIndexProjection {
     Integer getTotalReports(); // get total report while report-> comment_id is null get comment of commentReply.comment else get comment.comment
 
     LocalDateTime getLastReport(); // get last report on report.createdAt of last
+
+    Report getReport();
 
 }
