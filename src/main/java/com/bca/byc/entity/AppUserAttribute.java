@@ -48,6 +48,12 @@ public class AppUserAttribute {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "is_hard_deleted", columnDefinition = "boolean default false")
+    private Boolean isHardDeleted = false;
+
+    @Column(name = "hard_deleted_at")
+    private LocalDateTime hardDeletedAt;
+
     @Column(name = "is_recommended", columnDefinition = "boolean default false")
     private Boolean isRecommended = false;
 

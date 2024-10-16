@@ -17,4 +17,6 @@ public interface UserManagementService {
     // -------------------------------------
 
     void makeUserBulkDeleteTrue(Set<String> ids);
+
+    void makeUserBulkHardDeleteTrue(Set<String> ids);
 }

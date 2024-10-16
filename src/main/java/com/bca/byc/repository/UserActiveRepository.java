@@ -32,6 +32,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "u.appUserAttribute.isSuspended IN (false) AND " +
             "u.appUserAttribute.isDeleted IN (false) AND " +
+            "u.appUserAttribute.isHardDeleted IN (false) AND " +
             "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
     Page<AppUser> findByKeywordAndStatusAndCreatedAt(@Param("keyword") String keyword,
                                                      @Param("locationId") Long locationId,
@@ -55,7 +56,8 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "WHERE " +
             "aud.status = 6 AND " +
             "aua.isSuspended = false AND " +
-            "aua.isDeleted = false " +
+            "aua.isDeleted = false AND " +
+            "aua.isHardDeleted = false " +
             "ORDER BY u.createdAt DESC")
     List<UserActiveExportResponse> findDataForExport();
 
@@ -73,7 +75,8 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "(LOWER(aud.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
             "aud.status = 6 AND " +
             "aua.isSuspended = false AND " +
-            "aua.isDeleted = false " +
+            "aua.isDeleted = false AND " +
+            "aua.isHardDeleted = false " +
             "GROUP BY u.id, aud.avatar, aud.name, bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary ")
     Page<ListTagUserResponse> findListTagUser(String keyword, Pageable pageable);
 

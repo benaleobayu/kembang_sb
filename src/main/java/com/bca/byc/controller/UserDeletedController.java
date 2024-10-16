@@ -91,7 +91,19 @@ public class UserDeletedController {
         }
     }
 
-    @Operation(summary = "Export user deleted", description = "Export user deleted")
+    @Operation(summary = "Bulk Delete user delete by id", description = "Bulk Delete user delete by id")
+    @PostMapping("/delete")
+    public ResponseEntity<?> bulkDelete(@RequestBody BulkByIdRequest dto) {
+        log.info("POST " + urlRoute + "/delete endpoint hit");
+        try {
+            userManagementService.makeUserBulkHardDeleteTrue(dto.getIds());
+            return ResponseEntity.ok(new ApiDataResponse(true, "Successfully deleted user", null));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "Export user deleted", description = "Export user deleted", hidden = true)
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");

@@ -171,4 +171,21 @@ public class UserManagementServiceImpl implements UserManagementService {
             userManagementRepository.save(data);
         });
     }
+
+    @Override
+    public void makeUserBulkHardDeleteTrue(Set<String> ids) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Set<CMSBulkDeleteProjection> userProjections = userManagementRepository.findToDeleteBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser data = userManagementRepository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            AppUserAttribute userAttribute = data.getAppUserAttribute();
+            userAttribute.setIsHardDeleted(true);
+            data.setAppUserAttribute(userAttribute);
+
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            userManagementRepository.save(data);
+        });
+    }
 }

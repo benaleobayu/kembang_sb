@@ -40,6 +40,7 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
             "aua.isDeleted = true AND " +
+            "aua.isHardDeleted = false " +
             "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
     Page<AppUser> findByKeywordAndStatusAndDeletedAndCreatedAt(@Param("keyword") String keyword,
                                                                                   @Param("locationId") Long locationId,
@@ -60,6 +61,7 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "WHERE " +
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
-            "aua.isDeleted = true")
+            "aua.isDeleted = true AND " +
+            "aua.isHardDeleted = false ")
     List<UserActiveExportResponse> findDataForExport();
 }
