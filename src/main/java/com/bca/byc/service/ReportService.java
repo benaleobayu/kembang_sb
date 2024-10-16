@@ -10,7 +10,7 @@ public interface ReportService {
     String SendReport(ReportRequest dto) throws Exception;
 
     ResultPageResponseDTO<ReportContentIndexResponse> listReportOnDetail(
-            Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId);
+            Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId, String detailOf);
 
     void updateReportStatus(ChangeStatusRequest dto);
 }

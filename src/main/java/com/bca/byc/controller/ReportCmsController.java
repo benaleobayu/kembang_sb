@@ -6,8 +6,10 @@ import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.InputAttributeService;
 import com.bca.byc.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReportCmsController {
 
     private final ReportService reportService;
+    private final InputAttributeService inputAttributeService;
 
     static final String urlRoute = "/cms/v1/report";
 
@@ -34,11 +37,15 @@ public class ReportCmsController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @Schema(description = "POST | COMMENT | COMMENT_REPLY | USER", example = "POST")
+            @RequestParam(name = "detailOf", required = false, defaultValue = "POST" ) String detailOf,
             @PathVariable("id") String reportId
     ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list report content", reportService.listReportOnDetail(pages, limit, sortBy, direction, keyword, reportId)));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true,
+                "Success get report detail",
+                reportService.listReportOnDetail(pages, limit, sortBy, direction, keyword, reportId, detailOf)));
     }
 
     // update report status

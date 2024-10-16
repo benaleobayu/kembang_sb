@@ -84,7 +84,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ResultPageResponseDTO<ReportContentIndexResponse> listReportOnDetail(
-            Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId) {
+            Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId, String detailOf) {
 
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
@@ -96,10 +96,29 @@ public class ReportServiceImpl implements ReportService {
                 "Report not found"
         );
 
-        Page<ReportListDetailProjection> pageResult = reportRepository.getListReportOnDetail(
-                report.getId(), set.keyword(), set.pageable()
-        );
+        Page<ReportListDetailProjection> pageResult = null;
+        if (detailOf.equals("POST")) {
+            pageResult = reportRepository.getListReportOnDetail(
+                    report.getPost().getId(), null, null, null, set.keyword(), set.pageable()
+            );
+        }
+        if (detailOf.equals("COMMENT")) {
+            pageResult = reportRepository.getListReportOnDetail(
+                    null, report.getComment().getId(), null, null, set.keyword(), set.pageable()
+            );
+        }
+        if (detailOf.equals("COMMENT_REPLY")) {
+            pageResult = reportRepository.getListReportOnDetail(
+                    null, null, report.getCommentReply().getId(), null, set.keyword(), set.pageable()
+            );
+        }
+        if (detailOf.equals("USER")) {
+            pageResult = reportRepository.getListReportOnDetail(
+                    null, null, null, report.getReportedUser().getId(), set.keyword(), set.pageable()
+            );
+        }
 
+        assert pageResult != null;
         List<ReportListDetailResponse> data = pageResult.getContent().stream()
                 .map(d -> {
                     ReportListDetailResponse dto = new ReportListDetailResponse();

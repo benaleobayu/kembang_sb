@@ -23,10 +23,19 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "r.otherReason AS otherReason, " +
             "r.createdAt AS createdAt " +
             "FROM Report r " +
-            "WHERE r.id = :id AND " +
+            "WHERE " +
+            "(:postId IS NULL OR r.post.id = :postId) AND " +
+            "(:commentId IS NULL OR r.comment.id = :commentId) AND " +
+            "(:replyId IS NULL OR r.commentReply.id = :replyId) AND " +
+            "(:userId IS NULL OR r.reportedUser.id = :userId) AND " +
             "(LOWER(r.reason) LIKE LOWER(:keyword) OR " +
             "LOWER(r.otherReason) LIKE LOWER(:keyword) )" )
-    Page<ReportListDetailProjection> getListReportOnDetail(Long id, String keyword, Pageable pageable);
+    Page<ReportListDetailProjection> getListReportOnDetail(@Param("postId") Long postId,
+                                                           @Param("commentId") Long commentId,
+                                                           @Param("replyId") Long replyId,
+                                                           @Param("userId") Long userId,
+                                                           @Param("keyword") String keyword,
+                                                           Pageable pageable);
 
     Long countByPostId(Long id);
 
