@@ -14,7 +14,6 @@ import com.bca.byc.model.*;
 import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.model.data.UserProfileActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
-import com.bca.byc.model.projection.IdEmailProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserNotificationRepository;
@@ -140,6 +139,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
+        AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
         AppUser creatorId = HandlerRepository.getIdBySecureId(
                 userId,
                 appUserRepository::findBySecureId,
@@ -155,7 +155,7 @@ public class AppUserServiceImpl implements AppUserService {
         Page<Post> pageResult = postRepository.findMyPost(set.keyword(), set.pageable(), creatorId.getId());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = postConverter.convertToDetailResponse(post, creatorId.getId());
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, userLogin.getId());
             return dto;
         }).collect(Collectors.toList());
 
@@ -174,7 +174,7 @@ public class AppUserServiceImpl implements AppUserService {
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Post> pageResult = postRepository.findTaggedPost( creator.getId(), set.pageable());
+        Page<Post> pageResult = postRepository.findTaggedPost(creator.getId(), set.pageable());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
             PostHomeResponse dto = postConverter.convertToDetailResponse(post, creator.getId());

@@ -1,9 +1,11 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.entity.Notification;
-import com.bca.byc.model.*;
+import com.bca.byc.model.AppUserProfileRequest;
+import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.ProfileActivityCounts;
+import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
-import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.model.data.UserProfileActivityCounts;
 import com.bca.byc.response.*;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -41,7 +43,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get user detail", description = "Get user detail")
     @GetMapping("/info")
-    public ResponseEntity<?> getUserDetail(Principal principal) {
+    public ResponseEntity<?> InfoDetailUser(Principal principal) {
         log.info("GET " + urlRoute + "/info endpoint hit");
 
         UserInfoResponse user = userService.getUserDetails(principal.getName());
@@ -55,7 +57,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Update user avatar", description = "Update user avatar")
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUserAvatar(
+    public ResponseEntity<?> AvatarUpdate(
             @RequestPart("avatar") MultipartFile avatar,
             Principal principal
     ) {
@@ -75,7 +77,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Update user cover", description = "Update user cover")
     @PostMapping(value = "/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUserCover(
+    public ResponseEntity<?> CoverUpdate(
             @RequestPart("cover") MultipartFile cover,
             Principal principal
     ) {
@@ -95,7 +97,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Update user profile", description = "Update user profile")
     @PutMapping("/profile")
-    public ResponseEntity<?> updateUserData(@RequestBody AppUserProfileRequest dto, Principal principal) {
+    public ResponseEntity<?> UpdateDataProfile(@RequestBody AppUserProfileRequest dto, Principal principal) {
         String email = ContextPrincipal.getPrincipal();
         try {
             userService.updateUserData(email, dto);
@@ -114,7 +116,7 @@ public class AppUserProfileController {
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "userId", required = false) String userId
-            ) {
+    ) {
         if (userId == null || userId.isEmpty()) {
             userId = ContextPrincipal.getSecureUserId();
         }
@@ -132,7 +134,7 @@ public class AppUserProfileController {
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "userId", required = false) String userId
-            ) {
+    ) {
         if (userId == null || userId.isEmpty()) {
             userId = ContextPrincipal.getSecureUserId();
         }
@@ -142,10 +144,9 @@ public class AppUserProfileController {
     }
 
 
-
     @Operation(summary = "Change user password", description = "Change user password")
     @PutMapping("/profile/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest dto, Principal principal) {
+    public ResponseEntity<?> ChangePassword(@RequestBody ChangePasswordRequest dto, Principal principal) {
 
         String userSecureId = ContextPrincipal.getSecureUserId();
         try {
@@ -169,7 +170,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Update user notification settings", description = "Update notification preferences for the user")
     @PutMapping("/settings/notification")
-    public ResponseEntity<?> updateNotificationSettings(@RequestBody NotificationSettingsRequest dto, Principal principal) {
+    public ResponseEntity<?> UpdateNotificationSettings(@RequestBody NotificationSettingsRequest dto, Principal principal) {
         String userSecureId = ContextPrincipal.getSecureUserId();
         try {
             // Call service to save notification settings
@@ -183,7 +184,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get user notification settings", description = "Retrieve the notification preferences for the user")
     @GetMapping("/settings/notification")
-    public ResponseEntity<?> getNotificationSettings(Principal principal) {
+    public ResponseEntity<?> GetNotificationSettings(Principal principal) {
         String userSecureId = ContextPrincipal.getSecureUserId();
         try {
             // Fetch notification settings for the user
@@ -198,7 +199,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Create new request contact", description = "Creates a new user request contact and stores it in the database")
     @PostMapping("/request-contact/create")
-    public ResponseEntity<?> createRequestContact(@RequestBody AppUserRequestContactRequest requestContact, Principal principal) {
+    public ResponseEntity<?> FaqRequestContact(@RequestBody AppUserRequestContactRequest requestContact, Principal principal) {
         try {
             String userSecureId = ContextPrincipal.getSecureUserId();
             // Create new request contact
@@ -212,7 +213,7 @@ public class AppUserProfileController {
 
     @GetMapping("/my-notifications")
     @Operation(summary = "Notifications", description = "List Notifications")
-    public ResponseEntity<Page<NotificationResponse>> getNotifications(Pageable pageable) {
+    public ResponseEntity<Page<NotificationResponse>> GetNotifiation(Pageable pageable) {
         // Assuming `ContextPrincipal.getId()` retrieves the current user's ID
         Long userId = ContextPrincipal.getId();
 
@@ -237,7 +238,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get user activity counts", description = "Get user activity counts")
     @GetMapping("/activity-counts")
-    public ResponseEntity<?> getActivityCounts() {
+    public ResponseEntity<?> MyActivityCounts() {
         try {
             // Fetch activity counts
             ProfileActivityCounts data = userService.getActivityCounts();
@@ -250,7 +251,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Saved Activity", description = "Get list Post Saved Activity")
     @GetMapping("/post-saved-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostSavedActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> MySavedPostActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -263,7 +264,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Likes Activity", description = "Get list Post Likes Activity")
     @GetMapping("/post-likes-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostLikesActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> MyLikePostActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -276,7 +277,7 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get list Post Comments Activity", description = "Get list Post Comments Activity")
     @GetMapping("/post-comment-activity")
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostCommentsResponse>>> listDataPostCommentsActivity(
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostCommentsResponse>>> MyCommentsActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -289,7 +290,7 @@ public class AppUserProfileController {
 
     // Fetch to get profile activity
     @GetMapping("/profile-activity-counts")
-    public ResponseEntity<?> getProfileActivityCounts() {
+    public ResponseEntity<?> ProfileActivityCounts() {
         try {
             // Fetch activity counts
             UserProfileActivityCounts data = userService.getProfileActivityCounts();
@@ -299,8 +300,6 @@ public class AppUserProfileController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
-
 
 
 }
