@@ -105,6 +105,8 @@ public class UserManagementServiceImpl implements UserManagementService {
                 })
                 .collect(Collectors.toList());
 
+
+
         List<Map<String, List<?>>> attributes = new ArrayList<>();
 
         Map<String, List<?>> listStatus = new HashMap<>();
@@ -133,10 +135,17 @@ public class UserManagementServiceImpl implements UserManagementService {
                 })
                 .collect(Collectors.toList());
 
+        List<AttributeResponse<Integer>> listUserTypes = Arrays.asList(
+                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.ordinal(), "Solitaire"),
+                new AttributeResponse<>( UserType.MEMBER_PRIORITY.ordinal(),  "Priority"),
+                new AttributeResponse<>( UserType.NOT_MEMBER.ordinal(), "Non Member")
+        );
+
         List<Map<String, List<?>>> attributes = new ArrayList<>();
 
         Map<String, List<?>> listStatus = new HashMap<>();
         listStatus.put("subCategory", listSubCategory);
+        listStatus.put("segmentation", listUserTypes);
         attributes.add(listStatus);
 
         return attributes;

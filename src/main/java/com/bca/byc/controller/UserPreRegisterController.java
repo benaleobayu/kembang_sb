@@ -85,7 +85,7 @@ public class UserPreRegisterController {
         }
     }
 
-
+    @Operation(summary = "Export Pre-Register User", description = "Export Pre-Register User", hidden = true)
     @PreAuthorize("hasAuthority('pre-registration.export')")
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response,

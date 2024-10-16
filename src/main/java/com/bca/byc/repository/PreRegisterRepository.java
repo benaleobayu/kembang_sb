@@ -2,6 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.enums.AdminApprovalStatus;
+import com.bca.byc.enums.UserType;
 import com.bca.byc.model.export.PreRegisterExportResponse;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import org.springframework.data.domain.Page;
@@ -64,8 +65,13 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             ") " +
             "FROM PreRegister p " +
             "LEFT JOIN p.branchCode branch " +
-            "LEFT JOIN p.createdBy user ")
-    List<PreRegisterExportResponse> findDataForExport();
+            "LEFT JOIN p.createdBy user " +
+            "WHERE " +
+            "p.createdAt BETWEEN :start AND :end AND " +
+            "(:status IS NULL OR p.statusApproval = :status) ")
+    List<PreRegisterExportResponse> findDataForExport(@Param("start") LocalDateTime start,
+                                                      @Param("end") LocalDateTime end,
+                                                      @Param("status") AdminApprovalStatus status);
 
     // -- export --
 

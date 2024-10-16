@@ -17,6 +17,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.bca.byc.converter.dictionary.ExportHelper.createRow;
@@ -32,7 +34,11 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
 
     @Override
     public void exportExcelPreRegister(HttpServletResponse response, ExportFilterRequest filter) throws IOException {
-        List<PreRegisterExportResponse> datas = preRegisterRepository.findDataForExport();
+        // set date
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
+
+        List<PreRegisterExportResponse> datas = preRegisterRepository.findDataForExport(start, end, filter.getStatus());
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Pre-Register");
 
@@ -57,6 +63,14 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
 
         int dataRowIndex = 1;
         for (PreRegisterExportResponse data : datas) {
+            String status = switch (data.getAdminApprovalStatus().ordinal()) {
+                case 0 -> "Draft";
+                case 1 -> "Waiting Approval";
+                case 4 -> "Reject";
+                case 5 -> "Approve";
+                default ->
+                        throw new IllegalStateException("Unexpected value: " + data.getAdminApprovalStatus().ordinal());
+            };
             HSSFRow dataRow = sheet.createRow(dataRowIndex++);
             dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getName() == null ? null : data.getName());
@@ -66,14 +80,14 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(5).setCellValue(data.getMemberType() == null ? null : data.getMemberType().name());
             dataRow.createCell(6).setCellValue(data.getMemberBankAccount() == null ? null : data.getMemberBankAccount());
             dataRow.createCell(7).setCellValue(data.getMemberCin() == null ? null : data.getMemberCin());
-            dataRow.createCell(8).setCellValue(data.getMemberBirthdate() == null ? null : data.getMemberBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(8).setCellValue(data.getMemberBirthdate() == null ? null : data.getMemberBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(9).setCellValue(data.getParentBankAccount() == null ? null : data.getParentBankAccount());
             dataRow.createCell(10).setCellValue(data.getParentCin() == null ? null : data.getParentCin());
-            dataRow.createCell(11).setCellValue(data.getParentBirthdate() == null ? null : data.getParentBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-            dataRow.createCell(12).setCellValue(data.getAdminApprovalStatus() == null ? null : data.getAdminApprovalStatus().name());
-            dataRow.createCell(13).setCellValue(data.getBranch() == null ? null : data.getBranch());
-            dataRow.createCell(14).setCellValue(data.getAdminApprovalStatus() == null ? null : data.getAdminApprovalStatus().name());
-            dataRow.createCell(15).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(11).setCellValue(data.getParentBirthdate() == null ? null : data.getParentBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(12).setCellValue(data.getBranch() == null ? null : data.getBranch());
+            dataRow.createCell(13).setCellValue(data.getPicName() == null ? null : data.getPicName());
+            dataRow.createCell(14).setCellValue(data.getAdminApprovalStatus() == null ? null : status);
+            dataRow.createCell(15).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             dataRow.createCell(16).setCellValue(data.getCreatedBy() == null ? null : data.getCreatedBy());
         }
 
@@ -105,11 +119,11 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
             dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -140,11 +154,11 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
             dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -175,11 +189,11 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(0).setCellValue(dataRowIndex -1);
             dataRow.createCell(1).setCellValue(data.getBranch() == null ? null : data.getBranch());
             dataRow.createCell(2).setCellValue(data.getName() == null ? null : data.getName());
-            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
             dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
