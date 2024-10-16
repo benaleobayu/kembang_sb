@@ -27,7 +27,5 @@ public interface UserSuspendedService {
 
     void makeUserIsSuspendedFalse(String id);
 
-    void makeUserBulkDeleteTrue(Set<String> ids);
-
     void makeUserBulkSuspendedFalse(Set<String> ids);
 }

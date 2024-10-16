@@ -17,15 +17,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
-    Page<AppUser> findByNameLikeIgnoreCaseAndAppUserDetailStatusAndAppUserAttributeIsSuspendedTrueAndAppUserAttributeIsDeletedFalse(String userName, StatusType statusType, Pageable pageable);
-
-    Set<AppUser> findByIdIn(Set<Long> ids);
-
-    @Query("SELECT u " +
-            "FROM AppUser u " +
-            "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
-            "WHERE u.secureId IN :ids")
-    Set<CMSBulkDeleteProjection> findToDeleteBySecureIdIn(@Param("ids") Set<String> ids);
 
     @Query("SELECT u " +
             "FROM AppUser u " +

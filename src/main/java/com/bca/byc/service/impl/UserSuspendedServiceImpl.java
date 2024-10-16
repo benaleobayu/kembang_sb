@@ -116,23 +116,6 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserBulkDeleteTrue(Set<String> ids) {
-        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Set<CMSBulkDeleteProjection> userProjections = repository.findToDeleteBySecureIdIn(ids);
-
-        userProjections.forEach(projection -> {
-            AppUser data = repository.findById(projection.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            AppUserAttribute userAttribute = data.getAppUserAttribute();
-            userAttribute.setIsDeleted(true);
-            data.setAppUserAttribute(userAttribute);
-
-            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
-            repository.save(data);
-        });
-    }
-
-    @Override
     public void makeUserBulkSuspendedFalse(Set<String> ids) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Set<CmsGetIdFromSecureIdProjection> userProjections = repository.findToSuspendBySecureIdIn(ids);

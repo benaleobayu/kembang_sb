@@ -1,17 +1,17 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.Location;
+import com.bca.byc.entity.*;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.attribute.AttributeResponse;
+import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.service.UserManagementService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserManagementServiceImpl implements UserManagementService {
 
     private final AppAdminRepository adminRepository;
+    private final UserManagementRepository userManagementRepository;
 
     private final LocationRepository locationRepository;
     private final BusinessCategoryRepository businessCategoryRepository;
@@ -149,5 +150,24 @@ public class UserManagementServiceImpl implements UserManagementService {
         attributes.add(listStatus);
 
         return attributes;
+    }
+
+    // ------------------------------------------------------------------------------------------------
+
+    @Override
+    public void makeUserBulkDeleteTrue(Set<String> ids) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Set<CMSBulkDeleteProjection> userProjections = userManagementRepository.findToDeleteBySecureIdIn(ids);
+
+        userProjections.forEach(projection -> {
+            AppUser data = userManagementRepository.findById(projection.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            AppUserAttribute userAttribute = data.getAppUserAttribute();
+            userAttribute.setIsDeleted(true);
+            data.setAppUserAttribute(userAttribute);
+
+            GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+            userManagementRepository.save(data);
+        });
     }
 }

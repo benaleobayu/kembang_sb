@@ -83,10 +83,10 @@ public class UserSuspendedController {
 
     @Operation(summary = "Bulk Delete user suspended by id", description = "Bulk Delete user suspended by id")
     @PostMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody BulkByIdRequest dto) {
+    public ResponseEntity<?> bulkDelete(@RequestBody BulkByIdRequest dto) {
         log.info("POST " + urlRoute + "/delete endpoint hit");
         try {
-            service.makeUserBulkDeleteTrue(dto.getIds());
+            userManagementService.makeUserBulkDeleteTrue(dto.getIds());
             return ResponseEntity.ok(new ApiDataResponse(true, "Successfully deleted user", null));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
