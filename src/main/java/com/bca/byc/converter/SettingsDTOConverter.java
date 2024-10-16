@@ -37,6 +37,7 @@ public class SettingsDTOConverter {
     public SettingDetailResponse convertToDetailResponse(Settings data) {
         // mapping Entity with DTO Entity
         SettingDetailResponse dto = modelMapper.map(data, SettingDetailResponse.class);
+        dto.setId(data.getSecureId());
         // return
         return dto;
     }

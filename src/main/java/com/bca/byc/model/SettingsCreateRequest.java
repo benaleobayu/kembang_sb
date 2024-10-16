@@ -12,10 +12,6 @@ public class SettingsCreateRequest {
     @Size(max = 50, message = "Name must be less than 50 characters")
     private String name;
 
-    @NotBlank(message = "Identity is mandatory")
-    @Size(max = 50, message = "Identity must be less than 50 characters")
-    private String identity;
-
     private String description;
 
     private Integer value;

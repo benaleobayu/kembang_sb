@@ -20,6 +20,7 @@ import com.bca.byc.service.SettingService;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,8 +77,19 @@ public class SettingsServiceImpl implements SettingService {
 
     @Override
     public void saveData(@Valid SettingsCreateRequest dto) throws BadRequestException {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         // set entity to add with model mapper
-        Settings data = converter.convertToCreateRequest(dto);
+        Settings data = new Settings();
+        data.setName(dto.getName());
+        data.setDescription(dto.getDescription());
+        data.setIsActive(dto.getStatus());
+        data.setValue(data.getValue());
+        // identity is generated random code 8 digit alphabets and numerics
+        String convertName = dto.getName().replaceAll("\\s", "_").replaceAll("[^a-zA-Z0-9_]", "").toLowerCase();
+        String identity = RandomStringUtils.randomAlphanumeric(3);
+        data.setIdentity(convertName + "_" + identity);
+
+        GlobalConverter.CmsAdminCreateAtBy(data, admin);
         // save data
         repository.save(data);
     }
