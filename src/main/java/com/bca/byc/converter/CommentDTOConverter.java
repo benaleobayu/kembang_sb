@@ -113,6 +113,10 @@ public class CommentDTOConverter {
                 user
         ));
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
+        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        dto.setIsOwnerPost(isOwner);
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLike(isLike);
         // return
         return dto;
     }
