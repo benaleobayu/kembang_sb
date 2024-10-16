@@ -19,6 +19,7 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -124,6 +125,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void deleteData(String secureId) throws Exception {
         Post data = HandlerRepository.getIdBySecureId(
                 secureId,
@@ -135,7 +137,7 @@ public class PostServiceImpl implements PostService {
         if (!postRepository.existsById(data.getId())) {
             throw new ResourceNotFoundException("Post not found");
         } else {
-            postRepository.existsById(data.getId());
+            postRepository.deletePostById(data.getId());
         }
     }
 
