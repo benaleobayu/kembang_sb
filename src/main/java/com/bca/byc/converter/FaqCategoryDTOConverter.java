@@ -35,7 +35,6 @@ public class FaqCategoryDTOConverter {
             FaqDetailResponse faqDetailResponse = new FaqDetailResponse();
             faqDetailResponse.setQuestion(faq.getQuestion());
             faqDetailResponse.setAnswer(faq.getAnswer());
-            faqDetailResponse.setDescription(faq.getDescription());
             faqDetailResponse.setOrders(faq.getOrders());
             faqDetailResponse.setStatus(faq.getIsActive());
             GlobalConverter.CmsIDTimeStampResponse(faqDetailResponse, faq); // timestamp and id
@@ -78,7 +77,6 @@ public class FaqCategoryDTOConverter {
             FaqDetailResponse faqDetailResponse = new FaqDetailResponse();
             faqDetailResponse.setQuestion(faq.getQuestion());
             faqDetailResponse.setAnswer(faq.getAnswer());
-            faqDetailResponse.setDescription(faq.getDescription());
             faqDetailResponse.setOrders(faq.getOrders());
             faqDetailResponse.setStatus(faq.getIsActive());
             GlobalConverter.CmsIDTimeStampResponse(faqDetailResponse, faq); // timestamp and id
