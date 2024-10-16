@@ -7,6 +7,8 @@ public class TotalCountResponse {
 
     private Integer total = 0;
 
+    private Boolean isLiked = false;
+
     public TotalCountResponse() {
     }
 

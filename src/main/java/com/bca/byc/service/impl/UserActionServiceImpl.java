@@ -105,6 +105,7 @@ public class UserActionServiceImpl implements UserActionService {
                 CommentReply savedData = commentReplyRepository.save(commentReply);
                 response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             }
+            response.setIsLiked(false);
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
             if ("POST".equals(dto.getType())) {
@@ -135,6 +136,7 @@ public class UserActionServiceImpl implements UserActionService {
                 CommentReply savedData = commentReplyRepository.save(commentReply);
                 response.setTotal(Math.toIntExact(savedData.getLikesCount()));
             }
+            response.setIsLiked(true);
             return response;
         }
 
