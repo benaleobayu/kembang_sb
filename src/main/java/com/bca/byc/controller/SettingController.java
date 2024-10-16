@@ -29,7 +29,7 @@ import java.net.URI;
 @Slf4j
 @RestController
 @RequestMapping(SettingController.urlRoute)
-@Tag(name = "Additional Config API")
+@Tag(name = "Setting API")
 @SecurityRequirement(name = "Authorization")
 @AllArgsConstructor
 public class SettingController {
