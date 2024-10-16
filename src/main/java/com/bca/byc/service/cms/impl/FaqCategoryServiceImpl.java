@@ -16,15 +16,10 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.FaqCategoryService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +38,7 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
     @Override
     public List<FaqCategoryDetailResponse> findAllData() {
         // Get the list
-        List<FaqCategory> datas = repository.findAll();
+        List<FaqCategory> datas = repository.findAllAndStatusIsActive();
 
         // stream into the list
         return datas.stream()

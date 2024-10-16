@@ -21,6 +21,6 @@ public interface ExpectCategoryRepository extends JpaRepository<ExpectCategory, 
 
     Page<ExpectCategory> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
 
-    @Query("select e from ExpectCategory e ORDER BY e.id ASC")
+    @Query("select e from ExpectCategory e ORDER BY e.orders ASC")
     List<ExpectCategory> findAllAndOrderById();
 }

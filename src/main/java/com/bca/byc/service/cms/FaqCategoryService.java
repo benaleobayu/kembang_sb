@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface FaqCategoryService {
 
+    // -- public --
     List<FaqCategoryDetailResponse> findAllData();
+    // -- public --
 
     ResultPageResponseDTO<FaqCategoryIndexResponse> listDataFaqCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

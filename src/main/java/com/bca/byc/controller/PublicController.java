@@ -91,6 +91,7 @@ public class PublicController {
     public ResponseEntity<?> getAllExpectCategory() {
         log.info("GET /api/v1/public/expect-category endpoint hit");
         try {
+            // -- public --
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found expect category", expectCategoryService.findAllData()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

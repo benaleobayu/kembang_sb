@@ -17,13 +17,13 @@ import java.util.Optional;
 @Repository
 public interface BusinessCategoryRepository extends JpaRepository<BusinessCategory, Long> {
 
-    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.secureId = :secureId AND bc.isDeleted = false" )
+    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.secureId = :secureId AND bc.isActive = true AND bc.isDeleted = false" )
     Optional<BusinessCategory> findBySecureId(String secureId);
 
-    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId IS NULL")
+    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId IS NULL AND bc.isActive = true")
     List<BusinessCategory> findByParentIdIsNull();
 
-    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId IS NOT NULL")
+    @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId IS NOT NULL AND bc.isActive = true")
     List<BusinessCategory> findByParentIdIsNotNull();
 
     @Query("SELECT bc FROM BusinessCategory bc WHERE bc.parentId = :parentId")
