@@ -38,6 +38,7 @@ public class SettingsDTOConverter {
         // mapping Entity with DTO Entity
         SettingDetailResponse dto = modelMapper.map(data, SettingDetailResponse.class);
         dto.setId(data.getSecureId());
+        dto.setStatus(data.getIsActive());
         // return
         return dto;
     }
