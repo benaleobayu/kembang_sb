@@ -72,8 +72,8 @@ public class PostDTOConverter {
     public Post convertToCreateRequest(AppUser user, @Valid PostCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity
         Post data = new Post();
-        data.setDescription(dto.getDescription());
         data.setId(null);
+        data.setDescription(dto.getDescription());
         data.setUser(user);
         data.setPostAt(dto.getIsPosted().equals(true) ? LocalDateTime.now() : null);
 
@@ -139,23 +139,67 @@ public class PostDTOConverter {
 
     // for update data
     public void convertToUpdateRequest(Post data, @Valid PostCreateUpdateRequest dto) {
-        // mapping DTO Entity with Entity
-        modelMapper.map(dto, data);
-        // set updated_at
+        data.setDescription(dto.getDescription());
+
+        // Set list of Tags
+        Set<Tag> tags = new HashSet<>();
+        if (dto.getTagName() != null) {
+            for (String tagName : dto.getTagName()) {
+                Optional<Tag> tag = tagRepository.findByName(tagName);
+                tag.ifPresentOrElse(tags::add, () -> {
+                    Tag newTag = new Tag();
+                    newTag.setName(tagName);
+                    tags.add(tagRepository.save(newTag));
+                });
+            }
+        }
+        data.setTags(tags);
+
+        // Post category
+        if (dto.getPostCategoryId() != null) {
+            BusinessCategory postCategory = HandlerRepository.getIdBySecureId(
+                    dto.getPostCategoryId(),
+                    businessCategoryRepository::findBySecureId,
+                    projection -> businessCategoryRepository.findById(projection.getId()),
+                    "Post category not found"
+            );
+            data.setPostCategory(postCategory);
+        }
+
+        // Post location
+        if (dto.getPostLocation() != null) {
+            String placeName = dto.getPostLocation().getPlaceName();
+            if (placeName != null && !placeName.isEmpty()) {
+                PostLocation postLocation = postLocationRepository.findByPlaceName(placeName);
+                if (postLocation == null) {
+                    postLocation = new PostLocation();
+                    postLocation.setPlaceName(placeName);
+                    postLocation.setPlaceId(dto.getPostLocation().getPlaceId());
+                    postLocation.setDescription(dto.getPostLocation().getDescription());
+                    postLocation.setLatitude(dto.getPostLocation().getLatitude());
+                    postLocation.setLongitude(dto.getPostLocation().getLongitude());
+                    postLocation = postLocationRepository.save(postLocation);
+                }
+                data.setPostLocation(postLocation);
+            } else {
+                // Handle empty placeName if necessary
+                data.setPostLocation(null); // or skip setting it
+            }
+        } else {
+            data.setPostLocation(null); // Explicitly set to null if no location provided
+        }
+
+        // attribute
+        data.setIsPosted(dto.getIsPosted());
+        data.setIsCommentable(dto.getIsCommentable());
+        data.setIsShareable(dto.getIsShareable());
+        data.setIsShowLikes(dto.getIsShowLikes());
+
         data.setUpdatedAt(LocalDateTime.now());
     }
 
     // -----------------
 
-
-    private OwnerDataResponse convertOwnerData(TreePostConverter converter, AppUser appUser) {
-        return converter.OwnerDataResponse(
-                new OwnerDataResponse(),
-                appUser.getSecureId(),
-                appUser.getAppUserDetail().getName(),
-                appUser.getAppUserDetail().getAvatar()
-        );
-    }
 
     public ProfilePostResponse convertToProfilePostResponse(AppUser data) {
         ProfilePostResponse dto = modelMapper.map(data, ProfilePostResponse.class);
@@ -167,37 +211,5 @@ public class PostDTOConverter {
         return dto;
 
     }
-
-    // Helper method to convert comment replies
-    private List<ListCommentReplyResponse> convertCommentReplies(TreePostConverter converter, List<CommentReply> commentReplies) {
-        List<ListCommentReplyResponse> replyResponses = new ArrayList<>();
-        for (CommentReply reply : commentReplies) {
-            ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
-            replyResponse.setId(reply.getSecureId());
-            replyResponse.setComment(reply.getComment());
-
-            Business firstBusiness = reply.getUser().getBusinesses().stream()
-                    .filter(Business::getIsPrimary).findFirst().orElse(null);
-            assert firstBusiness != null;
-            BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
-                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
-            assert firstBusinessCategory != null;
-            replyResponse.setOwner(converter.PostOwnerResponse(
-                    new PostOwnerResponse(),
-                    reply.getUser().getSecureId(),
-                    reply.getUser().getName(),
-                    reply.getUser().getAppUserDetail().getAvatar(),
-                    firstBusiness.getName(),
-                    firstBusinessCategory.getName(),
-                    firstBusiness.getIsPrimary(),
-                    null
-            )); // Ensure correct conversion of the owner
-            replyResponse.setCreatedAt(reply.getCreatedAt().toString()); // Convert LocalDateTime to String if needed
-            replyResponses.add(replyResponse);
-        }
-        return replyResponses;
-    }
-
-
 
 }

@@ -109,8 +109,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void update(String secureId, PostCreateUpdateRequest post) throws Exception {
 
-        Post data = postRepository.findBySecureId(secureId)
-                .orElseThrow(() -> new BadRequestException("Post not found"));
+        Post data = HandlerRepository.getIdBySecureId(
+                secureId,
+                postRepository::findBySecureId,
+                projection -> postRepository.findById(projection.getId()),
+                "Post not found"
+        );
 
         converter.convertToUpdateRequest(data, post);
 
@@ -121,10 +125,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deleteData(String secureId) throws Exception {
-        if (!postRepository.existsBySecureId(secureId)) {
+        Post data = HandlerRepository.getIdBySecureId(
+                secureId,
+                postRepository::findBySecureId,
+                projection -> postRepository.findById(projection.getId()),
+                "Post not found"
+        );
+
+        if (!postRepository.existsById(data.getId())) {
             throw new ResourceNotFoundException("Post not found");
         } else {
-            postRepository.deleteBySecureId(secureId);
+            postRepository.existsById(data.getId());
         }
     }
 

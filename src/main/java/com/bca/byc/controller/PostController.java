@@ -155,27 +155,12 @@ public class PostController {
 
     // UPDATE Post
     @Operation(summary = "Update post", description = "Update post")
-    @PutMapping(value = "/{secureId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/{secureId}")
     public ResponseEntity<ApiResponse> updatePost(
             @PathVariable String secureId,
-            @RequestPart(value = "post") PostCreateUpdateRequest post,
-            @RequestPart(value = "content", required = false) PostContentRequest content,
-            @RequestPart("files") List<MultipartFile> files) throws Exception {
+            @RequestBody PostCreateUpdateRequest post) throws Exception {
 
-        // Similar file upload handling as in createPost
-        List<String> filePaths = new ArrayList<>();
-        try {
-            for (MultipartFile file : files) {
-                String filePath = saveFile(file, UPLOAD_DIR);
-                filePaths.add(filePath);
-            }
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-
-        content.setContent(String.join(",", filePaths));
         postService.update(secureId, post);
-
         return ResponseEntity.ok(new ApiResponse(true, "Post updated successfully"));
     }
 
