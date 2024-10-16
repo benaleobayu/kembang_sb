@@ -15,7 +15,7 @@ public interface FaqCategoryRepository extends JpaRepository<FaqCategory, Long> 
 
     Page<FaqCategory> findByNameLikeIgnoreCase(String keyword, Pageable pageable);
 
-    FaqCategory findBySecureId(String secureId);
+    Optional<FaqCategory> findBySecureId(String secureId);
 
     @Query("SELECT fc FROM FaqCategory fc WHERE fc.isDeleted = false AND fc.secureId = :id")
     Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("id") String id);

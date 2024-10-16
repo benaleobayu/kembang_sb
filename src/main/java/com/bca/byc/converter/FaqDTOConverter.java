@@ -24,8 +24,6 @@ public class FaqDTOConverter {
     public FaqIndexResponse convertToIndexResponse(Faq data) {
         // mapping Entity with DTO Entity
         FaqIndexResponse dto = new FaqIndexResponse();
-        dto.setId(data.getSecureId());
-        dto.setIndex(data.getId());
         dto.setName(data.getName());
         dto.setQuestion(data.getQuestion());
         dto.setAnswer(data.getAnswer());
@@ -40,7 +38,14 @@ public class FaqDTOConverter {
      // for get data detail
     public FaqDetailResponse convertToDetailResponse(Faq data) {
         // mapping Entity with DTO Entity
-        FaqDetailResponse dto = modelMapper.map(data, FaqDetailResponse.class);
+        FaqDetailResponse dto = new FaqDetailResponse();
+        dto.setName(data.getName());
+        dto.setAnswer(data.getAnswer());
+        dto.setQuestion(data.getQuestion());
+        dto.setOrders(data.getOrders());
+        dto.setStatus(data.getIsActive());
+
+        GlobalConverter.CmsIDTimeStampResponse(dto, data);
         // return
         return dto;
     }

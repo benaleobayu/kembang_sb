@@ -34,7 +34,7 @@ public class FaqServiceImpl implements FaqService {
     private final AppAdminRepository adminRepository;
 
     private final FaqCategoryRepository faqCategoryRepository;
-    private final FaqRepository repository;
+    private final FaqRepository faqRepository;
     private final FaqDTOConverter converter;
 
     @Override
@@ -50,7 +50,7 @@ public class FaqServiceImpl implements FaqService {
                 projection -> faqCategoryRepository.findById(projection.getId()),
                 "Category not found"
         );
-        Page<Faq> pageResult = repository.getFaqItemIndex(set.keyword(), set.pageable(), faqCategoryId.getId());
+        Page<Faq> pageResult = faqRepository.getFaqItemIndex(set.keyword(), set.pageable(), faqCategoryId.getId());
         List<FaqIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;
@@ -61,9 +61,20 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public FaqDetailResponse DetailFaqItem(String categoryId, String itemId) throws BadRequestException {
-        Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
-        FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
-        if (!item.getFaqCategoryId().equals(category.getId())) {
+        Faq item = HandlerRepository.getIdBySecureId(
+                itemId,
+                faqRepository::findBySecureId,
+                projection -> faqRepository.findById(projection.getId()),
+                "Faq not found"
+        );
+
+        FaqCategory category = HandlerRepository.getIdBySecureId(
+                categoryId,
+                faqCategoryRepository::findBySecureId,
+                projection -> faqCategoryRepository.findById(projection.getId()),
+                "Category not found"
+        );
+        if (!item.getFaqCategoryId().getId().equals(category.getId())) {
             throw new BadRequestException("Faq not belong to this category");
         }
 
@@ -79,14 +90,14 @@ public class FaqServiceImpl implements FaqService {
         data.setFaqCategoryId(category);
         GlobalConverter.CmsAdminCreateAtBy(data, admin);
         // save data
-        repository.save(data);
+        faqRepository.save(data);
     }
 
     @Override
     public void UpdateFaqItem(String categoryId, String itemId, FaqCreateUpdateRequest dto) throws BadRequestException {
         // check exist and get
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
+        Faq item = HandlerRepository.getEntityBySecureId(itemId, faqRepository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
 
         if (!item.getFaqCategoryId().equals(category.getId())) {
@@ -103,22 +114,22 @@ public class FaqServiceImpl implements FaqService {
         GlobalConverter.CmsAdminUpdateAtBy(item, admin);
 
         // save
-        repository.save(item);
+        faqRepository.save(item);
     }
 
     @Override
     public void DeleteFaqItem(String categoryId, String itemId) throws BadRequestException {
-        Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
+        Faq item = HandlerRepository.getEntityBySecureId(itemId, faqRepository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
 
         if (!item.getFaqCategoryId().equals(category.getId())) {
             throw new BadRequestException("Faq not belong to this category");
         }
         // delete data
-        if (!repository.existsById(item.getId())) {
+        if (!faqRepository.existsById(item.getId())) {
             throw new BadRequestException("Faq not found");
         } else {
-            repository.deleteById(item.getId());
+            faqRepository.deleteById(item.getId());
         }
     }
 }

@@ -47,7 +47,7 @@ public class FaqController {
     }
 
     @GetMapping("/{categoryId}/items/{itemId}")
-    public ResponseEntity<?> DetailFaqItem(@PathVariable("itemId") String itemId, @PathVariable("categoryId") String categoryId) {
+    public ResponseEntity<?> DetailFaqItem(@PathVariable("categoryId") String categoryId, @PathVariable("itemId") String itemId) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             FaqDetailResponse item = service.DetailFaqItem(categoryId, itemId);

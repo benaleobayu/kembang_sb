@@ -7,7 +7,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FaqIndexResponse extends AdminModelBaseDTOResponse {
+public class FaqIndexResponse extends AdminModelBaseDTOResponse<Long> {
 
     private String name;
     private String question;
