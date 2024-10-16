@@ -72,10 +72,12 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public void CreateFaqItem(String categoryId, @Valid FaqCreateUpdateRequest dto) throws BadRequestException {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
         // set entity to add with model mapper
         Faq data = converter.convertToCreateRequest(dto);
         data.setFaqCategoryId(category);
+        GlobalConverter.CmsAdminCreateAtBy(data, admin);
         // save data
         repository.save(data);
     }
