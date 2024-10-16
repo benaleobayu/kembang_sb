@@ -90,8 +90,12 @@ public class FaqCategoryServiceImpl implements FaqCategoryService {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         FaqCategory data = HandlerRepository.getEntityBySecureId(id, repository, notFoundMessage);
         // update
-        converter.convertToUpdateRequest(data, dto);
-        data.setUpdatedBy(admin);
+        data.setName(dto.getName());
+        data.setDescription(dto.getDescription());
+        data.setIsActive(dto.getStatus());
+        data.setOrders(dto.getOrders());
+
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         // save
         repository.save(data);
     }

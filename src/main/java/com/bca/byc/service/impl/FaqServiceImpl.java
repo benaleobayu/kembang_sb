@@ -2,6 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Faq;
 import com.bca.byc.entity.FaqCategory;
 import com.bca.byc.model.FaqCreateUpdateRequest;
@@ -10,6 +11,7 @@ import com.bca.byc.model.FaqIndexResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.FaqCategoryRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
@@ -28,6 +30,8 @@ import com.bca.byc.service.FaqService;
 @Service
 @AllArgsConstructor
 public class FaqServiceImpl implements FaqService {
+
+    private final AppAdminRepository adminRepository;
 
     private final FaqCategoryRepository faqCategoryRepository;
     private final FaqRepository repository;
@@ -79,6 +83,7 @@ public class FaqServiceImpl implements FaqService {
     @Override
     public void UpdateFaqItem(String categoryId, String itemId, FaqCreateUpdateRequest dto) throws BadRequestException {
         // check exist and get
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Faq item = HandlerRepository.getEntityBySecureId(itemId, repository, "Faq not found");
         FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
 
@@ -87,7 +92,13 @@ public class FaqServiceImpl implements FaqService {
         }
 
         // update
-        converter.convertToUpdateRequest(item, dto);
+        item.setName(dto.getName());
+        item.setQuestion(dto.getQuestion());
+        item.setAnswer(dto.getAnswer());
+        item.setIsActive(dto.getStatus());
+        item.setOrders(dto.getOrders());
+
+        GlobalConverter.CmsAdminUpdateAtBy(item, admin);
 
         // save
         repository.save(item);
