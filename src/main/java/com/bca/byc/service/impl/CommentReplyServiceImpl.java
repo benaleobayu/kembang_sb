@@ -108,7 +108,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
         CommentReply savedReply = commentReplyRepository.save(data);
 
         int totalComments = savedReply.getParentComment().getPost().getCommentsCount().intValue();
-        int totalReplies = savedReply.getCommentsCount().intValue();
+        int totalReplies = savedReply.getParentComment().getCommentReply().size();
 
         ReturnCommentResponse message = new ReturnCommentResponse();
         message.setCommentDetail(converter.convertToListRepliesResponse(savedReply));
