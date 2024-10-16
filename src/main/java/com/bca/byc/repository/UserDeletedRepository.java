@@ -12,9 +12,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
+
+    Optional<AppUser> findBySecureId(String userId);
 
     Set<AppUser> findByIdIn(Set<Long> ids);
 
@@ -64,4 +67,5 @@ public interface UserDeletedRepository extends JpaRepository<AppUser, Long> {
             "aua.isDeleted = true AND " +
             "aua.isHardDeleted = false ")
     List<UserActiveExportResponse> findDataForExport();
+
 }

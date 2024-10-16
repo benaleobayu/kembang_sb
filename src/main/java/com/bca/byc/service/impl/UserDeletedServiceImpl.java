@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.UserDeletedDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
@@ -17,14 +18,9 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserDeletedService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -59,7 +55,7 @@ public class UserDeletedServiceImpl implements UserDeletedService {
         Page<AppUser> pageResult = repository.findByKeywordAndStatusAndDeletedAndCreatedAt(set.keyword(), locationId, start, end, set.pageable());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
-            IndexResponse(c,dto);
+            IndexResponse(c, dto);
             return dto;
         }).collect(Collectors.toList());
 
@@ -68,9 +64,18 @@ public class UserDeletedServiceImpl implements UserDeletedService {
 
     @Override
     public UserManagementDetailResponse findDataById(String id) throws BadRequestException {
-        AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
+        AppUser data = HandlerRepository.getIdBySecureId(
+                id,
+                repository::findBySecureId,
+                projection -> repository.findById(projection.getId()),
+                "User not found"
+        );
+        UserManagementDetailResponse dto = new UserManagementDetailResponse();
+        TreeUserManagementConverter converter =
+                new TreeUserManagementConverter();
+        converter.DetailResponse(data, dto);
 
-        return converter.convertToListResponse(data);
+        return dto;
     }
 
     @Override
@@ -79,6 +84,7 @@ public class UserDeletedServiceImpl implements UserDeletedService {
         AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = data.getAppUserAttribute();
         userAttribute.setIsDeleted(false);
+        userAttribute.setIsSuspended(false);
         data.setAppUserAttribute(userAttribute);
 
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
@@ -95,6 +101,7 @@ public class UserDeletedServiceImpl implements UserDeletedService {
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
             AppUserAttribute userAttribute = data.getAppUserAttribute();
             userAttribute.setIsDeleted(false);
+            userAttribute.setIsSuspended(false);
             data.setAppUserAttribute(userAttribute);
 
             GlobalConverter.CmsAdminUpdateAtBy(data, admin);
