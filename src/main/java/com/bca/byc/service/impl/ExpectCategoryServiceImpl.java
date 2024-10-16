@@ -19,18 +19,12 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.ExpectCategoryService;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -108,10 +102,12 @@ public class ExpectCategoryServiceImpl implements ExpectCategoryService {
         // Check existence and get the business category
         ExpectCategory data = HandlerRepository.getEntityBySecureId(id, repository, "Business category not found");
 
+        data.setName(dto.getName());
+        data.setDescription(dto.getDescription());
+        data.setOrders(dto.getOrders());
+        data.setIsActive(dto.getStatus());
         // Update the main entity
-        converter.convertToUpdateRequest(data, dto);
-        data.setUpdatedAt(LocalDateTime.now());
-        data.setUpdatedBy(admin);
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
 
         // Save the updated entity
         ExpectCategory savedData = repository.save(data);

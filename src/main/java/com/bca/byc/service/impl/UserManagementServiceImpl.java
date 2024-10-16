@@ -107,12 +107,17 @@ public class UserManagementServiceImpl implements UserManagementService {
                 })
                 .collect(Collectors.toList());
 
-
+        List<AttributeResponse<String>> listUserTypes = Arrays.asList(
+                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
+                new AttributeResponse<>( UserType.MEMBER_PRIORITY.name(),  "Priority"),
+                new AttributeResponse<>( UserType.NOT_MEMBER.name(), "Non Member")
+        );
 
         List<Map<String, List<?>>> attributes = new ArrayList<>();
 
         Map<String, List<?>> listStatus = new HashMap<>();
-        listStatus.put("status", listStatusResponse);
+        listStatus.put("Location", listStatusResponse);
+        listStatus.put("Segmentation", listUserTypes);
         attributes.add(listStatus);
 
         return attributes;

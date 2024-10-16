@@ -126,7 +126,9 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         BusinessCategory data = HandlerRepository.getEntityBySecureId(id, repository, "Business category not found");
 
         // Update the main entity
-        converter.convertToUpdateRequest(data, dto);
+        data.setName(dto.getName());
+        data.setOrders(dto.getOrders());
+        data.setIsActive(dto.getStatus());
         data.setUpdatedAt(LocalDateTime.now());
         data.setUpdatedBy(admin);
 
