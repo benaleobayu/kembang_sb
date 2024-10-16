@@ -9,6 +9,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
+@Table(name = "settings", indexes = {
+    @Index(name = "idx_settings_secure_id", columnList = "secure_id")
+})
 public class Settings extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
@@ -26,9 +29,6 @@ public class Settings extends AbstractBaseEntityCms implements SecureIdentifiabl
 
     @Column(name = "value")
     private Integer value;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status;
 
     @Override
     public String getSecureId() {

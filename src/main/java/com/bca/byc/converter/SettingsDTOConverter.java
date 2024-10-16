@@ -21,9 +21,16 @@ public class SettingsDTOConverter {
     // for get data index
     public SettingIndexResponse convertToIndexResponse(Settings data) {
         // mapping Entity with DTO Entity
-        SettingIndexResponse dto = modelMapper.map(data, SettingIndexResponse.class);
-        // return
-        return dto;
+        return new SettingIndexResponse(
+                data.getSecureId(),
+                data.getId(),
+                data.getName(),
+                data.getIdentity(),
+                data.getDescription(),
+                data.getValue(),
+                data.getIsActive()
+        );
+
     }
 
     // for get data

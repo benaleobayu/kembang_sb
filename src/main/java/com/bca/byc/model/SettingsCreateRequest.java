@@ -1,6 +1,7 @@
 package com.bca.byc.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -16,8 +17,9 @@ public class SettingsCreateRequest {
     private String identity;
 
     private String description;
+
     private Integer value;
 
-    @NotBlank(message = "Status is mandatory")
+    @NotNull(message = "Status is mandatory")
     private Boolean status;
 }

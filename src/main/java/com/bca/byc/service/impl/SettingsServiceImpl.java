@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.SettingsDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Settings;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.SettingDetailResponse;
@@ -12,6 +13,7 @@ import com.bca.byc.model.SettingsUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.SettingsRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.SettingService;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class SettingsServiceImpl implements SettingService {
+
+    private final AppAdminRepository adminRepository;
 
     private final SettingsRepository repository;
     private final SettingsDTOConverter converter;
@@ -80,14 +84,15 @@ public class SettingsServiceImpl implements SettingService {
 
     @Override
     public void updateData(String id, SettingsUpdateRequest dto) throws BadRequestException {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         // check exist and get
         Settings data = HandlerRepository.getEntityBySecureId(id, repository, "Settings not found");
+        data.setName(dto.getName());
+        data.setDescription(dto.getDescription());
+        data.setValue(dto.getValue());
+        data.setIsActive(dto.getStatus());
 
-        // update
-        converter.convertToUpdateRequest(data, dto);
-
-        // update the updated_at
-        data.setUpdatedAt(LocalDateTime.now());
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
 
         // save
         repository.save(data);
