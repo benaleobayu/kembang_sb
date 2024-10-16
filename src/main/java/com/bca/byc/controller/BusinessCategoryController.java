@@ -37,7 +37,7 @@ public class BusinessCategoryController {
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<BusinessCategoryIndexResponse>>> listDataBusinessCategory(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true

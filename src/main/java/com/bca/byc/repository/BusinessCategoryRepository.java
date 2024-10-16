@@ -31,12 +31,10 @@ public interface BusinessCategoryRepository extends JpaRepository<BusinessCatego
 
     @Query("SELECT bc " +
             "FROM BusinessCategory bc " +
-            "LEFT JOIN bc.children bcc " +
             "WHERE " +
-            "(LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(bcc.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " + // in bc.parentId is not null TODO
+            "(LOWER(bc.name) LIKE LOWER(:keyword)) AND " +
             "bc.isDeleted = false AND " +
-            "bc.parentId IS NULL ")
+            "bc.isParent = true ")
     Page<BusinessCategory> findDataByKeyword(String keyword, Pageable pageable);
 
     @Query("SELECT bc " +

@@ -2,7 +2,6 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.PostCategory;
 import com.bca.byc.model.*;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -10,9 +9,10 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bca.byc.converter.parsing.GlobalConverter.CmsIDTimeStampResponse;
 
 @Component
 @AllArgsConstructor
@@ -22,19 +22,18 @@ public class BusinessCategoryDTOConverter {
 
     // for get data
     public BusinessCategoryIndexResponse convertToIndexResponse(BusinessCategory data) {
-        GlobalConverter converter = new GlobalConverter();
         BusinessCategoryIndexResponse dto = new BusinessCategoryIndexResponse();
         dto.setName(data.getName());
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
         List<String> subCategories = new ArrayList<>();
         for (BusinessCategory businessCategory : data.getChildren()) {
-            if (businessCategory.getIsDeleted().equals(false)){
+            if (businessCategory.getIsDeleted().equals(false)) {
                 subCategories.add(businessCategory.getName());
             }
         }
         dto.setSubCategories(subCategories);
-        converter.CmsIDTimeStampResponse(dto, data);
+        CmsIDTimeStampResponse(dto, data);
         return dto;
     }
 
@@ -45,7 +44,7 @@ public class BusinessCategoryDTOConverter {
         dto.setDescription(data.getDescription() != null ? Formatter.formatDescription(data.getDescription()) : null);
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        CmsIDTimeStampResponse(dto, data); // timestamp and id
 
         List<BusinessCategoryItemListResponse> listBusiness = new ArrayList<>();
         for (BusinessCategory businessCategory : data.getChildren()) {
@@ -54,7 +53,7 @@ public class BusinessCategoryDTOConverter {
             child.setDescription(businessCategory.getDescription() != null ? Formatter.formatDescription(businessCategory.getDescription()) : null);
             child.setOrders(businessCategory.getOrders());
             child.setStatus(businessCategory.getIsActive());
-            converter.CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
+            CmsIDTimeStampResponse(child, businessCategory); // timestamp and id
             listBusiness.add(child);
         }
         dto.setSubCategories(listBusiness);
@@ -69,7 +68,7 @@ public class BusinessCategoryDTOConverter {
         dto.setDescription(Formatter.formatDescription(data.getDescription()));
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponse(dto, data); // timestamp and id
+        CmsIDTimeStampResponse(dto, data); // timestamp and id
         return dto;
     }
     // for create data parent
