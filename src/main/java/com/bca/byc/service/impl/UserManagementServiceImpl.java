@@ -183,6 +183,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             AppUserAttribute userAttribute = data.getAppUserAttribute();
             userAttribute.setIsHardDeleted(true);
             data.setAppUserAttribute(userAttribute);
+            data.setEmail(data.getEmail() + "_deleted");
 
             GlobalConverter.CmsAdminUpdateAtBy(data, admin);
             userManagementRepository.save(data);
