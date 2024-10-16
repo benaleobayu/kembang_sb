@@ -1,7 +1,7 @@
 package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.LogUserManagementRequest;
+import com.bca.byc.model.ActionMessageRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -23,7 +23,7 @@ public interface UserSuspendedService {
 
     UserManagementDetailResponse findDataBySecureId(String id) throws BadRequestException;
 
-    void makeUserIsDeletedTrue(String id, @Valid LogUserManagementRequest dto);
+    void makeUserIsDeletedTrue(String id, @Valid ActionMessageRequest dto);
 
     void makeUserIsSuspendedFalse(String id);
 

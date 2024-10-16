@@ -9,10 +9,10 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.ActionMessageRequest;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
-import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -83,19 +83,23 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     }
 
     @Override
-    public void makeUserIsDeletedTrue(String id, @Valid LogUserManagementRequest dto) {
+    public void makeUserIsDeletedTrue(String id, @Valid ActionMessageRequest dto) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
         AppUserAttribute userAttribute = data.getAppUserAttribute();
         userAttribute.setIsDeleted(true);
         data.setAppUserAttribute(userAttribute);
+        LogUserManagementRequest newLog = new LogUserManagementRequest(
+                "DELETED",
+                dto.getMessage()
+        );
 
         logUserManagement(
                 null,
                 data,
                 admin,
                 LogStatus.DELETED,
-                dto,
+                newLog,
                 logUserManagementRepository
         );
 

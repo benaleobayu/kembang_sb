@@ -2,6 +2,7 @@ package com.bca.byc.controller;
 
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.ActionMessageRequest;
 import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
@@ -71,7 +72,7 @@ public class UserSuspendedController {
 
     @Operation(summary = "Delete user suspended by id", description = "Delete user suspended by id")
     @PutMapping("/{id}/delete")
-    public ResponseEntity<?> delete(@PathVariable("id") String id, @Valid @RequestBody LogUserManagementRequest dto) {
+    public ResponseEntity<?> delete(@PathVariable("id") String id, @Valid @RequestBody ActionMessageRequest dto) {
         log.info("PUT " + urlRoute + "/{id}/delete endpoint hit");
         try {
             service.makeUserIsDeletedTrue(id, dto);
