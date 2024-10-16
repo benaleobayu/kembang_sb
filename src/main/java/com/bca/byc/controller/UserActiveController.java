@@ -1,11 +1,14 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.BulkByIdRequest;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementListResponse;
+import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
@@ -57,21 +60,39 @@ public class UserActiveController {
 
     @Operation(summary = "Get list user active", description = "Get list user active")
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listUserActive(
+    public ResponseEntity<?> listUserActive(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "location", required = false) Long locationId,
+            @RequestParam(name = "segmentation", required = false) UserType segmentation,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(name = "export", required = false) Boolean export,
+            HttpServletResponse response
     ) {
-        // response true
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true,
-                "Success get list user",
-                service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate),
-                userManagementService.listAttributeUserManagement()));
+        if (Boolean.TRUE.equals(export)) {
+            // Export logic
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=pre-register.xls";
+            response.setHeader(headerKey, headerValue);
+
+            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation);
+            try {
+                exportService.exportExcelPreRegister(response, filter);
+            } catch (IOException e) {
+                log.error("Error exporting data", e);
+                return ResponseEntity.internalServerError().body("Error exporting data");
+            }
+            return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
+        } else {
+            // List data logic
+            ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate, segmentation);
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list active user", result, userManagementService.listAttributeUserManagement()));
+        }
     }
 
     @GetMapping("{id}")
@@ -125,6 +146,18 @@ public class UserActiveController {
         try {
             service.makeUserBulkSuspendedTrue(dto.getIds());
             return ResponseEntity.ok(new ApiResponse(true, "Successfully suspended user"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "Bulk Delete user active by id", description = "Bulk Delete user active by id")
+    @PostMapping("/delete")
+    public ResponseEntity<?> bulkDelete(@RequestBody BulkByIdRequest dto) {
+        log.info("POST " + urlRoute + "/delete endpoint hit");
+        try {
+            userManagementService.makeUserBulkDeleteTrue(dto.getIds());
+            return ResponseEntity.ok(new ApiDataResponse(true, "Successfully deleted user", null));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

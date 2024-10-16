@@ -7,6 +7,7 @@ import com.bca.byc.converter.parsing.TreeLogUserManagement;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.LogStatus;
+import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
@@ -73,7 +74,7 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate, UserType segmentation) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword,
                 startDate,

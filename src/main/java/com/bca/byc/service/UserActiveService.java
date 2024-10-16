@@ -1,5 +1,6 @@
 package com.bca.byc.service;
 
+import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
@@ -15,7 +16,7 @@ import java.util.Set;
 
 public interface UserActiveService {
 
-    ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate);
+    ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate, UserType segmentation);
 
     ResultPageResponseDTO<ListTagUserResponse> listDataTagUser(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

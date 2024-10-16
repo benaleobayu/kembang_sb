@@ -9,6 +9,7 @@ import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LocationRepository;
+import com.bca.byc.repository.UserManagementRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.service.UserManagementService;
 import jakarta.persistence.EntityNotFoundException;

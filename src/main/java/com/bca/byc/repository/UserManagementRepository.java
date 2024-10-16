@@ -1,4 +1,4 @@
-package com.bca.byc.service.impl;
+package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
