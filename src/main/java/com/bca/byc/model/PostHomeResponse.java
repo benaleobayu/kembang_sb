@@ -21,22 +21,22 @@ public class PostHomeResponse {
     private PostCategoryResponse postCategory;
 
     // ------- attributes -------
-    private Boolean isCommentable;
-    private Boolean isShareable;
-    private Boolean isShowLikes;
-    private Boolean isPosted;
+    private Boolean isCommentable = false;
+    private Boolean isShareable = false;
+    private Boolean isShowLikes = false;
+    private Boolean isPosted = false;
     // ------- attributes -------
 
     // ------- added function -------
-    private Boolean isMyPost;
-    private Boolean isLiked;
-    private Boolean isFollowed;
-    private Boolean isOfficial;
+    private Boolean isMyPost = false;
+    private Boolean isLiked = false;
+    private Boolean isFollowed = false;
+    private Boolean isOfficial = false;
     // ------- added function -------
     private String officialUrl;
     // ------- count -------
-    private Long likeCount;
-    private Long commentCount;
+    private Long likeCount = 0L;
+    private Long commentCount = 0L;
     // ------- count -------
 
 }
