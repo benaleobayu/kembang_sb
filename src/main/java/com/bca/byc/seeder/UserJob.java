@@ -82,6 +82,8 @@ public class UserJob {
                 null,
                 faker.random().nextBoolean(),
                 null,
+                false,
+                null,
                 faker.random().nextBoolean(),
                 null,
                 faker.random().nextBoolean(),
