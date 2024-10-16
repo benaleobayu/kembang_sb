@@ -44,12 +44,8 @@ public class FaqServiceImpl implements FaqService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        FaqCategory faqCategoryId = HandlerRepository.getIdBySecureId(
-                categoryId,
-                faqCategoryRepository::findByIdAndSecureId,
-                projection -> faqCategoryRepository.findById(projection.getId()),
-                "Category not found"
-        );
+        FaqCategory faqCategoryId = faqCategoryId(categoryId);
+
         Page<Faq> pageResult = faqRepository.getFaqItemIndex(set.keyword(), set.pageable(), faqCategoryId.getId());
         List<FaqIndexResponse> dtos = pageResult.stream().map((c) -> {
             FaqIndexResponse dto = converter.convertToIndexResponse(c);
@@ -61,19 +57,9 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public FaqDetailResponse DetailFaqItem(String categoryId, String itemId) throws BadRequestException {
-        Faq item = HandlerRepository.getIdBySecureId(
-                itemId,
-                faqRepository::findBySecureId,
-                projection -> faqRepository.findById(projection.getId()),
-                "Faq not found"
-        );
+        Faq item = faqItem(itemId);
+        FaqCategory category = faqCategory(categoryId);
 
-        FaqCategory category = HandlerRepository.getIdBySecureId(
-                categoryId,
-                faqCategoryRepository::findBySecureId,
-                projection -> faqCategoryRepository.findById(projection.getId()),
-                "Category not found"
-        );
         if (!item.getFaqCategoryId().getId().equals(category.getId())) {
             throw new BadRequestException("Faq not belong to this category");
         }
@@ -84,7 +70,7 @@ public class FaqServiceImpl implements FaqService {
     @Override
     public void CreateFaqItem(String categoryId, @Valid FaqCreateUpdateRequest dto) throws BadRequestException {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
+        FaqCategory category = faqCategory(categoryId);
         // set entity to add with model mapper
         Faq data = converter.convertToCreateRequest(dto);
         data.setFaqCategoryId(category);
@@ -95,12 +81,11 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public void UpdateFaqItem(String categoryId, String itemId, FaqCreateUpdateRequest dto) throws BadRequestException {
-        // check exist and get
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Faq item = HandlerRepository.getEntityBySecureId(itemId, faqRepository, "Faq not found");
-        FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
+        Faq item = faqItem(itemId);
+        FaqCategory category = faqCategory(categoryId);
 
-        if (!item.getFaqCategoryId().equals(category.getId())) {
+        if (!item.getFaqCategoryId().getId().equals(category.getId())) {
             throw new BadRequestException("Faq not belong to this category");
         }
 
@@ -119,10 +104,10 @@ public class FaqServiceImpl implements FaqService {
 
     @Override
     public void DeleteFaqItem(String categoryId, String itemId) throws BadRequestException {
-        Faq item = HandlerRepository.getEntityBySecureId(itemId, faqRepository, "Faq not found");
-        FaqCategory category = HandlerRepository.getEntityBySecureId(categoryId, faqCategoryRepository, "Category not found");
+        Faq item = faqItem(itemId);
+        FaqCategory category = faqCategory(categoryId);
 
-        if (!item.getFaqCategoryId().equals(category.getId())) {
+        if (!item.getFaqCategoryId().getId().equals(category.getId())) {
             throw new BadRequestException("Faq not belong to this category");
         }
         // delete data
@@ -132,4 +117,37 @@ public class FaqServiceImpl implements FaqService {
             faqRepository.deleteById(item.getId());
         }
     }
+
+    // --- Helper ---
+
+    private FaqCategory faqCategory(String categoryId){
+        return HandlerRepository.getIdBySecureId(
+                categoryId,
+                faqCategoryRepository::findBySecureId,
+                projection -> faqCategoryRepository.findById(projection.getId()),
+                "Category not found"
+        );
+    }
+
+     private Faq faqItem(String itemId){
+         return HandlerRepository.getIdBySecureId(
+                itemId,
+                faqRepository::findBySecureId,
+                projection -> faqRepository.findById(projection.getId()),
+                "Faq not found"
+        );
+    }
+
+    private FaqCategory faqCategoryId (String categoryId){
+         return HandlerRepository.getIdBySecureId(
+                categoryId,
+                faqCategoryRepository::findByIdAndSecureId,
+                projection -> faqCategoryRepository.findById(projection.getId()),
+                "Category not found"
+        );
+    }
+
+
+
+
 }

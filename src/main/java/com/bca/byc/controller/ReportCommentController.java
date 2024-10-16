@@ -26,7 +26,7 @@ import java.time.LocalDate;
 @SecurityRequirement(name = "Authorization")
 public class ReportCommentController {
 
-    static final String urlRoute = "/cms/v1/report/Comment";
+    static final String urlRoute = "/cms/v1/report/comment";
     private ReportCommentService service;
 
     @GetMapping
