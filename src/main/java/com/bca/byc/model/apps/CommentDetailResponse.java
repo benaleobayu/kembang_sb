@@ -19,6 +19,8 @@ public class CommentDetailResponse {
 
     private Boolean isOwnerPost = false;
 
+    private String parentId;
+
     private Long likesCount = 0L;
 
     private Long sharesCount = 0L;

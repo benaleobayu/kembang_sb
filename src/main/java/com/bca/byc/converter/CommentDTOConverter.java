@@ -151,6 +151,7 @@ public class CommentDTOConverter {
         dto.setIsOwnerPost(isOwner);
         boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
         dto.setIsLike(isLike);
+        dto.setParentId(data.getParentComment().getSecureId());
         // return
         return dto;
     }
