@@ -98,20 +98,20 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
     }
 
     @Override
-    public void exportExcelUserActive(HttpServletResponse response) throws IOException {
-        List<UserActiveExportResponse> datas = userActiveRepository.findDataForExport();
+    public void exportExcelUserActive(HttpServletResponse response, ExportFilterRequest filter) throws IOException {
+        // set date
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
+
+        List<UserActiveExportResponse> datas = userActiveRepository.findDataForExport(start, end, filter.getSegmentation(), filter.getLocationId(), filter.getIsSenior());
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("User Active");
 
         HSSFRow headerRow = sheet.createRow(0);
-        createRow(sheet, headerRow, 0, "ID");
-        createRow(sheet, headerRow, 1, "Branch Code");
-        createRow(sheet, headerRow, 2, "Name");
-        createRow(sheet, headerRow, 3, "Birthday");
-        createRow(sheet, headerRow, 4, "Email");
-        createRow(sheet, headerRow, 5, "Cin Number");
-        createRow(sheet, headerRow, 6, "Phone Number");
-        createRow(sheet, headerRow, 7, "Created At");
+        String[] rowNames = {"ID", "Branch", "Name", "Birthday", "Email", "Cin Number", "Segmentationt", "Phone Number", "Created At"};
+        for (int i = 0; i < rowNames.length; i++) {
+            createRow(sheet, headerRow, i, rowNames[i]);
+        }
 
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
@@ -122,8 +122,9 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(6).setCellValue(data.getSegmentation() == null ? null : data.getSegmentation().name());
+            dataRow.createCell(7).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(8).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -133,20 +134,20 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
     }
 
     @Override
-    public void exportExcelUserSuspended(HttpServletResponse response) throws IOException {
-        List<UserActiveExportResponse> datas = userSuspendedRepository.findDataForExport();
+    public void exportExcelUserSuspended(HttpServletResponse response, ExportFilterRequest filter) throws IOException {
+        // set date
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
+
+        List<UserActiveExportResponse> datas = userSuspendedRepository.findDataForExport(start, end, filter.getSegmentation(), filter.getLocationId(), filter.getIsSenior());
         HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("User Suspended");
+        HSSFSheet sheet = workbook.createSheet("User Active");
 
         HSSFRow headerRow = sheet.createRow(0);
-        createRow(sheet, headerRow, 0, "ID");
-        createRow(sheet, headerRow, 1, "Branch Code");
-        createRow(sheet, headerRow, 2, "Name");
-        createRow(sheet, headerRow, 3, "Birthday");
-        createRow(sheet, headerRow, 4, "Email");
-        createRow(sheet, headerRow, 5, "Cin Number");
-        createRow(sheet, headerRow, 6, "Phone Number");
-        createRow(sheet, headerRow, 7, "Created At");
+        String[] rowNames = {"ID", "Branch", "Name", "Birthday", "Email", "Cin Number", "Segmentationt", "Phone Number", "Created At"};
+        for (int i = 0; i < rowNames.length; i++) {
+            createRow(sheet, headerRow, i, rowNames[i]);
+        }
 
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
@@ -157,8 +158,9 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(6).setCellValue(data.getSegmentation() == null ? null : data.getSegmentation().name());
+            dataRow.createCell(7).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(8).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
@@ -168,20 +170,20 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
     }
 
     @Override
-    public void exportExcelUserDeleted(HttpServletResponse response) throws IOException {
-        List<UserActiveExportResponse> datas = userDeletedRepository.findDataForExport();
+    public void exportExcelUserDeleted(HttpServletResponse response, ExportFilterRequest filter) throws IOException {
+        // set date
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
+
+        List<UserActiveExportResponse> datas = userDeletedRepository.findDataForExport(start, end, filter.getSegmentation(), filter.getLocationId(), filter.getIsSenior());
         HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("User Deleted");
+        HSSFSheet sheet = workbook.createSheet("User Active");
 
         HSSFRow headerRow = sheet.createRow(0);
-        createRow(sheet, headerRow, 0, "ID");
-        createRow(sheet, headerRow, 1, "Branch Code");
-        createRow(sheet, headerRow, 2, "Name");
-        createRow(sheet, headerRow, 3, "Birthday");
-        createRow(sheet, headerRow, 4, "Email");
-        createRow(sheet, headerRow, 5, "Cin Number");
-        createRow(sheet, headerRow, 6, "Phone Number");
-        createRow(sheet, headerRow, 7, "Created At");
+        String[] rowNames = {"ID", "Branch", "Name", "Birthday", "Email", "Cin Number", "Segmentationt", "Phone Number", "Created At"};
+        for (int i = 0; i < rowNames.length; i++) {
+            createRow(sheet, headerRow, i, rowNames[i]);
+        }
 
         int dataRowIndex = 1;
         for (UserActiveExportResponse data : datas) {
@@ -192,8 +194,9 @@ public class UserManagementExportServiceImpl implements UserManagementExportServ
             dataRow.createCell(3).setCellValue(data.getBirthdate() == null ? null : data.getBirthdate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
             dataRow.createCell(4).setCellValue(data.getEmail() == null ? null : data.getEmail());
             dataRow.createCell(5).setCellValue(data.getCinNumber() == null ? null : data.getCinNumber());
-            dataRow.createCell(6).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
-            dataRow.createCell(7).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            dataRow.createCell(6).setCellValue(data.getSegmentation() == null ? null : data.getSegmentation().name());
+            dataRow.createCell(7).setCellValue(data.getPhoneNumber() == null ? null : data.getPhoneNumber());
+            dataRow.createCell(8).setCellValue(data.getCreatedAt() == null ? null : data.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         }
 
         ServletOutputStream ops = response.getOutputStream();
