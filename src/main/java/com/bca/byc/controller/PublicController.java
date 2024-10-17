@@ -9,7 +9,6 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.*;
 import com.bca.byc.service.cms.FaqCategoryService;
 import com.bca.byc.service.cms.LocationService;

@@ -13,7 +13,6 @@ public class PreRegisterDetailResponse extends AdminModelBaseDTOResponse {
     private String name;
     private String email;
     private String phone;
-    private String type;
     private String parentType;
     private String memberType;
     private String description;

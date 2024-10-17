@@ -50,9 +50,8 @@ public class PreRegisterDTOConverter {
         dto.setParentBankAccount(data.getParentBankAccount());
         dto.setMemberCin(data.getMemberCin());
         dto.setParentCin(data.getParentCin());
-        dto.setType(data.getMemberType() != null ? data.getMemberType().toString() : null);
+        dto.setMemberType(data.getMemberType() != null ? data.getMemberType().toString() : null);
         dto.setParentType(data.getParentType() != null ? data.getParentType().toString() : null);
-        dto.setMemberType(data.getAccountType());
         dto.setOrders(data.getOrders());
         dto.setApprovalStatus(data.getStatusApproval());
 
@@ -181,7 +180,8 @@ public class PreRegisterDTOConverter {
         data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
         data.setMemberBirthdate(dto.getMemberBirthdate());
         data.setParentBirthdate(dto.getParentBirthdate());
-        data.setMemberType(dto.getType() != null ? dto.getType() : null);
+        data.setMemberType(dto.getMemberType() != null ? dto.getMemberType() : null);
+        data.setParentType(dto.getParentType() != null ? dto.getParentType() : null);
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
         data.setBranchCode(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
@@ -209,7 +209,7 @@ public class PreRegisterDTOConverter {
         data.setParentCin(dto.getParentCin() != null ? dto.getParentCin().replaceAll("[^0-9]", "") : null);
         data.setMemberBirthdate(dto.getMemberBirthdate());
         data.setParentBirthdate(dto.getParentBirthdate());
-        data.setMemberType(dto.getType() != null ? dto.getType() : null);
+        data.setMemberType(dto.getMemberType() != null ? dto.getMemberType() : null);
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
         data.setBranchCode(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));

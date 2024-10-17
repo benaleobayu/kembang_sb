@@ -25,7 +25,7 @@ public class PreRegisterCreateRequest {
     private String phone;
 
     @Schema(description = "MEMBER_SOLITAIRE | MEMBER_PRIORITY | NOT_MEMBER", example = "MEMBER_SOLITAIRE")
-    private UserType type;
+    private UserType memberType;
 
     @Schema(description = "MEMBER_SOLITAIRE | MEMBER_PRIORITY | NOT_MEMBER", example = "MEMBER_SOLITAIRE")
     private UserType parentType;
