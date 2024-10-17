@@ -75,6 +75,7 @@ public class TreeOnboardingUpdate {
     public Business updateBusiness(Business existingBusiness, BusinessTreeRequest dto, AppUser user, boolean isFirstBusiness, BusinessRepository businessRepository) {
         existingBusiness.setName(dto.getBusinessName());
         existingBusiness.setAddress(dto.getBusinessAddress());
+        existingBusiness.setDescription(dto.getDescription());
         existingBusiness.setUser(user);
         boolean newIsPrimary = isFirstBusiness || (dto.getIsPrimary() != null && dto.getIsPrimary());
 

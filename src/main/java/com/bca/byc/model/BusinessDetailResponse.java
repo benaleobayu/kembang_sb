@@ -13,6 +13,8 @@ public class BusinessDetailResponse {
     private String address;
     private Boolean isPrimary;
 
+    private String description;
+
     private BusinessCategoryParentResponse category;
     private List<LocationListResponse> locations = new ArrayList<>();
     private Integer totalCatalogs;

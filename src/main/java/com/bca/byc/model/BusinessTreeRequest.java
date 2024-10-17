@@ -14,6 +14,8 @@ public class BusinessTreeRequest {
 
     private Boolean isPrimary;
 
+    private String description;
+
     private List<String> categoryItemIds;
     private List<String> locationIds;
 }

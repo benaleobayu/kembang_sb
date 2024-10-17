@@ -44,6 +44,7 @@ public class TreeOnboarding {
         Business business = new Business();
         business.setName(businessDto.getBusinessName());
         business.setAddress(businessDto.getBusinessAddress());
+        business.setDescription(businessDto.getDescription());
         business.setUser(user);
         // Determine if this business is primary
         boolean isPrimary = isFirstBusiness || (businessDto.getIsPrimary() != null && businessDto.getIsPrimary());
