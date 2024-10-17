@@ -22,6 +22,7 @@ import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.UserActiveService;
@@ -63,8 +64,7 @@ public class UserActiveServiceImpl implements UserActiveService {
 
     @Override
     public UserManagementDetailResponse findBySecureId(String id) throws BadRequestException {
-        AppUser data = repository.findBySecureId(id)
-                .orElseThrow(() -> new BadRequestException("User Active not found"));
+        AppUser data = getEntityData(id);
 
         UserManagementDetailResponse dto = new UserManagementDetailResponse();
         TreeUserManagementConverter converter = new TreeUserManagementConverter();
@@ -99,8 +99,8 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Transactional
     public void updateData(String id, UserActiveUpdateRequest dto) throws BadRequestException {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        AppUser data = getEntityBySecureId(id, repository, "user not found");
-        Branch branch = getEntityBySecureId(dto.getBranchId(), branchRepository, "branch not found");
+        AppUser data = getEntityData(id);
+        Branch branch = getEntityBranch(dto.getBranchId());
         converter.convertToUpdateRequest(data, dto, branch);
 
         LogUserManagementRequest logDto = new LogUserManagementRequest(
@@ -214,5 +214,24 @@ public class UserActiveServiceImpl implements UserActiveService {
                 userList.getTotalElements()
         );
     }
+
+    // --- Helper ---
+    private AppUser getEntityData(String id) {
+        return HandlerRepository.getIdBySecureId(
+                id,
+                repository::findBySecureId,
+                projection -> repository.findById(projection.getId()),
+                "user not found"
+        );
+    }
+    private Branch getEntityBranch(String id) {
+        return HandlerRepository.getIdBySecureId(
+                id,
+                branchRepository::findBySecureId,
+                projection -> branchRepository.findById(projection.getId()),
+                "Branch not found"
+        );
+    }
+
 
 }
