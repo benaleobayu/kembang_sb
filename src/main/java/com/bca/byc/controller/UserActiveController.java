@@ -3,11 +3,8 @@ package com.bca.byc.controller;
 
 import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.BulkByIdRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.model.Elastic.UserActiveElastic;
-import com.bca.byc.model.LogUserManagementRequest;
-import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
@@ -68,6 +65,7 @@ public class UserActiveController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "location", required = false) Long locationId,
             @RequestParam(name = "segmentation", required = false) UserType segmentation,
+            @RequestParam(name = "label", required = false) String label,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(name = "export", required = false) Boolean export,
@@ -90,7 +88,8 @@ public class UserActiveController {
             return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
         } else {
             // List data logic
-            ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate, segmentation);
+            UserManagementFilterList filter = new UserManagementFilterList(startDate, endDate, locationId, segmentation, label);
+            ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, filter);
             return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list active user", result, userManagementService.listAttributeUserManagement()));
         }
     }

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -56,9 +57,8 @@ public class AppUserDTOConverter {
         dto.setEmail(data.getEmail());
         AppUserDetail appUserDetail = data.getAppUserDetail();
         dto.setStatus(appUserDetail.getStatus());
-        dto.setType(appUserDetail.getMemberType());
-        dto.setTypeName(appUserDetail.getMemberType().equals(UserType.MEMBER_SOLITAIRE) ? "Solitaire" :
-                appUserDetail.getMemberType().equals(UserType.MEMBER_PRIORITY) ? "Priority" : "Member");
+        dto.setType(appUserDetail.getMemberType() != null ? appUserDetail.getMemberType() : null);
+        dto.setTypeName(appUserDetail.getAccountType() != null ? StringUtils.capitalize(appUserDetail.getAccountType().toLowerCase()) : null);
         dto.setAvatar(GlobalConverter.getParseImage(data.getAppUserDetail().getAvatar(), baseUrl));
         dto.setCover(GlobalConverter.getParseImage(data.getAppUserDetail().getCover(), baseUrl));
         dto.setBiodata(Objects.equals(appUserDetail.getBiodata(), "") ? null : appUserDetail.getBiodata());

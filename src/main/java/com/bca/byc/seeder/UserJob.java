@@ -66,6 +66,7 @@ public class UserJob {
                 null,
                 faker.name().firstName(),
                 faker.number().randomDigit(),
+                "ALUMNUS",
                 admin
         );
         AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);

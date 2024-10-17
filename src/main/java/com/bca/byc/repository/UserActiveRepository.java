@@ -1,6 +1,7 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.enums.UserType;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
@@ -24,21 +25,25 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "LEFT JOIN b.businessHasLocations bhl " +
             "LEFT JOIN bhl.location loc " +
             "WHERE " +
-            "(LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(u.appUserDetail.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(u.appUserDetail.phone) LIKE LOWER(CONCAT('%', :keyword, '%') ) OR " +
-            "LOWER(u.appUserDetail.memberBankAccount) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
+            "(LOWER(u.email) LIKE LOWER(:keyword ) OR " +
+            "LOWER(u.appUserDetail.name) LIKE LOWER(:keyword ) OR " +
+            "LOWER(u.appUserDetail.phone) LIKE LOWER(:keyword ) OR " +
+            "LOWER(u.appUserDetail.memberBankAccount) LIKE LOWER(:keyword ) ) AND " +
             "(:locationId IS NULL OR loc.id = :locationId) AND " +
+            "(:label IS NULL OR u.appUserDetail.label = :label) AND " +
+            "(:segmentation IS NULL OR u.appUserDetail.memberType = :segmentation) AND " +
             "aud.status = 6 AND " +
             "u.appUserAttribute.isSuspended IN (false) AND " +
             "u.appUserAttribute.isDeleted IN (false) AND " +
             "u.appUserAttribute.isHardDeleted IN (false) AND " +
             "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
-    Page<AppUser> findByKeywordAndStatusAndCreatedAt(@Param("keyword") String keyword,
-                                                     @Param("locationId") Long locationId,
-                                                     @Param("startDate") LocalDateTime start,
-                                                     @Param("endDate") LocalDateTime end,
-                                                     Pageable pageable);
+    Page<AppUser> GetDataIndexUserActive(@Param("keyword") String keyword,
+                                         Pageable pageable,
+                                         @Param("startDate") LocalDateTime start,
+                                         @Param("endDate") LocalDateTime end,
+                                         @Param("locationId") Long locationId,
+                                         @Param("segmentation") UserType segmentation,
+                                         @Param("label") String label);
 
     @Query("SELECT u FROM AppUser u ")
     List<UserActiveExportResponse> findAllData();
@@ -72,7 +77,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
             "WHERE " +
-            "(LOWER(aud.name) LIKE LOWER(CONCAT('%', :keyword, '%') ) ) AND " +
+            "(LOWER(aud.name) LIKE LOWER(:keyword ) ) AND " +
             "aud.status = 6 AND " +
             "aua.isSuspended = false AND " +
             "aua.isDeleted = false AND " +

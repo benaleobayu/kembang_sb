@@ -7,11 +7,11 @@ import com.bca.byc.converter.parsing.TreeLogUserManagement;
 import com.bca.byc.converter.parsing.TreeUserManagementConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.LogStatus;
-import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.UserActiveElastic;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementFilterList;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
@@ -39,7 +39,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -74,19 +73,19 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate, UserType segmentation) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter) {
+        ListOfFilterPagination filtering = new ListOfFilterPagination(
                 keyword,
-                startDate,
-                endDate
+                filter.getStartDate(),
+                filter.getEndDate()
         );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filtering);
 
         // set date
-        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
-        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndCreatedAt(set.keyword(), locationId, start, end, set.pageable());
+        Page<AppUser> pageResult = repository.GetDataIndexUserActive(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getLabel());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
             IndexResponse(c, dto);
