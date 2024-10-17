@@ -30,6 +30,7 @@ public class PostHomeResponse {
     // ------- added function -------
     private Boolean isMyPost = false;
     private Boolean isLiked = false;
+    private Boolean isSaved = false;
     private Boolean isFollowed = false;
     private Boolean isOfficial = false;
     // ------- added function -------

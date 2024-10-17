@@ -30,66 +30,8 @@ public class CommentDTOConverter {
     private ModelMapper modelMapper;
 
     // for get data
-    public ListCommentResponse convertToPageListResponse(Comment data) {
-        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
-        // mapping Entity with DTO Entity
-        ListCommentResponse dto = new ListCommentResponse();
-        dto.setId(data.getSecureId());
-        dto.setIndex(data.getId());
-        dto.setComment(data.getComment());
-
-        Business firstBusiness = data.getUser().getBusinesses().stream()
-                .filter(Business::getIsPrimary).findFirst().orElse(null);
-        assert firstBusiness != null;
-        BusinessCategory firstBusinessCategory = firstBusiness.getBusinessCategories().stream()
-                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
-        assert firstBusinessCategory != null;
-        PostOwnerResponse owner = converter.PostOwnerResponse(
-                new PostOwnerResponse(),
-                data.getUser().getSecureId(),
-                data.getUser().getName(),
-                data.getUser().getAppUserDetail().getAvatar(),
-                firstBusiness.getName(),
-                firstBusinessCategory.getName(),
-                firstBusiness.getIsPrimary(),
-                null
-        );
-        dto.setOwner(owner);
-//        dto.setOwner(owner);
-        List<ListCommentReplyResponse> commentReplyResponse  = new ArrayList<>();
-        for (CommentReply reply : data.getCommentReply()) {
-            ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
-            replyResponse.setId(reply.getSecureId());
-            replyResponse.setIndex(reply.getId());
-            replyResponse.setComment(reply.getComment());
-            Business firstBusinessOnReply = data.getUser().getBusinesses().stream()
-                    .filter(Business::getIsPrimary).findFirst().orElse(null);
-            assert firstBusinessOnReply != null;
-            BusinessCategory firstBusinessCategoryOnReply = firstBusiness.getBusinessCategories().stream()
-                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null);
-            assert firstBusinessCategoryOnReply != null;
-            PostOwnerResponse replyOwner = converter.PostOwnerResponse(
-                    new PostOwnerResponse(),
-                    data.getUser().getSecureId(),
-                    data.getUser().getName(),
-                    data.getUser().getAppUserDetail().getAvatar(),
-                    firstBusinessOnReply.getName(),
-                    firstBusinessCategoryOnReply.getName(),
-                    firstBusinessOnReply.getIsPrimary(),
-                    null
-            );
-            replyResponse.setOwner(replyOwner);
-            commentReplyResponse.add(replyResponse);
-        }
-//        dto.setCommentReply(commentReplyResponse);
-        dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
-        // return
-        return dto;
-    }
-
-    // for get data
     public CommentDetailResponse convertToListResponse(Comment data) {
-        AppUser user = GlobalConverter.getUserEntity(userRepository);
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
@@ -110,12 +52,13 @@ public class CommentDTOConverter {
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                user
+                owner,
+                userLogin
         ));
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
-        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        boolean isOwner = Objects.equals(userLogin.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);
-        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLike(isLike);
         // return
         return dto;
@@ -123,7 +66,7 @@ public class CommentDTOConverter {
 
      // for get data replies
     public CommentDetailResponse convertToListRepliesResponse(CommentReply data) {
-        AppUser user = GlobalConverter.getUserEntity(userRepository);
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
@@ -144,12 +87,13 @@ public class CommentDTOConverter {
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                user
+                data.getUser(),
+                userLogin
         ));
         dto.setCreatedAt(Formatter.formatDateTimeApps(data.getCreatedAt()));
-        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        boolean isOwner = Objects.equals(userLogin.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);
-        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLike(isLike);
         dto.setParentId(data.getParentComment().getSecureId());
         // return

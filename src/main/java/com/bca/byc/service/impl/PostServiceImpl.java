@@ -45,12 +45,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category) {
-        // Get user id
-        AppUser user;
+        // Get userLogin
+        AppUser userLogin;
         if (email != null){
-            user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
+            userLogin = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         } else {
-            user = null;
+            userLogin = null;
         }
 
         ListOfFilterPagination filter = new ListOfFilterPagination(
@@ -63,13 +63,13 @@ public class PostServiceImpl implements PostService {
             pageResult = postRepository.findRandomPosts(set.keyword(), set.pageable());
         }
         if (Objects.equals(category, "following")) {
-            if (user == null) {
+            if (userLogin == null) {
                 throw new ResourceNotFoundException("User not found");
             }
-            pageResult = postRepository.findPostByFollowingUsers(user.getId(), set.keyword(), set.pageable());
+            pageResult = postRepository.findPostByFollowingUsers(userLogin.getId(), set.keyword(), set.pageable());
         }
         if (Objects.equals(category, "discover")) {
-            if (user == null) {
+            if (userLogin == null) {
                 throw new ResourceNotFoundException("User not found");
             }
             pageResult = postRepository.findPostByOfficialUsers(set.keyword(), set.pageable());
@@ -77,7 +77,7 @@ public class PostServiceImpl implements PostService {
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            return converter.convertToDetailResponse(post, user == null ? null : user.getId() );
+            return converter.convertToDetailResponse(post, userLogin);
         }).collect(Collectors.toList());
 
         return PageCreateReturnApps.create(pageResult, dtos);
@@ -107,7 +107,7 @@ public class PostServiceImpl implements PostService {
         AppUser user = GlobalConverter.getUserEntity(appUserRepository);
         Post data = getEntityBySecureId(secureId, postRepository, "Post not found");
 
-        return converter.convertToDetailResponse(data, user.getId());
+        return converter.convertToDetailResponse(data, user);
     }
 
     @Override

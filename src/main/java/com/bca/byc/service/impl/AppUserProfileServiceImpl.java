@@ -95,7 +95,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        // Set up pagination and sorting
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
@@ -103,15 +103,14 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
 
         String userId = GlobalConverter.getUuidUser(userRepository);
-        AppUser user = GlobalConverter.getUserEntity(userRepository);
 
-        // Retrieve likes for the user
+        // Retrieve likes for the userLogin
         Page<UserHasSavedPost> likesPage = userHasSavedPostRepository.findSavedPostByUserId(userId, set.pageable());
 
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(savedPost -> {
                     Post post = savedPost.getPost();
-                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
+                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, userLogin);
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -136,7 +135,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         List<PostHomeResponse> dtos = likesPage.stream()
                 .map(likeDislike -> {
                     Post post = likeDislike.getPost();
-                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, user.getId());
+                    PostHomeResponse dto = postConverter.convertToDetailResponse(post, user);
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -146,26 +145,22 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public ResultPageResponseDTO<ProfileActivityPostCommentsResponse> listDataPostCommentsActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-
-
-        AppUser user = GlobalConverter.getUserEntity(userRepository);
-        String userId = user.getSecureId();
-
-        // Get comment form user
-        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userId, set.pageable());
+        // Get comment form userLogin
+        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userLogin.getSecureId(), set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
         TreePostConverter postConverter = new TreePostConverter(baseUrl, userRepository);
 
         List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
             Comment comment = result.getComment(); // Get comment
-            AppUser commentUser = result.getCommentUser(); // Get user create comment
+            AppUser commentUser = result.getCommentUser(); // Get userLogin create comment
             CommentReply commentReply = result.getCommentReply(); // Get commentReply
-            AppUser replyUser = result.getReplyUser(); // Get user create commentReply
+            AppUser replyUser = result.getReplyUser(); // Get userLogin create commentReply
             Post post = comment.getPost(); // Get post dari comment src
 
             ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
@@ -194,7 +189,8 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         firstBusiness != null ? firstBusiness.getName() : null,
                         firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                         firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                        user
+                        post.getUser(),
+                        userLogin
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
             }

@@ -51,10 +51,7 @@ public class AppSearchServiceImpl implements AppSearchService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listResultPosts(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        // get user id
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-        Long userId = user.getId();
+        AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
 
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
@@ -70,7 +67,7 @@ public class AppSearchServiceImpl implements AppSearchService {
                     new PostHomeResponse(),
                     data,
                     treePostConverter,
-                    user,
+                    userLogin,
                     likeDislikeRepository
             );
             return dto;

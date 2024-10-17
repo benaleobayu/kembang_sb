@@ -151,7 +151,7 @@ public class AppUserServiceImpl implements AppUserService {
         Page<Post> pageResult = postRepository.findMyPost(set.keyword(), set.pageable(), creatorId.getId());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = postConverter.convertToDetailResponse(post, userLogin.getId());
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, userLogin);
             return dto;
         }).collect(Collectors.toList());
 
@@ -173,7 +173,7 @@ public class AppUserServiceImpl implements AppUserService {
         Page<Post> pageResult = postRepository.findTaggedPost(creator.getId(), set.pageable());
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = postConverter.convertToDetailResponse(post, creator.getId());
+            PostHomeResponse dto = postConverter.convertToDetailResponse(post, creator);
             return dto;
         }).collect(Collectors.toList());
 

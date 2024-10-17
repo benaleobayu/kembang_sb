@@ -11,7 +11,6 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public class TreePostConverter {
             PostHomeResponse dto,
             Post data,
             TreePostConverter converter,
-            AppUser user,
+            AppUser userLogin,
             LikeDislikeRepository likeDislikeRepository
     ){
 
@@ -45,18 +44,18 @@ public class TreePostConverter {
 
         dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser));
+        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
         dto.setPostCategory(convertPostCategory(data.getPostCategory()));
 
         // check is my post or not
-        dto.setIsMyPost(Objects.equals(appUser.getId(), user.getId()));
+        dto.setIsMyPost(Objects.equals(appUser.getId(), userLogin.getId()));
 
-        // Check if the post is liked by the user
-        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), user.getId()).isPresent();
+        // Check if the post is liked by the userLogin
+        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLiked(isLiked);
 
-        // Check if the user is following the post owner
-        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
+        // Check if the userLogin is following the post owner
+        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(userLogin.getId()));
         dto.setIsFollowed(isFollowing);
 
         dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
@@ -122,6 +121,7 @@ public class TreePostConverter {
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                data.getUser(),
                 user
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : null);
@@ -161,6 +161,7 @@ public class TreePostConverter {
                 firstBusiness != null ? firstBusiness.getName() : null,
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                data.getUser(),
                 user
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : "No data");
@@ -173,7 +174,7 @@ public class TreePostConverter {
         return dto;
     }
     // Helper owner with business
-    public PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser) {
+    public PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser, AppUser userLogin) {
         return converter.PostOwnerResponse(
                 new PostOwnerResponse(),
                 appUser.getSecureId(),
@@ -193,10 +194,19 @@ public class TreePostConverter {
                         .filter(Business::getIsPrimary)
                         .map(business -> true)
                         .findFirst().orElse(false),
-                appUser
+                appUser,
+                userLogin
         );
     }
-    public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto, String id, String name, String avatar, String businessName, String lineOfBusiness, Boolean isPrimary, AppUser user
+    public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto,
+                                               String id,
+                                               String name,
+                                               String avatar,
+                                               String businessName,
+                                               String lineOfBusiness,
+                                               Boolean isPrimary,
+                                               AppUser userPost,
+                                               AppUser userLogin
     ) {
         AppUser owner = HandlerRepository.getIdBySecureId(
                 id,
@@ -207,9 +217,9 @@ public class TreePostConverter {
         dto.setId(id);
         dto.setName(name);
         dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
-        boolean isMyAccount = Objects.equals(user.getSecureId(), id);
+        boolean isMyAccount = Objects.equals(userPost.getId(), userLogin.getId());
         dto.setIsMyAccount(isMyAccount);
-        boolean isFollowing = user.getFollows().stream().anyMatch(f -> f.getId().equals(owner.getId()));
+        boolean isFollowing = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(userPost.getId()));
         dto.setIsFollowed(isFollowing);
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);

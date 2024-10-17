@@ -9,10 +9,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface UserHasSavedPostRepository extends JpaRepository<UserHasSavedPost, Long> {
 
     @Query("SELECT sp FROM UserHasSavedPost sp WHERE sp.user.secureId = :userId")
     Page<UserHasSavedPost> findSavedPostByUserId(@Param("userId") String userId, Pageable pageable);
 
     UserHasSavedPost findByPostAndUser(Post post, AppUser user);
+
+    Optional<UserHasSavedPost> findByPostIdAndUserId(Long postId, Long userId);
 }

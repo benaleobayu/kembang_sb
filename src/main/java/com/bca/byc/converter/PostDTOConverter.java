@@ -26,15 +26,14 @@ public class PostDTOConverter {
     private final ModelMapper modelMapper;
     private final TagRepository tagRepository;
     private final PostLocationRepository postLocationRepository;
-    private final PostCategoryRepository postCategoryRepository;
     private final BusinessCategoryRepository businessCategoryRepository;
-    private final CommentRepository commentRepository;
     private final LikeDislikeRepository likeDislikeRepository;
     private final AppUserRepository userRepository;
+    private final UserHasSavedPostRepository savedPostRepository;
     @Value("${app.base.url}")
     private String baseUrl;
 
-    public PostHomeResponse convertToDetailResponse(Post data, Long userId) {
+    public PostHomeResponse convertToDetailResponse(Post data, AppUser userLogin) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
         TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
@@ -46,22 +45,26 @@ public class PostDTOConverter {
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
         dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
-        AppUser appUser = data.getUser();
+        AppUser postUser = data.getUser();
 
         dto.setPostTagsList(converter.convertTagList(data.getTags()));
         dto.setPostHighlightsList(GlobalConverter.convertListToArray(data.getHighlight()));
         dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
-        dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, appUser));
+        dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, postUser, userLogin));
 
-        dto.setIsMyPost(data.getUser().getId().equals(userId));
+        dto.setIsMyPost(data.getUser().getId().equals(userLogin.getId()));
 
         // Check if the post is liked by the user
-        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userId).isPresent();
+        boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLiked(isLiked);
 
         // Check if the user is following the post owner
-        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(userId));
+        boolean isFollowing = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(data.getUser().getId()));
         dto.setIsFollowed(isFollowing);
+
+        // Check if the user is saved post
+        boolean isSaved = savedPostRepository.findByPostIdAndUserId(data.getId(), userLogin.getId()).isPresent();
+        dto.setIsSaved(isSaved);
 
         dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
 
