@@ -2,10 +2,10 @@ package com.bca.byc.service;
 
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementFilterList;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 public interface UserDeletedService {
@@ -15,8 +15,8 @@ public interface UserDeletedService {
                                                                String sortBy,
                                                                String direction,
                                                                String keyword,
-                                                               Long locationId, LocalDate startDate,
-                                                               LocalDate endDate);
+
+                                                               UserManagementFilterList filter);
 
     UserManagementDetailResponse findDataById(String id) throws BadRequestException;
 
