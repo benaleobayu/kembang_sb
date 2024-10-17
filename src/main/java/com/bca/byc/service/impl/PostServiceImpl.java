@@ -46,8 +46,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category) {
         // Get user id
-        AppUser user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
-        Long userId = user.getId();
+        AppUser user;
+        if (email != null){
+            user = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
+        } else {
+            user = null;
+        }
 
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
@@ -59,16 +63,21 @@ public class PostServiceImpl implements PostService {
             pageResult = postRepository.findRandomPosts(set.keyword(), set.pageable());
         }
         if (Objects.equals(category, "following")) {
-            pageResult = postRepository.findPostByFollowingUsers(userId, set.keyword(), set.pageable());
+            if (user == null) {
+                throw new ResourceNotFoundException("User not found");
+            }
+            pageResult = postRepository.findPostByFollowingUsers(user.getId(), set.keyword(), set.pageable());
         }
-        if (Objects.equals(category, "discovery")) {
+        if (Objects.equals(category, "discover")) {
+            if (user == null) {
+                throw new ResourceNotFoundException("User not found");
+            }
             pageResult = postRepository.findPostByOfficialUsers(set.keyword(), set.pageable());
         }
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
-            PostHomeResponse dto = converter.convertToDetailResponse(post, userId);
-            return dto;
+            return converter.convertToDetailResponse(post, user == null ? null : user.getId() );
         }).collect(Collectors.toList());
 
         return PageCreateReturnApps.create(pageResult, dtos);

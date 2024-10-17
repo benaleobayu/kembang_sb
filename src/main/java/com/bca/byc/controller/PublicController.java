@@ -3,14 +3,18 @@ package com.bca.byc.controller;
 
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.*;
 import com.bca.byc.service.cms.FaqCategoryService;
 import com.bca.byc.service.cms.LocationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +44,7 @@ public class PublicController {
     private final LocationService locationService;
     private final ExpectCategoryService expectCategoryService;
     private final PreRegisterService preRegisterService;
+    private final PostService postService;
 
     // show by identity
     @GetMapping("/setting")
@@ -96,6 +101,21 @@ public class PublicController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @Operation(summary = "Get list post home without bearer", description = "Get list post home")
+    @GetMapping("/home-post")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostHome(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @Schema(example = "top-picks", description = "top-picks | following | discover")
+            @RequestParam(name = "category", required = false, defaultValue = "top-picks") String category) {
+        // response true
+
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(null, pages, limit, sortBy, direction, keyword, category)));
     }
 
     // get test pre register
