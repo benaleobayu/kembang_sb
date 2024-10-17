@@ -30,7 +30,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "LOWER(u.appUserDetail.phone) LIKE LOWER(:keyword ) OR " +
             "LOWER(u.appUserDetail.memberBankAccount) LIKE LOWER(:keyword ) ) AND " +
             "(:locationId IS NULL OR loc.id = :locationId) AND " +
-            "(:label IS NULL OR u.appUserDetail.label = :label) AND " +
+            "(:isSenior IS NULL OR u.appUserDetail.isSenior = :isSenior) AND " +
             "(:segmentation IS NULL OR u.appUserDetail.memberType = :segmentation) AND " +
             "aud.status = 6 AND " +
             "u.appUserAttribute.isSuspended IN (false) AND " +
@@ -43,7 +43,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
                                          @Param("endDate") LocalDateTime end,
                                          @Param("locationId") Long locationId,
                                          @Param("segmentation") UserType segmentation,
-                                         @Param("label") String label);
+                                         @Param("isSenior") Boolean isSenior);
 
     @Query("SELECT u FROM AppUser u ")
     List<UserActiveExportResponse> findAllData();

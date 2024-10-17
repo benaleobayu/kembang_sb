@@ -65,7 +65,7 @@ public class UserActiveController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "location", required = false) Long locationId,
             @RequestParam(name = "segmentation", required = false) UserType segmentation,
-            @RequestParam(name = "senior", required = false) String senior,
+            @RequestParam(name = "isSenior", required = false) Boolean isSenior,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(name = "export", required = false) Boolean export,
@@ -75,7 +75,7 @@ public class UserActiveController {
             // Export logic
             response.setContentType("application/octet-stream");
             String headerKey = "Content-Disposition";
-            String headerValue = "attachment; filename=pre-register.xls";
+            String headerValue = "attachment; filename=active-user.xls";
             response.setHeader(headerKey, headerValue);
 
             ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation);
@@ -88,7 +88,7 @@ public class UserActiveController {
             return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
         } else {
             // List data logic
-            UserManagementFilterList filter = new UserManagementFilterList(startDate, endDate, locationId, segmentation, senior);
+            UserManagementFilterList filter = new UserManagementFilterList(startDate, endDate, locationId, segmentation, isSenior);
             ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, filter);
             return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list active user", result, userManagementService.listAttributeUserManagement()));
         }
@@ -162,6 +162,7 @@ public class UserActiveController {
         }
     }
 
+    @Operation(summary = "Export User Active", description = "Export User Active", hidden = true)
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response) throws IOException {
         log.info("GET " + urlRoute + "/export endpoint hit");

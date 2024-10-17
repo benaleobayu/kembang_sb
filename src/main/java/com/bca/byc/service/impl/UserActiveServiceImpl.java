@@ -85,7 +85,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
         LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.GetDataIndexUserActive(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getLabel());
+        Page<AppUser> pageResult = repository.GetDataIndexUserActive(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getIsSenior());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
             IndexResponse(c, dto);
