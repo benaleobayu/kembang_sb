@@ -3,11 +3,11 @@ package com.bca.byc.service;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ActionMessageRequest;
 import com.bca.byc.model.UserManagementDetailResponse;
+import com.bca.byc.model.UserManagementFilterList;
 import com.bca.byc.model.UserManagementListResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 public interface UserSuspendedService {
@@ -16,10 +16,8 @@ public interface UserSuspendedService {
                                                                Integer limit,
                                                                String sortBy,
                                                                String direction,
-                                                               String userName,
-                                                               Long locationId,
-                                                               LocalDate startDate,
-                                                               LocalDate endDate);
+                                                               String keyword,
+                                                               UserManagementFilterList filter);
 
     UserManagementDetailResponse findDataBySecureId(String id) throws BadRequestException;
 

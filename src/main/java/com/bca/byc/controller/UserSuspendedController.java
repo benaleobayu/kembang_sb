@@ -1,12 +1,14 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.enums.UserType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ActionMessageRequest;
-import com.bca.byc.model.BulkByIdRequest;
-import com.bca.byc.model.LogUserManagementRequest;
-import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.response.*;
+import com.bca.byc.model.*;
+import com.bca.byc.model.export.ExportFilterRequest;
+import com.bca.byc.response.ApiDataResponse;
+import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationCmsResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserManagementExportService;
 import com.bca.byc.service.UserManagementService;
 import com.bca.byc.service.UserSuspendedService;
@@ -41,21 +43,41 @@ public class UserSuspendedController {
 
     @Operation(summary = "Get list user suspended", description = "Get list user suspended")
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<UserManagementDetailResponse>>> listFollowUser(
+    public ResponseEntity<?> listFollowUser(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "location", required = false) Long locationId,
+            @RequestParam(name = "segmentation", required = false) UserType segmentation,
+            @RequestParam(name = "isSenior", required = false) Boolean isSenior,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(name = "export", required = false) Boolean export,
+            HttpServletResponse response
     ) {
-        // response true
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true,
-                "Success get list user",
-                service.listData(pages, limit, sortBy, direction, keyword, locationId, startDate, endDate),
-                userManagementService.listAttributeUserManagement()));
+        if (Boolean.TRUE.equals(export)) {
+            // Export logic
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=active-user.xls";
+            response.setHeader(headerKey, headerValue);
+
+            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation);
+            try {
+                exportService.exportExcelPreRegister(response, filter);
+            } catch (IOException e) {
+                log.error("Error exporting data", e);
+                return ResponseEntity.internalServerError().body("Error exporting data");
+            }
+            return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
+        } else {
+            // response true
+            UserManagementFilterList filter = new UserManagementFilterList(startDate, endDate, locationId, segmentation, isSenior);
+            ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, filter);
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list suspended user", result, userManagementService.listAttributeUserManagement()));
+        }
     }
 
     @Operation(summary = "Get user suspended by id", description = "Get user suspended by id")

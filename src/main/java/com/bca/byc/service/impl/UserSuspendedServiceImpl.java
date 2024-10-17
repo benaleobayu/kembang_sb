@@ -9,10 +9,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ActionMessageRequest;
-import com.bca.byc.model.LogUserManagementRequest;
-import com.bca.byc.model.UserManagementDetailResponse;
-import com.bca.byc.model.UserManagementListResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -28,7 +25,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -50,21 +46,22 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     private final UserSuspendedDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, Long locationId, LocalDate startDate, LocalDate endDate) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
+    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter) {
+        ListOfFilterPagination filtering = new ListOfFilterPagination(
                 keyword,
-                startDate,
-                endDate
+                filter.getStartDate(),
+                filter.getEndDate()
         );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-        // set date
-        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
-        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filtering);
 
-        Page<AppUser> pageResult = repository.findByKeywordAndStatusAndSuspendedAndCreatedAt(set.keyword(), locationId, start, end, set.pageable());
+        // set date
+        LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
+        LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
+
+        Page<AppUser> pageResult = repository.GetDataSuspendedUser(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getIsSenior());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
-            IndexResponse(c,dto);
+            IndexResponse(c, dto);
             return dto;
         }).collect(Collectors.toList());
 
