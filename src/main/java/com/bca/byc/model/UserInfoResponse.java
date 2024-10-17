@@ -25,11 +25,13 @@ public class UserInfoResponse {
     private String phone;
     private String createdAt;
 
-    private LocationListResponse location; // TODO: location
+    private LocationListResponse location; //
 
     private List<BusinessListResponse> businesses; // <business>
 
     private List<ExpectCategoryUserInfoResponse> expectCategory; // <category>
+
+    private Boolean isFollowed = false;
 
 //    private Integer totalFollowers;
     private Integer totalFollowing;

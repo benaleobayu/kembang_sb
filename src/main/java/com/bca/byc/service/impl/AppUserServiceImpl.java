@@ -110,8 +110,9 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public UserInfoResponse getUserDetails(String userId) {
+        AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
         AppUser user = getUserBySecureId(userId);
-        return converter.convertToInfoResponse(user);
+        return converter.convertToInfoResponse(user, userLogin);
     }
 
     @Override

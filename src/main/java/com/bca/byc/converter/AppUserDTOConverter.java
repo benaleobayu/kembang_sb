@@ -49,7 +49,7 @@ public class AppUserDTOConverter {
         return data;
     }
 
-    public UserInfoResponse convertToInfoResponse(AppUser data) {
+    public UserInfoResponse convertToInfoResponse(AppUser data, AppUser userLogin) {
         // Mapping Entity with DTO Entity
         UserInfoResponse dto = modelMapper.map(data, UserInfoResponse.class);
         dto.setId(data.getSecureId());
@@ -145,6 +145,9 @@ public class AppUserDTOConverter {
         } else {
             log.warn("Location is null for user: {}", data.getId());
         }
+
+        boolean isFollowed = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(data.getId()));
+        dto.setIsFollowed(isFollowed);
 
         // Count followers, following, posts, events
 //        dto.setTotalFollowers(data.getFollowers() != null ? data.getFollowers().size() : 0);
