@@ -11,11 +11,13 @@ import java.util.List;
 
 public interface ExpectCategoryService {
 
+    // public
+    List<PublicExpectCategoryDetailResponse> findAllData();
+
+    // cms
     ResultPageResponseDTO<ExpectCategoryIndexResponse> listDataExpectCategory(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ExpectCategoryIndexResponse findDataBySecureId(String id) throws BadRequestException;
-
-    List<PublicExpectCategoryDetailResponse> findAllData();
 
     void saveData(@Valid ExpectCategoryCreateUpdateRequest dto) throws BadRequestException;
 

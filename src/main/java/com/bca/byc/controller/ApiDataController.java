@@ -2,15 +2,15 @@ package com.bca.byc.controller;
 
 import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.PostCategory;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.SecureIdAndNameResponse;
 import com.bca.byc.model.data.ListTagUserResponse;
 import com.bca.byc.model.data.TagDetailResponse;
+import com.bca.byc.response.ApiDataResponse;
+import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.service.BusinessCategoryService;
-import com.bca.byc.service.PostCategoryService;
-import com.bca.byc.service.TagService;
-import com.bca.byc.service.UserActiveService;
+import com.bca.byc.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +37,18 @@ public class ApiDataController {
     private final UserActiveService tagUserService;
     private final PostCategoryService postCategoryService;
     private final BusinessCategoryService businessCategoryService;
+    private final ReasonReportService reasonReportService;
+
+    // reason report category
+    @GetMapping("/reason-report")
+    public ResponseEntity<?> ReasonReportList() {
+        log.info("GET /api/v1/data/reason-report endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found reason report", reasonReportService.findAllData()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags", description = "Get all tags")

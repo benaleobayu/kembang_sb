@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ReasonReport;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ReasonReportCreateUpdateRequest;
@@ -43,6 +44,17 @@ public class ReasonReportServiceImpl implements ReasonReportService {
     private String baseUrl;
 
     @Override
+    public List<ReasonReportIndexResponse> findAllData() {
+        // Get the list
+        List<ReasonReportProjection> datas = repository.findDataForPublic();
+
+        // stream into the list
+        return datas.stream()
+                .map(this::convertToListResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ResultPageResponseDTO<ReasonReportIndexResponse> listDataReasonReportIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
@@ -50,20 +62,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<ReasonReportProjection> pageResult = repository.findDataReasonReportIndex(set.keyword(), set.pageable());
-        List<ReasonReportIndexResponse> dtos = pageResult.stream().map((data) -> {
-            ReasonReportIndexResponse dto = new ReasonReportIndexResponse();
-            dto.setId(data.getId());
-            dto.setIndex(data.getOrders());
-            dto.setIcon(GlobalConverter.getParseImage(data.getIcon(), baseUrl));
-            dto.setName(data.getName());
-            dto.setStatus(data.getStatus());
-
-            dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-            dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
-            dto.setCreatedBy(data.getCreatedBy());
-            dto.setUpdatedBy(data.getUpdatedBy());
-            return dto;
-        }).collect(Collectors.toList());
+        List<ReasonReportIndexResponse> dtos = pageResult.stream().map(this::convertToListResponse).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
     }
@@ -139,4 +138,20 @@ public class ReasonReportServiceImpl implements ReasonReportService {
             data.setIcon(GlobalConverter.replaceImagePath(filePath));
         }
     }
+
+    private ReasonReportIndexResponse convertToListResponse(ReasonReportProjection data) {
+        ReasonReportIndexResponse dto = new ReasonReportIndexResponse();
+        dto.setId(data.getId());
+        dto.setIndex(data.getOrders());
+        dto.setIcon(GlobalConverter.getParseImage(data.getIcon(), baseUrl));
+        dto.setName(data.getName());
+        dto.setStatus(data.getStatus());
+
+        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+        dto.setCreatedBy(data.getCreatedBy());
+        dto.setUpdatedBy(data.getUpdatedBy());
+        return dto;
+    }
+
 }
