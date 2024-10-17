@@ -64,9 +64,9 @@ public class UserSuspendedController {
             String headerValue = "attachment; filename=active-user.xls";
             response.setHeader(headerKey, headerValue);
 
-            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation);
+            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation, isSenior);
             try {
-                exportService.exportExcelPreRegister(response, filter);
+                exportService.exportExcelUserSuspended(response, filter);
             } catch (IOException e) {
                 log.error("Error exporting data", e);
                 return ResponseEntity.internalServerError().body("Error exporting data");
@@ -140,14 +140,14 @@ public class UserSuspendedController {
         }
     }
 
-    @Operation(summary = "Export Excel", description = "Export Excel")
+    @Operation(summary = "Export Excel", description = "Export Excel", hidden = true)
     @GetMapping("/export")
     public void exportExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=user-suspended.xls";
         response.setHeader(headerKey, headerValue);
-        exportService.exportExcelUserSuspended(response);
+        exportService.exportExcelUserSuspended(response, null);
     }
 
 }

@@ -53,21 +53,33 @@ public interface UserSuspendedRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT new com.bca.byc.model.export.UserActiveExportResponse(" +
             "branch.name, aud.name, " +
-            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberBirthdate ELSE aud.parentBirthdate END, " +
+            "aud.memberBirthdate, " +
             "u.email, " +
-            "CASE WHEN aud.userAs is null OR aud.userAs = 'member' THEN aud.memberCin ELSE aud.parentCin END, " +
+            "aud.memberCin, " +
+            "aud.memberType, " +
             "aud.phone, u.createdAt) " +
             "FROM AppUser u " +
             "LEFT JOIN AppUserDetail aud ON aud.id = u.appUserDetail.id " +
             "LEFT JOIN AppUserAttribute aua ON aua.id = u.appUserAttribute.id " +
             "LEFT JOIN aud.branchCode branch " +
+            "LEFT JOIN u.businesses b " +
+            "LEFT JOIN b.businessHasLocations bhl " +
+            "LEFT JOIN bhl.location loc " +
             "WHERE " +
             "aud.status = 6 AND " +
             "aua.isSuspended = true AND " +
             "aua.isDeleted = false AND " +
-            "aua.isHardDeleted = false " +
+            "aua.isHardDeleted = false AND " +
+            "(:segmentation IS NULL OR aud.memberType = :segmentation) AND " +
+            "(:locationId IS NULL OR loc.id = :locationId) AND " +
+            "(:isSenior IS NULL OR aud.isSenior = :isSenior) AND " +
+            "u.createdAt BETWEEN :startDate AND :endDate " +
             "ORDER BY u.createdAt DESC")
-    List<UserActiveExportResponse> findDataForExport();
+    List<UserActiveExportResponse> findDataForExport(@Param("startDate") LocalDateTime start,
+                                                     @Param("endDate") LocalDateTime end,
+                                                     @Param("segmentation") UserType segmentation,
+                                                     @Param("locationId") Long locationId,
+                                                     @Param("isSenior") Boolean isSenior);
 
     Optional<AppUser> findBySecureId(String id);
 }
