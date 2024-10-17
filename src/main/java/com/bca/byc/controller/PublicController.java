@@ -44,6 +44,7 @@ public class PublicController {
     private final ExpectCategoryService expectCategoryService;
     private final PreRegisterService preRegisterService;
     private final PostService postService;
+    private final ReasonReportService reasonReportService;
 
     // show by identity
     @GetMapping("/setting")
@@ -55,7 +56,6 @@ public class PublicController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
-
 
     // how all faq
     @GetMapping("/faq")
@@ -97,6 +97,17 @@ public class PublicController {
         try {
             // -- public --
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found expect category", expectCategoryService.findAllData()));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    // reason report category
+    @GetMapping("/reason-report")
+    public ResponseEntity<?> ReasonReportList() {
+        log.info("GET /api/v1/public/reason-report endpoint hit");
+        try {
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found reason report", reasonReportService.findAllData()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

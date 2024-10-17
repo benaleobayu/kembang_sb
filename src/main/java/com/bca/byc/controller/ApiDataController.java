@@ -37,18 +37,6 @@ public class ApiDataController {
     private final UserActiveService tagUserService;
     private final PostCategoryService postCategoryService;
     private final BusinessCategoryService businessCategoryService;
-    private final ReasonReportService reasonReportService;
-
-    // reason report category
-    @GetMapping("/reason-report")
-    public ResponseEntity<?> ReasonReportList() {
-        log.info("GET /api/v1/data/reason-report endpoint hit");
-        try {
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found reason report", reasonReportService.findAllData()));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        }
-    }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all tags", description = "Get all tags")
