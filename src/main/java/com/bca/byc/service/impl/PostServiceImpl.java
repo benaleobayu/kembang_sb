@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
@@ -79,16 +80,9 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
         Post data = converter.convertToCreateRequest(user, dto);
-        String contentType = "text";
 
-        boolean hasImage = contentList.stream().anyMatch(pc -> pc.getType().contains("image"));
-        boolean hasVideo = contentList.stream().anyMatch(pc -> pc.getType().contains("video"));
-
-        if (hasImage) {
-            contentType = "image";
-        } else if (hasVideo) {
-            contentType = "video";
-        }
+        TreePostConverter treePostConverter = new TreePostConverter(null,null);
+        String contentType = treePostConverter.getContentTypePost(contentList);
 
         data.setContentType(contentType);
         Post savedPost = postRepository.save(data);

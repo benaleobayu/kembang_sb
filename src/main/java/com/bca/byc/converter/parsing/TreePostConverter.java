@@ -294,4 +294,18 @@ public class TreePostConverter {
         dto.setPostCategoryName(data.getName());
         return dto;
     }
+
+    public String getContentTypePost(List<PostContent> contentList){
+        String contentType = "text";
+
+        boolean hasImage = contentList.stream().anyMatch(pc -> pc.getType().contains("image"));
+        boolean hasVideo = contentList.stream().anyMatch(pc -> pc.getType().contains("video"));
+
+        if (hasImage) {
+            contentType = "image";
+        } else if (hasVideo) {
+            contentType = "video";
+        }
+        return contentType;
+    }
 }

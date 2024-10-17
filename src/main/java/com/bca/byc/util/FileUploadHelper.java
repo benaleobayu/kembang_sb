@@ -110,18 +110,17 @@ public class FileUploadHelper {
 
     // Method to check if the file is a video
     public static boolean isVideoFile(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+        Tika tika = new Tika();
 
-        return fileName != null && (
-                fileName.endsWith(".mp4") ||
-                        fileName.endsWith(".avi") ||
-                        fileName.endsWith(".mkv") ||
-                        fileName.endsWith(".mov") ||
-                        fileName.endsWith(".wmv") ||
-                        fileName.endsWith(".flv") ||
-                        fileName.endsWith(".mpeg") ||
-                        fileName.endsWith(".3gp")
-        );
+        try {
+            String mimeType = tika.detect(file.getInputStream());
+            System.out.println("Detected MIME type: " + mimeType);
+
+            return mimeType.startsWith("video/");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 
