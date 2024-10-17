@@ -2,10 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
-import com.bca.byc.entity.BusinessCategory;
-import com.bca.byc.entity.BusinessHasCategory;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
-import com.bca.byc.model.export.BusinessExportResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
@@ -37,7 +33,8 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.business.id " +
             "WHERE (LOWER(bc.name) LIKE LOWER(:keyword)) AND " +
             "b.isActive = true AND b.isDeleted = false AND " +
-            "b.user.id = :id")
+            "b.user.id = :id " +
+            "ORDER BY b.isPrimary DESC, b.id ASC")
     Page<Business> findBusinessByKeyword(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
 
 

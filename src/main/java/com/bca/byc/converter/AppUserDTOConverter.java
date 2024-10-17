@@ -81,7 +81,6 @@ public class AppUserDTOConverter {
                 business.setName(b.getName());
                 business.setIsPrimary(b.getIsPrimary());
 
-                int businessChildIdx = 1;
                 List<BusinessCategoryResponse> businessCategoryResponses = b.getBusinessCategories().stream()
                         .map(bc -> {
                             BusinessCategoryResponse businessCategoryResponse = new BusinessCategoryResponse();
@@ -100,7 +99,10 @@ public class AppUserDTOConverter {
                 business.setLineOfBusiness(lineOfBusiness);
 
                 return business;
-            }).collect(Collectors.toList());
+            })
+                    .sorted(Comparator.comparing(BusinessListResponse::getIsPrimary).reversed()
+                            .thenComparing(BusinessListResponse::getIndex))
+            .collect(Collectors.toList());
             dto.setBusinesses(businesses);
         } else {
             log.warn("Businesses list is empty or null for user: {}", data.getId());
