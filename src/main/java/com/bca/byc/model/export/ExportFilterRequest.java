@@ -15,6 +15,7 @@ public class ExportFilterRequest {
     private AdminApprovalStatus status;
     private Long locationId;
     private UserType segmentation;
+    private Boolean isSenior;
 
     public ExportFilterRequest(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
@@ -52,5 +53,13 @@ public class ExportFilterRequest {
         this.endDate = endDate;
         this.locationId = locationId;
         this.segmentation = segmentation;
+    }
+
+    public ExportFilterRequest(LocalDate startDate, LocalDate endDate, Long locationId, UserType segmentation, Boolean isSenior) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.locationId = locationId;
+        this.segmentation = segmentation;
+        this.isSenior = isSenior;
     }
 }
