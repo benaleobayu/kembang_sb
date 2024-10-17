@@ -21,6 +21,7 @@ public class TreeUserResponse {
             businessResponse.setIndex(business.getId());
             businessResponse.setName(business.getName());
             businessResponse.setAddress(business.getAddress());
+            businessResponse.setDescription(business.getDescription());
             businessResponse.setLineOfBusiness(business.getBusinessCategories().stream().findFirst().get().getBusinessCategoryParent().getName());
             businessResponse.setIsPrimary(business.getIsPrimary());
             businessResponse.setTotalCatalogs(!business.getBusinessCatalogs().isEmpty() ? business.getBusinessCatalogs().size() : 0);
@@ -55,6 +56,7 @@ public class TreeUserResponse {
         dto.setIndex(data.getId());
         dto.setName(data.getName());
         dto.setAddress(data.getAddress());
+        dto.setDescription(data.getDescription());
         dto.setTotalCatalogs(data.getBusinessCatalogs().size());
         dto.setIsPrimary(data.getIsPrimary());
 
