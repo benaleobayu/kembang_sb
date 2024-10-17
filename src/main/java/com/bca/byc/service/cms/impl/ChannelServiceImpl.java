@@ -127,13 +127,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword, String channelId) {
-        Channel channel = HandlerRepository.getIdBySecureId(
-                channelId,
-                repository::findBySecureId,
-                projection -> repository.findById(projection.getId()),
-                "Channel not found"
-        );
-
+        Channel channel = getDataEntity(channelId);
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );

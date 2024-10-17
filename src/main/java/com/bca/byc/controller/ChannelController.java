@@ -131,10 +131,10 @@ public class ChannelController {
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ChanelListContentResponse<Long>>>> listDataContentIndex(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "channelId", required = false) String channelId
+            @PathVariable(name = "channelId", required = false) String channelId
     ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
