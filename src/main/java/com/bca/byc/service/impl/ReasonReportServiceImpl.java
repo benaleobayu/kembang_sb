@@ -3,7 +3,6 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.ExpectCategory;
 import com.bca.byc.entity.ReasonReport;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ReasonReportCreateUpdateRequest;
@@ -133,7 +132,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         data.setIsActive(dto.status());
 
         if (dto.icon() != null) {
-            FileUploadHelper.validateFileTypeImage(dto.icon());
+            FileUploadHelper.validateFileImageSvg(dto.icon());
             String filePath = FileUploadHelper.saveFile(dto.icon(), UPLOAD_DIR + "/images");
             data.setIcon(GlobalConverter.replaceImagePath(filePath));
         }

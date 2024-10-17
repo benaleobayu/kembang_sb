@@ -78,6 +78,30 @@ public class FileUploadHelper {
 
     }
 
+    public static void validateFileImageSvg(MultipartFile file) throws InvalidFileTypeImageException, IOException {
+        String filename = file.getOriginalFilename();
+        List<String> validExtensions = List.of("svg");
+
+        if (filename != null && !isValidExtension(filename, validExtensions)) {
+            throw new InvalidFileTypeImageVideoException("Only " + validExtensions + " files are allowed.");
+        }
+
+        Tika tika = new Tika();
+        String mimeType = tika.detect(file.getInputStream());
+
+        System.out.println("Detected MIME type: " + mimeType);
+
+        // Validate the MIME type for images
+        if (mimeType.startsWith("image/") || mimeType.equals("video/mp4")) {
+            return;
+        }
+
+        throw new InvalidFileTypeImageVideoException("Only image with SVG files are allowed.");
+
+    }
+
+
+
     public static void validateFileTypePost(MultipartFile file) throws InvalidFileTypeImageException, IOException {
         String filename = file.getOriginalFilename();
         List<String> validExtensions = List.of("jpg", "jpeg", "png", "heic", "mp4");
