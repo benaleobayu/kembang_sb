@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 import com.bca.byc.model.PostShareResponse;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.returns.ReturnIsSavedResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -59,12 +60,11 @@ public class AppUserActionController {
 
     @Operation(summary = "Save or unsave post", description = "Save or unsave post")
     @PostMapping("/post/{postId}/saved")
-    public ResponseEntity<ApiResponse> savingPost(@PathVariable("postId") String postId) {
+    public ResponseEntity<ApiDataResponse> savingPost(@PathVariable("postId") String postId) {
         log.info("POST " + urlRoute + "/post/{}/saved endpoint hit", postId);
-        String email = ContextPrincipal.getPrincipal();
-        String message = userActionService.saveUnsavePost(postId, email);
+        ReturnIsSavedResponse message = userActionService.saveUnsavePost(postId);
 
-        return ResponseEntity.ok(new ApiResponse(true, message));
+        return ResponseEntity.ok(new ApiDataResponse<>(true, "Succes" , message));
     }
 
     // API to share post

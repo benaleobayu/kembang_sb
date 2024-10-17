@@ -7,6 +7,7 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PostShareResponse;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
+import com.bca.byc.model.returns.ReturnIsSavedResponse;
 import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -145,20 +146,26 @@ public class UserActionServiceImpl implements UserActionService {
 
 
     @Override
-    public String saveUnsavePost(String postId, String email) {
+    public ReturnIsSavedResponse saveUnsavePost(String postId) {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
-        AppUser user = getUserByEmail(email, userRepository, "User not found");
+        AppUser user = GlobalConverter.getUserEntity(userRepository);
+
+        ReturnIsSavedResponse message = new ReturnIsSavedResponse();
 
         UserHasSavedPost existingSavedPost = userHasSavedPostRepository.findByPostAndUser(post, user);
         if (existingSavedPost != null) {
             userHasSavedPostRepository.delete(existingSavedPost);
-            return "success remove saved post";
+            message.setMessage("Post unsave successfully");
+            message.setIsSaved(false);
+            return message;
         } else {
             UserHasSavedPost newSavedPost = new UserHasSavedPost();
             newSavedPost.setPost(post);
             newSavedPost.setUser(user);
             userHasSavedPostRepository.save(newSavedPost);
-            return "success save post";
+            message.setMessage("Post saved successfully");
+            message.setIsSaved(true);
+            return message;
         }
     }
 
