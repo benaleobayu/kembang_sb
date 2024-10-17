@@ -4,10 +4,7 @@ package com.bca.byc.controller;
 import com.bca.byc.converter.parsing.TreeChannel;
 import com.bca.byc.entity.Channel;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ChanelDetailResponse;
-import com.bca.byc.model.ChanelIndexResponse;
-import com.bca.byc.model.ChanelListContentResponse;
-import com.bca.byc.model.ChannelCreateUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
@@ -104,6 +101,19 @@ public class ChannelController {
         }
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable("id") String id
+    ) {
+        log.info("PUT " + urlRoute + " endpoint hit");
+        try {
+            service.updateStatusChannel(id);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully update status chanel"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
         log.info("DELETE " + urlRoute + "/{id} endpoint hit");
@@ -125,7 +135,7 @@ public class ChannelController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "channelId", required = false) String channelId
-            ) {
+    ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list chanel", service.listDataContentChannel(pages, limit, sortBy, direction, keyword, channelId)));

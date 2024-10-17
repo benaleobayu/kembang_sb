@@ -9,10 +9,7 @@ import com.bca.byc.entity.Channel;
 import com.bca.byc.entity.Post;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.InvalidFileTypeImageException;
-import com.bca.byc.model.ChanelListContentResponse;
-import com.bca.byc.model.ChannelCreateUpdateRequest;
-import com.bca.byc.model.ChanelDetailResponse;
-import com.bca.byc.model.ChanelIndexResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ChannelRepository;
@@ -108,6 +105,14 @@ public class ChannelServiceImpl implements ChannelService {
 
     }
 
+    @Override
+    public void updateStatusChannel(String id) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Channel data = getDataEntity(id);
+        data.setIsActive(!data.getIsActive());
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+        repository.save(data);
+    }
 
     @Override
     public void deleteData(String id) throws BadRequestException {
@@ -141,5 +146,15 @@ public class ChannelServiceImpl implements ChannelService {
         }).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    // --- Helper ---
+    private Channel getDataEntity(String id) {
+        return HandlerRepository.getIdBySecureId(
+                id,
+                repository::findBySecureId,
+                projection -> repository.findById(projection.getId()),
+                "Channel not found"
+        );
     }
 }
