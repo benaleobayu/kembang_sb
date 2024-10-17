@@ -41,14 +41,14 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
 
     private final BusinessRepository businessRepository;
     private final BusinessHasCategoryRepository businessHasCategoryRepository;
-    private final BusinessCategoryRepository repository;
+    private final BusinessCategoryRepository businessCategoryRepository;
     private final BusinessCategoryDTOConverter converter;
 
 
     @Override
     public List<BusinessCategoryListResponse> findByParentIdIsNotNull() {
         // Get the list
-        List<BusinessCategory> datas = repository.findByParentIdIsNotNull();
+        List<BusinessCategory> datas = businessCategoryRepository.findByParentIdIsNotNull();
         for (BusinessCategory item : datas) {
             if (item.getDescription() != null) {
                 String cleanDescription = Jsoup.parse(item.getDescription()).text();
@@ -65,7 +65,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
     @Override
     public List<BusinessCategoryListResponse> findByParentIdIsNull() {
         // Get the list
-        List<BusinessCategory> datas = repository.findByParentIdIsNull();
+        List<BusinessCategory> datas = businessCategoryRepository.findByParentIdIsNull();
 
         // stream into the list
         return datas.stream()
@@ -80,7 +80,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<BusinessCategory> pageResult = repository.findDataByKeyword(set.keyword(), set.pageable());
+        Page<BusinessCategory> pageResult = businessCategoryRepository.findDataByKeyword(set.keyword(), set.pageable());
         List<BusinessCategoryIndexResponse> dtos = pageResult.stream().map((c) -> {
             BusinessCategoryIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;
@@ -91,19 +91,17 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
 
     @Override
     public BusinessCategoryIndexResponse findDataBySecureId(String id) {
-        BusinessCategory data = repository.findBySecureId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Business Category not found"));
+        BusinessCategory data = getEntityData(id);
         return converter.convertToIndexResponse(data);
     }
 
     @Override
     public void saveData(@Valid BusinessCategoryParentCreateRequest dto) throws BadRequestException {
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         // set entity to add with model mapper
         BusinessCategory data = converter.convertToCreateParentRequest(dto);
         data.setCreatedBy(admin);
-        BusinessCategory savedData = repository.save(data);
+        BusinessCategory savedData = businessCategoryRepository.save(data);
 
         // add children from list<String> e.g ["id1", "id2", "id3"] to add to new BusinessCategory with assign the parentId
         if (dto.getSubCategories() != null) {
@@ -112,7 +110,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
                 child.setName(name);
                 child.setIsParent(false);
                 child.setParentId(savedData);
-                repository.save(child);
+                businessCategoryRepository.save(child);
             }
         }
     }
@@ -123,7 +121,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "Admin not found");
 
         // Check existence and get the business category
-        BusinessCategory data = HandlerRepository.getEntityBySecureId(id, repository, "Business category not found");
+        BusinessCategory data = HandlerRepository.getEntityBySecureId(id, businessCategoryRepository, "Business category not found");
 
         // Update the main entity
         data.setName(dto.getName());
@@ -133,26 +131,26 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         data.setUpdatedBy(admin);
 
         // Save the updated entity
-        BusinessCategory savedData = repository.save(data);
+        BusinessCategory savedData = businessCategoryRepository.save(data);
 
         // Handle subcategories
         List<String> updatedSubCategoryNames = dto.getSubCategories() != null ? dto.getSubCategories() : new ArrayList<>();
         // Retrieve all existing subcategories for the current parent
-        List<BusinessCategory> existingChildren = repository.findByParentId(savedData);
+        List<BusinessCategory> existingChildren = businessCategoryRepository.findByParentId(savedData);
 
         // Remove subcategories that are no longer referenced
         for (BusinessCategory child : existingChildren) {
             if (!updatedSubCategoryNames.contains(child.getName())) {
                 // Mark as deleted or remove
                 child.setIsDeleted(true);  // Assuming you have a soft delete mechanism
-                repository.save(child);
+                businessCategoryRepository.save(child);
             }
         }
 
         // Handle addition or updating of subcategories
         for (String name : updatedSubCategoryNames) {
             // Find existing subcategory
-            Optional<BusinessCategory> existingChildOpt = repository.findByNameSubCategory(savedData.getId(), name);
+            Optional<BusinessCategory> existingChildOpt = businessCategoryRepository.findByNameSubCategory(savedData.getId(), name);
 
             BusinessCategory child;
             if (existingChildOpt.isPresent()) {
@@ -166,7 +164,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
                 child.setParentId(savedData);
             }
             // Save the child (either existing or new)
-            repository.save(child);
+            businessCategoryRepository.save(child);
         }
     }
 
@@ -174,7 +172,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
     public void deleteData(String id) throws BadRequestException {
         // Fetch the BusinessCategory; if not found, an exception is thrown
         BusinessCategory data = HandlerRepository.getEntityBySecureId(
-                id, repository, "Business category not found"
+                id, businessCategoryRepository, "Business category not found"
         );
 
         // Check if any BusinessHasCategory is using this BusinessCategory
@@ -189,14 +187,13 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         log.info("Deleting BusinessCategory with ID: {}", data.getId());
 
         // Delete the BusinessCategory
-        repository.deleteById(data.getId());
+        businessCategoryRepository.deleteById(data.getId());
     }
-
 
 
     @Override
     public BusinessCategory getCategoryById(Long id) {
-        Optional<BusinessCategory> categoryOptional = repository.findById(id);
+        Optional<BusinessCategory> categoryOptional = businessCategoryRepository.findById(id);
         if (categoryOptional.isPresent()) {
             return categoryOptional.get();
         } else {
@@ -211,7 +208,7 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<CastSecureIdAndNameProjection> pageResult = repository.findPostCategoryOnCreatePost(set.keyword(), set.pageable());
+        Page<CastSecureIdAndNameProjection> pageResult = businessCategoryRepository.findPostCategoryOnCreatePost(set.keyword(), set.pageable());
         List<SecureIdAndNameResponse> dtos = pageResult.stream().map((c) -> {
             SecureIdAndNameResponse dto = new SecureIdAndNameResponse();
             dto.setId(c.getSecureId());
@@ -222,5 +219,14 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         return PageCreateReturn.create(pageResult, dtos);
     }
 
+    // --- Helper ---
+    private BusinessCategory getEntityData(String id) {
+        return HandlerRepository.getIdBySecureId(
+                id,
+                businessCategoryRepository::findBySecureId,
+                projection -> businessCategoryRepository.findById(projection.getId()),
+                "Business Category not found"
+        );
+    }
 
 }
