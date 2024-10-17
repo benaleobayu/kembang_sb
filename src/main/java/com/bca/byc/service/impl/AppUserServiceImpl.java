@@ -109,14 +109,9 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public UserInfoResponse getUserDetails(String email) {
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Email not found"));
-
-        AppUser data = appUserRepository.findById(user.getId())
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        return converter.convertToInfoResponse(data);
+    public UserInfoResponse getUserDetails(String userId) {
+        AppUser user = getUserBySecureId(userId);
+        return converter.convertToInfoResponse(user);
     }
 
     @Override
@@ -259,10 +254,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ProfileActivityCounts getActivityCounts() {
-        String uuid = ContextPrincipal.getSecureUserId();
-
-        UserActivityCounts counts = appUserRepository.getActivityCounts(uuid);
+    public ProfileActivityCounts getActivityCounts(String userId) {
+        UserActivityCounts counts = appUserRepository.getActivityCounts(userId);
 
         ProfileActivityCounts dto = new ProfileActivityCounts();
         dto.setTotalPosts(counts.getTotalPosts() != null ? counts.getTotalPosts() : 0);
@@ -273,10 +266,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public UserProfileActivityCounts getProfileActivityCounts() {
-        String uuid = ContextPrincipal.getSecureUserId();
-
-        UserProfileActivityCountsProjection counts = appUserRepository.getProfileActivityCounts(uuid);
+    public UserProfileActivityCounts getProfileActivityCounts(String userId) {
+        UserProfileActivityCountsProjection counts = appUserRepository.getProfileActivityCounts(userId);
 
         UserProfileActivityCounts dto = new UserProfileActivityCounts();
         dto.setTotalBusinesses(counts.getTotalBusinesses() != null ? counts.getTotalBusinesses() : 0);
@@ -287,5 +278,13 @@ public class AppUserServiceImpl implements AppUserService {
         return dto;
     }
 
-
+    // --- Helper ---
+    private AppUser getUserBySecureId(String userId) {
+        return HandlerRepository.getIdBySecureId(
+                userId,
+                appUserRepository::findBySecureId,
+                projection -> appUserRepository.findById(projection.getId()),
+                "User not found"
+        );
+    }
 }

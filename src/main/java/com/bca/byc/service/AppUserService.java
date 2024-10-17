@@ -14,7 +14,7 @@ public interface AppUserService extends UserDetailsService {
 	AppUser findByUsername(String subject);
 	AppUser findBySecureId(String secureId);
 
-	UserInfoResponse getUserDetails(String name);
+	UserInfoResponse getUserDetails(String userId);
 
 	void updateUserData(String email, AppUserProfileRequest dto);
 
@@ -28,7 +28,7 @@ public interface AppUserService extends UserDetailsService {
 
 	AppUserRequestContactResponse  createRequestContact(String userSecureId, String messageString);
 
-	ProfileActivityCounts getActivityCounts();
+	ProfileActivityCounts getActivityCounts(String userId);
 
-	UserProfileActivityCounts getProfileActivityCounts();
+	UserProfileActivityCounts getProfileActivityCounts(String userId);
 }

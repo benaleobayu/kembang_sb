@@ -43,12 +43,13 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get user detail", description = "Get user detail")
     @GetMapping("/info")
-    public ResponseEntity<?> InfoDetailUser(Principal principal) {
+    public ResponseEntity<?> InfoDetailUser(@RequestParam(value = "userId", required = false) String userId) {
         log.info("GET " + urlRoute + "/info endpoint hit");
-
-        UserInfoResponse user = userService.getUserDetails(principal.getName());
-        // response true
         try {
+            if (userId == null || userId.isEmpty()) {
+                userId = ContextPrincipal.getSecureUserId();
+            }
+            UserInfoResponse user = userService.getUserDetails(userId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "User found", user));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -238,11 +239,12 @@ public class AppUserProfileController {
 
     @Operation(summary = "Get user activity counts", description = "Get user activity counts")
     @GetMapping("/activity-counts")
-    public ResponseEntity<?> MyActivityCounts() {
+    public ResponseEntity<?> MyActivityCounts(@RequestParam(name = "userId", required = false) String userId) {
         try {
-            // Fetch activity counts
-            ProfileActivityCounts data = userService.getActivityCounts();
-            // Return success response
+            if (userId == null || userId.isEmpty()) {
+                userId = ContextPrincipal.getSecureUserId();
+            }
+            ProfileActivityCounts data = userService.getActivityCounts(userId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Activity counts retrieved successfully", data));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -290,10 +292,13 @@ public class AppUserProfileController {
 
     // Fetch to get profile activity
     @GetMapping("/profile-activity-counts")
-    public ResponseEntity<?> ProfileActivityCounts() {
+    public ResponseEntity<?> ProfileActivityCounts(@RequestParam(name = "userId", required = false) String userId) {
         try {
+            if (userId == null || userId.isEmpty()) {
+                userId = ContextPrincipal.getSecureUserId();
+            }
             // Fetch activity counts
-            UserProfileActivityCounts data = userService.getProfileActivityCounts();
+            UserProfileActivityCounts data = userService.getProfileActivityCounts(userId);
             // Return success response
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile activity counts retrieved successfully", data));
         } catch (Exception e) {
