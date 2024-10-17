@@ -29,10 +29,8 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     Page<Business> findByUser_Id(Long userId, Pageable pageable);
 
     @Query("SELECT b FROM Business b " +
-            "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
-            "LEFT JOIN BusinessCategory bc ON bc.id = bhc.business.id " +
-            "WHERE (LOWER(bc.name) LIKE LOWER(:keyword)) AND " +
-            "b.isActive = true AND b.isDeleted = false AND " +
+            "WHERE (LOWER(b.name) LIKE LOWER(:keyword)) AND " +
+            "b.isActive = true AND " +
             "b.user.id = :id " +
             "ORDER BY b.isPrimary DESC, b.id ASC")
     Page<Business> findBusinessByKeyword(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
