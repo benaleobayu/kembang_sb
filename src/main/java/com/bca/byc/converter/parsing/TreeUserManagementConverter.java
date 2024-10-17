@@ -71,7 +71,7 @@ public class TreeUserManagementConverter {
         dto.setBusinesses(treeUserResponse.convertListBusinesses(businesses));
 //
         // expect
-        List<ExpectCategoryList> expectCategories = treeUserResponse.convertExpectCategories(data.getUserHasExpects());
+        List<ExpectCategoryList> expectCategories = treeUserResponse.convertExpectCategoriesCMS(data.getUserHasExpects());
         dto.setExpectCategory(expectCategories);
 
         dto.setOrders(data.getAppUserDetail().getOrders());

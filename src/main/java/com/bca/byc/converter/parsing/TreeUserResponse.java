@@ -10,6 +10,7 @@ import com.bca.byc.model.apps.SubExpectCategoryList;
 import com.bca.byc.model.data.BusinessListResponse;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TreeUserResponse {
@@ -99,7 +100,6 @@ public class TreeUserResponse {
     }
 
 
-
     public static List<ExpectCategoryList> convertExpectCategories(List<UserHasExpect> userHasExpects) {
         return userHasExpects.stream()
                 .filter(ue -> ue.getExpectItem() != null)
@@ -135,6 +135,54 @@ public class TreeUserResponse {
                 }).collect(Collectors.toList());
     }
 
+    // for detail user cms only
+    public static List<ExpectCategoryList> convertExpectCategoriesCMS(List<UserHasExpect> userHasExpects) {
+        // Grouping by name using a Map
+        Map<String, ExpectCategoryList> groupedCategories = userHasExpects.stream()
+                .filter(ue -> ue.getExpectItem() != null)
+                .map(ue -> {
+                    ExpectCategoryList expectCategoryDetailResponse = new ExpectCategoryList();
+                    expectCategoryDetailResponse.setId(ue.getExpectCategory().getSecureId());
+                    expectCategoryDetailResponse.setIndex(ue.getExpectCategory().getOrders());
+                    expectCategoryDetailResponse.setName(ue.getExpectCategory().getName());
+
+                    List<ExpectItem> expectItems = ue.getExpectCategory().getExpectItems();
+
+                    // Sort and limit expectItems if not null
+                    if (expectItems != null) {
+                        expectItems = expectItems.stream()
+                                .filter(Objects::nonNull)
+                                .sorted(Comparator.comparing(ExpectItem::getOrders, Comparator.nullsLast(Comparator.naturalOrder())))
+                                .limit(3)
+                                .collect(Collectors.toList());
+                    }
+
+                    // Setting subCategories
+                    List<SubExpectCategoryList> subCategories = expectItems == null ? new ArrayList<>() : expectItems.stream()
+                            .filter(ei -> ei.getId().equals(ue.getExpectItem().getId()))
+                            .map(ei -> {
+                                SubExpectCategoryList expectItem = new SubExpectCategoryList();
+                                expectItem.setId(ei.getId());
+                                expectItem.setName(ei.getName());
+                                return expectItem;
+                            })
+                            .collect(Collectors.toList());
+
+                    expectCategoryDetailResponse.setSubCategories(subCategories);
+
+                    return expectCategoryDetailResponse;
+                })
+                .collect(Collectors.toMap(ExpectCategoryList::getName,
+                        Function.identity(),
+                        (existing, replacement) -> {
+                            // Merge logic
+                            existing.getSubCategories().addAll(replacement.getSubCategories());
+                            return existing;
+                        }));
+
+        // Return the values from the map as a list
+        return new ArrayList<>(groupedCategories.values());
+    }
 
     public static SuggestedUserResponse convertToCardUser(AppUser user, String baseUrl) {
         SuggestedUserResponse response = new SuggestedUserResponse();
@@ -147,7 +195,7 @@ public class TreeUserResponse {
                 .findFirst().orElse(null));
         response.setBusinessLob(user.getBusinesses().stream()
                 .filter(Business::getIsPrimary)
-                .flatMap(b-> b.getBusinessCategories().stream()
+                .flatMap(b -> b.getBusinessCategories().stream()
                         .map(bc -> bc.getBusinessCategoryParent().getName()))
                 .findFirst().orElse(null));
         boolean isFollowed = user.getFollowers().stream().anyMatch(f -> f.getId().equals(user.getId()));
