@@ -113,8 +113,8 @@ public class AppUserDetail extends AbstractBaseEntity implements SecureIdentifia
     @Column(name = "orders")
     private Integer orders;
 
-    @Column(name = "label")
-    private String label;
+    @Column(name = "is_senior")
+    private Boolean isSenior;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
