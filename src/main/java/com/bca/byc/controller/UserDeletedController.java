@@ -63,9 +63,9 @@ public class UserDeletedController {
             String headerValue = "attachment; filename=deleted-user.xls";
             response.setHeader(headerKey, headerValue);
 
-            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation);
+            ExportFilterRequest filter = new ExportFilterRequest(startDate, endDate, locationId, segmentation, isSenior);
             try {
-                exportService.exportExcelPreRegister(response, filter);
+                exportService.exportExcelUserDeleted(response, filter);
             } catch (IOException e) {
                 log.error("Error exporting data", e);
                 return ResponseEntity.internalServerError().body("Error exporting data");
@@ -134,7 +134,7 @@ public class UserDeletedController {
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=user-deleted.xls";
         response.setHeader(headerKey, headerValue);
-        exportService.exportExcelUserDeleted(response);
+        exportService.exportExcelUserDeleted(response, null);
     }
 
 }
