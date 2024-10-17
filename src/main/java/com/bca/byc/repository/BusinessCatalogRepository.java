@@ -21,9 +21,8 @@ public interface BusinessCatalogRepository extends JpaRepository<BusinessCatalog
 
 
     @Query("SELECT bc FROM BusinessCatalog bc " +
-            "JOIN Business b ON bc.business.id = b.id " +
             "WHERE " +
             "(LOWER(bc.title) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
-            "b.id = :id")
+            "bc.business.id = :id")
     Page<BusinessCatalog> findByTitleLikeIgnoreCase(Long id, String keyword, Pageable pageable);
 }
