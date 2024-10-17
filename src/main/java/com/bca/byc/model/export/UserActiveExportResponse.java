@@ -1,6 +1,7 @@
 package com.bca.byc.model.export;
 
 import com.bca.byc.entity.Branch;
+import com.bca.byc.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class UserActiveExportResponse {
     private LocalDate birthdate;
     private String email;
     private String cinNumber;
+    private UserType segmentation;
     private String phoneNumber;
     private LocalDateTime createdAt;
 
