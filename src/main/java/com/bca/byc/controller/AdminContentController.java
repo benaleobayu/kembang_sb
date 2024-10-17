@@ -272,7 +272,7 @@ public class AdminContentController {
             }
         }
         post.setTags(tags);
-        post.setIsActive(status);
+        post.setIsActive(!status);
         post.setPromotedActive(promotedActive != null ? promotedActive : false);
         post.setPromotedStatus(promotedActive != null ? "SCHEDULED" : "NOT_DEFINED");
         post.setPromotedAt(promotedAt);
