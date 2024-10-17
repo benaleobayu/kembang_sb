@@ -127,7 +127,7 @@ public class ChannelController {
 
     // ------------------------------------------------------------------
 
-    @GetMapping("/{chennelId}/content")
+    @GetMapping("/{channelId}/content")
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ChanelListContentResponse<Long>>>> listDataContentIndex(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
