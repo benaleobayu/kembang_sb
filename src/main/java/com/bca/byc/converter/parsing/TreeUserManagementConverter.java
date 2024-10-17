@@ -1,12 +1,15 @@
 package com.bca.byc.converter.parsing;
 
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Branch;
+import com.bca.byc.entity.Business;
+import com.bca.byc.entity.UserManagementLog;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.UserManagementDetailResponse;
 import com.bca.byc.model.UserManagementListResponse;
-import com.bca.byc.model.apps.*;
+import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.util.helper.Formatter;
 
 import java.util.List;
@@ -16,7 +19,7 @@ public class TreeUserManagementConverter {
     public static void IndexResponse(
             AppUser data,
             UserManagementListResponse dto
-    ){
+    ) {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setBranchCode(data.getAppUserDetail().getBranchCode() != null ? data.getAppUserDetail().getBranchCode().getName() : null);
@@ -32,6 +35,9 @@ public class TreeUserManagementConverter {
         dto.setUpdatedBy(data.getUpdatedAt() != null ? data.getEmail() : null);
         dto.setApproveAt(data.getAppUserDetail().getApprovedAt() != null ? Formatter.formatLocalDateTime(data.getAppUserDetail().getApprovedAt()) : null);
         dto.setApproveBy(data.getAppUserDetail().getApprovedBy() != null ? data.getAppUserDetail().getApprovedBy() : null);
+
+        String senior = data.getAppUserDetail().getIsSenior() == null ? null : data.getAppUserDetail().getIsSenior() ? "Senior" : "Youth";
+        dto.setSenior(senior);
     }
 
     public void DetailResponse(
@@ -53,6 +59,9 @@ public class TreeUserManagementConverter {
         dto.setParentCin(data.getAppUserDetail().getParentCin());
         dto.setParentBankAccount(data.getAppUserDetail().getParentBankAccount());
         dto.setOrders(data.getAppUserDetail().getOrders());
+
+        String senior = data.getAppUserDetail().getIsSenior() == null ? null : data.getAppUserDetail().getIsSenior() ? "Senior" : "Youth";
+        dto.setSenior(senior);
 
         Branch branch = data.getAppUserDetail().getBranchCode();
         BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
@@ -84,14 +93,14 @@ public class TreeUserManagementConverter {
                         : "Active"
                         : "Inactive"
         );
-        if (data.getAppUserAttribute().getIsSuspended()){
+        if (data.getAppUserAttribute().getIsSuspended()) {
             dto.setSuspendedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream()
                     .filter(l -> l.getStatus().equals(LogStatus.SUSPENDED))
                     .reduce((first, second) -> second)
                     .map(UserManagementLog::getMessage)
                     .orElse(null) : null);
         }
-        if (data.getAppUserAttribute().getIsDeleted()){
+        if (data.getAppUserAttribute().getIsDeleted()) {
             dto.setDeletedReason(data.getLog() != null && !data.getLog().isEmpty() ? data.getLog().stream()
                     .filter(l -> l.getStatus().equals(LogStatus.DELETED))
                     .reduce((first, second) -> second)
