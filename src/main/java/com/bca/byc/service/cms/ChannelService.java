@@ -24,6 +24,6 @@ public interface ChannelService {
 
     void deleteData(String id) throws BadRequestException;
 
-    ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword, String channelId);
 }
 

@@ -22,16 +22,11 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.ChannelService;
 import com.bca.byc.util.FileUploadHelper;
-import com.bca.byc.util.PaginationUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -126,13 +121,20 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword, String channelId) {
+        Channel channel = HandlerRepository.getIdBySecureId(
+                channelId,
+                repository::findBySecureId,
+                projection -> repository.findById(projection.getId()),
+                "Channel not found"
+        );
+
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Post> pageResult = postRepository.findPostOnChannel(set.keyword(), set.pageable());
+        Page<Post> pageResult = postRepository.findPostOnChannel(set.keyword(), set.pageable(), channel.getId());
         List<ChanelListContentResponse<Long>> dtos = pageResult.stream().map((c) -> {
             ChanelListContentResponse<Long> dto = converter.convertListContentResponse(c, baseUrl);
             return dto;

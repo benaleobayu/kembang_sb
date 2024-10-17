@@ -84,7 +84,7 @@ public class ChanelDTOConverter {
         String firstTypeContent = data.getPostContents().getFirst().getType();
         String firstContentThumbnail;
         if (firstTypeContent != null && firstTypeContent.equals("image")) {
-            firstContentThumbnail = GlobalConverter.getParseImage(data.getPostContents().getFirst().getThumbnail(), baseUrl);
+            firstContentThumbnail = GlobalConverter.getParseImage(data.getPostContents().getFirst().getContent(), baseUrl);
         } else {
             firstContentThumbnail = GlobalConverter.getParseImage(data.getPostContents().getFirst().getThumbnail(), baseUrl);
         }
@@ -97,7 +97,7 @@ public class ChanelDTOConverter {
                 firstContentThumbnail,
                 data.getDescription(),
                 admin.getName(),
-                GlobalConverter.getParseImage(admin.getAvatar(), baseUrl),
+                GlobalConverter.getAvatarImage(admin.getAvatar(), baseUrl),
                 admin.getAccountType() != null ? admin.getAccountType() : null,
                 data.getLikesCount(),
                 data.getCommentsCount(),

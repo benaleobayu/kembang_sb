@@ -100,8 +100,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LEFT JOIN p.postContents pc " +
             "LEFT JOIN p.user u " +
             "WHERE " +
-            "p.isAdminPost = true")
-    Page<Post> findPostOnChannel(String keyword, Pageable pageable);
+            "p.isAdminPost = true AND " +
+            "(LOWER(p.description) LIKE LOWER(:keyword) ) AND " +
+            "p.channel.id = :channelId ")
+    Page<Post> findPostOnChannel(@Param("keyword") String keyword, Pageable pageable,@Param("channelId") Long channelId);
 
     // ------------- post on channel -------------
 
