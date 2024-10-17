@@ -34,5 +34,7 @@ public class UserManagementDetailResponse extends AdminModelBaseDTOResponse<Long
     private String suspendedReason;
     private String deletedReason;
 
+    private String senior;
+
 }
 

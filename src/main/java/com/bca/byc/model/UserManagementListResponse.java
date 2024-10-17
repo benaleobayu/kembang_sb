@@ -1,12 +1,16 @@
 package com.bca.byc.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserManagementListResponse extends AdminModelBaseDTOResponse<Long> implements Serializable {
 
     private String branchCode;
@@ -17,18 +21,6 @@ public class UserManagementListResponse extends AdminModelBaseDTOResponse<Long> 
     private String phone;
     private String approveAt;
     private String approveBy;
+    private String senior;
 
-    public UserManagementListResponse() {
-    }
-
-    public UserManagementListResponse(String branchCode, String name, String birthDate, String email, String memberCin, String phone, String approveAt, String approveBy) {
-        this.branchCode = branchCode;
-        this.name = name;
-        this.birthDate = birthDate;
-        this.email = email;
-        this.memberCin = memberCin;
-        this.phone = phone;
-        this.approveAt = approveAt;
-        this.approveBy = approveBy;
-    }
 }

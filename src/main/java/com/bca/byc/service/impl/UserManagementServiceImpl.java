@@ -98,19 +98,28 @@ public class UserManagementServiceImpl implements UserManagementService {
                     return location;
                 }).collect(Collectors.toList());
 
-        List<AttributeResponse> listStatusResponse = locations.stream()
+        List<AttributeResponse<Long>> listStatusResponse = new ArrayList<>();
+        listStatusResponse.add(new AttributeResponse<>( null, "All"));
+        listStatusResponse.addAll(locations.stream()
                 .map((c) -> {
-                    AttributeResponse response = new AttributeResponse<>();
+                    AttributeResponse<Long> response = new AttributeResponse<>();
                     response.setId(c.getId());
                     response.setName(c.getName());
                     return response;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
         List<AttributeResponse<String>> listUserTypes = Arrays.asList(
+                new AttributeResponse<>( null, "All"),
                 new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
                 new AttributeResponse<>( UserType.MEMBER_PRIORITY.name(),  "Priority"),
                 new AttributeResponse<>( UserType.NOT_MEMBER.name(), "Non Member")
+        );
+
+        List<AttributeResponse<Boolean>> listSeniority = Arrays.asList(
+                new AttributeResponse<>( null, "All"),
+                new AttributeResponse<>( true,  "Senior"),
+                new AttributeResponse<>( false, "Youth")
         );
 
         List<Map<String, List<?>>> attributes = new ArrayList<>();
@@ -118,6 +127,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         Map<String, List<?>> listStatus = new HashMap<>();
         listStatus.put("Location", listStatusResponse);
         listStatus.put("Segmentation", listUserTypes);
+        listStatus.put("Senior", listSeniority);
         attributes.add(listStatus);
 
         return attributes;

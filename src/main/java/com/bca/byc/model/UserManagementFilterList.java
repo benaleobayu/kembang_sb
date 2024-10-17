@@ -11,13 +11,13 @@ public class UserManagementFilterList {
     private LocalDate endDate;
     private Long locationId;
     private UserType segmentation;
-    private String label;
+    private Boolean isSenior;
 
-    public UserManagementFilterList(LocalDate startDate, LocalDate endDate, Long locationId, UserType segmentation, String label) {
+    public UserManagementFilterList(LocalDate startDate, LocalDate endDate, Long locationId, UserType segmentation, Boolean isSenior) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.locationId = locationId;
         this.segmentation = segmentation;
-        this.label = label;
+        this.isSenior = isSenior;
     }
 }
