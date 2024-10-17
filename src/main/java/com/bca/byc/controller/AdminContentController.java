@@ -7,6 +7,7 @@ import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
+import com.bca.byc.model.ContentStringRequest;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.ChannelRepository;
 import com.bca.byc.repository.PostRepository;
@@ -17,12 +18,14 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.AdminContentService;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -84,12 +87,12 @@ public class AdminContentController {
     public ResponseEntity<ApiResponse> create(
             @RequestPart(value = "files") List<MultipartFile> files,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
-            @RequestPart(value = "content") String contentString,
             @RequestParam("channelId") String channelId,
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
             @RequestParam("isSchedule") Boolean isSchedule,
+            @RequestParam("totalFile") Integer totalFile,
             @RequestParam(value = "promotedActive", required = false) Boolean promotedActive,
             @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
             @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
@@ -98,18 +101,24 @@ public class AdminContentController {
         log.info("POST " + urlRoute + " endpoint hit");
 
         try {
+            Post post = new Post();
             List<PostContent> contentList = new ArrayList<>();
-            if (postAt == null){
+            if (isSchedule){
                 postAt = LocalDateTime.now();
             }
 
-            // Validate contentString
-            if (contentString == null || contentString.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(false, "Content data is missing"));
+            List<ContentStringRequest> contentString = new ArrayList<>();
+            for (int i = 0; i < totalFile; i++) {
+                String name = RandomStringUtils.randomAlphanumeric(8);
+                contentString.add(new ContentStringRequest(name));
             }
-            List<PostContentRequest> contentRequests = objectMapper.readValue(contentString,
-                    new TypeReference<List<PostContentRequest>>() {
-                    });
+
+            List<PostContentRequest> contentRequests = new ArrayList<>();
+            for (ContentStringRequest contentStringRequest : contentString) {
+                PostContentRequest postContentRequest = new PostContentRequest();
+                postContentRequest.setOriginalName(contentStringRequest.getOriginalName());
+                contentRequests.add(postContentRequest);
+            }
             // Validate if contentRequests and files match in size
             if (files.size() != contentRequests.size()) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "Mismatch between files and content data"));
@@ -134,7 +143,6 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post post = new Post();
             Post newPost = parseToPost(channelId, highlight, description, tags, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
             service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))

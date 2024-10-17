@@ -3,6 +3,7 @@ package com.bca.byc.service.cms.impl;
 import com.bca.byc.converter.AdminContentDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
@@ -80,6 +81,11 @@ public class AdminContentServiceImpl implements AdminContentService {
 
         newPost.setAdmin(admin);
         newPost.setIsAdminPost(true);
+
+        TreePostConverter treePostConverter = new TreePostConverter(null,null);
+        String contentType = treePostConverter.getContentTypePost(contentList);
+
+        newPost.setContentType(contentType);
 
         Post savedPost = postRepository.save(newPost);
 
