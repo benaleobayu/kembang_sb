@@ -86,6 +86,9 @@ public class AppUser extends AbstractBaseEntityCms implements UserDetails , Secu
     @OneToMany(mappedBy = "user")
     private List<LikeDislike> likesPosts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reportedUser")
+    private List<Report> reports = new ArrayList<>();
+
     // many to one
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")

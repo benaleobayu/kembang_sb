@@ -24,7 +24,7 @@ public class ReportPostJob {
     private final CommentRepository commentRepository;
     private final CommentReplyRepository replyRepository;
 
-    //    @Scheduled(fixedDelay = 50)
+//        @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
         String[] postStatus = {"DRAFT", "REVIEW", "REJECT", "TAKE_DOWN"};
@@ -32,13 +32,14 @@ public class ReportPostJob {
         Integer randomPost = faker.random().nextInt(1, totalPost.intValue());
         Post post = postRepository.findById(Long.valueOf(randomPost)).orElse(null);
 
+
         Report newReportPost = new Report();
         newReportPost.setPost(post);
         newReportPost.setType("POST");
         newReportPost.setReason(faker.lorem().sentence());
         newReportPost.setStatus(postStatus[faker.number().numberBetween(0, 4)]);
-        newReportPost.setCreatedAt(LocalDateTime.now());
-        newReportPost.setReporterUser(userRepository.findById(189L).orElse(null));
+        newReportPost.setCreatedAt(LocalDateTime.of(2024, 10, 10, 0, 0).plusSeconds(faker.number().numberBetween(0, (int) java.time.Duration.between(LocalDateTime.of(2024, 10, 10, 0, 0), LocalDateTime.now()).getSeconds())));
+        newReportPost.setReporterUser(getUser(userRepository));
         reportRepository.save(newReportPost);
 
     }
@@ -51,13 +52,14 @@ public class ReportPostJob {
         Integer random = faker.random().nextInt(1, totalPost.intValue());
         Comment data = commentRepository.findById(Long.valueOf(random)).orElse(null);
 
+
         Report newReportPost = new Report();
         newReportPost.setComment(data);
         newReportPost.setType("COMMENT");
         newReportPost.setReason(faker.lorem().sentence());
         newReportPost.setStatus(postStatus[faker.number().numberBetween(0, 4)]);
-        newReportPost.setCreatedAt(LocalDateTime.now());
-        newReportPost.setReporterUser(userRepository.findById(189L).orElse(null));
+        newReportPost.setCreatedAt(LocalDateTime.of(2024, 10, 10, 0, 0).plusSeconds(faker.number().numberBetween(0, (int) java.time.Duration.between(LocalDateTime.of(2024, 10, 10, 0, 0), LocalDateTime.now()).getSeconds())));
+        newReportPost.setReporterUser(getUser(userRepository));
         reportRepository.save(newReportPost);
 
     }
@@ -72,11 +74,11 @@ public class ReportPostJob {
 
         Report newReportPost = new Report();
         newReportPost.setCommentReply(data);
-        newReportPost.setType("COMMENT_REPLY");
+        newReportPost.setType("COMMENT_REPLIES");
         newReportPost.setReason(faker.lorem().sentence());
         newReportPost.setStatus(postStatus[faker.number().numberBetween(0, 4)]);
-        newReportPost.setCreatedAt(LocalDateTime.now());
-        newReportPost.setReporterUser(userRepository.findById(189L).orElse(null));
+        newReportPost.setCreatedAt(LocalDateTime.of(2024, 10, 10, 0, 0).plusSeconds(faker.number().numberBetween(0, (int) java.time.Duration.between(LocalDateTime.of(2024, 10, 10, 0, 0), LocalDateTime.now()).getSeconds())));
+        newReportPost.setReporterUser(getUser(userRepository));
         reportRepository.save(newReportPost);
 
     }
@@ -94,10 +96,18 @@ public class ReportPostJob {
         newReportPost.setType("USER");
         newReportPost.setReason(faker.lorem().sentence());
         newReportPost.setStatus(postStatus[faker.number().numberBetween(0, 4)]);
-        newReportPost.setCreatedAt(LocalDateTime.now());
-        newReportPost.setReporterUser(userRepository.findById(189L).orElse(null));
+        newReportPost.setCreatedAt(LocalDateTime.of(2024, 10, 10, 0, 0).plusSeconds(faker.number().numberBetween(0, (int) java.time.Duration.between(LocalDateTime.of(2024, 10, 10, 0, 0), LocalDateTime.now()).getSeconds())));
+        newReportPost.setReporterUser(getUser(userRepository));
         reportRepository.save(newReportPost);
 
+    }
+
+    private AppUser getUser(AppUserRepository userRepository){
+        Faker faker = new Faker();
+        Long totalUser= userRepository.count();
+        Integer randomUser = faker.random().nextInt(1, totalUser.intValue());
+
+        return userRepository.findById(Long.valueOf(randomUser)).orElse(null);
     }
 
 
