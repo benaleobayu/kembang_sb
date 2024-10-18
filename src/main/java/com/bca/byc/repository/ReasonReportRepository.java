@@ -17,7 +17,7 @@ public interface ReasonReportRepository extends JpaRepository<ReasonReport, Long
     Optional<ReasonReport> findBySecureId(String secureId);
 
     @Query("SELECT new com.bca.byc.model.projection.ReasonReportProjection(" +
-            " rr.secureId, rr.icon, rr.name, rr.orders, rr.isActive, rr.createdAt, rrc.name, rr.updatedAt, rru.name) " +
+            " rr.secureId, rr.icon, rr.name, rr.orders, rr.isActive, rr.isRequired, rr.createdAt, rrc.name, rr.updatedAt, rru.name) " +
             "FROM ReasonReport rr " +
             "LEFT JOIN rr.updatedBy rru " +
             "LEFT JOIN rr.createdBy rrc " +
@@ -27,7 +27,7 @@ public interface ReasonReportRepository extends JpaRepository<ReasonReport, Long
     Page<ReasonReportProjection> findDataReasonReportIndex(String keyword, Pageable pageable);
 
     @Query("SELECT new com.bca.byc.model.projection.ReasonReportProjection(" +
-            " rr.secureId, rr.icon, rr.name, rr.orders, rr.isActive, rr.createdAt, rrc.name, rr.updatedAt, rru.name) " +
+            " rr.secureId, rr.icon, rr.name, rr.orders, rr.isActive, rr.isRequired, rr.createdAt, rrc.name, rr.updatedAt, rru.name) " +
             "FROM ReasonReport rr " +
             "LEFT JOIN rr.updatedBy rru " +
             "LEFT JOIN rr.createdBy rrc " +

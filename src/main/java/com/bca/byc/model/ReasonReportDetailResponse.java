@@ -5,6 +5,7 @@ public record ReasonReportDetailResponse(
         String icon,
         String name,
         Boolean status,
-        Integer orders
+        Integer orders,
+        Boolean isRequired
 ) {
 }

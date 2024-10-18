@@ -23,6 +23,9 @@ public class ReasonReport extends AbstractBaseEntityCms implements SecureIdentif
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders;
 
+    @Column(name = "is_required")
+    private Boolean isRequired = true;
+
     @Override
     public Long getId() {
         return super.getId();

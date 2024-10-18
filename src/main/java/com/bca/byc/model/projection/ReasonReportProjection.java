@@ -14,6 +14,7 @@ public class ReasonReportProjection {
     private String name;
     private Integer orders;
     private Boolean status;
+    private Boolean isRequired;
 
     private LocalDateTime createdAt;
     private String createdBy;

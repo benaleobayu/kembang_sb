@@ -12,5 +12,6 @@ public class ReasonReportIndexResponse extends AdminModelBaseDTOResponse<Integer
     private String icon;
     private String name;
     private Boolean status;
+    private Boolean isRequired;
 
 }

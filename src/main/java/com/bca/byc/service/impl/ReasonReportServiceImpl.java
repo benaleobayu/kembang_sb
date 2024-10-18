@@ -74,7 +74,8 @@ public class ReasonReportServiceImpl implements ReasonReportService {
                 GlobalConverter.getParseImage(data.getIcon(), baseUrl),
                 data.getName(),
                 data.getIsActive(),
-                data.getOrders()
+                data.getOrders(),
+                data.getIsRequired()
         );
     }
 
@@ -93,16 +94,11 @@ public class ReasonReportServiceImpl implements ReasonReportService {
     public void updateData(String id, ReasonReportCreateUpdateRequest dto) throws BadRequestException, IOException {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         ReasonReport data = reasonReport(id);
-        String oldFilePath = data.getIcon();
 
         saveData(data, dto);
 
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
-        // delete old file
-        if (oldFilePath != null && !oldFilePath.isEmpty()) {
-            FileUploadHelper.deleteFile(oldFilePath, UPLOAD_DIR);
-        }
     }
 
     @Override
@@ -130,11 +126,16 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         data.setName(dto.name());
         data.setOrders(dto.orders());
         data.setIsActive(dto.status());
+        data.setIsRequired(dto.isRequired());
 
         if (dto.icon() != null) {
+            String oldFilePath = data.getIcon();
             FileUploadHelper.validateFileImageSvg(dto.icon());
             String filePath = FileUploadHelper.saveFile(dto.icon(), UPLOAD_DIR + "/images");
             data.setIcon(GlobalConverter.replaceImagePath(filePath));
+            if (oldFilePath != null && !oldFilePath.isEmpty()) {
+                FileUploadHelper.deleteFile(oldFilePath, UPLOAD_DIR);
+            }
         }
     }
 
@@ -145,6 +146,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         dto.setIcon(GlobalConverter.getParseImage(data.getIcon(), baseUrl));
         dto.setName(data.getName());
         dto.setStatus(data.getStatus());
+        dto.setIsRequired(data.getIsRequired());
 
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));

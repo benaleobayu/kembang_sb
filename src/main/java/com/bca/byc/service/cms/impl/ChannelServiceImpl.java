@@ -93,7 +93,7 @@ public class ChannelServiceImpl implements ChannelService {
         Channel data = HandlerRepository.getEntityBySecureId(id, repository, "Channel not found");
         TreeChannel.updatedChannel(dto, data, admin);
 
-        if (dto.logo() != null) {
+        if (dto.logo() != null ) {
             FileUploadHelper.validateFileTypeImage(dto.logo());
             String oldLogo = data.getLogo();
             String newLogo = saveFile(dto.logo(), UPLOAD_DIR + "/images/channel");

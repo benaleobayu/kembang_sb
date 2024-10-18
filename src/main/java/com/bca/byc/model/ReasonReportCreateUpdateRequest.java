@@ -6,6 +6,7 @@ public record ReasonReportCreateUpdateRequest(
         MultipartFile icon,
         String name,
         Integer orders,
-        Boolean status
+        Boolean status,
+        Boolean isRequired
         ) {
 }

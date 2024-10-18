@@ -62,14 +62,15 @@ public class ReasonReportController {
     @Operation(summary = "Create new reason report", description = "Create new reason report")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> create(
-            @ModelAttribute(value = "icon") MultipartFile icon,
-            @ModelAttribute(value = "name") String name,
-            @ModelAttribute(value = "orders") Integer orders,
-            @ModelAttribute(value = "status") Boolean status
+            @RequestPart(value = "icon") MultipartFile icon,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "orders") Integer orders,
+            @RequestParam(value = "status") Boolean status,
+            @RequestParam(value = "isRequired", required = false) Boolean isRequired
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            ReasonReportCreateUpdateRequest item = new ReasonReportCreateUpdateRequest(icon, name, orders, status);
+            ReasonReportCreateUpdateRequest item = new ReasonReportCreateUpdateRequest(icon, name, orders, status, isRequired);
             service.saveData(item);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created reason report"));
@@ -82,14 +83,15 @@ public class ReasonReportController {
     @PutMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id,
-            @ModelAttribute(value = "icon") MultipartFile icon,
-            @ModelAttribute(value = "name") String name,
-            @ModelAttribute(value = "orders") Integer orders,
-            @ModelAttribute(value = "status") Boolean status
+            @RequestPart(value = "icon", required = false) MultipartFile icon,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "orders") Integer orders,
+            @RequestParam(value = "status") Boolean status,
+            @RequestParam(value = "isRequired", required = false) Boolean isRequired
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            ReasonReportCreateUpdateRequest item = new ReasonReportCreateUpdateRequest(icon, name, orders, status);
+            ReasonReportCreateUpdateRequest item = new ReasonReportCreateUpdateRequest(icon, name, orders, status, isRequired);
             service.updateData(id, item);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated reason report"));
         } catch (BadRequestException | IOException e) {
