@@ -11,7 +11,7 @@ import java.util.Collections;
 
 @Configuration
 public class CorsConfig {
-//
+
 //    @Bean
 //    public CorsFilter corsFilter() {
 //        CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -19,7 +19,7 @@ public class CorsConfig {
 //                "https://admin-byc2024.kelolain.id",
 //                "http://localhost:4200"
 //        ));
-//        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+//        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
 //        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
 //        corsConfiguration.setAllowCredentials(true);
 //
