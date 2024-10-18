@@ -13,7 +13,7 @@ public class ReportTypeValidator implements ConstraintValidator<ReportTypeEnum, 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
 
-        List<String> values = Arrays.asList("POST", "COMMENT", "COMMENT_REPLIES", "USER");
+        List<String> values = Arrays.asList("POST", "COMMENT", "COMMENT_REPLY", "USER");
 
         return values.contains(value);
     }

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = ReportTypeValidator.class)
 public @interface ReportTypeEnum {
-    String message() default "Invalid value must be one of: POST, COMMENT, COMMENT_REPLIES, USER";
+    String message() default "Invalid value must be one of: POST, COMMENT, COMMENT_REPLY, USER";
 
     Class<?>[] groups() default {};
 
