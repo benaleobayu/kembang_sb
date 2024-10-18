@@ -84,7 +84,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         ReasonReport data = new ReasonReport();
 
-        saveData(data, dto);
+        saveData(data, dto, null);
 
         GlobalConverter.CmsAdminCreateAtBy(data, admin);
         repository.save(data);
@@ -95,7 +95,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         ReasonReport data = reasonReport(id);
 
-        saveData(data, dto);
+        saveData(data, dto, "update");
 
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         repository.save(data);
@@ -122,7 +122,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         );
     }
 
-    private void saveData(ReasonReport data, ReasonReportCreateUpdateRequest dto) throws IOException {
+    private void saveData(ReasonReport data, ReasonReportCreateUpdateRequest dto, String type) throws IOException {
         data.setName(dto.name());
         data.setOrders(dto.orders());
         data.setIsActive(dto.status());
@@ -133,8 +133,10 @@ public class ReasonReportServiceImpl implements ReasonReportService {
             String oldFilePath = data.getIcon();
             String filePath = FileUploadHelper.saveFile(dto.icon(), UPLOAD_DIR + "/images");
             data.setIcon(GlobalConverter.replaceImagePath(filePath));
-            if (!oldFilePath.equals(filePath)) {
-                FileUploadHelper.deleteFile(oldFilePath, UPLOAD_DIR);
+            if (type.equals("update")) {
+                if (!oldFilePath.equals(filePath)) {
+                    FileUploadHelper.deleteFile(oldFilePath, UPLOAD_DIR);
+                }
             }
         }
     }
