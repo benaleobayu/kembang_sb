@@ -3,6 +3,7 @@ package com.bca.byc.converter.parsing;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCategoryResponse;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.PostLocationRequestAndResponse;
 import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.LikeDislikeRepository;
@@ -46,6 +47,7 @@ public class TreePostConverter {
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
         dto.setPostCategory(convertPostCategory(data.getPostCategory()));
+        dto.setPostLocation(convertPostLocation(data.getPostLocation()));
 
         // check is my post or not
         dto.setIsMyPost(Objects.equals(appUser.getId(), userLogin.getId()));
@@ -331,4 +333,16 @@ public class TreePostConverter {
         }
         return contentType;
     }
+
+    private PostLocationRequestAndResponse convertPostLocation(PostLocation postLocation) {
+
+        PostLocationRequestAndResponse dto = new PostLocationRequestAndResponse();
+        dto.setPlaceName(postLocation.getPlaceName());
+        dto.setDescription(postLocation.getDescription());
+        dto.setPlaceId(postLocation.getPlaceId());
+        dto.setLongitude(postLocation.getLongitude());
+        dto.setLatitude(postLocation.getLatitude());
+        return dto;
+    }
+
 }
