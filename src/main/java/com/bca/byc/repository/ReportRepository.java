@@ -1,9 +1,11 @@
 package com.bca.byc.repository;
 
+import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Report;
 import com.bca.byc.model.projection.ReportCommentIndexProjection;
 import com.bca.byc.model.projection.ReportContentIndexProjection;
 import com.bca.byc.model.projection.ReportListDetailProjection;
+import com.bca.byc.model.projection.ReportUserIndexProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +16,13 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
+
+    // -- counter --
+    @Query("SELECT COUNT(r.id) FROM Report r WHERE r.reportedUser.id = :reportedUser")
+    Report countByReportedUserId(Long reportedUser);
+
+    Integer countByReportedUser(AppUser data);
+    // -- counter --
 
     // -- general --
 
@@ -114,6 +123,24 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                                                                  @Param("endDate") LocalDateTime end,
                                                                  @Param("reportStatus") String reportStatus,
                                                                  @Param("reportType") String reportType);
+
+    @Query("""
+            SELECT new com.bca.byc.model.projection.ReportUserIndexProjection(
+            r.secureId, r.id, ru.id, ru.email, ru, u.email)
+            FROM Report r
+            LEFT JOIN r.reporterUser u
+            LEFT JOIN r.reportedUser ru
+            WHERE (LOWER(u.email) LIKE (:keyword) OR LOWER(r.secureId) LIKE(:reportId)) AND
+            r.type = 'USER' AND
+            r.createdAt BETWEEN :startDate AND :endDate
+            """)
+    Page<ReportUserIndexProjection> getDataReportUserIndex(@Param("reportId") String reportId,
+                                                                 @Param("keyword") String keyword,
+                                                                 Pageable pageable,
+                                                                 @Param("startDate") LocalDateTime start,
+                                                                 @Param("endDate") LocalDateTime end);
+
+
 
     // ----- report content ----
 
