@@ -119,7 +119,12 @@ public class GlobalConverter {
 
     // Helper pagination
     public static SavedKeywordAndPageable createPageable(
-            Integer pages, Integer limit, String sortBy, String direction, String keyword, ListOfFilterPagination discardList
+            Integer pages,
+            Integer limit,
+            String sortBy,
+            String direction,
+            String keyword,
+            ListOfFilterPagination discardList
     ) {
         // Check if any of the fields in discardList are not null or empty
         if (discardList.getKeyword() != null && discardList.getKeyword().length() >= 3) {

@@ -87,6 +87,9 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserHasSavedPost> savedPosts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
+
     // relation on admin post
 
     @ManyToOne

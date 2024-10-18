@@ -1,6 +1,7 @@
 package com.bca.byc.model;
 
 import java.util.List;
+import java.util.Set;
 
 public record ReportContentIndexResponse(
 
@@ -9,9 +10,9 @@ public record ReportContentIndexResponse(
         List<String> highlight,
         String thumbnail,
         String description,
-        String tags,
+        Set<String> tags,
         String creator,
-        String statusReport,
+        String reporterEmail,
         Long totalReport,
         String lastReportAt
 
