@@ -23,9 +23,11 @@ public interface ReasonReportRepository extends JpaRepository<ReasonReport, Long
             "LEFT JOIN rr.createdBy rrc " +
             "WHERE " +
             "(LOWER(rr.name) LIKE (:keyword) ) AND " +
-            "rr.isActive = true AND rr.isDeleted = false")
+            "rr.isDeleted = false")
     Page<ReasonReportProjection> findDataReasonReportIndex(String keyword, Pageable pageable);
 
+
+    // -- apps --
     @Query("SELECT new com.bca.byc.model.projection.ReasonReportProjection(" +
             " rr.secureId, rr.icon, rr.name, rr.orders, rr.isActive, rr.isRequired, rr.createdAt, rrc.name, rr.updatedAt, rru.name) " +
             "FROM ReasonReport rr " +
@@ -34,4 +36,6 @@ public interface ReasonReportRepository extends JpaRepository<ReasonReport, Long
             "WHERE " +
             "rr.isActive = true AND rr.isDeleted = false")
     List<ReasonReportProjection> findDataForPublic();
+    // -- apps --
+
 }

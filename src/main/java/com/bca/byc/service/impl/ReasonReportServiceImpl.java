@@ -133,7 +133,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
             String oldFilePath = data.getIcon();
             String filePath = FileUploadHelper.saveFile(dto.icon(), UPLOAD_DIR + "/images");
             data.setIcon(GlobalConverter.replaceImagePath(filePath));
-            if (oldFilePath.equals(filePath)) {
+            if (!oldFilePath.equals(filePath)) {
                 FileUploadHelper.deleteFile(oldFilePath, UPLOAD_DIR);
             }
         }
