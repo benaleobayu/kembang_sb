@@ -58,12 +58,12 @@ public class ChannelController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> create(
-            @ModelAttribute(value = "logo") MultipartFile logo,
-            @ModelAttribute(value = "name") String name,
-            @ModelAttribute(value = "orders") Integer orders,
-            @ModelAttribute(value = "description") String description,
-            @ModelAttribute(value = "status") Boolean status,
-            @ModelAttribute(value = "privacy") String privacy
+            @RequestPart(value = "logo") MultipartFile logo,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "orders") Integer orders,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "status") Boolean status,
+            @RequestParam(value = "privacy") String privacy
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
@@ -81,12 +81,12 @@ public class ChannelController {
     @PutMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id,
-            @ModelAttribute(value = "logo") MultipartFile logo,
-            @ModelAttribute(value = "name") String name,
-            @ModelAttribute(value = "orders") Integer orders,
-            @ModelAttribute(value = "description") String description,
-            @ModelAttribute(value = "status") Boolean status,
-            @ModelAttribute(value = "privacy") String privacy
+            @RequestPart(value = "logo", required = false) MultipartFile logo,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "orders") Integer orders,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "status") Boolean status,
+            @RequestParam(value = "privacy") String privacy
     ) {
         log.info("PUT " + urlRoute + " endpoint hit");
         try {

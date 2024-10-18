@@ -89,17 +89,18 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     @Transactional
     public void updateData(String id, ChannelCreateUpdateRequest dto) throws IOException, InvalidFileTypeImageException {
-        FileUploadHelper.validateFileTypeImage(dto.logo());
-
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Channel data = HandlerRepository.getEntityBySecureId(id, repository, "Channel not found");
         TreeChannel.updatedChannel(dto, data, admin);
 
-        String oldLogo = data.getLogo();
-        String newLogo = saveFile(dto.logo(), UPLOAD_DIR + "/images/channel");
-        data.setLogo(GlobalConverter.replaceImagePath(newLogo));
-        if (!oldLogo.equals(newLogo)) {
-            FileUploadHelper.deleteFile(oldLogo, UPLOAD_DIR);
+        if (dto.logo() != null) {
+            FileUploadHelper.validateFileTypeImage(dto.logo());
+            String oldLogo = data.getLogo();
+            String newLogo = saveFile(dto.logo(), UPLOAD_DIR + "/images/channel");
+            data.setLogo(GlobalConverter.replaceImagePath(newLogo));
+            if (!oldLogo.equals(newLogo)) {
+                FileUploadHelper.deleteFile(oldLogo, UPLOAD_DIR);
+            }
         }
         repository.save(data);
 
