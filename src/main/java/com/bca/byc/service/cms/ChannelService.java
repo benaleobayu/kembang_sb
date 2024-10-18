@@ -21,6 +21,8 @@ public interface ChannelService {
 
     void updateStatusChannel(String id);
 
+    ReturnStatusResponse getUpdateStatusChannel(String id, Boolean status);
+
     void deleteData(String id) throws BadRequestException;
 
     ResultPageResponseDTO<ChanelListContentResponse<Long>> listDataContentChannel(Integer pages, Integer limit, String sortBy, String direction, String keyword, String channelId);

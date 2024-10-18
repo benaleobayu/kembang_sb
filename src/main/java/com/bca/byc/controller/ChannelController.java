@@ -10,6 +10,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.ChannelService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -101,6 +102,7 @@ public class ChannelController {
         }
     }
 
+    @Operation(summary = "Update status channel", hidden = true)
     @PutMapping("/{id}/status")
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id
@@ -109,6 +111,21 @@ public class ChannelController {
         try {
             service.updateStatusChannel(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully update status chanel"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "Update status channel")
+    @GetMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable("id") String id,
+            @RequestParam("isActive") Boolean status
+    ) {
+        log.info("PUT " + urlRoute + " endpoint hit");
+        try {
+            ReturnStatusResponse message = service.getUpdateStatusChannel(id, status);
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully update status chanel", message));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

@@ -116,6 +116,17 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    public ReturnStatusResponse getUpdateStatusChannel(String id, Boolean status) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        Channel data = getDataEntity(id);
+        data.setIsActive(status);
+        GlobalConverter.CmsAdminUpdateAtBy(data, admin);
+        Channel savedData = repository.save(data);
+
+        return new ReturnStatusResponse(savedData.getIsActive());
+    }
+
+    @Override
     public void deleteData(String id) throws BadRequestException {
         Channel data = HandlerRepository.getEntityBySecureId(id, repository, "Channel not found");
         // delete data
