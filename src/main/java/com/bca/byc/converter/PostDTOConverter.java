@@ -49,7 +49,7 @@ public class PostDTOConverter {
 
         dto.setPostTagsList(converter.convertTagList(data.getTags()));
         dto.setPostHighlightsList(GlobalConverter.convertListToArray(data.getHighlight()));
-        dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter));
+        dto.setPostContentList(converter.convertPostContents(data.getPostContents(), converter, userLogin));
         dto.setPostOwner(converter.convertOwnerDataWithBusiness(converter, postUser, userLogin));
 
         dto.setIsMyPost(data.getUser().getId().equals(userLogin.getId()));

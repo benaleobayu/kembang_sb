@@ -43,7 +43,7 @@ public class TreePostConverter {
         AppUser appUser = data.getUser();
 
         dto.setPostTagsList(convertTagList(data.getTags()));
-        dto.setPostContentList(convertPostContents(data.getPostContents(), converter));
+        dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
         dto.setPostCategory(convertPostCategory(data.getPostCategory()));
 
@@ -89,22 +89,6 @@ public class TreePostConverter {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setComment(data.getComment());
-        List<ListCommentReplyResponse> commentReplyResponse = new ArrayList<>();
-//        commentReply.stream()
-//                .sorted(Comparator.comparing(CommentReply::getCreatedAt).reversed())
-//                .limit(3)
-//                .forEach(data -> commentReplyResponse.add(convertToListCommentReplyResponse(
-//                        new ListCommentReplyResponse(),
-//                        data.getSecureId(),
-//                        data.getId(),
-//                        data.getComment(),
-//                        data.getUser(),
-//                        data.getCreatedAt()
-//                )));
-//        dto.setCommentReply(commentReplyResponse);
-//        int lastPage = (int) Math.floor(commentReply.size() / 10.0);
-//        int page = commentReply.size() < 10 ? 0 : lastPage;
-//        dto.setCommentReplyLastPage(page);
 
         AppUser owner = data.getUser();
         Business firstBusiness = owner.getBusinesses().stream()
@@ -208,12 +192,6 @@ public class TreePostConverter {
                                                AppUser userPost,
                                                AppUser userLogin
     ) {
-        AppUser owner = HandlerRepository.getIdBySecureId(
-                id,
-                userRepository::findBySecureId,
-                projection -> userRepository.findById(projection.getId()),
-                "User not found"
-        );
         dto.setId(id);
         dto.setName(name);
         dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
@@ -224,11 +202,33 @@ public class TreePostConverter {
         dto.setBusinessName(businessName);
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
-
+        return dto;
+    }
+    public PostOwnerResponse TagUserResponse(PostOwnerResponse dto,
+                                               String id,
+                                               String name,
+                                               String avatar,
+                                               String businessName,
+                                               String lineOfBusiness,
+                                               Boolean isPrimary,
+                                               AppUser userTagged,
+                                               AppUser userLogin
+    ) {
+        dto.setId(id);
+        dto.setName(name);
+        dto.setAvatar(GlobalConverter.getAvatarImage(avatar, baseUrl));
+        boolean isMyAccount = Objects.equals(userTagged.getId(), userLogin.getId());
+        dto.setIsMyAccount(isMyAccount);
+        boolean isFollowing = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(userTagged.getId()));
+        dto.setIsFollowed(isFollowing);
+        dto.setBusinessName(businessName);
+        dto.setLineOfBusiness(lineOfBusiness);
+        dto.setIsPrimary(isPrimary);
         return dto;
     }
 
-    public PostContentDetailResponse PostContentDetailResponse(PostContentDetailResponse dto, String contentId, String content, String contentType, String thumbnail, List<OwnerDataResponse> tagsUser
+
+    public PostContentDetailResponse PostContentDetailResponse(PostContentDetailResponse dto, String contentId, String content, String contentType, String thumbnail, List<PostOwnerResponse> tagsUser
     ) {
         dto.setContentId(contentId);
         dto.setContent(GlobalConverter.getParseImage(content, baseUrl));
@@ -277,14 +277,27 @@ public class TreePostConverter {
     }
 
     // Helper post content
-    public List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter) {
+    public List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter, AppUser userLogin) {
         return postContentList.stream().map(postContent -> {
-            List<OwnerDataResponse> tagUsers = postContent.getTagUsers().stream()
-                    .map(tagUser -> converter.OwnerDataResponse(
-                            new OwnerDataResponse(),
+            AppUser owner = postContent.getPost().getUser();
+            Business firstBusiness = owner.getBusinesses().stream()
+                    .filter(Business::getIsPrimary).findFirst().orElse(null);
+            assert firstBusiness != null;
+            BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
+            assert firstBusinessCategory != null;
+
+            List<PostOwnerResponse> tagUsers = postContent.getTagUsers().stream()
+                    .map(tagUser -> converter.TagUserResponse(
+                            new PostOwnerResponse(),
                             tagUser.getSecureId(),
                             tagUser.getAppUserDetail().getName(),
-                            tagUser.getAppUserDetail().getAvatar()
+                            tagUser.getAppUserDetail().getAvatar(),
+                            firstBusiness != null ? firstBusiness.getName() : null,
+                            firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                            firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                            tagUser,
+                            userLogin
                     )).collect(Collectors.toList());
             return converter.PostContentDetailResponse(
                     new PostContentDetailResponse(),

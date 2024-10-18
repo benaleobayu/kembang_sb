@@ -13,7 +13,7 @@ public class PostContentDetailResponse {
     private String contentType;
     private String thumbnail;
 
-    private List<OwnerDataResponse> contentTagsUser = new ArrayList<>();
+    private List<PostOwnerResponse> contentTagsUser = new ArrayList<>();
 
     public PostContentDetailResponse() {
     }
@@ -25,7 +25,7 @@ public class PostContentDetailResponse {
         this.thumbnail = thumbnail;
     }
 
-    public PostContentDetailResponse(String contentId, String content, String contentType, String thumbnail, List<OwnerDataResponse> contentTagsUser) {
+    public PostContentDetailResponse(String contentId, String content, String contentType, String thumbnail, List<PostOwnerResponse> contentTagsUser) {
         this.contentId = contentId;
         this.content = content;
         this.contentType = contentType;
