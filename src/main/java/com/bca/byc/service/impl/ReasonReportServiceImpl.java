@@ -84,7 +84,7 @@ public class ReasonReportServiceImpl implements ReasonReportService {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         ReasonReport data = new ReasonReport();
 
-        saveData(data, dto, null);
+        saveData(data, dto, "save");
 
         GlobalConverter.CmsAdminCreateAtBy(data, admin);
         repository.save(data);
