@@ -158,14 +158,16 @@ public class BusinessService {
     }
 
     public ResultPageResponseDTO<BusinessListResponse> listDataBusinessUser(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
-        AppUser user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
-
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
+        AppUser user;
+        if (userId != null) {
+            user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
+        } else {
+            user = null;
+        }
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Business> pageResult = businessRepository.findBusinessOnUser(user.getId(), set.keyword(), set.pageable());
+        Page<Business> pageResult = businessRepository.findBusinessOnUser(user == null ? null : user.getId(), set.keyword(), set.pageable());
         List<BusinessListResponse> dtos = TreeUserResponse.convertListBusinesses(pageResult.toList());
 
         return PageCreateReturn.create(pageResult, dtos);

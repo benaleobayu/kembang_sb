@@ -50,7 +50,7 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     @Query("SELECT b FROM Business b " +
             "WHERE " +
             "(LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
-            "b.user.id = :id")
+            "(:id IS NULL OR b.user.id = :id)")
     Page<Business> findBusinessOnUser(Long id, String keyword, Pageable pageable);
 
     @Query("SELECT b.id, b.name, b.address, bc.name, b.isPrimary, loc.name, bci.name " +
@@ -59,8 +59,7 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
             "LEFT JOIN BusinessCategory bci ON bci.id = bhc.businessCategoryChild.id " +
             "LEFT JOIN BusinessHasLocation bhl ON bhl.business.id = b.id " +
-            "LEFT JOIN Location loc ON loc.id = bhl.location.id " +
-            "WHERE b.user.secureId = :userId")
-    List<Object[]> findDataForExportByUserId(String userId);
+            "LEFT JOIN Location loc ON loc.id = bhl.location.id ")
+    List<Object[]> findDataForExportByUserId();
     // --- for detail usermanagement ---
 }

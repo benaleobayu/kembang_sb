@@ -6,5 +6,5 @@ import java.io.IOException;
 
 public interface MasterDataExportService {
 
-    void exportBusinessUser(HttpServletResponse response, String userId) throws IOException;
+    void exportBusinessUser(HttpServletResponse response) throws IOException;
 }

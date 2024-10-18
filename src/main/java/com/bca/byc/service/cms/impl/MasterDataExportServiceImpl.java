@@ -1,7 +1,6 @@
 package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.model.export.BusinessExportResponse;
-import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.repository.BusinessRepository;
 import com.bca.byc.service.cms.MasterDataExportService;
 import jakarta.servlet.ServletOutputStream;
@@ -11,7 +10,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +26,8 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
     private final BusinessRepository businessRepository;
 
     @Override
-    public void exportBusinessUser(HttpServletResponse response, String userId) throws IOException {
-        List<BusinessExportResponse> datas = findDataForExportByUserId(userId);
+    public void exportBusinessUser(HttpServletResponse response) throws IOException {
+        List<BusinessExportResponse> datas = findDataForExportByUserId();
 
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-Disposition", "attachment; filename=business_export.xls");
@@ -69,8 +67,8 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
 
 
     // -------- Helper
-    public List<BusinessExportResponse> findDataForExportByUserId(String userId) {
-        List<Object[]> rawResults = businessRepository.findDataForExportByUserId(userId);
+    public List<BusinessExportResponse> findDataForExportByUserId() {
+        List<Object[]> rawResults = businessRepository.findDataForExportByUserId();
         Map<Long, BusinessExportResponse> responseMap = new HashMap<>();
 
         for (Object[] row : rawResults) {
