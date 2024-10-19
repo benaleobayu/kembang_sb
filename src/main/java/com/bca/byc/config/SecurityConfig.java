@@ -31,9 +31,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
 import java.util.Arrays;
@@ -141,14 +138,13 @@ public class SecurityConfig {
                                                    UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter,
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
                                                    JwtTokenFilter jwtTokenFilter,
-                                                   CorsConfigurationSource corsConfigurationSource,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
-
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource())); // Mengonfigurasi CORS
-
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(PERMIT_ENDPOINT_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
+               // .requestMatchers("/api/chat/**").permitAll()
                 .requestMatchers(V1_URL, V2_URL, APPS_V1, CMS_V1).authenticated());
 
         http.formLogin(formLogin -> formLogin
@@ -163,31 +159,19 @@ public class SecurityConfig {
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler));
 
+
         http.sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // Add JwtTokenFilter before authentication filters
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Add authentication filters
         http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "https://admin-byc2024.kelolain.id",
-                "http://localhost:4200"
-        ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        corsConfiguration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
     }
 
     @Bean
