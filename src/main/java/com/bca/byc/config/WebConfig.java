@@ -18,12 +18,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:/var/www/html/cms-byc2024/uploads/");
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("https://admin-byc2024.kelolain.id")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("https://admin-byc2024.kelolain.id")
+//                .allowedMethods("*")
+//                .allowedHeaders("*")
+//                .allowCredentials(true);
+//    }
 }
