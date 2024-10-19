@@ -1,7 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppSearchDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.converter.parsing.TreeUserResponse;
@@ -73,7 +73,7 @@ public class AppSearchServiceImpl implements AppSearchService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class AppSearchServiceImpl implements AppSearchService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class AppSearchServiceImpl implements AppSearchService {
                 .map(data -> TreeUserResponse.convertToCardUser(data, baseUrl)) // Convert AppUser to SuggestedUserResponse
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class AppSearchServiceImpl implements AppSearchService {
                 .map(user -> TreeUserResponse.convertToCardUser(user, baseUrl)) // Convert AppUser to SuggestedUserResponse
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class AppSearchServiceImpl implements AppSearchService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
 }

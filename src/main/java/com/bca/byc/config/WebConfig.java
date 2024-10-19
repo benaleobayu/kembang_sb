@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Atur endpoint sesuai kebutuhan
+        registry.addMapping("/**")
                 .allowedOrigins("https://admin-byc2024.kelolain.id")
                 .allowedMethods("*")
                 .allowedHeaders("*")

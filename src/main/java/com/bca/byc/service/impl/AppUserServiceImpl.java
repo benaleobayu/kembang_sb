@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserNotification;
@@ -25,7 +26,6 @@ import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
 import com.bca.byc.response.NotificationSettingsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.AppUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -155,7 +155,7 @@ public class AppUserServiceImpl implements AppUserService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class AppUserServiceImpl implements AppUserService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     public void changePassword(String userSecureId, String currentPassword, String newPassword) throws Exception {
