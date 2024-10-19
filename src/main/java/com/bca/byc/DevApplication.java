@@ -30,23 +30,20 @@ public class DevApplication {
         SpringApplication.run(DevApplication.class, args);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "https://admin-byc2024.kelolain.id",
-                "http://localhost:4200"
-        ));
-
-        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
-        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
-        corsConfiguration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(Arrays.asList(
+//                "https://admin-byc2024.kelolain.id",
+//                "http://localhost:4200"
+//        ));
+//        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+//        corsConfiguration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
 
 }
