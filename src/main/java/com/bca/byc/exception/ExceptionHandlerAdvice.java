@@ -69,11 +69,10 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Access-Control-Allow-Origin", "*");
+        headers.add("Access-Control-Allow-Origin", "https://admin-byc2024.kelolain.id");
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .headers(headers)
-                .body(new ApiResponse(false, ex.getMessage()));
+        return new ResponseEntity<>(new ApiResponse(false, ex.getMessage()), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, ex.getMessage()));
     }
 
     @Override
