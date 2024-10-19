@@ -141,6 +141,7 @@ public class SecurityConfig {
                                                    UsernamePasswordAuthProcessingFilter usernamePasswordAuthProcessingFilter,
                                                    JwtAuthProcessingFilter jwtAuthProcessingFilter,
                                                    JwtTokenFilter jwtTokenFilter,
+                                                   CorsConfigurationSource corsConfigurationSource,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
 
@@ -165,7 +166,7 @@ public class SecurityConfig {
         http.sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-//        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(usernamePasswordAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthProcessingFilter, UsernamePasswordAuthenticationFilter.class);
