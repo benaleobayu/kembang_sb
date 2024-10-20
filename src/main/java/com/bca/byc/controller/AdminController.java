@@ -94,7 +94,7 @@ public class AdminController {
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> UpdateAdmin(
             @PathVariable("id") String id,
-            @RequestPart("avatar") MultipartFile avatar,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar,
             @RequestParam("name") String name,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "password", required = false) String password,

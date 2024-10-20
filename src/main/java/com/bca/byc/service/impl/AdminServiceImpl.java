@@ -126,6 +126,7 @@ public class AdminServiceImpl implements AdminService {
 
         // Check if the email has changed and if it exists
         String newEmail = dto.email() != null ? dto.email().toLowerCase() : null;
+        assert newEmail != null;
         if (!newEmail.equals(data.getEmail())) {
             if (emailExists(newEmail, appAdminRepository)) {
                 return;

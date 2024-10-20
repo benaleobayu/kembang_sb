@@ -17,7 +17,8 @@ public interface AdminRepository extends JpaRepository<AppAdmin, Long> {
 
     @Query("SELECT a FROM AppAdmin a " +
             "WHERE " +
-            "(LOWER(a.name) LIKE(:keyword) ) AND " +
-            "a.isActive = true AND a.isDeleted = false")
+            "(LOWER(a.name) LIKE(:keyword) OR " +
+            "LOWER(a.email) LIKE(:keyword)) AND " +
+            "a.isDeleted = false")
     Page<AppAdmin> getAdminList(@Param("keyword") String keyword, Pageable pageable);
 }
