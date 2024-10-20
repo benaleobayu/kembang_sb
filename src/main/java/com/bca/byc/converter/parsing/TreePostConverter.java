@@ -12,6 +12,7 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,7 +111,7 @@ public class TreePostConverter {
                 data.getUser(),
                 user
         ));
-        dto.setCreatedAt(data.getCreatedAt() != null ? data.getCreatedAt() : null);
+        dto.setCreatedAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
 
         boolean isOwner = Objects.equals(user.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);

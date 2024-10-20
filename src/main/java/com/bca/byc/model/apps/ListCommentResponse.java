@@ -26,5 +26,5 @@ public class ListCommentResponse {
 
     private Integer likeCount = 0;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 }
