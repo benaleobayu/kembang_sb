@@ -5,5 +5,6 @@ public enum AdminType {
     GENERAL, // 1
     OPERATIONAL, // 2
     SUPERVISOR, //3
-    MANAGER //4
+    MANAGER, //4
+    CONTENT //5
 }

@@ -4,6 +4,7 @@ import com.bca.byc.converter.InputAttributeDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.AttributeNameResponse;
 import com.bca.byc.entity.impl.AttrIdentificable;
@@ -143,6 +144,23 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         );
         Map<String, List<?>> userTypeMap = new HashMap<>();
         userTypeMap.put("segmentation", listUserTypes);
+        attributes.add(userTypeMap);
+
+        return attributes;
+    }
+
+    @Override
+    public List<Map<String, List<?>>> AdminType(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        // Data UserTypes
+        List<AttributeResponse<String>> listAdminTypes = Arrays.asList(
+                new AttributeResponse<>(AdminType.GENERAL.name(), "General"),
+                new AttributeResponse<>(AdminType.OPERATIONAL.name(), "Operational"),
+                new AttributeResponse<>(AdminType.SUPERVISOR.name(), "Supervisor"),
+                new AttributeResponse<>(AdminType.CONTENT.name(), "Content")
+        );
+        Map<String, List<?>> userTypeMap = new HashMap<>();
+        userTypeMap.put("admin_type", listAdminTypes);
         attributes.add(userTypeMap);
 
         return attributes;

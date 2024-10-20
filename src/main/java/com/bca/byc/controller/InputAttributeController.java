@@ -5,6 +5,7 @@ import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.InputAttributeService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -109,5 +110,20 @@ public class InputAttributeController {
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.RoleList(pages, limit, sortBy, direction, keyword)));
     }
+
+    @Operation(summary = "For input attribute admin")
+    @GetMapping("admin-type")
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> AdminType(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "100") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + "/admin-type endpoint hit");
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.AdminType(pages, limit, sortBy, direction, keyword)));
+    }
+
+
 
 }
