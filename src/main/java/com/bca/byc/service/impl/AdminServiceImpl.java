@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.util.FileUploadHelper.saveFile;
+
 @Service
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -118,10 +120,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void UpdateAdmin(String id, AdminUpdateRequest dto, MultipartFile avatar) throws BadRequestException, IOException {
-        FileUploadHelper.validateFileTypeImage(avatar);
-
         // Create a new AppAdmin instance to update
-        AppAdmin data = new AppAdmin();
+        AppAdmin data = HandlerRepository.getEntityBySecureId(id, appAdminRepository, "Admin not found");
         data.setName(dto.name());
 
         // Check if the email has changed and if it exists
@@ -140,16 +140,19 @@ public class AdminServiceImpl implements AdminService {
         data.setRole(role);
         data.setIsActive(dto.status());
 
-        String oldCover = data.getAvatar();
-        String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
-        data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
+        if (avatar != null ) {
+            FileUploadHelper.validateFileTypeImage(avatar);
+            String oldAvatar = data.getAvatar();
+            String newAvatar = saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
+            data.setAvatar(GlobalConverter.replaceImagePath(newAvatar));
+            if (!oldAvatar.equals(newAvatar)) {
+                FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
+            }
+        }
 
         // Save the updated admin data
         repository.save(data);
 
-        if (oldCover != null && !oldCover.isEmpty()) {
-            FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
-        }
     }
 
 
