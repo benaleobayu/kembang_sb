@@ -47,7 +47,8 @@ public class ChanelDTOConverter {
                 data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null,
                 data.getDescription(),
                 GlobalConverter.getParseImage(data.getLogo(), baseUrl),
-                data.getPrivacy()
+                data.getPrivacy(),
+                data.getIsActive()
         );
     }
 

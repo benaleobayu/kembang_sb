@@ -14,7 +14,9 @@ public record ChanelDetailResponse(
 
         String logo,
 
-        String privacy
+        String privacy,
+
+        Boolean status
 
 ) {
 }
