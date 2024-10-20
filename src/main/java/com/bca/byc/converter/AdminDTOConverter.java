@@ -37,8 +37,9 @@ public class AdminDTOConverter {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setStatus(data.getIsActive());
-
+        dto.setRoleId(data.getRole().getSecureId());
         dto.setRoleName(data.getRole().getName());
+        dto.setType(data.getType().name());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
         // return

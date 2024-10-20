@@ -156,13 +156,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void DeleteAdmin(String id) throws BadRequestException {
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
-
-        // delete data
-        if (!repository.existsById(data.getId())) {
-            throw new BadRequestException("Admin not found");
-        } else {
-            repository.deleteById(data.getId());
+        int adminId = Math.toIntExact(data.getId());
+        if (adminId >= 1 && adminId <= 4) {
+            throw new BadRequestException("Cannot delete admin IDs 1-4");
         }
+        repository.deleteById(data.getId());
     }
 
     @Override
