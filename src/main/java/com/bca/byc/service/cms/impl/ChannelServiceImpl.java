@@ -57,10 +57,9 @@ public class ChannelServiceImpl implements ChannelService {
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<Channel> pageResult = repository.findByNameLikeIgnoreCaseOrderByOrders(set.keyword(), set.pageable());
-        List<ChanelIndexResponse> dtos = pageResult.stream().map((c) -> {
-            ChanelIndexResponse dto = converter.convertToIndexResponse(c, baseUrl);
-            return dto;
-        }).collect(Collectors.toList());
+        List<ChanelIndexResponse> dtos = pageResult.stream().map((c) ->
+            converter.convertToIndexResponse(c, baseUrl)
+        ).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
     }

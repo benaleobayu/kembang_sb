@@ -16,6 +16,9 @@ public record ChanelIndexResponse(
 
         String logo,
 
-        String privacy
+        String privacy,
+
+        Boolean status
+
 )  implements Serializable {
 }
