@@ -1,5 +1,6 @@
 package com.bca.byc.model.apps;
 
+import com.bca.byc.model.PostHomeResponse;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class ProfileActivityPostCommentsResponse {
     private String userName;
     private String userAvatar;
 
-    private SimplePostResponse post;
+    private PostHomeResponse post;
 
     private List<ListCommentResponse> comments = new ArrayList<>();
 }

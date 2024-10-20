@@ -166,7 +166,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
             ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
 
             // Use TreeProfileActivityConverter for convert data
-            SimplePostResponse postDto = new SimplePostResponse();
+            PostHomeResponse postDto = new PostHomeResponse();
             converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl, likeDislikeRepository, userRepository);
 
             // Set data untuk balasan jika ada

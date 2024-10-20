@@ -8,6 +8,7 @@ public class SimplePostResponse {
     private String postId;
     private String postDescription;
     private String postContent;
+    private String postThumbnail;
     private String postCreatedAt;
 
 }

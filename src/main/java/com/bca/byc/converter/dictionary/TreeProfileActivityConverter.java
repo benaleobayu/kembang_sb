@@ -4,6 +4,8 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
+import com.bca.byc.entity.PostContent;
+import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
 import com.bca.byc.model.apps.SimplePostResponse;
@@ -22,9 +24,12 @@ public class TreeProfileActivityConverter {
             AppUser user,
             String baseUrl
     ) {
+        PostContent firstPostContent = user.getPosts().getFirst().getPostContents().getFirst();
+
         dto.setPostId(user.getPosts().getFirst().getSecureId());
         dto.setPostDescription(user.getPosts().getFirst().getDescription());
-        dto.setPostContent(GlobalConverter.getParseImage(user.getPosts().getFirst().getPostContents().getFirst().getContent(), baseUrl));
+        dto.setPostContent(GlobalConverter.getParseImage(firstPostContent.getContent(), baseUrl));
+        dto.setPostThumbnail(GlobalConverter.getParseImage(firstPostContent.getThumbnail(), baseUrl));
         dto.setPostCreatedAt(user.getPosts().getFirst().getCreatedAt() != null ? Formatter.formatDateTimeApps(user.getPosts().getFirst().getCreatedAt()) : null);
         return dto;
     }
@@ -33,17 +38,23 @@ public class TreeProfileActivityConverter {
             ProfileActivityPostCommentsResponse dto,
             AppUser user,
             Comment comment,
-            SimplePostResponse postDto,
+            PostHomeResponse postDto,
             String baseUrl,
             LikeDislikeRepository likeDislikeRepository,
             AppUserRepository userRepository
 
     ) {
+        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
         dto.setUserId(user.getSecureId());
         dto.setUserName(user.getAppUserDetail().getName());
         dto.setUserAvatar(getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
-        dto.setPost(convertPostData(postDto, user, baseUrl));
-        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
+        dto.setPost(converter.convertToPostHomeResponse(
+                new PostHomeResponse(),
+                user.getPosts().getFirst(),
+                converter,
+                user,
+                likeDislikeRepository
+        ));
         dto.setComments(Collections.singletonList(converter.convertToListCommentResponse(
                 new ListCommentResponse(),
                 user,

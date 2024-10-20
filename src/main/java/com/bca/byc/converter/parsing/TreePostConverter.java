@@ -47,7 +47,7 @@ public class TreePostConverter {
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
         dto.setPostCategory(convertPostCategory(data.getPostCategory()));
-        dto.setPostLocation(convertPostLocation(data.getPostLocation()));
+        dto.setPostLocation(data.getPostLocation() == null ? null : convertPostLocation(data.getPostLocation()));
 
         // check is my post or not
         dto.setIsMyPost(Objects.equals(appUser.getId(), userLogin.getId()));
@@ -110,7 +110,7 @@ public class TreePostConverter {
                 data.getUser(),
                 user
         ));
-        dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : null);
+        dto.setCreatedAt(data.getCreatedAt() != null ? data.getCreatedAt() : null);
 
         boolean isOwner = Objects.equals(user.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);
@@ -337,11 +337,11 @@ public class TreePostConverter {
     private PostLocationRequestAndResponse convertPostLocation(PostLocation postLocation) {
 
         PostLocationRequestAndResponse dto = new PostLocationRequestAndResponse();
-        dto.setPlaceName(postLocation.getPlaceName());
-        dto.setDescription(postLocation.getDescription());
-        dto.setPlaceId(postLocation.getPlaceId());
-        dto.setLongitude(postLocation.getLongitude());
-        dto.setLatitude(postLocation.getLatitude());
+        dto.setPlaceName(postLocation.getPlaceName() == null ? null : postLocation.getPlaceName());
+        dto.setDescription(postLocation.getDescription() == null ? null : postLocation.getDescription());
+        dto.setPlaceId(postLocation.getPlaceId() == null ? null : postLocation.getPlaceId());
+        dto.setLongitude(postLocation.getLongitude() == null ? null : postLocation.getLongitude());
+        dto.setLatitude(postLocation.getLatitude() == null ? null : postLocation.getLatitude());
         return dto;
     }
 

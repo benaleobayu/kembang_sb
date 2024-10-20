@@ -2,6 +2,7 @@ package com.bca.byc.model.apps;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -25,5 +26,5 @@ public class ListCommentResponse {
 
     private Integer likeCount = 0;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 }
