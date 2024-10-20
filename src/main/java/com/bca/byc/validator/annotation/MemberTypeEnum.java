@@ -1,6 +1,5 @@
 package com.bca.byc.validator.annotation;
 
-import com.bca.byc.validator.ApproveEnumValidator;
 import com.bca.byc.validator.MemberTypeValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

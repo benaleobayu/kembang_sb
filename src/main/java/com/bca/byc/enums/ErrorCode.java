@@ -17,7 +17,14 @@ public enum ErrorCode {
 	NOT_ACCEPTABLE(11),
 	REQUEST_TIMEOUT(12),
 	TOKEN_EXPIRED(404),
-	REDIRECT(302),;
+	REDIRECT(302),
+
+	// BCA CUSTOM CODE
+	unsupported_grant_type(400),
+	invalid_request(400),
+	Invalid_client(400),
+	unauthorized_client(401),
+	invalid_grant(400);
 
 	private int code;
 	ErrorCode(int code) {
