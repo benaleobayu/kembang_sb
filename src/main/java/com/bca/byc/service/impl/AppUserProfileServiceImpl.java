@@ -167,9 +167,9 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
             // Use TreeProfileActivityConverter for convert data
             PostHomeResponse postDto = new PostHomeResponse();
-            converter.convertActivityComments(dto, commentUser, comment, postDto, baseUrl, likeDislikeRepository, userRepository);
+            converter.convertActivityComments(dto, commentUser, userLogin, post, comment, baseUrl, likeDislikeRepository, userRepository);
 
-            // Set data untuk balasan jika ada
+//            // Set data untuk balasan jika ada
             if (commentReply != null) {
                 ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
                 replyResponse.setId(commentReply.getSecureId());
@@ -189,7 +189,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                         firstBusiness != null ? firstBusiness.getName() : null,
                         firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                         firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                        post.getUser(),
+                        commentReply.getUser(),
                         userLogin
                 ));
                 replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));

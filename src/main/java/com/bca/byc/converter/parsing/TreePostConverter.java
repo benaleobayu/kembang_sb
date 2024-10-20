@@ -46,7 +46,7 @@ public class TreePostConverter {
         dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
         dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
-        dto.setPostCategory(convertPostCategory(data.getPostCategory()));
+        dto.setPostCategory(data.getPostCategory() == null ? null :convertPostCategory(data.getPostCategory()));
         dto.setPostLocation(data.getPostLocation() == null ? null : convertPostLocation(data.getPostLocation()));
 
         // check is my post or not

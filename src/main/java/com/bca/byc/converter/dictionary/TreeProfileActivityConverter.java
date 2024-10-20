@@ -4,6 +4,7 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
+import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
@@ -37,8 +38,9 @@ public class TreeProfileActivityConverter {
     public ProfileActivityPostCommentsResponse convertActivityComments(
             ProfileActivityPostCommentsResponse dto,
             AppUser user,
+            AppUser userLogin,
+            Post post,
             Comment comment,
-            PostHomeResponse postDto,
             String baseUrl,
             LikeDislikeRepository likeDislikeRepository,
             AppUserRepository userRepository
@@ -50,9 +52,9 @@ public class TreeProfileActivityConverter {
         dto.setUserAvatar(getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
         dto.setPost(converter.convertToPostHomeResponse(
                 new PostHomeResponse(),
-                user.getPosts().getFirst(),
+                post,
                 converter,
-                user,
+                userLogin,
                 likeDislikeRepository
         ));
         dto.setComments(Collections.singletonList(converter.convertToListCommentResponse(
