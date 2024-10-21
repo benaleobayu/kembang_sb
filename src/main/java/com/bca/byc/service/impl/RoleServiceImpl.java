@@ -47,11 +47,8 @@ public class RoleServiceImpl implements RoleService {
 
     private final AppAdminRepository adminRepository;
     private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
-    private final RoleHasPermissionRepository roleHasPermissionRepository;
 
     private final RoleDTOConverter converter;
-    private final EntityManager entityManager;
 
     private final String notFoundMessage = " not found.";
 
@@ -76,12 +73,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public void updateData(String roleId, RoleCreateUpdateRequest dto) throws BadRequestException {
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "user" + notFoundMessage);
+        AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
         // Check if the role exists and get it
         Role role = HandlerRepository.getEntityBySecureId(roleId, roleRepository, "Role " + notFoundMessage);
 
-        converter.convertToUpdateRequest(role, dto, admin);
+        converter.convertToUpdateRequest(role, dto, adminLogin);
 
         roleRepository.save(role);
     }
@@ -93,7 +89,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = HandlerRepository.getEntityBySecureId(id, roleRepository, "Role " + notFoundMessage);
         Long roleId = role.getId();
 
-        if (roleId == 1 || roleId == 2 || roleId == 3 || roleId == 4) {
+        if (roleId == 1 || roleId == 2 || roleId == 3 || roleId == 4 || roleId == 5) {
             throw new BadRequestException("Role " + role.getName() + " cannot be deleted.");
         }
 

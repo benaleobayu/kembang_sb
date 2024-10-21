@@ -38,7 +38,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         List<AttributeResponse<AdminApprovalStatus>> listStatusResponse = null;
 
-        if (admin.getType().equals(AdminType.SUPERADMIN)) {
+        if (admin.getRole().getName().equals("SUPERADMIN")) {
             listStatusResponse = Arrays.asList(
                     new AttributeResponse<>( null, "All"),
                     new AttributeResponse<>( AdminApprovalStatus.PENDING, "Draft"),
@@ -48,7 +48,7 @@ public class UserManagementServiceImpl implements UserManagementService {
                     new AttributeResponse<>( AdminApprovalStatus.DELETED, "Deleted")
             );
         }
-        if (admin.getType().equals(AdminType.OPERATIONAL)) {
+        if (admin.getRole().getName().equals("ADMIN-OPERATIONAL")) {
             listStatusResponse = Arrays.asList(
                     new AttributeResponse<>( null, "All"),
                     new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
@@ -56,7 +56,7 @@ public class UserManagementServiceImpl implements UserManagementService {
                     new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved")
             );
         }
-        if (admin.getType().equals(AdminType.SUPERVISOR)) {
+        if (admin.getRole().getName().equals("ADMIN-SUPERVISOR")) {
             listStatusResponse = Arrays.asList(
                     new AttributeResponse<>( null, "All"),
                     new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),

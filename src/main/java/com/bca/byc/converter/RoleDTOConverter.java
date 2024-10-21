@@ -15,6 +15,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jsoup.internal.StringUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -138,7 +140,11 @@ public class RoleDTOConverter {
     // update
     public void convertToUpdateRequest(Role data, @Valid RoleCreateUpdateRequest dto, AppAdmin admin) {
         // Update fields based on the DTO
-        data.setName(dto.getName().toUpperCase());
+        if (data.getId() == 1 || data.getId() == 2 || data.getId() == 3 || data.getId() == 4 || data.getId() == 5) {
+            return;
+        } else {
+            data.setName(dto.getName().toUpperCase());
+        }
         data.setIsActive(dto.getStatus());
 
         // Retrieve existing permissions for the role
@@ -172,15 +178,6 @@ public class RoleDTOConverter {
             }
         }
 
-        // Step 1: Remove inactive permissions
-//        for (Long permissionId : removePermissionIds) {
-//            Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
-//            RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleAndPermission(data, permission);
-//            if (roleHasPermission != null) {
-//                log.info("Deleting RoleHasPermission: roleId={}, permissionId={}", data.getId(), permissionId);
-//                roleHasPermissionRepository.delete(roleHasPermission);
-//            }
-//        }
         for (Long permissionId : removePermissionIds) {
             RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleIdAndPermissionId(data.getId(), permissionId);
             if (roleHasPermission != null) {
