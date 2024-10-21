@@ -32,4 +32,6 @@ public interface ReportContentIndexProjection {
 
     Post getPost();
 
+    String getStatusReport();
+
 }

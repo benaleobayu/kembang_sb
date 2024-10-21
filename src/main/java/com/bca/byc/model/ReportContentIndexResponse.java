@@ -13,6 +13,7 @@ public record ReportContentIndexResponse(
         Set<String> tags,
         String creator,
         String reporterEmail,
+        String statusReport,
         Long totalReport,
         String lastReportAt
 

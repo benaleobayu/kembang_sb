@@ -55,6 +55,7 @@ public class ReportContentServiceImpl implements ReportContentService {
                         data.getTags() != null ? data.getTags().stream().map(Tag::getName).collect(Collectors.toSet()) : null,
                         data.getCreator(),
                         data.getReporterEmail(),
+                        data.getStatusReport(),
                         data.getTotalReport(),
                         data.getLastReportAt() != null ? Formatter.formatLocalDateTime(data.getLastReportAt()) : null
                 )).collect(Collectors.toMap(

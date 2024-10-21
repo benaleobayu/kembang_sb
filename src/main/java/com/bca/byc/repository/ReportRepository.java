@@ -57,7 +57,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "r.secureId AS id, r.id AS index, p.highlight AS highlight, " +
             "CASE WHEN MAX(pc.type) = 'video' THEN MAX(pc.thumbnail) ELSE MAX(pc.content) END AS thumbnail, " +
             "p.description AS description, t AS tags, aud.name AS creator, ru.email AS reporterEmail, COUNT(r.id) AS totalReport, MAX(r.createdAt) AS lastReportAt, " +
-            "c.name AS channelName,p AS post " +
+            "c.name AS channelName,p AS post ," +
+            "p.reportStatus as statusReport " +
             "FROM Post p " +
             "LEFT JOIN p.postContents pc " +
             "LEFT JOIN p.reports r " +
