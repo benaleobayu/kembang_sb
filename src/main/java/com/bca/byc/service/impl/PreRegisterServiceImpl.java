@@ -86,15 +86,15 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         int s6 = AdminApprovalStatus.DELETED.ordinal(); // 6
         List<Integer> listStatus;
         Page<PreRegister> pageResult = null;
-        if (admin.getType().equals(AdminType.SUPERADMIN)) {
+        if (admin.getRole().getName().equals("SUPERADMIN")) {
             listStatus = List.of(s0, s1, s4, s5, s6);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
-        if (admin.getType().equals(AdminType.OPERATIONAL)) {
+        if (admin.getRole().getName().equals("ADMIN-OPERATIONAL")) {
             listStatus = List.of(s0, s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
-        if (admin.getType().equals(AdminType.SUPERVISOR)) {
+        if (admin.getRole().getName().equals("ADMIN-SUPERVISOR")) {
             listStatus = List.of(s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }

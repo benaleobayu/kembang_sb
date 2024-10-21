@@ -26,6 +26,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static com.bca.byc.enums.AdminType.SUPERADMIN;
+
 @Component
 @AllArgsConstructor
 public class PreRegisterDTOConverter {
@@ -79,19 +81,19 @@ public class PreRegisterDTOConverter {
         PreRegister data = new PreRegister();
         convertToCreatePreRegister(data, dto);
         data.setCreatedBy(admin);
-        AdminType typeEquals = admin.getType();
+        String roleEquals = admin.getRole().getName();
 
-        switch (typeEquals) {
-            case SUPERADMIN:
+        switch (roleEquals) {
+            case "SUPERADMIN":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
-            case OPERATIONAL:
+            case "ADMIN-OPERATIONAL":
                 data.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
                 break;
-            case SUPERVISOR:
+            case "ADMIN-SUPERVISOR":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
-            case MANAGER:
+            case "ADMIN-MANAGER":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
             default:
@@ -133,20 +135,20 @@ public class PreRegisterDTOConverter {
         emailData.setCardNumber(data.getMemberBankAccount());
         emailData.setName(data.getName());
 
-        AdminType typeAdmin = admin.getType();
+        String typeAdmin = admin.getRole().getName();
         switch (typeAdmin) {
-            case SUPERADMIN:
+            case "SUPERADMIN":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 emailService.sendApprovalPreRegister(emailData);
                 break;
-            case OPERATIONAL:
+            case "ADMIN-OPERATIONAL":
                 data.setStatusApproval(AdminApprovalStatus.OPT_APPROVED);
                 break;
-            case SUPERVISOR:
+            case "ADMIN-SUPERVISOR":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 emailService.sendApprovalPreRegister(emailData);
                 break;
-            case MANAGER:
+            case "ADMIN-MANAGER":
                 data.setStatusApproval(AdminApprovalStatus.APPROVED);
                 break;
             default:
