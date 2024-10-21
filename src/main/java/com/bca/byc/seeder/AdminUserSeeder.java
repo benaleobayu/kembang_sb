@@ -118,6 +118,29 @@ public class AdminUserSeeder implements CommandLineRunner {
             appAdminRepository.save(adminManager);
         }
 
+        if (appAdminRepository.findByEmail("admin-content@unictive.net").isEmpty()) {
+            AppAdmin adminManager = new AppAdmin();
+            adminManager.setName("admin-content");
+            adminManager.setEmail("admin-content@unictive.net");
+            adminManager.setPassword(passwordEncoder.encode("password"));
+            adminManager.setIsActive(true);
+            adminManager.setCreatedAt(LocalDateTime.now());
+            adminManager.setUpdatedAt(LocalDateTime.now());
+
+            Role adminManagerRole;
+            if (roleRepository.findByName("ADMIN-CONTENT").isPresent()) {
+                adminManagerRole = roleRepository.findByName("ADMIN-CONTENT")
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                adminManagerRole = new Role();
+                adminManagerRole.setName("ADMIN-CONTENT");
+                roleRepository.save(adminManagerRole);
+            }
+            adminManager.setRole(adminManagerRole);
+
+            appAdminRepository.save(adminManager);
+        }
+
 
         // create user
 //        if (appUserRepository.count() == 0) {

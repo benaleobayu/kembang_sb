@@ -107,10 +107,10 @@ public class AdminServiceImpl implements AdminService {
         data.setName(dto.name());
         data.setEmail(dto.email());
         data.setPassword(dto.password());
-        data.setType(dto.type());
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
+        data.setIsVisible(dto.isVisible());
 
         String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
         data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
@@ -135,10 +135,10 @@ public class AdminServiceImpl implements AdminService {
         }
 
         data.setPassword(dto.password() != null ? dto.password() : null);
-        data.setType(dto.type());
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
+        data.setIsVisible(dto.isVisible());
 
         if (avatar != null ) {
             FileUploadHelper.validateFileTypeImage(avatar);
@@ -159,9 +159,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void DeleteAdmin(String id) throws BadRequestException {
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
+        AppAdmin adminLogin = GlobalConverter.getAdminEntity(appAdminRepository);
         int adminId = Math.toIntExact(data.getId());
-        if (adminId >= 1 && adminId <= 4) {
-            throw new BadRequestException("Cannot delete admin IDs 1-4");
+        if (adminId >= 1 && adminId <= 5) {
+            throw new BadRequestException("Cannot delete admin IDs 1-5");
+        }
+        // if admin itself cannot be deleted
+        if ( data.getId().equals(adminLogin.getId()) ) {
+            throw new BadRequestException("Cannot delete admin itself");
         }
         repository.deleteById(data.getId());
     }

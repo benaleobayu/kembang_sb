@@ -1,11 +1,11 @@
 package com.bca.byc.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class AdminDetailResponse {
-    private String id;
-    private Long index;
+public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
     private String avatar;
     private String name;
     private String email;
@@ -13,7 +13,6 @@ public class AdminDetailResponse {
     private String roleName;
     private String type;
     private Boolean status;
-    private String createdAt;
-    private String updatedAt;
+    private Boolean isVisible;
 }
 

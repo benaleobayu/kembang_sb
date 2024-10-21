@@ -35,12 +35,11 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "avatar")
     private String avatar;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private AdminType type = AdminType.GENERAL;
-
     @Column(name = "account_type")
     private String accountType = "Official";
+
+    @Column(name = "is_visible")
+    private Boolean isVisible = true;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

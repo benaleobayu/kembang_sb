@@ -1,6 +1,5 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.enums.AdminType;
 import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
 import com.bca.byc.model.AdminDetailResponse;
@@ -10,7 +9,6 @@ import com.bca.byc.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,12 +39,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.view')")
     @Operation(summary = "Get List Admin", description = "Get List Admin")
     @GetMapping
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages, @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit, @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy, @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction, @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.AdminIndex(pages, limit, sortBy, direction, keyword)));
@@ -69,21 +62,12 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.create')")
     @Operation(summary = "Create Admin", description = "Create Admin")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> CreateAdmin(
-            @RequestPart("avatar") MultipartFile avatar,
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("status") Boolean status,
-            @RequestParam("type") AdminType type,
-            @RequestParam("roleId") String roleId
-            ) {
+    public ResponseEntity<ApiResponse> CreateAdmin(@RequestPart("avatar") MultipartFile avatar, @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("isVisible") Boolean isVisible, @RequestParam("status") Boolean status, @RequestParam("roleId") String roleId) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            AdminCreateRequest item = new AdminCreateRequest(email, password, name, status, type, roleId);
+            AdminCreateRequest item = new AdminCreateRequest(email, password, name, status, isVisible, roleId);
             service.CreateAdmin(item, avatar);
-            return ResponseEntity.created(URI.create("/cms/v1/am/admin/"))
-                    .body(new ApiResponse(true, "Successfully created admin"));
+            return ResponseEntity.created(URI.create("/cms/v1/am/admin/")).body(new ApiResponse(true, "Successfully created admin"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
@@ -92,19 +76,10 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.update')")
     @Operation(summary = "Update Admin", description = "Update Admin")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> UpdateAdmin(
-            @PathVariable("id") String id,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatar,
-            @RequestParam("name") String name,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "password", required = false) String password,
-            @RequestParam("status") Boolean status,
-            @RequestParam("type") AdminType type,
-            @RequestParam("roleId") String roleId
-    ) {
+    public ResponseEntity<ApiResponse> UpdateAdmin(@PathVariable("id") String id, @RequestPart(value = "avatar", required = false) MultipartFile avatar, @RequestParam("name") String name, @RequestParam(value = "email", required = false) String email, @RequestParam(value = "password", required = false) String password, @RequestParam("status") Boolean status, @RequestParam("isVisible") Boolean isVisible, @RequestParam("roleId") String roleId) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            AdminUpdateRequest item = new AdminUpdateRequest(email, password, name, status, type, roleId);
+            AdminUpdateRequest item = new AdminUpdateRequest(email, password, name, status, isVisible, roleId);
             service.UpdateAdmin(id, item, avatar);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated admin"));
         } catch (Exception e) {
@@ -136,8 +111,7 @@ public class AdminController {
             return ResponseEntity.ok(new ApiDataResponse<>(true, "User found", data));
         } else {
             log.error("GET " + urlRoute + "/info endpoint hit on email : {}", userDetails.getUsername());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse(false, "Unauthorized access"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized access"));
         }
     }
 
@@ -150,8 +124,7 @@ public class AdminController {
             AdminPermissionResponse data = service.DetailAdmin(email);
             return ResponseEntity.ok().body(data);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AdminPermissionResponse());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AdminPermissionResponse());
         }
     }
 }
