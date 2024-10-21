@@ -50,7 +50,7 @@ public class ReportContentServiceImpl implements ReportContentService {
                         data.getHighlight() != null ? Arrays.stream(data.getHighlight().split(","))
                                 .map(String::trim)
                                 .collect(Collectors.toList()) : null,
-                        data.getThumbnail(),
+                        GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
                         data.getDescription(),
                         data.getTags() != null ? data.getTags().stream().map(Tag::getName).collect(Collectors.toSet()) : null,
                         data.getCreator(),
