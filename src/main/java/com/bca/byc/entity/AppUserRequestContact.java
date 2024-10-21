@@ -1,12 +1,12 @@
 package com.bca.byc.entity;
 
 import com.bca.byc.entity.impl.SecureIdentifiable;
+import com.bca.byc.enums.RequestType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -16,7 +16,7 @@ import jakarta.persistence.*;
 @Table(name = "app_user_request_contact", indexes = {
         @Index(name = "request_contact_secure_id", columnList = "secure_id")
 })
-public class AppUserRequestContact extends AbstractBaseEntity implements SecureIdentifiable {
+public class AppUserRequestContact extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +32,12 @@ public class AppUserRequestContact extends AbstractBaseEntity implements SecureI
     public Boolean getIsActive() {
         return super.getIsActive();
     }
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status")
+    private RequestType status = RequestType.PENDING;
+
+    @ManyToOne
+    @JoinColumn(name = "app_user_id", insertable = false, updatable = false)
+    private AppUser user;
 }

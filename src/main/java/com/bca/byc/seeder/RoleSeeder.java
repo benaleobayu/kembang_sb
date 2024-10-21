@@ -60,6 +60,8 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("blacklist_keyword", List.of("view", "create", "read", "update", "delete", "export"));
         actionByResource.put("setting", List.of("view", "create", "read", "update", "delete"));
 
+        actionByResource.put("request_contact", List.of("view", "read", "update", "delete"));
+
 
         List<Permission> allPermissions = new ArrayList<>();
 
