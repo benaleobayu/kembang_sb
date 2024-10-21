@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 import com.bca.byc.entity.impl.SecureIdentifiable;
+import com.bca.byc.validator.annotation.ReportStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,8 +38,12 @@ public class CommentReply extends AbstractBaseEntity implements SecureIdentifiab
     @Column(name = "comment", columnDefinition = "varchar(250)")
     private String comment;
 
-    @Column(name = "status", columnDefinition = "boolean default true")
+    @Column(name = "status")
     private Boolean status = true;
+
+    @ReportStatusEnum
+    @Column(name = "report_status")
+    private String reportStatus ;
 
     // relations
     @ManyToOne

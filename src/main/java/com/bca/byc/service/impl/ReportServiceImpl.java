@@ -2,9 +2,7 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Report;
+import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentIndexResponse;
@@ -59,20 +57,33 @@ public class ReportServiceImpl implements ReportService {
         String message;
         switch (dto.getType()) {
             case "POST":
-                report.setPost(getEntityBySecureId(dto.getReportedId(), postRepository, "Post not found"));
+                Post post = getEntityBySecureId(dto.getReportedId(), postRepository, "Post not found");
+                report.setPost(post);
+                post.setReportStatus("REVIEW");
+                postRepository.save(post);
                 message = "Post reported successfully";
+
                 break;
             case "COMMENT":
-                report.setComment(getEntityBySecureId(dto.getReportedId(), commentRepository, "Comment not found"));
+                Comment comment = getEntityBySecureId(dto.getReportedId(), commentRepository, "Comment not found");
+                report.setComment(comment);
                 message = "Comment reported successfully";
+                comment.setReportStatus("REVIEW");
+                commentRepository.save(comment);
                 break;
             case "COMMENT_REPLY":
-                report.setCommentReply(getEntityBySecureId(dto.getReportedId(), commentReplyRepository, "Comment not found"));
+                CommentReply commentReply = getEntityBySecureId(dto.getReportedId(), commentReplyRepository, "Comment not found");
+                report.setCommentReply(commentReply);
                 message = "Comment reply reported successfully";
+                commentReply.setReportStatus("REVIEW");
+                commentReplyRepository.save(commentReply);
                 break;
             case "USER":
-                report.setReportedUser(getEntityBySecureId(dto.getReportedId(), appUserRepository, "User not found"));
+                AppUser user = getEntityBySecureId(dto.getReportedId(), appUserRepository, "User not found");
+                report.setReportedUser(user);
                 message = "User reported successfully";
+                user.getAppUserAttribute().setReportStatus("REVIEW");
+                appUserRepository.save(user);
                 break;
             default:
                 throw new BadRequestException("Invalid type");

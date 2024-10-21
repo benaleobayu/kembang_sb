@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 import com.bca.byc.entity.impl.SecureIdentifiable;
+import com.bca.byc.validator.annotation.ReportStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,6 +55,10 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @Column(name = "content_type")
     private String contentType = "IMAGE";
+
+    @ReportStatusEnum
+    @Column(name = "report_status")
+    private String reportStatus ;
 
     // relations on post user
 

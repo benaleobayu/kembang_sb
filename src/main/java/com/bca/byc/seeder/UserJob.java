@@ -33,6 +33,7 @@ public class UserJob {
 //    @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
+        String[] statusType = {"DRAFT", "REVIEW", "REJECT", "TAKE_DOWN"};
         String[] memberType = {"Solitaire", "Priority"};
         UserType[] userType = {UserType.MEMBER_SOLITAIRE, UserType.MEMBER_PRIORITY};
         StatusType[] statusTypes = {StatusType.REJECTED, StatusType.PRE_ACTIVATED, StatusType.ACTIVATED};
@@ -89,7 +90,8 @@ public class UserJob {
                 null,
                 faker.random().nextBoolean(),
                 null,
-                faker.internet().domainWord()
+                faker.internet().domainWord(),
+                statusType[faker.random().nextInt(0, 4)]
         );
         AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
 

@@ -1,5 +1,6 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.validator.annotation.ReportStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -68,5 +69,9 @@ public class AppUserAttribute {
 
     @Column(name = "official_url")
     private String officialUrl;
+
+    @ReportStatusEnum
+    @Column(name = "report_status")
+    private String reportStatus ;
 
 }
