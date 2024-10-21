@@ -14,7 +14,6 @@ import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminRepository;
-import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -100,7 +99,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar) throws BadRequestException, IOException {
+    public void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar, MultipartFile cover) throws BadRequestException, IOException {
         FileUploadHelper.validateFileTypeImage(avatar);
         // set entity to add with model mapper
         AppAdmin data = new AppAdmin();
@@ -114,12 +113,17 @@ public class AdminServiceImpl implements AdminService {
 
         String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
         data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
+
+        String coverUrl = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/admin/cover");
+        data.setCover(GlobalConverter.getParseImage(coverUrl, baseUrl));
+
+
         // save data
         repository.save(data);
     }
 
     @Override
-    public void UpdateAdmin(String id, AdminUpdateRequest dto, MultipartFile avatar) throws BadRequestException, IOException {
+    public void UpdateAdmin(String id, AdminUpdateRequest dto, MultipartFile avatar, MultipartFile cover) throws BadRequestException, IOException {
         // Create a new AppAdmin instance to update
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, appAdminRepository, "Admin not found");
         data.setName(dto.name());
@@ -139,7 +143,6 @@ public class AdminServiceImpl implements AdminService {
         data.setRole(role);
         data.setIsActive(dto.status());
         data.setIsVisible(dto.isVisible());
-
         if (avatar != null ) {
             FileUploadHelper.validateFileTypeImage(avatar);
             String oldAvatar = data.getAvatar();
@@ -150,6 +153,15 @@ public class AdminServiceImpl implements AdminService {
             }
         }
 
+        if (cover != null ) {
+            FileUploadHelper.validateFileTypeImage(cover);
+            String oldCover = data.getCover();
+            String newCover = saveFile(cover, UPLOAD_DIR + "/admin/cover");
+            data.setCover(GlobalConverter.replaceImagePath(newCover));
+            if (!oldCover.equals(newCover)) {
+                FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
+            }
+        }
         // Save the updated admin data
         repository.save(data);
 

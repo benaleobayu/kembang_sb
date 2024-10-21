@@ -32,8 +32,11 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "password")
     private String password;
 
-    @Column(name = "avatar")
+    @Column(name = "avatar" , columnDefinition = "text")
     private String avatar;
+
+    @Column(name = "cover", columnDefinition = "text")
+    private String cover;
 
     @Column(name = "account_type")
     private String accountType = "Official";

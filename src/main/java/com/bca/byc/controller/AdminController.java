@@ -62,11 +62,11 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.create')")
     @Operation(summary = "Create Admin", description = "Create Admin")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> CreateAdmin(@RequestPart("avatar") MultipartFile avatar, @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("isVisible") Boolean isVisible, @RequestParam("status") Boolean status, @RequestParam("roleId") String roleId) {
+    public ResponseEntity<ApiResponse> CreateAdmin(@RequestPart("avatar") MultipartFile avatar, @RequestPart("cover") MultipartFile cover, @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("isVisible") Boolean isVisible, @RequestParam("status") Boolean status, @RequestParam("roleId") String roleId) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
             AdminCreateRequest item = new AdminCreateRequest(email, password, name, status, isVisible, roleId);
-            service.CreateAdmin(item, avatar);
+            service.CreateAdmin(item, avatar, cover);
             return ResponseEntity.created(URI.create("/cms/v1/am/admin/")).body(new ApiResponse(true, "Successfully created admin"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
@@ -76,11 +76,11 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.update')")
     @Operation(summary = "Update Admin", description = "Update Admin")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> UpdateAdmin(@PathVariable("id") String id, @RequestPart(value = "avatar", required = false) MultipartFile avatar, @RequestParam("name") String name, @RequestParam(value = "email", required = false) String email, @RequestParam(value = "password", required = false) String password, @RequestParam("status") Boolean status, @RequestParam("isVisible") Boolean isVisible, @RequestParam("roleId") String roleId) {
+    public ResponseEntity<ApiResponse> UpdateAdmin(@PathVariable("id") String id, @RequestPart(value = "avatar", required = false) MultipartFile avatar, @RequestPart(value = "cover", required = false) MultipartFile cover, @RequestParam("name") String name, @RequestParam(value = "email", required = false) String email, @RequestParam(value = "password", required = false) String password, @RequestParam("status") Boolean status, @RequestParam("isVisible") Boolean isVisible, @RequestParam("roleId") String roleId) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             AdminUpdateRequest item = new AdminUpdateRequest(email, password, name, status, isVisible, roleId);
-            service.UpdateAdmin(id, item, avatar);
+            service.UpdateAdmin(id, item, avatar, cover);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated admin"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));

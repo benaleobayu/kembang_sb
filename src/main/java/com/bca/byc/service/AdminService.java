@@ -22,9 +22,9 @@ public interface AdminService {
 
     List<AdminDetailResponse> findAllData();
 
-    void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar) throws Exception;
+    void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar, MultipartFile cover) throws Exception;
 
-    void UpdateAdmin(String id, @Valid AdminUpdateRequest dto, MultipartFile avatar) throws Exception;
+    void UpdateAdmin(String id, @Valid AdminUpdateRequest dto, MultipartFile avatar, MultipartFile cover) throws Exception;
 
     void DeleteAdmin(String id) throws Exception;
 
