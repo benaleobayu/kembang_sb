@@ -202,7 +202,7 @@ public class TreePostConverter {
         dto.setIsMyAccount(isMyAccount);
         boolean isFollowing = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(userPost.getId()));
         dto.setIsFollowed(isFollowing);
-        dto.setBusinessName(businessName);
+        dto.setBusinessName(businessName != null ? businessName : "");
         dto.setLineOfBusiness(lineOfBusiness);
         dto.setIsPrimary(isPrimary);
         return dto;

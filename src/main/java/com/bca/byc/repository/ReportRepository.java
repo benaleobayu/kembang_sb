@@ -1,6 +1,8 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Comment;
+import com.bca.byc.entity.CommentReply;
 import com.bca.byc.entity.Report;
 import com.bca.byc.model.projection.ReportCommentIndexProjection;
 import com.bca.byc.model.projection.ReportContentIndexProjection;
@@ -22,6 +24,11 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Report countByReportedUserId(Long reportedUser);
 
     Integer countByReportedUser(AppUser data);
+
+    Integer countByComment(Comment data);
+
+    Integer countByCommentReply(CommentReply data);
+
     // -- counter --
 
     // -- general --
@@ -85,38 +92,24 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                                                           @Param("reportStatus") String reportStatus,
                                                           @Param("reportType") String reportType);
 
-    @Query("SELECT " +
-            "r.secureId AS id, " +
-            "r.id AS index, " +
-            "CASE WHEN c.id IS NULL THEN " +
-            "   CASE WHEN crpc.type = 'video' THEN crpc.thumbnail " +
-            "   ELSE crpc.content END " +
-            "ELSE " +
-            "   CASE WHEN rpc.type = 'video' THEN rpc.thumbnail " +
-            "   ELSE rpc.content END END AS thumbnail, " +
-            "CASE WHEN c.id IS NULL THEN cr.comment " +
-            "ELSE c.comment END AS comment, " +
-            "CASE WHEN c.id IS NULL THEN craud.name " +
-            "ELSE caud.name END AS commentOwner, " +
-            "r.status AS statusReport, " +
-            "CASE WHEN c.id IS NULL THEN COUNT(cr.id) ELSE COUNT(c.id) END AS totalReports, " +
-            "MAX(r.createdAt) AS lastReport, " +
-            "r AS report " +
-            "FROM Report r " +
-            "LEFT JOIN r.comment c " +
-            "LEFT JOIN r.commentReply cr " +
-            "LEFT JOIN c.post.postContents rpc " +
-            "LEFT JOIN cr.parentComment.post.postContents crpc " +
-            "LEFT JOIN c.user.appUserDetail caud " +
-            "LEFT JOIN cr.user.appUserDetail craud " +
-            "WHERE " +
-            "(LOWER(c.comment) LIKE LOWER(:keyword) OR " +
-            "LOWER(cr.comment) LIKE LOWER(:keyword) OR " +
-            "LOWER(r.secureId) LIKE LOWER(:reportId) ) AND " +
-            "r.createdAt BETWEEN :startDate AND :endDate AND " +
-            "(:reportStatus IS NULL OR r.status = :reportStatus) AND " +
-            "(:reportType IS NULL OR r.type = :reportType) " +
-            "GROUP BY r, c, cr, rpc, crpc, caud, craud, c.id, cr.comment, craud.name, caud.name ")
+    @Query("""
+                SELECT new com.bca.byc.model.projection.ReportCommentIndexProjection(
+                    r.secureId, r.id,
+                    CASE WHEN r.comment IS NOT NULL THEN CAST(c.id AS long) ELSE CAST(cr.id AS long) END,
+                    CASE WHEN r.comment IS NOT NULL THEN c.comment ELSE cr.comment END,
+                    CASE WHEN r.comment IS NOT NULL THEN c.reportStatus ELSE cr.reportStatus END
+                )
+                FROM Report r
+                LEFT JOIN r.comment c
+                LEFT JOIN r.commentReply cr
+                WHERE
+                (LOWER(c.comment) LIKE LOWER(:keyword) OR
+                LOWER(cr.comment) LIKE LOWER(:keyword) OR
+                LOWER(r.secureId) LIKE LOWER(:reportId)) AND
+                r.createdAt BETWEEN :startDate AND :endDate AND
+                (:reportStatus IS NULL OR r.status = :reportStatus) AND
+                (:reportType IS NULL OR r.type = :reportType)
+            """)
     Page<ReportCommentIndexProjection> getDataReportCommentIndex(@Param("reportId") String reportId,
                                                                  @Param("keyword") String keyword,
                                                                  Pageable pageable,
@@ -136,11 +129,10 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             r.createdAt BETWEEN :startDate AND :endDate
             """)
     Page<ReportUserIndexProjection> getDataReportUserIndex(@Param("reportId") String reportId,
-                                                                 @Param("keyword") String keyword,
-                                                                 Pageable pageable,
-                                                                 @Param("startDate") LocalDateTime start,
-                                                                 @Param("endDate") LocalDateTime end);
-
+                                                           @Param("keyword") String keyword,
+                                                           Pageable pageable,
+                                                           @Param("startDate") LocalDateTime start,
+                                                           @Param("endDate") LocalDateTime end);
 
 
     // ----- report content ----

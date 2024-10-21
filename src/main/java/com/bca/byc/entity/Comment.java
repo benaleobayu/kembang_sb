@@ -58,6 +58,9 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentReply> commentReply = new ArrayList<>();
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> report = new ArrayList<>();
+
     // stats
 
     @Column(name = "likes_count")
