@@ -72,6 +72,6 @@ public class AppUserAttribute {
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus ;
+    private String reportStatus = "NULL" ;
 
 }
