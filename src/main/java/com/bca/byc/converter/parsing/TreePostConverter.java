@@ -41,7 +41,7 @@ public class TreePostConverter {
         dto.setIsShareable(data.getIsShareable());
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
-        dto.setPostAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
+        dto.setPostAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
         AppUser appUser = data.getUser();
 
         dto.setPostTagsList(convertTagList(data.getTags()));
