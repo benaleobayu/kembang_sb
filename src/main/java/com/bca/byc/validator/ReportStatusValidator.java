@@ -14,7 +14,7 @@ public class ReportStatusValidator implements ConstraintValidator<ReportStatusEn
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
 
-        List<String> values = Arrays.asList("DRAFT", "REVIEW", "REJECT", "TAKE_DOWN");
+        List<String> values = Arrays.asList("NULL", "DRAFT", "REVIEW", "REJECT", "TAKE_DOWN");
 
         return values.contains(value);
     }
