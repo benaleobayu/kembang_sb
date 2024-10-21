@@ -46,7 +46,7 @@ public class ReportCommentServiceImpl implements ReportCommentService {
                 .map(data -> new ReportCommentIndexResponse(
                         data.getId(),
                         data.getIndex(),
-                        data.getThumbnail(),
+                        GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
                         data.getComment(),
                         data.getCommentOwner(),
                         data.getStatusReport(),
