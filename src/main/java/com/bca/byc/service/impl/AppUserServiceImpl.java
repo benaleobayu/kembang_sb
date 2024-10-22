@@ -2,7 +2,6 @@ package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.AppUserDTOConverter;
 import com.bca.byc.converter.PostDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppUser;
@@ -116,12 +115,17 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void updateUserData(String email, AppUserProfileRequest dto) {
+    public UserInfoResponse getUserDetailFromId(Long userId) {
+        AppUser user = HandlerRepository.getEntityById(userId, appUserRepository, "User not found");
+        return converter.convertToInfoResponse(user, user);
+    }
 
-        AppUser user = appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("User not found in email: " + email));
+    @Override
+    public Long updateUserData(AppUserProfileRequest dto) {
+        AppUser user =  GlobalConverter.getUserEntity(appUserRepository);
         converter.convertToUpdateProfile(user, dto);
-        appUserRepository.save(user);
+        AppUser savedUser = appUserRepository.save(user);
+        return savedUser.getId();
     }
 
     @Override

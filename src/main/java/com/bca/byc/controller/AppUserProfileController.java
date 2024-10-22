@@ -99,10 +99,9 @@ public class AppUserProfileController {
     @Operation(summary = "Update user profile", description = "Update user profile")
     @PutMapping("/profile")
     public ResponseEntity<?> UpdateDataProfile(@RequestBody AppUserProfileRequest dto, Principal principal) {
-        String email = ContextPrincipal.getPrincipal();
         try {
-            userService.updateUserData(email, dto);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile updated successfully", userService.getUserDetails(principal.getName())));
+            Long userId = userService.updateUserData(dto);
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Profile updated successfully", userService.getUserDetailFromId(userId)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }

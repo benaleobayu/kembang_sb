@@ -15,8 +15,9 @@ public interface AppUserService extends UserDetailsService {
 	AppUser findBySecureId(String secureId);
 
 	UserInfoResponse getUserDetails(String userId);
+	UserInfoResponse getUserDetailFromId(Long userId);
 
-	void updateUserData(String email, AppUserProfileRequest dto);
+	Long updateUserData(AppUserProfileRequest dto);
 
 	ProfilePostResponse getUserPosts(String userId);
 	ResultPageResponseDTO<PostHomeResponse> listDataMyPost(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId);
@@ -31,4 +32,5 @@ public interface AppUserService extends UserDetailsService {
 	ProfileActivityCounts getActivityCounts(String userId);
 
 	UserProfileActivityCounts getProfileActivityCounts(String userId);
+
 }
