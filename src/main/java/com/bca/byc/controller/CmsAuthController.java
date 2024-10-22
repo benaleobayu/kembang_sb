@@ -19,9 +19,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -38,22 +42,29 @@ public class CmsAuthController {
 
     private final JWTTokenFactory jwtUtil;
     private final JWTHeaderTokenExtractor jwtHeaderTokenExtractor;
+    private final PasswordEncoder passwordEncoder;
 
     private final LogDeviceRepository logDeviceRepository;
     private final ClientInfoService clientInfoService;
     private final TokenBlacklistService tokenBlacklist;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiDataResponse> authLogin(@RequestBody LoginRequestDTO dto, HttpServletRequest request) {
+    public ResponseEntity<?> authLogin(@RequestBody LoginRequestDTO dto, HttpServletRequest request) {
+
+        AppAdmin admin = adminService.findByEmail(dto.email());
+
+        if (admin == null || !passwordEncoder.matches(dto.password(), admin.getPassword()) || !admin.getIsActive() || admin.getIsDeleted()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again."));
+        }
 
         final UserDetails userDetails = appAdminService.loadUserByUsername(dto.email());
+
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
         final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
 
         final String ipAddress = clientInfoService.getClientIp(request);
         final String deviceId = clientInfoService.getBrowser(request);
 
-        AppAdmin admin = adminService.findByEmail(dto.email());
         LogDevice logDevice = new LogDevice();
         logDevice.setAdmin(admin);
         logDevice.setDeviceId(deviceId);
@@ -85,7 +96,6 @@ public class CmsAuthController {
 
         return ResponseEntity.ok().body(new ApiResponse(true, "User logged out successfully"));
     }
-
 
 
 }
