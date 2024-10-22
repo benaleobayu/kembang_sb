@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +43,8 @@ public class AdminServiceImpl implements AdminService {
     private final AppAdminRepository appAdminRepository;
     private final AdminRepository repository;
     private final RoleRepository roleRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final AdminDTOConverter converter;
 
@@ -105,7 +108,7 @@ public class AdminServiceImpl implements AdminService {
         AppAdmin data = new AppAdmin();
         data.setName(dto.name());
         data.setEmail(dto.email());
-        data.setPassword(dto.password());
+        data.setPassword(passwordEncoder.encode(dto.password()));
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
@@ -138,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
             data.setEmail(newEmail);
         }
 
-        data.setPassword(dto.password() != null ? dto.password() : null);
+        data.setPassword(dto.password() != null ? passwordEncoder.encode(dto.password()) : data.getPassword());
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
