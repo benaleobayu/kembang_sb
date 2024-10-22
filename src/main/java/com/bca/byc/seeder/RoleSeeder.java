@@ -38,8 +38,8 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("user-deleted", List.of("view", "read", "update", "delete", "export"));
 
         // content management
-        actionByResource.put("channel_management", List.of("view", "read", "update", "delete", "export"));
-        actionByResource.put("content_management", List.of("view", "read", "update", "delete", "export"));
+        actionByResource.put("channel_management", List.of("view", "read", "create", "update", "delete", "export"));
+        actionByResource.put("content_management", List.of("view", "read", "create", "update", "delete", "export"));
         // report
         actionByResource.put("report_content", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("report_comment", List.of("view", "read", "update", "delete", "export"));

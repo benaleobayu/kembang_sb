@@ -196,7 +196,7 @@ public class RoleDTOConverter {
             roleHasPermissionRepository.save(roleHasPermission);
         }
         log.info("addList : {}", addPermissionIds);
-        log.info("removeList : {}", addPermissionIds);
+        log.info("removeList : {}", removePermissionIds);
 
         // Set updated metadata
         data.setUpdatedBy(admin);
