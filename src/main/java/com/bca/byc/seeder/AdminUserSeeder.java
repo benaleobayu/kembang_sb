@@ -29,7 +29,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             AppAdmin admin = new AppAdmin();
             admin.setName("admin");
             admin.setEmail("admin@unictive.net");
-            admin.setPassword(passwordEncoder.encode("password"));
+            admin.setPassword(passwordEncoder.encode("janganpassword"));
             admin.setIsActive(true);
             admin.setCreatedAt(LocalDateTime.now());
             admin.setUpdatedAt(LocalDateTime.now());
@@ -53,7 +53,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             AppAdmin adminOperator = new AppAdmin();
             adminOperator.setName("admin-operator");
             adminOperator.setEmail("admin-opt@unictive.net");
-            adminOperator.setPassword(passwordEncoder.encode("password"));
+            adminOperator.setPassword(passwordEncoder.encode("janganpassword"));
             adminOperator.setIsActive(true);
             adminOperator.setCreatedAt(LocalDateTime.now());
             adminOperator.setUpdatedAt(LocalDateTime.now());
@@ -76,7 +76,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             AppAdmin adminSPV = new AppAdmin();
             adminSPV.setName("admin-spv");
             adminSPV.setEmail("admin-spv@unictive.net");
-            adminSPV.setPassword(passwordEncoder.encode("password"));
+            adminSPV.setPassword(passwordEncoder.encode("janganpassword"));
             adminSPV.setIsActive(true);
             adminSPV.setCreatedAt(LocalDateTime.now());
             adminSPV.setUpdatedAt(LocalDateTime.now());
@@ -99,7 +99,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             AppAdmin adminManager = new AppAdmin();
             adminManager.setName("admin-manager");
             adminManager.setEmail("admin-mgr@unictive.net");
-            adminManager.setPassword(passwordEncoder.encode("password"));
+            adminManager.setPassword(passwordEncoder.encode("janganpassword"));
             adminManager.setIsActive(true);
             adminManager.setCreatedAt(LocalDateTime.now());
             adminManager.setUpdatedAt(LocalDateTime.now());
@@ -122,7 +122,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             AppAdmin adminManager = new AppAdmin();
             adminManager.setName("admin-content");
             adminManager.setEmail("admin-content@unictive.net");
-            adminManager.setPassword(passwordEncoder.encode("password"));
+            adminManager.setPassword(passwordEncoder.encode("janganpassword"));
             adminManager.setIsActive(true);
             adminManager.setCreatedAt(LocalDateTime.now());
             adminManager.setUpdatedAt(LocalDateTime.now());
@@ -147,7 +147,7 @@ public class AdminUserSeeder implements CommandLineRunner {
 //            AppUser user = new AppUser();
 //            user.setName("user");
 //            user.setEmail("user@unictive.net");
-//            user.setPassword(passwordEncoder.encode("password"));
+//            user.setPassword(passwordEncoder.encode("janganpassword"));
 //            user.setActive(true);
 //            user.setCreatedAt(LocalDateTime.now());
 //            user.setUpdatedAt(LocalDateTime.now());
