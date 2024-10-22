@@ -9,6 +9,7 @@ import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
@@ -23,6 +24,7 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
+import com.bca.byc.service.AppUserService;
 import com.bca.byc.util.FileUploadHelper;
 import com.bca.byc.util.helper.Formatter;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AppUserProfileServiceImpl implements AppUserProfileService {
 
+    private final AppUserService appUserService;
+
     private final AppUserRepository userRepository;
     private final AppUserDetailRepository userDetailRepository;
     private final LikeDislikeRepository likeDislikeRepository;
@@ -54,7 +58,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private String baseUrl;
 
     @Override
-    public Long updateUserAvatar(MultipartFile avatar) throws IOException, InvalidFileTypeImageException {
+    public UserInfoResponse updateUserAvatar(MultipartFile avatar) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(avatar);
         AppUser appUser = GlobalConverter.getUserEntity(userRepository);
 
@@ -69,11 +73,11 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         if (oldAvatar != null && !oldAvatar.isEmpty()) {
             FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
         }
-        return savedUser.getId();
+        return appUserService.getUserDetailFromId(savedUser.getId());
     }
 
     @Override
-    public Long updateUserCover(MultipartFile cover) throws IOException, InvalidFileTypeImageException {
+    public UserInfoResponse updateUserCover(MultipartFile cover) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(cover);
         AppUser appUser = GlobalConverter.getUserEntity(userRepository);
 
@@ -88,7 +92,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         if (oldCover != null && !oldCover.isEmpty()) {
             FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
         }
-        return savedUser.getId();
+        return appUserService.getUserDetailFromId(savedUser.getId());
     }
 
     @Override

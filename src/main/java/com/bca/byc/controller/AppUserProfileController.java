@@ -59,14 +59,12 @@ public class AppUserProfileController {
     @Operation(summary = "Update user avatar", description = "Update user avatar")
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> AvatarUpdate(
-            @RequestPart("avatar") MultipartFile avatar,
-            Principal principal
+            @RequestPart("avatar") MultipartFile avatar
     ) {
         log.info("POST " + urlRoute + "/avatar endpoint hit");
 
         try {
-            Long userId = profileService.updateUserAvatar(avatar);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetailFromId(userId)));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", profileService.updateUserAvatar(avatar)));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -77,14 +75,12 @@ public class AppUserProfileController {
     @Operation(summary = "Update user cover", description = "Update user cover")
     @PostMapping(value = "/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> CoverUpdate(
-            @RequestPart("cover") MultipartFile cover,
-            Principal principal
+            @RequestPart("cover") MultipartFile cover
     ) {
         log.info("POST " + urlRoute + "/cover endpoint hit");
 
         try {
-            Long userId = profileService.updateUserCover(cover);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Cover updated successfully", userService.getUserDetailFromId(userId)));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Cover updated successfully", profileService.updateUserCover(cover)));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
