@@ -1,9 +1,11 @@
 package com.bca.byc.service.impl;
 
+import com.bca.byc.converter.AccountDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Account;
 import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.BlacklistKeyword;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AccountCreateUpdateRequest;
 import com.bca.byc.model.AccountDetailResponse;
@@ -34,6 +36,8 @@ public class AccountServiceImpl implements AccountService {
     private final AppAdminRepository adminRepository;
     private final AccountRepository accountRepository;
 
+    private AccountDTOConverter converter;
+
     @Override
     public ResultPageResponseDTO<AccountIndexResponse> listDataAccountIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
@@ -61,21 +65,22 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void saveData(@Valid AccountCreateUpdateRequest dto) throws BadRequestException {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Account data = new Account();
 
         // TODO logic to save
-        // save data
-        GlobalConverter.CmsAdminCreateAtBy(data, admin);
+        Account data = converter.convertToCreateRequest(dto, admin);
+
         accountRepository.save(data);
     }
 
     @Override
     @Transactional
     public void updateData(String id, AccountCreateUpdateRequest dto) throws BadRequestException {
+        // check exist and get
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Account data = getEntity(id);
 
-        // TODO logic update
+        // update
+        converter.convertToUpdateRequest(data, dto, admin);
 
         // update the updated_at
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
