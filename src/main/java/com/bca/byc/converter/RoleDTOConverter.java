@@ -141,7 +141,7 @@ public class RoleDTOConverter {
     public void convertToUpdateRequest(Role data, @Valid RoleCreateUpdateRequest dto, AppAdmin admin) {
         // Update fields based on the DTO
         if (data.getId() == 1 || data.getId() == 2 || data.getId() == 3 || data.getId() == 4 || data.getId() == 5) {
-            return;
+            data.setName(data.getName());
         } else {
             data.setName(dto.getName().toUpperCase());
         }
