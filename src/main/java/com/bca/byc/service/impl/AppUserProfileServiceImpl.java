@@ -12,7 +12,6 @@ import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
-import com.bca.byc.model.apps.SimplePostResponse;
 import com.bca.byc.model.projection.PostCommentActivityProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -21,6 +20,7 @@ import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.util.FileUploadHelper;
@@ -54,11 +54,9 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     private String baseUrl;
 
     @Override
-    public void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeImageException {
+    public Long updateUserAvatar(MultipartFile avatar) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(avatar);
-
-        AppUser appUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser appUser = GlobalConverter.getUserEntity(userRepository);
 
         AppUserDetail userDetail = appUser.getAppUserDetail();
         String oldAvatar = userDetail.getAvatar();
@@ -66,19 +64,18 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
         userDetail.setAvatar(avatarPath.replace("src/main/resources/static/", "/"));
         userDetailRepository.save(userDetail);
-        userRepository.save(appUser);
+        AppUser savedUser = userRepository.save(appUser);
 
         if (oldAvatar != null && !oldAvatar.isEmpty()) {
             FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
         }
+        return savedUser.getId();
     }
 
     @Override
-    public void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeImageException {
+    public Long updateUserCover(MultipartFile cover) throws IOException, InvalidFileTypeImageException {
         FileUploadHelper.validateFileTypeImage(cover);
-
-        AppUser appUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser appUser = GlobalConverter.getUserEntity(userRepository);
 
         AppUserDetail userDetail = appUser.getAppUserDetail();
         String oldCover = userDetail.getCover();
@@ -86,11 +83,12 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
         userDetail.setCover(coverPath.replace("src/main/resources/static/", "/"));
         userDetailRepository.save(userDetail);
-        userRepository.save(appUser);
+        AppUser savedUser = userRepository.save(appUser);
 
         if (oldCover != null && !oldCover.isEmpty()) {
             FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
         }
+        return savedUser.getId();
     }
 
     @Override

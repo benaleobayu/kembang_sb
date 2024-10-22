@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface AppUserProfileService {
-    void updateUserAvatar(String email, MultipartFile avatar) throws IOException, InvalidFileTypeImageException;
+    Long updateUserAvatar(MultipartFile avatar) throws IOException, InvalidFileTypeImageException;
 
-    void updateUserCover(String email, MultipartFile cover) throws IOException, InvalidFileTypeImageException;
+    Long updateUserCover(MultipartFile cover) throws IOException, InvalidFileTypeImageException;
 
     ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

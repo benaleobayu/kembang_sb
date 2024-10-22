@@ -64,11 +64,9 @@ public class AppUserProfileController {
     ) {
         log.info("POST " + urlRoute + "/avatar endpoint hit");
 
-        String email = ContextPrincipal.getPrincipal();
-
         try {
-            profileService.updateUserAvatar(email, avatar);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetails(principal.getName())));
+            Long userId = profileService.updateUserAvatar(avatar);
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Avatar updated successfully", userService.getUserDetailFromId(userId)));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -84,11 +82,9 @@ public class AppUserProfileController {
     ) {
         log.info("POST " + urlRoute + "/cover endpoint hit");
 
-        String email = ContextPrincipal.getPrincipal();
-
         try {
-            profileService.updateUserCover(email, cover);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Cover updated successfully", userService.getUserDetails(principal.getName())));
+            Long userId = profileService.updateUserCover(cover);
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Cover updated successfully", userService.getUserDetailFromId(userId)));
         } catch (IOFileUploadException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
         } catch (Exception e) {
