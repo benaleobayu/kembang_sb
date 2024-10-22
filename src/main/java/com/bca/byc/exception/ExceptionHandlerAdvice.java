@@ -96,5 +96,13 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*"); // Menambahkan header CORS
+
+        return new ResponseEntity<>(new ApiResponse(false, ex.getMessage()), headers, HttpStatus.BAD_REQUEST);
+    }
+
 
 }
