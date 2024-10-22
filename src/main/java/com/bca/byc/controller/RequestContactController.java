@@ -2,6 +2,7 @@ package com.bca.byc.controller;
 
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.LogRequestIndexResponse;
 import com.bca.byc.model.RequestContactUpdateRequest;
 import com.bca.byc.model.RequestContactDetailResponse;
 import com.bca.byc.model.RequestContactIndexResponse;
@@ -9,6 +10,7 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.cms.LogRequestService;
 import com.bca.byc.service.cms.RequestContactService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -32,6 +32,7 @@ public class RequestContactController {
 
     static final String urlRoute = "/cms/v1/ms/request-contacts";
     private RequestContactService service;
+    private LogRequestService logService;
 
     @PreAuthorize("hasAuthority('request_contact.view')")
     @Operation(summary = "Get list Contact Request", description = "Get list Contact Request")
@@ -81,6 +82,29 @@ public class RequestContactController {
         try {
             service.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted contact request"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasAuthority('request_contact.view')")
+    @Operation(summary = "Get list Contact Request Log", description = "Get list Contact Request Log")
+    @GetMapping("{id}/histories")
+    public ResponseEntity<?> getLogRequestByContactRequestSecureId(
+            @PathVariable("id") String id,
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+
+        log.info("GET " + urlRoute + "/{id}/histories endpoint hit for Contact Request ID: " + id);
+
+        try {
+            // Retrieve the history log for a specific contact request based on the ID with pagination, sorting, and filtering
+            ResultPageResponseDTO<LogRequestIndexResponse> requestLogs = logService.listLogRequestByModelableId(id, pages, limit, sortBy, direction, keyword);
+
+            return ResponseEntity.ok(new PaginationCmsResponse<>(true, "Successfully found contact request histories", requestLogs));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
