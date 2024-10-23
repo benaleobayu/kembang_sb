@@ -22,11 +22,11 @@ import java.util.List;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
-
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         String message = "The media type " + ex.getContentType() + " is not supported.";
+        headers.add("Access-Control-Allow-Origin", "*");
         return new ResponseEntity<>(new ApiResponse(false, message), headers, status);
     }
 
@@ -35,6 +35,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("data not found", details, ErrorCode.DATA_NOT_FOUND, HttpStatus.BAD_REQUEST);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -43,6 +45,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("UNAUTHORIZED", details, ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
@@ -51,6 +55,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("FORBIDDEN", details, ErrorCode.FORBIDDEN, HttpStatus.FORBIDDEN);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
@@ -62,6 +68,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add("Token has expired. Please log in again.");
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.TOKEN_EXPIRED, HttpStatus.FOUND);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
         return ResponseEntity.status(HttpStatus.FOUND).body(errorResponse);
     }
 
@@ -77,12 +85,14 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        return new ResponseEntity<>(new ApiResponse(false, "File size exceeds the maximum limit!"), HttpStatus.PAYLOAD_TOO_LARGE);
+        headers.add("Access-Control-Allow-Origin", "*");
+        return new ResponseEntity<>(new ApiResponse(false, "File size exceeds the maximum limit!"), headers, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-        return new ResponseEntity<>(new ApiResponse(false, "Internal Server Error"), statusCode);
+        headers.add("Access-Control-Allow-Origin", "*");
+        return new ResponseEntity<>(new ApiResponse(false, "Internal Server Error"), headers, statusCode);
     }
 
     @Override
@@ -93,6 +103,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
             details.add(error.getDefaultMessage());
         }
         ErrorResponseDTO errorResponse = ErrorResponseDTO.of("invalid data", details, ErrorCode.INVALID_DATA, HttpStatus.BAD_REQUEST);
+        headers.add("Access-Control-Allow-Origin", "*");
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
