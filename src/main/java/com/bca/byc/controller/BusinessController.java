@@ -38,10 +38,12 @@ public class BusinessController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "userId", required = false) String userId
+            ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list BusinessList", businessService.listDataBusiness(pages, limit, sortBy, direction, keyword)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list BusinessList", businessService.listDataBusiness(pages, limit, sortBy, direction, keyword, userId)));
     }
 
     @Operation(summary = "Get details of a business")

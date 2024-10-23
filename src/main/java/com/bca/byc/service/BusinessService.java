@@ -41,12 +41,8 @@ public class BusinessService {
 
     // Method to get a Business by its secureId
     public BusinessDetailResponse getBusinessBySecureId(String secureId) {
-        AppUser user = GlobalConverter.getUserEntity(appUserRepository);
         Business business = HandlerRepository.getEntityBySecureId(secureId, businessRepository, "Business not found");
 
-        if (business.getUser().getId() != user.getId()) {
-            throw new ForbiddenException("You are not authorized to access this resource");
-        }
         BusinessDetailResponse dto = new BusinessDetailResponse();
         TreeUserResponse.convertSingleBusinesses(business, dto);
         return dto;
@@ -114,8 +110,13 @@ public class BusinessService {
         businessRepository.delete(business);
     }
 
-    public ResultPageResponseDTO<BusinessListResponse> listDataBusiness(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        AppUser user = GlobalConverter.getUserEntity(appUserRepository);
+    public ResultPageResponseDTO<BusinessListResponse> listDataBusiness(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
+        AppUser user;
+        if (userId == null) {
+            user = GlobalConverter.getUserEntity(appUserRepository);
+        } else {
+            user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
+        }
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword
         );
