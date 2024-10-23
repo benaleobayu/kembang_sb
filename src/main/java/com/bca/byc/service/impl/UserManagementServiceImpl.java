@@ -116,6 +116,16 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
 
         return attributes;
     }
+
+    @Override
+    public List<Map<String, List<?>>> listAttributeChannel() {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        Map<String, List<?>> listAttr = new HashMap<>();
+        listAttr.put("status", getStatusList());
+        attributes.add(listAttr);
+
+        return attributes;
+    }
     // ------------------------------------------------------------------------------------------------
 
     @Override

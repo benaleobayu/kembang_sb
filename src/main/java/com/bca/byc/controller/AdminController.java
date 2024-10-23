@@ -49,7 +49,8 @@ public class AdminController {
                                                                                                          @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
                                                                                                          @RequestParam(name = "keyword", required = false) String keyword,
                                                                                                          @RequestParam(name = "roleId", required = false) String roleId,
-                                                                                                         @RequestParam(name = "status", required = false) Boolean status
+                                                                                                         @RequestParam(name = "status", required = false) Boolean status,
+                                                                                                         @RequestParam(name = "export", required = false) Boolean export // TODO export admin
                                                                                                          ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");

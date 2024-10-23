@@ -39,6 +39,13 @@ public class ListOfFilterPagination {
         this.adminApprovalStatus = adminApprovalStatus;
     }
 
+    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, Boolean status) {
+        this.keyword = keyword;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+    }
+
     public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, String reportStatus, String reportType) {
         this.keyword = keyword;
         this.startDate = startDate;

@@ -36,7 +36,9 @@ public class TagController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "export", required = false) Boolean export // TODO export tag
+    ) {
         // response true
         try {
             return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list tag detail", service.listDataTag(pages, limit, sortBy, direction, keyword)));

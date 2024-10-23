@@ -40,7 +40,9 @@ public class ExpectCategoryController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "export", required = false) Boolean export // TODO export expect
+    ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list expect category", service.listDataExpectCategory(pages, limit, sortBy, direction, keyword)));

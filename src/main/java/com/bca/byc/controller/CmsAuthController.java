@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.repository.LogDeviceRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.JWTHeaderTokenExtractor;
@@ -54,7 +55,7 @@ public class CmsAuthController {
         AppAdmin admin = adminService.findByEmail(dto.email());
 
         if (admin == null || !passwordEncoder.matches(dto.password(), admin.getPassword()) || !admin.getIsActive() || admin.getIsDeleted()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "The email address and password you entered do not match. Please try again."));
+            throw new BadRequestException("The email address and password you entered do not match. Please try again.");
         }
 
         final UserDetails userDetails = appAdminService.loadUserByUsername(dto.email());

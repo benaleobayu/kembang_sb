@@ -39,7 +39,9 @@ public class BlacklistKeywordController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "export", required = false) Boolean export // TODO export blacklist
+    ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list blacklist keyword", service.listDataBlacklist(pages, limit, sortBy, direction, keyword)));

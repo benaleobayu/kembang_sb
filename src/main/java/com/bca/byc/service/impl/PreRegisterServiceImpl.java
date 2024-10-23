@@ -90,11 +90,11 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             listStatus = List.of(s0, s1, s4, s5, s6);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
-        if (admin.getRole().getName().equals("ADMIN-OPERATIONAL")) {
+        if (admin.getRole().getName().contains("ADMIN-OPERATOR")) {
             listStatus = List.of(s0, s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
-        if (admin.getRole().getName().equals("ADMIN-SUPERVISOR")) {
+        if (admin.getRole().getName().contains("ADMIN-SUPERVISOR")) {
             listStatus = List.of(s1, s4, s5);
             pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
