@@ -335,7 +335,7 @@ public class TreePostConverter {
         return contentType;
     }
 
-    private PostLocationRequestAndResponse convertPostLocation(PostLocation postLocation) {
+    public PostLocationRequestAndResponse convertPostLocation(PostLocation postLocation) {
 
         PostLocationRequestAndResponse dto = new PostLocationRequestAndResponse();
         dto.setPlaceName(postLocation.getPlaceName() == null ? null : postLocation.getPlaceName());
