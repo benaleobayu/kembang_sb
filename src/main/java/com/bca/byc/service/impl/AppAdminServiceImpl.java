@@ -16,27 +16,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class AppAdminServiceImpl implements AppAdminService {
 
-	private AppAdminRepository appAdminRepository;
+    private AppAdminRepository appAdminRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return appAdminRepository.findByEmail(email)
-				.orElseThrow(() -> new ResourceNotFoundException("invalid email admin"));
-	}
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return appAdminRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("invalid email admin"));
+    }
 
-	@Override
-	public UserDetailResponseDTO findUserDetail() {
-		SecurityContext ctx = SecurityContextHolder.getContext();
-		UserDetailResponseDTO dto = new UserDetailResponseDTO();
-		String username = ctx.getAuthentication().getName();
-		dto.setUsername(username);
-		return dto;
-	}
+    @Override
+    public UserDetailResponseDTO findUserDetail() {
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        UserDetailResponseDTO dto = new UserDetailResponseDTO();
+        String username = ctx.getAuthentication().getName();
+        dto.setUsername(username);
+        return dto;
+    }
 
     @Override
     public AppAdmin findByEmail(String email) {
         return appAdminRepository.findByEmail(email)
-				.orElseThrow(() -> new ResourceNotFoundException("invalid email admin"));
+                .orElseThrow(() -> new ResourceNotFoundException("invalid email admin"));
     }
 
 }

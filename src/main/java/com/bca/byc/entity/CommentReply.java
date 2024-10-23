@@ -48,14 +48,16 @@ public class CommentReply extends AbstractBaseEntity implements SecureIdentifiab
     // relations
     @ManyToOne
     @JoinColumn(name = "comment_id")
+    @EqualsAndHashCode.Exclude
     private Comment parentComment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
     private AppUser user;
 
     @OneToMany(mappedBy = "commentReply", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LikeDislike> likeDislikes = new ArrayList<>();
+    private List<Report> reports = new ArrayList<>();
 
     // stats
 

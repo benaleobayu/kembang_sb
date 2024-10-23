@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
+import static com.bca.byc.repository.handler.HandlerRepository.getIdBySecureId;
 
 @Service
 @AllArgsConstructor
@@ -52,6 +53,7 @@ public class ReportServiceImpl implements ReportService {
         report.setType(dto.getType());
         report.setReporterUser(userId);
         report.setReason(dto.getReason());
+        report.setOtherReason(dto.getOtherReason());
         report.setStatus("DRAFT");
 
         String message;
@@ -90,6 +92,26 @@ public class ReportServiceImpl implements ReportService {
         }
         reportRepository.save(report);
 
+        return message;
+    }
+
+    @Override
+    public String SendReportCommentReply(ReportRequest dto) {
+        AppUser userId = GlobalConverter.getUserEntity(appUserRepository);
+
+        Report report = new Report();
+        report.setType(dto.getType());
+        report.setReporterUser(userId);
+        report.setReason(dto.getReason());
+        report.setOtherReason(dto.getOtherReason());
+        report.setStatus("DRAFT");
+
+        CommentReply commentReply = getEntityBySecureId(dto.getReportedId(), commentReplyRepository, "Comment not found");
+        report.setCommentReply(commentReply);
+        String message = "Comment reply reported successfully";
+        commentReply.setReportStatus("REVIEW");
+        commentReplyRepository.save(commentReply);
+        reportRepository.save(report);
         return message;
     }
 

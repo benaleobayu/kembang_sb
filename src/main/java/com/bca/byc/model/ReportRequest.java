@@ -6,7 +6,7 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 
 @Data
 public class ReportRequest {
-    @Schema(example = "POST or COMMENT or COMMENT_REPLY or USER")
+    @Schema(example = "COMMENT_REPLY")
     private String type;
 
     @Schema(example = "data id")

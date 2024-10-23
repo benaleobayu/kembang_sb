@@ -9,6 +9,8 @@ public interface ReportService {
 
     String SendReport(ReportRequest dto) throws Exception;
 
+    String SendReportCommentReply(ReportRequest dto);
+
     ResultPageResponseDTO<ReportContentIndexResponse> listReportOnDetail(
             Integer pages, Integer limit, String sortBy, String direction, String keyword, String reportId, String detailOf);
 

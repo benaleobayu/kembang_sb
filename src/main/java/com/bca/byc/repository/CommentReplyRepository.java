@@ -12,7 +12,6 @@ import java.util.Optional;
 
 public interface CommentReplyRepository extends JpaRepository<CommentReply, Long> {
 
-    @Query("SELECT c FROM CommentReply c WHERE c.secureId = :secureId")
     Optional<CommentReply> findBySecureId(@Param("secureId") String secureId);
 
     @Query("SELECT c FROM CommentReply c WHERE c.secureId = :secureId")

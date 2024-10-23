@@ -1,6 +1,5 @@
 package com.bca.byc.entity;
 
-import com.bca.byc.entity.impl.AttrIdentificable;
 import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.validator.annotation.ReportStatusEnum;
 import jakarta.persistence.*;
@@ -17,20 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "comments" ,indexes = {
-    @Index(name = "idx_comments_secure_id", columnList = "secure_id", unique = true)
-})
+@Table(name = "comments", indexes = {@Index(name = "idx_comments_secure_id", columnList = "secure_id", unique = true)})
 public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
-
-    @Override
-    public String getSecureId() {
-        return super.getSecureId();
-    }
-
-    @Override
-    public Boolean getIsActive() {
-        return super.getIsActive();
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +31,10 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "NULL" ;
+    private String reportStatus = "NULL";
 
     // relations
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -61,12 +49,22 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> report = new ArrayList<>();
 
-    // stats
-
     @Column(name = "likes_count")
     private Long LikesCount = 0L;
 
     @Column(name = "comments_count")
     private Long CommentsCount = 0L;
+
+    // stats
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getIsActive() {
+        return super.getIsActive();
+    }
 
 }

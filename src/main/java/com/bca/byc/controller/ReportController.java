@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 import com.bca.byc.model.ReportRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.service.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -40,4 +41,18 @@ public class ReportController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+    // Report Comment
+    @Operation(hidden = true)
+    @PostMapping("/send-report-replies")
+    public ResponseEntity<ApiResponse> sendReportCommentReply(@Valid @RequestBody ReportRequest dto) {
+        log.info("POST " + urlRoute + "/send-report endpoint hit");
+
+        try {
+            String message = service.SendReportCommentReply(dto);
+            return ResponseEntity.ok(new ApiResponse(true, message));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
 }
