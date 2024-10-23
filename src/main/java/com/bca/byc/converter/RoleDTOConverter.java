@@ -107,9 +107,6 @@ public class RoleDTOConverter {
             }
         }
 
-        // Flush and clear the session to apply deletions
-        entityManager.flush();
-        entityManager.clear();
 
         // Step 2: Add permissions with default active status as false
         if (dto.getPermissions() != null) {

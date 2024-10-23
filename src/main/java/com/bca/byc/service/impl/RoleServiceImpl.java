@@ -47,6 +47,7 @@ public class RoleServiceImpl implements RoleService {
 
     private final AppAdminRepository adminRepository;
     private final RoleRepository roleRepository;
+    private final RoleHasPermissionRepository roleHasPermissionRepository;
 
     private final RoleDTOConverter converter;
 
@@ -89,15 +90,29 @@ public class RoleServiceImpl implements RoleService {
         Role role = HandlerRepository.getEntityBySecureId(id, roleRepository, "Role " + notFoundMessage);
         Long roleId = role.getId();
 
-        if (roleId == 1 || roleId == 2 || roleId == 3 || roleId == 4 || roleId == 5) {
+        // Check for protected roles
+        if (roleId >= 1 && roleId <= 5) {
             throw new BadRequestException("Role " + role.getName() + " cannot be deleted.");
         }
 
-        // Delete data
-        if (!roleRepository.existsById(roleId)) {
-            throw new BadRequestException("Role not found");
-        } else {
+        // Check for dependencies (e.g., users assigned to this role)
+        if (adminRepository.existsByRoleId(roleId)) {
+            throw new BadRequestException("Role " + role.getName() + " cannot be deleted because it is assigned to users.");
+        }
+
+        // Proceed to delete associated permissions if needed
+        // Assuming permissions should be removed, otherwise skip this part
+        role.getRolePermission().forEach(roleHasPermission -> {
+            // Here you can decide whether to delete or keep permissions
+            // If deleting:
+            roleHasPermissionRepository.delete(roleHasPermission);
+        });
+
+        // Finally, delete the role
+        if (roleRepository.existsById(roleId)) {
             roleRepository.deleteById(roleId);
+        } else {
+            throw new BadRequestException("Role not found");
         }
     }
 

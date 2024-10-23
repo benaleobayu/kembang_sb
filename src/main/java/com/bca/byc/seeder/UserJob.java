@@ -42,58 +42,58 @@ public class UserJob {
         String[] memberAs = {"member", "child"};
 
         AppAdmin admin = adminRepository.findByEmail("admin-opt@unictive.net").orElse(null);
-        AppUserDetail userDetail = new AppUserDetail(
-                null,
-                faker.name().fullName(),
-                "+62",
-                faker.phoneNumber().phoneNumber(),
-                cardNumber.toString(),
-                cardNumber.toString(),
-                LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35)),
-                LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35)),
-                cinNumber.toString(),
-                cinNumber.toString(),
-                null,
-                faker.lorem().characters(120),
-                StatusType.ACTIVATED,
-                userType[faker.number().numberBetween(0, 2)],
-                userType[faker.number().numberBetween(0, 2)],
-                memberType[faker.number().numberBetween(0, 2)],
-                "SYSTEM",
-                LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),
-                faker.avatar().image(),
-                faker.avatar().image(),
-                memberAs[faker.number().numberBetween(0, 2)],
-                null,
-                faker.name().firstName(),
-                faker.number().randomDigit(),
-                faker.random().nextBoolean(),
-                admin
-        );
-        AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
-
-        AppUserAttribute appUserAttribute = new AppUserAttribute(
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.random().nextBoolean(),
-                null,
-                false,
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.random().nextBoolean(),
-                null,
-                faker.internet().domainWord(),
-                statusType[faker.random().nextInt(0, 4)]
-        );
-        AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
+//        AppUserDetail userDetail = new AppUserDetail(
+//                null,
+//                faker.name().fullName(),
+//                "+62",
+//                faker.phoneNumber().phoneNumber(),
+//                cardNumber.toString(),
+//                cardNumber.toString(),
+//                LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35)),
+//                LocalDate.now().minusDays(faker.number().numberBetween(365 * 18, 365 * 35)),
+//                cinNumber.toString(),
+//                cinNumber.toString(),
+//                null,
+//                faker.lorem().characters(120),
+//                StatusType.ACTIVATED,
+//                userType[faker.number().numberBetween(0, 2)],
+//                userType[faker.number().numberBetween(0, 2)],
+//                memberType[faker.number().numberBetween(0, 2)],
+//                "SYSTEM",
+//                LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)),
+//                faker.avatar().image(),
+//                faker.avatar().image(),
+//                memberAs[faker.number().numberBetween(0, 2)],
+//                null,
+//                faker.name().firstName(),
+//                faker.number().randomDigit(),
+//                faker.random().nextBoolean(),
+//                admin
+//        );
+//        AppUserDetail saveUserDetail = appUserDetailRepository.save(userDetail);
+//
+//        AppUserAttribute appUserAttribute = new AppUserAttribute(
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                false,
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.random().nextBoolean(),
+//                null,
+//                faker.internet().domainWord(),
+//                statusType[faker.random().nextInt(0, 4)]
+//        );
+//        AppUserAttribute saveUserAttribute = appUserAttributeRepository.save(appUserAttribute);
 
         AppUser user = new AppUser(null,
                 faker.name().username(),
