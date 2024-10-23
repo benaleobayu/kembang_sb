@@ -14,6 +14,8 @@ public interface AppUserProfileService {
 
     UserInfoResponse updateUserCover(MultipartFile cover) throws IOException, InvalidFileTypeImageException;
 
+    ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type);
+
     ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     ResultPageResponseDTO<PostHomeResponse> listDataProfileLikesActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword);

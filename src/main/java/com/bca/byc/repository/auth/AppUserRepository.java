@@ -107,6 +107,22 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
             "attribute.isDeleted = false AND " +
             "u.id != :id) ")
     Page<AppUser> findUserByNameAndLob(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+            SELECT u FROM AppUser u
+            LEFT JOIN u.followers f
+            WHERE f.id = :userId AND
+            LOWER(u.appUserDetail.name) LIKE LOWER(:keyword)
+            """)
+    Page<AppUser> findFollowing(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+            SELECT u FROM AppUser u
+            LEFT JOIN u.follows f
+            WHERE f.id = :userId AND
+            LOWER(u.appUserDetail.name) LIKE LOWER(:keyword)
+            """)
+    Page<AppUser> findFollowers(Long userId, String keyword, Pageable pageable);
     // --- search ---
 }
 

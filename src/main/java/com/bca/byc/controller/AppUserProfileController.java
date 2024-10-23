@@ -13,6 +13,7 @@ import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
 import com.bca.byc.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -241,6 +242,22 @@ public class AppUserProfileController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+    @GetMapping("/following-followers")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> UserFollowAndFollowing(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @Schema(example = "FOLLOWING | FOLLOWERS")
+            @RequestParam(name = "type", required = false) String type
+            ) {
+        // response true
+        log.info("GET " + urlRoute + "/post-saved-activity endpoint hit");
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataUserFollowAndFollowing(pages, limit, sortBy, direction, keyword, type)));
+    }
+
 
     @Operation(summary = "Get list Post Saved Activity", description = "Get list Post Saved Activity")
     @GetMapping("/post-saved-activity")

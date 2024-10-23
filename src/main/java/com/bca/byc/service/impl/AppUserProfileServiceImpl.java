@@ -7,7 +7,6 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeImageException;
-import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.UserInfoResponse;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
@@ -21,7 +20,6 @@ import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
@@ -35,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,6 +93,67 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         }
         return appUserService.getUserDetailFromId(savedUser.getId());
     }
+
+    @Override
+    public ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type) {
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
+
+        // Validate parameters
+        if (pages < 0 || limit <= 0) {
+            throw new IllegalArgumentException("Invalid pagination parameters.");
+        }
+
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        // Retrieve followers or following
+        Page<AppUser> pageResult;
+        if (type.equals("FOLLOWING")) {
+            pageResult = userRepository.findFollowing(userLogin.getId(), set.keyword(), set.pageable());
+        } else if (type.equals("FOLLOWERS")) {
+            pageResult = userRepository.findFollowers(userLogin.getId(), set.keyword(), set.pageable());
+        } else {
+            throw new IllegalArgumentException("Invalid type. Must be 'FOLLOWING' or 'FOLLOWERS'.");
+        }
+
+        // Map results to DTOs
+        List<PostOwnerResponse> dtos = pageResult.stream()
+                .map(data -> {
+                    TreePostConverter dataConverter = new TreePostConverter(baseUrl, userRepository);
+
+                    // Get the first primary business
+                    Business firstBusiness = data.getBusinesses() == null ? null :
+                            data.getBusinesses().stream().filter(Business::getIsPrimary).findFirst().orElse(null);
+
+                    // Get the first category from the first business, if it exists
+                    BusinessCategory firstBusinessCategory = null;
+                    if (firstBusiness != null) {
+                        firstBusinessCategory = firstBusiness.getBusinessCategories() == null ? null :
+                                firstBusiness.getBusinessCategories().stream()
+                                        .findFirst()
+                                        .map(BusinessHasCategory::getBusinessCategoryParent)
+                                        .orElse(null);
+                    }
+
+                    // Return the PostOwnerResponse with appropriate null checks
+                    return dataConverter.PostOwnerResponse(
+                            new PostOwnerResponse(),
+                            data.getSecureId(),
+                            data.getAppUserDetail().getName(),
+                            data.getAppUserDetail().getAvatar(),
+                            firstBusiness != null ? firstBusiness.getName() : null,
+                            firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                            firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                            data,
+                            userLogin
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return PageCreateReturnApps.create(pageResult, dtos);
+    }
+
+
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataProfileSavedActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
