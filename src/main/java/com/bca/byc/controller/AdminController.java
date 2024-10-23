@@ -71,7 +71,7 @@ public class AdminController {
                                                    @RequestParam("password") String password,
                                                    @RequestParam("isVisible") Boolean isVisible,
                                                    @RequestParam("status") Boolean status,
-                                                   @RequestParam("accountIds") Set<String> accountIds,
+                                                   @RequestParam(value = "accountIds", required = false) Set<String> accountIds,
                                                    @RequestParam("roleId") String roleId) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
@@ -94,7 +94,7 @@ public class AdminController {
                                                    @RequestParam(value = "password", required = false) String password,
                                                    @RequestParam("status") Boolean status,
                                                    @RequestParam("isVisible") Boolean isVisible,
-                                                   @RequestParam("accountIds") Set<String> accountIds,
+                                                   @RequestParam(value = "accountIds", required = false) Set<String> accountIds,
                                                    @RequestParam("roleId") String roleId) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
