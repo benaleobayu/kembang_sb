@@ -15,9 +15,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.jsoup.internal.StringUtil;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -34,7 +31,6 @@ public class RoleDTOConverter {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
-    private ModelMapper modelMapper;
     private EntityManager entityManager;
 
     // for get data
@@ -131,7 +127,6 @@ public class RoleDTOConverter {
         // Return the saved role
         return savedRole;
     }
-
 
 
     // update

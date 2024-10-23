@@ -2,7 +2,6 @@ package com.bca.byc.validator;
 
 
 import com.bca.byc.validator.annotation.ReportStatusEnum;
-import com.bca.byc.validator.annotation.ReportTypeEnum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

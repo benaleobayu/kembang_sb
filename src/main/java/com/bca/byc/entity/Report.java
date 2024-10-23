@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "report", indexes = {
@@ -27,7 +25,7 @@ public class Report extends AbstractBaseEntityCms implements SecureIdentifiable 
 
     @ReportStatusEnum
     @Column(name = "status")
-    private String status ;
+    private String status;
 
     @ReportTypeEnum
     @Column(name = "type")

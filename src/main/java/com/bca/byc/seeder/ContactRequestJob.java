@@ -7,7 +7,6 @@ import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +17,7 @@ public class ContactRequestJob {
     private final AppUserRepository userRepository;
     private final AppUserRequestContactRepository contactRepository;
 
-//    @Scheduled(fixedDelay = 50)
+    //    @Scheduled(fixedDelay = 50)
     public void saveDataInDb() {
         Faker faker = new Faker();
         RequestType[] requestTypes = {RequestType.PENDING, RequestType.IN_PROGRESS, RequestType.COMPLETED, RequestType.CANCELLED};
