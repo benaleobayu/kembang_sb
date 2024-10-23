@@ -29,7 +29,7 @@ public class Role extends AbstractBaseEntityCms implements Serializable, SecureI
     @Column(name = "orders", columnDefinition = "int default 1")
     private Integer orders = 1;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "role",  fetch = FetchType.EAGER)
     private List<RoleHasPermission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {

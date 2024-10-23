@@ -18,4 +18,6 @@ public interface RoleHasPermissionRepository extends JpaRepository<RoleHasPermis
     RoleHasPermission findByRoleAndPermission(Role role, Permission permission);
 
     List<RoleHasPermission> findByRole(Role role);
+
+    void deleteByRoleId(Long id);
 }

@@ -61,7 +61,7 @@ public class RoleDTOConverter {
 
         List<RoleHasPermission> roleHasPermissionList = data.getRolePermission();
         TreeRolePermissionConverter converter = new TreeRolePermissionConverter();
-        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList, permissionRepository);
+        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList, permissionRepository, "privilege");
 
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
@@ -140,7 +140,7 @@ public class RoleDTOConverter {
     // update
     public void convertToUpdateRequest(Role data, @Valid RoleCreateUpdateRequest dto, AppAdmin admin) {
         // Update fields based on the DTO
-        if (data.getId() == 1 || data.getId() == 2 || data.getId() == 3 || data.getId() == 4 || data.getId() == 5) {
+        if (data.getId() <= 5) {
             data.setName(data.getName());
         } else {
             data.setName(dto.getName().toUpperCase());
@@ -161,7 +161,6 @@ public class RoleDTOConverter {
         if (dto.getPermissions() != null) {
             for (PrivilegeRoleCreateUpdateRequest permissionDto : dto.getPermissions()) {
                 Long permissionId = permissionDto.getPermissionId();
-
                 if (permissionId != null) {
                     if (permissionDto.isActive()) {
                         // Add to new permissions if active and not already present
@@ -178,9 +177,13 @@ public class RoleDTOConverter {
             }
         }
 
+        // Remove permissions
         for (Long permissionId : removePermissionIds) {
             RoleHasPermission roleHasPermission = roleHasPermissionRepository.findByRoleIdAndPermissionId(data.getId(), permissionId);
             if (roleHasPermission != null) {
+                // Remove from Role's permissions list
+                data.getRolePermission().remove(roleHasPermission);
+                // Delete the RoleHasPermission entity
                 roleHasPermissionRepository.delete(roleHasPermission);
             }
         }
@@ -189,12 +192,14 @@ public class RoleDTOConverter {
         entityManager.flush();
         entityManager.clear();
 
-        // Step 2: Add new active permissions
+        // Add new active permissions
         for (Long permissionId : addPermissionIds) {
             Permission permission = HandlerRepository.getEntityById(permissionId, permissionRepository, "Permission not found");
             RoleHasPermission roleHasPermission = new RoleHasPermission(data, permission);
+            data.getRolePermission().add(roleHasPermission); // Add to the list
             roleHasPermissionRepository.save(roleHasPermission);
         }
+
         log.info("addList : {}", addPermissionIds);
         log.info("removeList : {}", removePermissionIds);
 
@@ -202,5 +207,6 @@ public class RoleDTOConverter {
         data.setUpdatedBy(admin);
         data.setUpdatedAt(LocalDateTime.now());
     }
+
 
 }
