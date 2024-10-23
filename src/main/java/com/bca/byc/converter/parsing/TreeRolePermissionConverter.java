@@ -51,7 +51,7 @@ public class TreeRolePermissionConverter {
                     permissionDetail.setActive(isActive);
                 } else {
                     Permission permissionOnNull = permissionRepository.findByName(category + "." + defaultPermission).orElse(null);
-                    permissionDetail.setPermissionId(type.equals("info") ? null : permissionOnNull.getId()); // no ID because it doesn't exist
+                    permissionDetail.setPermissionId(type.equals("info") ? null : Objects.requireNonNull(permissionOnNull).getId()); // no ID because it doesn't exist
                     permissionDetail.setPermissionName(defaultPermission);
                     permissionDetail.setDisabled(!permissionRepository.existsByName(category + "." + defaultPermission)); // permission doesn't exist, disabled
                     permissionDetail.setActive(false);
