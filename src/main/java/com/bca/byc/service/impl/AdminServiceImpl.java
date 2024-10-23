@@ -3,9 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.AdminDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Role;
-import com.bca.byc.entity.RoleHasPermission;
+import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminCmsDetailResponse;
 import com.bca.byc.model.AdminCreateRequest;
@@ -13,6 +11,8 @@ import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
+import com.bca.byc.repository.AccountRepository;
+import com.bca.byc.repository.AdminHasAccountRepository;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -21,6 +21,7 @@ import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.util.FileUploadHelper;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.saveFile;
@@ -43,6 +46,8 @@ public class AdminServiceImpl implements AdminService {
     private final AppAdminRepository appAdminRepository;
     private final AdminRepository repository;
     private final RoleRepository roleRepository;
+    private final AccountRepository accountRepository;
+    private final AdminHasAccountRepository adminHasAccountRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -102,6 +107,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void CreateAdmin(@Valid AdminCreateRequest dto, MultipartFile avatar, MultipartFile cover) throws BadRequestException, IOException {
         FileUploadHelper.validateFileTypeImage(avatar);
         // set entity to add with model mapper
@@ -122,7 +128,10 @@ public class AdminServiceImpl implements AdminService {
 
 
         // save data
-        repository.save(data);
+        AppAdmin savedAdmin = repository.save(data);
+
+        // list of account ids e.g ['abc-def', 'ghi-jkl']
+        saveAccountInAdmin(savedAdmin, dto.accountIds());
     }
 
     @Override
@@ -166,8 +175,12 @@ public class AdminServiceImpl implements AdminService {
             }
         }
         // Save the updated admin data
-        repository.save(data);
+        AppAdmin savedAdmin = repository.save(data);
 
+        // remove first of all data
+        adminHasAccountRepository.deleteByAdminId(data.getId());
+        // list of account ids e.g ['abc-def', 'ghi-jkl']
+       saveAccountInAdmin(savedAdmin, dto.accountIds());
     }
 
 
@@ -215,6 +228,25 @@ public class AdminServiceImpl implements AdminService {
 
     public boolean emailExists(String email, AppAdminRepository repository) {
         return repository.existsByEmail(email);
+    }
+
+    private void saveAccountInAdmin(AppAdmin savedAdmin, Set<String> accountIds) {
+        Set<Account> accounts = new HashSet<>();
+        for (String accountId : accountIds){
+            Account account = HandlerRepository.getIdBySecureId(
+                    accountId,
+                    accountRepository::findByIdAndSecureId,
+                    projection -> accountRepository.findById(projection.getId()),
+                    "Account not found for ID: " + accountId
+            );
+            accounts.add(account);
+        }
+        for (Account account : accounts) {
+            AdminHasAccounts adminHasAccount = new AdminHasAccounts();
+            adminHasAccount.setAdmin(savedAdmin);
+            adminHasAccount.setAccount(account);
+            adminHasAccountRepository.save(adminHasAccount);
+        }
     }
 
 }

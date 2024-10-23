@@ -20,7 +20,6 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT u FROM AppUser u " +
             "LEFT JOIN u.appUserDetail aud " +
-            "LEFT JOIN aud.branchCode bc " +
             "LEFT JOIN u.businesses b " +
             "LEFT JOIN b.businessHasLocations bhl " +
             "LEFT JOIN bhl.location loc " +

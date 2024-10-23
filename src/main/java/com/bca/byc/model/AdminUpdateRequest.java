@@ -5,7 +5,7 @@ public record AdminUpdateRequest(
         String password,
         String name,
         Boolean status,
-        Boolean isVisible, String roleId
+        Boolean isVisible, java.util.Set<String> accountIds, String roleId
 ) {
 }
 

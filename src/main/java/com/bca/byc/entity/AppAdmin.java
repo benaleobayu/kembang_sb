@@ -2,14 +2,13 @@ package com.bca.byc.entity;
 
 
 import com.bca.byc.entity.impl.SecureIdentifiable;
-import com.bca.byc.enums.AdminType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -43,6 +42,9 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
 
     @Column(name = "is_visible")
     private Boolean isVisible = true;
+
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AdminHasAccounts> adminHasAccounts = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "role_id")
