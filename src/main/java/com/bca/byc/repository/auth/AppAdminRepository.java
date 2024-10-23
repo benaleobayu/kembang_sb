@@ -12,4 +12,6 @@ public interface AppAdminRepository extends JpaRepository<AppAdmin, Long> {
     Optional<AppAdmin> findBySecureId(String secureId);
 
     boolean existsByEmail(String email);
+
+    boolean existsByRoleId(Long roleId);
 }

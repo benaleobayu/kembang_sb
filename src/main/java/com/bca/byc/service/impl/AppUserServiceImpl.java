@@ -250,7 +250,7 @@ public class AppUserServiceImpl implements AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         AppUserRequestContact requestContact = new AppUserRequestContact();
-        requestContact.setAppUserId(user.getId());
+        requestContact.setUser(user);
         requestContact.setMessages(messageString);
 
         AppUserRequestContact savedContact = appUserRequestContactRepository.save(requestContact);
