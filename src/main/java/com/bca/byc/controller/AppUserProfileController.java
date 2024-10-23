@@ -250,12 +250,13 @@ public class AppUserProfileController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "userId", required = false) String userId,
             @Schema(example = "FOLLOWING | FOLLOWERS")
             @RequestParam(name = "type", required = false) String type
             ) {
         // response true
         log.info("GET " + urlRoute + "/post-saved-activity endpoint hit");
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataUserFollowAndFollowing(pages, limit, sortBy, direction, keyword, type)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list PostActivity", profileService.listDataUserFollowAndFollowing(pages, limit, sortBy, direction, keyword, type, userId)));
     }
 
 

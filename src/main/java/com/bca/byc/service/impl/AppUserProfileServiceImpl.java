@@ -20,6 +20,7 @@ import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.UserHasSavedPostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AppUserProfileService;
 import com.bca.byc.service.AppUserService;
@@ -33,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,8 +95,13 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type) {
-        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
+    public ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type, String userId) {
+        AppUser userLogin;
+        if (userId == null) {
+            userLogin = GlobalConverter.getUserEntity(userRepository);
+        } else {
+            userLogin = HandlerRepository.getEntityBySecureId(userId, userRepository, "user not found");
+        }
 
         // Validate parameters
         if (pages < 0 || limit <= 0) {
