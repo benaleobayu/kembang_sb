@@ -1,13 +1,18 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Report;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.ReportUserDetailResponse;
 import com.bca.byc.model.ReportUserIndexResponse;
+import com.bca.byc.model.ReportUserStatusRequest;
 import com.bca.byc.model.projection.ReportUserIndexProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportUserService;
 import com.bca.byc.service.UserProjectionService;
@@ -19,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -117,5 +121,29 @@ public class ReportUserServiceImpl implements ReportUserService {
                 phone,
                 data.getReportedEmail()
         );
+    }
+
+    @Override
+    public String updateStatusReportUser(ReportUserStatusRequest dto) {
+        Report report = HandlerRepository.getEntityBySecureId(dto.getId(), reportRepository, "Report not found");
+        AppUser user = report.getReportedUser();
+        String message;
+        switch (dto.getStatus()){
+            case "SUSPENDED":
+                report.setStatus("END");
+                user.getAppUserAttribute().setIsSuspended(true);
+                userRepository.save(user);
+                message = "User has been suspended";
+                break;
+            case "WARNING":
+                report.setStatus("WARNING");
+                message = "User has been warned";
+                break;
+            default:
+                throw new BadRequestException("Invalid status");
+        }
+
+        reportRepository.save(report);
+        return message;
     }
 }

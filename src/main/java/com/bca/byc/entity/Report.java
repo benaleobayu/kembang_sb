@@ -33,23 +33,23 @@ public class Report extends AbstractBaseEntityCms implements SecureIdentifiable 
     @Column(name = "type")
     private String type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @ManyToOne
-    @JoinColumn(name = "reply_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_reply_id")
     private CommentReply commentReply;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private AppUser reportedUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id")
     private AppUser reporterUser;
 

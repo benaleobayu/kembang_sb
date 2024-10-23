@@ -1,10 +1,7 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ReportCommentDetailResponse;
-import com.bca.byc.model.ReportCommentIndexResponse;
-import com.bca.byc.model.ReportUserDetailResponse;
-import com.bca.byc.model.ReportUserIndexResponse;
+import com.bca.byc.model.*;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
@@ -58,6 +55,13 @@ public class ReportUserController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse> update(@RequestBody ReportUserStatusRequest dto) {
+        log.info("PUT " + urlRoute + "/{id} endpoint hit");
+        String message = service.updateStatusReportUser(dto);
+        return ResponseEntity.ok(new ApiResponse(true, message));
     }
 
 }
