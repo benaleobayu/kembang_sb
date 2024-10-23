@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public interface ChannelService {
 
-    ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(CompilerFilterRequest filter);
+
 
     ChanelDetailResponse findDataById(String id) throws BadRequestException;
 

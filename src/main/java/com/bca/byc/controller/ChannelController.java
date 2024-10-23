@@ -9,6 +9,7 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.cms.ChannelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
 
 @Slf4j
 @RestController
@@ -33,6 +35,7 @@ public class ChannelController {
 
     static final String urlRoute = "/cms/v1/channel";
     private ChannelService service;
+    private final GlobalAttributeService attributeService;
 
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ChanelIndexResponse>>> listDataChanelIndex(
@@ -40,10 +43,19 @@ public class ChannelController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "orders") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "status", required = false) Boolean status,
+            @RequestParam(name = "startDate", required = false) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) LocalDate endDate,
+            @RequestParam(name = "export", required = false) Boolean export // TODO export channel
+    ) {
         // response true
+        CompilerFilterRequest filter = new CompilerFilterRequest(
+                pages, limit, sortBy, direction, keyword,
+                startDate, endDate, status
+        );
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list chanel", service.listDataChanelIndex(pages, limit, sortBy, direction, keyword)));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list chanel", service.listDataChanelIndex(filter), attributeService.listAttributeChannel()));
     }
 
     @GetMapping("{id}")

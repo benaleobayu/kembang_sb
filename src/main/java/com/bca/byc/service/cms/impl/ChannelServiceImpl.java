@@ -50,15 +50,19 @@ public class ChannelServiceImpl implements ChannelService {
     private String baseUrl;
 
     @Override
-    public ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<ChanelIndexResponse> listDataChanelIndex(CompilerFilterRequest filters) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
+                filters.getKeyword(), filters.getStartDate(), filters.getEndDate(), filters.getStatus()
         );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(filters.getPages(), filters.getLimit(), filters.getSortBy(), filters.getDirection(), filters.getKeyword(), filter);
 
-        Page<Channel> pageResult = repository.findByNameLikeIgnoreCaseOrderByOrders(set.keyword(), set.pageable());
+        // set date
+        LocalDateTime start = (filters.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filters.getStartDate().atStartOfDay();
+        LocalDateTime end = (filters.getEndDate() == null) ? LocalDateTime.now() : filters.getEndDate().atTime(23, 59, 59);
+
+        Page<Channel> pageResult = repository.findByNameLikeIgnoreCaseOrderByOrders(set.keyword(), set.pageable(), start, end, filters.getStatus());
         List<ChanelIndexResponse> dtos = pageResult.stream().map((c) ->
-            converter.convertToIndexResponse(c, baseUrl)
+                converter.convertToIndexResponse(c, baseUrl)
         ).collect(Collectors.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
