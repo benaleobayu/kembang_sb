@@ -35,6 +35,7 @@ public class AdminDTOConverter {
         // mapping Entity with DTO Entity
         AdminDetailResponse dto = modelMapper.map(data, AdminDetailResponse.class);
         dto.setAvatar(GlobalConverter.getAvatarImage(data.getAvatar(), baseUrl));
+        dto.setCover(GlobalConverter.getAvatarImage(data.getCover(), baseUrl));
         // get role name
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());

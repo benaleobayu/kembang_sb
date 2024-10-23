@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
     private String avatar;
+    private String cover;
     private String name;
     private String email;
     private String roleId;
