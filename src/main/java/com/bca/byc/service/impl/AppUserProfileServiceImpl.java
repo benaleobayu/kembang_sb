@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +97,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type, String userId) {
+        AppUser userAccess = GlobalConverter.getUserEntity(userRepository);
         AppUser userLogin;
         if (userId == null) {
             userLogin = GlobalConverter.getUserEntity(userRepository);
@@ -114,9 +116,9 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         // Retrieve followers or following
         Page<AppUser> pageResult;
         if (type.equals("FOLLOWING")) {
-            pageResult = userRepository.findFollowing(userLogin.getId(), set.keyword(), set.pageable());
+            pageResult = userRepository.findFollowing(userLogin.getId(), userAccess.getId(), set.keyword(), set.pageable());
         } else if (type.equals("FOLLOWERS")) {
-            pageResult = userRepository.findFollowers(userLogin.getId(), set.keyword(), set.pageable());
+            pageResult = userRepository.findFollowers(userLogin.getId(), userAccess.getId(), set.keyword(), set.pageable());
         } else {
             throw new IllegalArgumentException("Invalid type. Must be 'FOLLOWING' or 'FOLLOWERS'.");
         }
@@ -150,14 +152,14 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
                             firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                             firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                             data,
-                            userLogin
+                            userAccess
                     );
                 })
                 .collect(Collectors.toList());
 
+        dtos.sort(Comparator.comparing(PostOwnerResponse::getIsFollowed).reversed());
         return PageCreateReturnApps.create(pageResult, dtos);
     }
-
 
 
     @Override

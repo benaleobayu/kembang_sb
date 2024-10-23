@@ -111,18 +111,19 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("""
             SELECT u FROM AppUser u
             LEFT JOIN u.followers f
-            WHERE f.id = :userId AND
+            LEFT JOIN u.follows uf
+            WHERE f.id = :userId AND u.id != :userLoginId AND
             LOWER(u.appUserDetail.name) LIKE LOWER(:keyword)
             """)
-    Page<AppUser> findFollowing(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+    Page<AppUser> findFollowing(@Param("userId") Long userId,@Param("userLoginId") Long id, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("""
             SELECT u FROM AppUser u
             LEFT JOIN u.follows f
-            WHERE f.id = :userId AND
+            WHERE f.id = :userId AND u.id != :userLoginId AND
             LOWER(u.appUserDetail.name) LIKE LOWER(:keyword)
             """)
-    Page<AppUser> findFollowers(Long userId, String keyword, Pageable pageable);
+    Page<AppUser> findFollowers(@Param("userId") Long userId, @Param("userLoginId") Long id,@Param("keyword") String keyword, Pageable pageable);
     // --- search ---
 }
 
