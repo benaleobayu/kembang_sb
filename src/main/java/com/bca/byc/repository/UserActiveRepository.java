@@ -93,7 +93,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "aua.isSuspended = false AND " +
             "aua.isDeleted = false AND " +
             "aua.isHardDeleted = false AND " +
-            "u.id != userId " +
+            "u.id != :userId " +
             "GROUP BY u.id, aud.avatar, aud.name, bhc.business.name, bhc.businessCategoryParent.name, b.isPrimary ")
     Page<ListTagUserResponse> findListTagUser(@Param("keyword") String keyword, Pageable pageable,@Param("userId") Long id);
 
