@@ -32,6 +32,6 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     @Query("SELECT r FROM Role r WHERE r.secureId = :roleId")
     Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("roleId") String roleId);
 
-    @Query("SELECT r FROM Role r WHERE r.id IN :list")
+    @Query("SELECT r FROM Role r WHERE r.id NOT IN :list")
     List<Role> findAllByIdNotIn(List<Integer> list);
 }
