@@ -17,10 +17,7 @@ public class Account extends AbstractBaseEntityCms implements SecureIdentifiable
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "accounts_has_channel",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "channel_id"))
-    private List<Channel> channels = new ArrayList<>();
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountHasChannels> accountHasChannels = new ArrayList<>();
 
 }

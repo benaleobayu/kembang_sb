@@ -2,11 +2,11 @@ package com.bca.byc.model;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class AccountCreateUpdateRequest {
     private String name;
-
-//    private List<String> channels;
+    private Boolean status;
+    private Set<String> channelIds;
 }
