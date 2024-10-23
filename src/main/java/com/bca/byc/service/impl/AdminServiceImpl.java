@@ -155,7 +155,7 @@ public class AdminServiceImpl implements AdminService {
         data.setRole(role);
         data.setIsActive(dto.status());
         data.setIsVisible(dto.isVisible());
-        if (avatar != null ) {
+        if (avatar != null) {
             FileUploadHelper.validateFileTypeImage(avatar);
             String oldAvatar = data.getAvatar();
             String newAvatar = saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
@@ -165,7 +165,7 @@ public class AdminServiceImpl implements AdminService {
             }
         }
 
-        if (cover != null ) {
+        if (cover != null) {
             FileUploadHelper.validateFileTypeImage(cover);
             String oldCover = data.getCover();
             String newCover = saveFile(cover, UPLOAD_DIR + "/admin/cover");
@@ -180,7 +180,7 @@ public class AdminServiceImpl implements AdminService {
         // remove first of all data
         adminHasAccountRepository.deleteByAdminId(data.getId());
         // list of account ids e.g ['abc-def', 'ghi-jkl']
-       saveAccountInAdmin(savedAdmin, dto.accountIds());
+        saveAccountInAdmin(savedAdmin, dto.accountIds());
     }
 
 
@@ -193,7 +193,7 @@ public class AdminServiceImpl implements AdminService {
             throw new BadRequestException("Cannot delete admin IDs 1-5");
         }
         // if admin itself cannot be deleted
-        if ( data.getId().equals(adminLogin.getId()) ) {
+        if (data.getId().equals(adminLogin.getId())) {
             throw new BadRequestException("Cannot delete admin itself");
         }
         repository.deleteById(data.getId());
@@ -231,21 +231,23 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private void saveAccountInAdmin(AppAdmin savedAdmin, Set<String> accountIds) {
-        Set<Account> accounts = new HashSet<>();
-        for (String accountId : accountIds){
-            Account account = HandlerRepository.getIdBySecureId(
-                    accountId,
-                    accountRepository::findByIdAndSecureId,
-                    projection -> accountRepository.findById(projection.getId()),
-                    "Account not found for ID: " + accountId
-            );
-            accounts.add(account);
-        }
-        for (Account account : accounts) {
-            AdminHasAccounts adminHasAccount = new AdminHasAccounts();
-            adminHasAccount.setAdmin(savedAdmin);
-            adminHasAccount.setAccount(account);
-            adminHasAccountRepository.save(adminHasAccount);
+        if (accountIds != null) {
+            Set<Account> accounts = new HashSet<>();
+            for (String accountId : accountIds) {
+                Account account = HandlerRepository.getIdBySecureId(
+                        accountId,
+                        accountRepository::findByIdAndSecureId,
+                        projection -> accountRepository.findById(projection.getId()),
+                        "Account not found for ID: " + accountId
+                );
+                accounts.add(account);
+            }
+            for (Account account : accounts) {
+                AdminHasAccounts adminHasAccount = new AdminHasAccounts();
+                adminHasAccount.setAdmin(savedAdmin);
+                adminHasAccount.setAccount(account);
+                adminHasAccountRepository.save(adminHasAccount);
+            }
         }
     }
 
