@@ -6,6 +6,7 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Role;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.model.*;
+import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ public class AdminDTOConverter {
     private String baseUrl;
 
     private ModelMapper modelMapper;
+    private final PermissionRepository permissionRepository;
 
     // for get data
     public AdminDetailResponse convertToListResponse(AppAdmin data) {
@@ -62,7 +64,7 @@ public class AdminDTOConverter {
         Role role = data.getRole();
         List<RoleHasPermission> roleHasPermissionList = role.getRolePermission();
         TreeRolePermissionConverter converter = new TreeRolePermissionConverter();
-        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList);
+        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList, permissionRepository);
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
         // return

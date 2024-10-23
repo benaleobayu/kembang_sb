@@ -1,6 +1,7 @@
 package com.bca.byc.converter.parsing;
 import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.model.PermissionListResponse;
+import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.PermissionResponse;
 
 import java.util.*;
@@ -10,7 +11,7 @@ public class TreeRolePermissionConverter {
 
     private static final List<String> DEFAULT_PERMISSIONS = Arrays.asList("view", "create", "read", "update", "delete", "export");
 
-    public List<PermissionListResponse> convertRolePermissions(List<RoleHasPermission> roleHasPermissionList) {
+    public List<PermissionListResponse> convertRolePermissions(List<RoleHasPermission> roleHasPermissionList, PermissionRepository permissionRepository) {
         // Group permissions by the prefix (category) before the dot (e.g., role, admin, user)
         Map<String, List<RoleHasPermission>> permissionsByCategory = roleHasPermissionList.stream()
                 .collect(Collectors.groupingBy(roleHasPermission -> {
@@ -39,19 +40,17 @@ public class TreeRolePermissionConverter {
 
                 // Create a new PermissionResponse
                 PermissionResponse permissionDetail = new PermissionResponse();
-
-                boolean disabled = !matchingPermission.isPresent() || matchingPermission.get().getPermission().getId() == null;
-
                 boolean isActive = matchingPermission.isPresent();
                 if (matchingPermission.isPresent()) {
-                    permissionDetail.setPermissionId(matchingPermission.get().getPermission().getId());
+                    Long permissionId = matchingPermission.get().getPermission().getId();
+                    permissionDetail.setPermissionId(permissionId);
                     permissionDetail.setPermissionName(defaultPermission);
-                    permissionDetail.setDisabled(disabled); // permission exists, not disabled
+                    permissionDetail.setDisabled(!permissionRepository.existsById(permissionId)); // permission exists, not disabled
                     permissionDetail.setActive(isActive);
                 } else {
                     permissionDetail.setPermissionId(null); // no ID because it doesn't exist
                     permissionDetail.setPermissionName(defaultPermission);
-                    permissionDetail.setDisabled(disabled); // permission doesn't exist, disabled
+                    permissionDetail.setDisabled(true); // permission doesn't exist, disabled
                     permissionDetail.setActive(false);
                 }
 

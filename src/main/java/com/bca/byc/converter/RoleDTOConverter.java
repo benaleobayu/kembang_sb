@@ -61,7 +61,7 @@ public class RoleDTOConverter {
 
         List<RoleHasPermission> roleHasPermissionList = data.getRolePermission();
         TreeRolePermissionConverter converter = new TreeRolePermissionConverter();
-        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList);
+        List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList, permissionRepository);
 
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
