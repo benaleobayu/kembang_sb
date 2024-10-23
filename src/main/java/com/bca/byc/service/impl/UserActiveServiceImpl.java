@@ -22,6 +22,7 @@ import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
+import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -52,6 +53,7 @@ import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecure
 @Service
 @AllArgsConstructor
 public class UserActiveServiceImpl implements UserActiveService {
+    private final AppUserRepository userRepository;
 
     private final AppAdminRepository adminRepository;
     private final UserActiveRepository repository;
@@ -180,11 +182,12 @@ public class UserActiveServiceImpl implements UserActiveService {
 
     @Override
     public ResultPageResponseDTO<ListTagUserResponse> listDataTagUser(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
 
-        Page<ListTagUserResponse> pageResult = repository.findListTagUser(keyword, pageable);
+        Page<ListTagUserResponse> pageResult = repository.findListTagUser(keyword, pageable, userLogin.getId());
         List<ListTagUserResponse> dtos = pageResult.stream().map((data) -> {
             ListTagUserResponse dto = new ListTagUserResponse();
 
