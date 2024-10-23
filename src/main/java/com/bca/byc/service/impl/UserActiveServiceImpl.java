@@ -75,7 +75,7 @@ public class UserActiveServiceImpl implements UserActiveService {
     }
 
     @Override
-    public ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter) {
+    public ResultPageResponseDTO<UserManagementListResponse> listDataActiveIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter) {
         ListOfFilterPagination filtering = new ListOfFilterPagination(
                 keyword,
                 filter.getStartDate(),
@@ -87,7 +87,7 @@ public class UserActiveServiceImpl implements UserActiveService {
         LocalDateTime start = (filter.getStartDate() == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : filter.getStartDate().atStartOfDay();
         LocalDateTime end = (filter.getEndDate() == null) ? LocalDateTime.now() : filter.getEndDate().atTime(23, 59, 59);
 
-        Page<AppUser> pageResult = repository.GetDataIndexUserActive(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getIsSenior());
+        Page<AppUser> pageResult = repository.getDataActiveIndex(set.keyword(), set.pageable(), start , end, filter.getLocationId(), filter.getSegmentation(), filter.getIsSenior());
         List<UserManagementListResponse> dtos = pageResult.stream().map((c) -> {
             UserManagementListResponse dto = new UserManagementListResponse();
             IndexResponse(c, dto);

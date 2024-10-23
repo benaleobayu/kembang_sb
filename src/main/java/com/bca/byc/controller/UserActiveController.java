@@ -89,7 +89,7 @@ public class UserActiveController {
         } else {
             // List data logic
             UserManagementFilterList filter = new UserManagementFilterList(startDate, endDate, locationId, segmentation, isSenior);
-            ResultPageResponseDTO<UserManagementListResponse> result = service.listData(pages, limit, sortBy, direction, keyword, filter);
+            ResultPageResponseDTO<UserManagementListResponse> result = service.listDataActiveIndex(pages, limit, sortBy, direction, keyword, filter);
             return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list active user", result, userManagementService.listAttributeUserManagement()));
         }
     }
@@ -112,7 +112,7 @@ public class UserActiveController {
             service.updateData(id, item);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated user active"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new RuntimeException(e.getMessage());
         }
     }
 

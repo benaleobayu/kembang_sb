@@ -15,7 +15,7 @@ import java.util.Set;
 
 public interface UserActiveService {
 
-    ResultPageResponseDTO<UserManagementListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter);
+    ResultPageResponseDTO<UserManagementListResponse> listDataActiveIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, UserManagementFilterList filter);
 
     ResultPageResponseDTO<ListTagUserResponse> listDataTagUser(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 

@@ -36,13 +36,13 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "u.appUserAttribute.isDeleted IN (false) AND " +
             "u.appUserAttribute.isHardDeleted IN (false) AND " +
             "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
-    Page<AppUser> GetDataIndexUserActive(@Param("keyword") String keyword,
-                                         Pageable pageable,
-                                         @Param("startDate") LocalDateTime start,
-                                         @Param("endDate") LocalDateTime end,
-                                         @Param("locationId") Long locationId,
-                                         @Param("segmentation") UserType segmentation,
-                                         @Param("isSenior") Boolean isSenior);
+    Page<AppUser> getDataActiveIndex(@Param("keyword") String keyword,
+                                     Pageable pageable,
+                                     @Param("startDate") LocalDateTime start,
+                                     @Param("endDate") LocalDateTime end,
+                                     @Param("locationId") Long locationId,
+                                     @Param("segmentation") UserType segmentation,
+                                     @Param("isSenior") Boolean isSenior);
 
     @Query("SELECT u FROM AppUser u ")
     List<UserActiveExportResponse> findAllData();
@@ -69,8 +69,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "(:segmentation IS NULL OR aud.memberType = :segmentation) AND " +
             "(:locationId IS NULL OR loc.id = :locationId) AND " +
             "(:isSenior IS NULL OR aud.isSenior = :isSenior) AND " +
-            "u.createdAt BETWEEN :startDate AND :endDate " +
-            "ORDER BY u.createdAt DESC")
+            "u.createdAt BETWEEN :startDate AND :endDate")
     List<UserActiveExportResponse> findDataForExport(@Param("startDate") LocalDateTime start,
                                                      @Param("endDate") LocalDateTime end,
                                                      @Param("segmentation") UserType segmentation,
