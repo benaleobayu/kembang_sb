@@ -8,7 +8,7 @@ import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.PreRegisterService;
 import com.bca.byc.service.UserManagementExportService;
-import com.bca.byc.service.UserManagementService;
+import com.bca.byc.service.GlobalAttributeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +44,7 @@ public class UserPreRegisterController {
     static final String urlRoute = "/cms/v1/um/pre-register";
     private PreRegisterService service;
     private UserManagementExportService exportService;
-    private UserManagementService userManagementService;
+    private GlobalAttributeService attributeService;
 
     @PreAuthorize("hasAuthority('pre-registration.view')")
     @Operation(summary = "Create Pre-Register User", description = "Create Pre-Register User")
@@ -81,7 +81,7 @@ public class UserPreRegisterController {
         } else {
             // List data logic
             ResultPageResponseDTO<PreRegisterDetailResponse> result = service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate);
-            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", result, userManagementService.listAttributePreRegister()));
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", result, attributeService.listAttributePreRegister()));
         }
     }
 
@@ -112,7 +112,7 @@ public class UserPreRegisterController {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
         try {
             PreRegisterDetailResponse item = service.findDataBySecureId(id);
-            return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, userManagementService.listAttributeCreateUpdatePreRegister()));
+            return ResponseEntity.ok(new ApiWithAttributeResponse(true, "Successfully found pre-register user", item, attributeService.listAttributeCreateUpdatePreRegister()));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiWithAttributeResponse(false, e.getMessage(), null));
         }
@@ -206,7 +206,7 @@ public class UserPreRegisterController {
     @GetMapping("/attribute")
     public ResponseEntity<ApiAttributeResponse> listAttribute() {
         log.info("GET " + urlRoute + "/attribute endpoint hit");
-        return ResponseEntity.ok(new ApiAttributeResponse(true, "Successfully get list attribute", userManagementService.listAttributeCreateUpdatePreRegister()));
+        return ResponseEntity.ok(new ApiAttributeResponse(true, "Successfully get list attribute", attributeService.listAttributeCreateUpdatePreRegister()));
     }
 
 }

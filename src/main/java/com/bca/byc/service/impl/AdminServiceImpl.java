@@ -200,13 +200,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+    public ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String roleId, Boolean status) {
         ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
+                keyword,
+                roleId,
+                status
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-
-        Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable());
+        Long idRole = roleId != null ? getRoleId(roleId) : null;
+        Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable(), idRole, status);
         List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
             AdminDetailResponse dto = converter.convertToListResponse(c);
             return dto;
@@ -249,6 +251,17 @@ public class AdminServiceImpl implements AdminService {
                 adminHasAccountRepository.save(adminHasAccount);
             }
         }
+    }
+
+    // -- helper --
+    private Long getRoleId(String roleId) {
+        Role data = HandlerRepository.getIdBySecureId(
+                roleId,
+                roleRepository::findByIdAndSecureId,
+                projection -> roleRepository.findById(projection.getId()),
+                "Role not found for ID: " + roleId
+        );
+        return data.getId();
     }
 
 }

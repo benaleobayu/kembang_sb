@@ -16,7 +16,7 @@ public interface AdminService {
 
     AppAdmin findByEmail(String email);
 
-    ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+    ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String roleId, Boolean status);
 
     AdminDetailResponse FindAdminById(String id) throws Exception;
 

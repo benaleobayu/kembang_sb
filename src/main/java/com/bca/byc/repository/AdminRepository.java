@@ -16,9 +16,12 @@ public interface AdminRepository extends JpaRepository<AppAdmin, Long> {
     Optional<AppAdmin> findByEmail(String email);
 
     @Query("SELECT a FROM AppAdmin a " +
+            "LEFT JOIN a.role r " +
             "WHERE " +
             "(LOWER(a.name) LIKE(:keyword) OR " +
             "LOWER(a.email) LIKE(:keyword)) AND " +
+            "(:roleId IS NULL OR r.id = :roleId) AND " +
+            "(:status IS NULL OR a.isActive = :status) AND " +
             "a.isDeleted = false AND a.id != 1")
-    Page<AppAdmin> getAdminList(@Param("keyword") String keyword, Pageable pageable);
+    Page<AppAdmin> getAdminList(@Param("keyword") String keyword, Pageable pageable,@Param("roleId") Long roleId,@Param("status") Boolean status);
 }

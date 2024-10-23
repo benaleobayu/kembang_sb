@@ -10,7 +10,7 @@ import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.UserManagementExportService;
-import com.bca.byc.service.UserManagementService;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.UserSuspendedService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +38,7 @@ public class UserSuspendedController {
 
     static final String urlRoute = "/cms/v1/um/suspended";
     private final UserSuspendedService service;
-    private final UserManagementService userManagementService;
+    private final GlobalAttributeService userManagementService;
     private final UserManagementExportService exportService;
 
     @Operation(summary = "Get list user suspended", description = "Get list user suspended")

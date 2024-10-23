@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface UserManagementService {
+public interface GlobalAttributeService {
     List<Map<String, List<?>>> listAttributePreRegister();
 
     List<Map<String, List<?>>> listAttributeCreateUpdatePreRegister();
@@ -13,10 +13,12 @@ public interface UserManagementService {
 
     List<Map<String, List<?>>> listAttributeSubBusinessCategory();
 
+    List<Map<String, List<?>>> listAttributeRole();
 
     // -------------------------------------
 
     void makeUserBulkDeleteTrue(Set<String> ids);
 
     void makeUserBulkHardDeleteTrue(Set<String> ids);
+
 }

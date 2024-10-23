@@ -3,15 +3,15 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.enums.AdminApprovalStatus;
-import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.attribute.AttributeResponse;
 import com.bca.byc.model.projection.CMSBulkDeleteProjection;
 import com.bca.byc.repository.BusinessCategoryRepository;
 import com.bca.byc.repository.LocationRepository;
+import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.UserManagementRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.service.UserManagementService;
+import com.bca.byc.service.GlobalAttributeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserManagementServiceImpl implements UserManagementService {
+public class UserManagementServiceImpl implements GlobalAttributeService {
 
     private final AppAdminRepository adminRepository;
     private final UserManagementRepository userManagementRepository;
 
     private final LocationRepository locationRepository;
     private final BusinessCategoryRepository businessCategoryRepository;
+    private final RoleRepository roleRepository;
 
 
     @Override
@@ -40,28 +41,28 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         if (admin.getRole().getName().equals("SUPERADMIN")) {
             listStatusResponse = Arrays.asList(
-                    new AttributeResponse<>( null, "All"),
-                    new AttributeResponse<>( AdminApprovalStatus.PENDING, "Draft"),
-                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
-                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
-                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved"),
-                    new AttributeResponse<>( AdminApprovalStatus.DELETED, "Deleted")
+                    new AttributeResponse<>(null, "All"),
+                    new AttributeResponse<>(AdminApprovalStatus.PENDING, "Draft"),
+                    new AttributeResponse<>(AdminApprovalStatus.OPT_APPROVED, "Waiting Approval"),
+                    new AttributeResponse<>(AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>(AdminApprovalStatus.APPROVED, "Approved"),
+                    new AttributeResponse<>(AdminApprovalStatus.DELETED, "Deleted")
             );
         }
         if (admin.getRole().getName().equals("ADMIN-OPERATIONAL")) {
             listStatusResponse = Arrays.asList(
-                    new AttributeResponse<>( null, "All"),
-                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
-                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
-                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved")
+                    new AttributeResponse<>(null, "All"),
+                    new AttributeResponse<>(AdminApprovalStatus.OPT_APPROVED, "Waiting Approval"),
+                    new AttributeResponse<>(AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>(AdminApprovalStatus.APPROVED, "Approved")
             );
         }
         if (admin.getRole().getName().equals("ADMIN-SUPERVISOR")) {
             listStatusResponse = Arrays.asList(
-                    new AttributeResponse<>( null, "All"),
-                    new AttributeResponse<>( AdminApprovalStatus.OPT_APPROVED,  "Waiting Approval"),
-                    new AttributeResponse<>( AdminApprovalStatus.REJECTED, "Rejected"),
-                    new AttributeResponse<>( AdminApprovalStatus.APPROVED, "Approved")
+                    new AttributeResponse<>(null, "All"),
+                    new AttributeResponse<>(AdminApprovalStatus.OPT_APPROVED, "Waiting Approval"),
+                    new AttributeResponse<>(AdminApprovalStatus.REJECTED, "Rejected"),
+                    new AttributeResponse<>(AdminApprovalStatus.APPROVED, "Approved")
             );
         }
 
@@ -75,14 +76,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public List<Map<String, List<?>>> listAttributeCreateUpdatePreRegister() {
         List<Map<String, List<?>>> attributes = new ArrayList<>();
-        // Data UserTypes
-        List<AttributeResponse<Integer>> listUserTypes = Arrays.asList(
-                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.ordinal(), "Solitaire"),
-                new AttributeResponse<>( UserType.MEMBER_PRIORITY.ordinal(),  "Priority"),
-                new AttributeResponse<>( UserType.NOT_MEMBER.ordinal(), "Non Member")
-        );
         Map<String, List<?>> userTypeMap = new HashMap<>();
-        userTypeMap.put("segmentation", listUserTypes);
+        userTypeMap.put("segmentation", getUserTypeList());
         attributes.add(userTypeMap);
 
         return attributes;
@@ -90,44 +85,11 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public List<Map<String, List<?>>> listAttributeUserManagement() {
-        List<Location> locations = locationRepository.findAll().stream()
-                .map(l -> {
-                    Location location = new Location();
-                    location.setId(l.getId());
-                    location.setName(l.getName());
-                    return location;
-                }).collect(Collectors.toList());
-
-        List<AttributeResponse<Long>> listStatusResponse = new ArrayList<>();
-        listStatusResponse.add(new AttributeResponse<>( null, "All"));
-        listStatusResponse.addAll(locations.stream()
-                .map((c) -> {
-                    AttributeResponse<Long> response = new AttributeResponse<>();
-                    response.setId(c.getId());
-                    response.setName(c.getName());
-                    return response;
-                })
-                .collect(Collectors.toList()));
-
-        List<AttributeResponse<String>> listUserTypes = Arrays.asList(
-                new AttributeResponse<>( null, "All"),
-                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
-                new AttributeResponse<>( UserType.MEMBER_PRIORITY.name(),  "Priority"),
-                new AttributeResponse<>( UserType.NOT_MEMBER.name(), "Non Member")
-        );
-
-        List<AttributeResponse<Boolean>> listSeniority = Arrays.asList(
-                new AttributeResponse<>( null, "All"),
-                new AttributeResponse<>( true,  "Senior"),
-                new AttributeResponse<>( false, "Youth")
-        );
-
         List<Map<String, List<?>>> attributes = new ArrayList<>();
-
         Map<String, List<?>> listStatus = new HashMap<>();
-        listStatus.put("Location", listStatusResponse);
-        listStatus.put("Segmentation", listUserTypes);
-        listStatus.put("Senior", listSeniority);
+        listStatus.put("Location", getLocationList());
+        listStatus.put("Segmentation", getUserTypeList());
+        listStatus.put("Senior", getSeniorityList());
         attributes.add(listStatus);
 
         return attributes;
@@ -135,39 +97,25 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public List<Map<String, List<?>>> listAttributeSubBusinessCategory() {
-        List<BusinessCategory> subCategory = new ArrayList<>();
-        for (BusinessCategory category : businessCategoryRepository.findAll()) {
-            BusinessCategory businessCategory = new BusinessCategory();
-            businessCategory.setId(category.getId());
-            businessCategory.setName(category.getName());
-            subCategory.add(businessCategory);
-        }
-
-        List<AttributeResponse> listSubCategory = subCategory.stream()
-                .map((c) -> {
-                    AttributeResponse<Long> response = new AttributeResponse<>();
-                    response.setId(c.getId());
-                    response.setName(c.getName());
-                    return response;
-                })
-                .collect(Collectors.toList());
-
-        List<AttributeResponse<Integer>> listUserTypes = Arrays.asList(
-                new AttributeResponse<>( UserType.MEMBER_SOLITAIRE.ordinal(), "Solitaire"),
-                new AttributeResponse<>( UserType.MEMBER_PRIORITY.ordinal(),  "Priority"),
-                new AttributeResponse<>( UserType.NOT_MEMBER.ordinal(), "Non Member")
-        );
-
         List<Map<String, List<?>>> attributes = new ArrayList<>();
-
         Map<String, List<?>> listStatus = new HashMap<>();
-        listStatus.put("subCategory", listSubCategory);
-        listStatus.put("segmentation", listUserTypes);
+        listStatus.put("subCategory", getBusinessCategoryList());
+        listStatus.put("segmentation", getUserTypeList());
         attributes.add(listStatus);
 
         return attributes;
     }
 
+    @Override
+    public List<Map<String, List<?>>> listAttributeRole() {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        Map<String, List<?>> listAttr = new HashMap<>();
+        listAttr.put("role", getRoleList());
+        listAttr.put("status", getStatusList());
+        attributes.add(listAttr);
+
+        return attributes;
+    }
     // ------------------------------------------------------------------------------------------------
 
     @Override
@@ -204,4 +152,81 @@ public class UserManagementServiceImpl implements UserManagementService {
             userManagementRepository.save(data);
         });
     }
+
+    //----- helper -----
+
+    // -- location --
+    private List<AttributeResponse<Long>> getLocationList(){
+        List<AttributeResponse<Long>> listStatusResponse = new ArrayList<>();
+        listStatusResponse.add(new AttributeResponse<>(null, "All"));
+        listStatusResponse.addAll(locationRepository.findAll().stream()
+                .map((c) -> {
+                    AttributeResponse<Long> response = new AttributeResponse<>();
+                    response.setId(c.getId());
+                    response.setName(c.getName());
+                    return response;
+                })
+                .toList());
+
+        return listStatusResponse;
+    }
+
+    // -- business category --
+    private List<AttributeResponse<Long>> getBusinessCategoryList(){
+        List<AttributeResponse<Long>> responses = new ArrayList<>();
+        responses.add(new AttributeResponse<>(null, "All"));
+        responses.addAll(businessCategoryRepository.findAll().stream()
+                .map((c) -> {
+                    AttributeResponse<Long> response = new AttributeResponse<>();
+                    response.setId(c.getId());
+                    response.setName(c.getName());
+                    return response;
+                })
+                .toList());
+        return responses;
+    }
+
+    // -- userTypes --
+    private List<AttributeResponse<String>> getUserTypeList(){
+       return Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>(UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
+                new AttributeResponse<>(UserType.MEMBER_PRIORITY.name(), "Priority"),
+                new AttributeResponse<>(UserType.NOT_MEMBER.name(), "Non Member")
+        );
+    }
+
+    // -- status --
+    private List<AttributeResponse<Boolean>> getStatusList(){
+        return Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>(true, "Active"),
+                new AttributeResponse<>(false, "Deactive")
+        );
+    }
+
+    // -- role --
+    private List<AttributeResponse<String>> getRoleList(){
+        List<AttributeResponse<String>> responses = new ArrayList<>();
+        responses.add(new AttributeResponse<>(null, "All"));
+        responses.addAll(roleRepository.findAllByIdNotIn(Arrays.asList(1)).stream()
+                .map((c) -> {
+                    AttributeResponse<String> response = new AttributeResponse<>();
+                    response.setId(c.getSecureId());
+                    response.setName(c.getName());
+                    return response;
+                })
+                .toList());
+        return responses;
+    }
+
+    // -- seniority --
+    private List<AttributeResponse<Boolean>> getSeniorityList(){
+        return Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>(true, "Senior"),
+                new AttributeResponse<>(false, "Youth")
+        );
+    }
+
 }

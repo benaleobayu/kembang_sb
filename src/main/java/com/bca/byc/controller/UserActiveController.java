@@ -10,7 +10,7 @@ import com.bca.byc.response.*;
 import com.bca.byc.service.UserActiveService;
 import com.bca.byc.service.UserActiveUpdateRequest;
 import com.bca.byc.service.UserManagementExportService;
-import com.bca.byc.service.UserManagementService;
+import com.bca.byc.service.GlobalAttributeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +38,7 @@ public class UserActiveController {
     static final String urlRoute = "/cms/v1/um/active";
     private final UserActiveService service;
     private final UserManagementExportService exportService;
-    private final UserManagementService userManagementService;
+    private final GlobalAttributeService userManagementService;
 
     // elastic search
     @Operation(hidden = true)

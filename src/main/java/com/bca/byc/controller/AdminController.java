@@ -6,6 +6,7 @@ import com.bca.byc.model.AdminDetailResponse;
 import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.AdminService;
+import com.bca.byc.service.GlobalAttributeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,14 +38,22 @@ public class AdminController {
     static final String urlRoute = "/cms/v1/am/admin";
 
     private AdminService service;
+    private final GlobalAttributeService attributeService;
 
     @PreAuthorize("hasAuthority('admin.view')")
     @Operation(summary = "Get List Admin", description = "Get List Admin")
     @GetMapping
-    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages, @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit, @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy, @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction, @RequestParam(name = "keyword", required = false) String keyword) {
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+                                                                                                         @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                                                                                         @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+                                                                                                         @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+                                                                                                         @RequestParam(name = "keyword", required = false) String keyword,
+                                                                                                         @RequestParam(name = "roleId", required = false) String roleId,
+                                                                                                         @RequestParam(name = "status", required = false) Boolean status
+                                                                                                         ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list user", service.AdminIndex(pages, limit, sortBy, direction, keyword)));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", service.AdminIndex(pages, limit, sortBy, direction, keyword, roleId, status), attributeService.listAttributeRole()));
 
     }
 

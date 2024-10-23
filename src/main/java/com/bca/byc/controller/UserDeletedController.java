@@ -11,7 +11,7 @@ import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.*;
 import com.bca.byc.service.UserDeletedService;
 import com.bca.byc.service.UserManagementExportService;
-import com.bca.byc.service.UserManagementService;
+import com.bca.byc.service.GlobalAttributeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +37,7 @@ public class UserDeletedController {
 
     static final String urlRoute = "/cms/v1/um/deleted";
     private final UserDeletedService service;
-    private final UserManagementService userManagementService;
+    private final GlobalAttributeService userManagementService;
     private final UserManagementExportService exportService;
 
     @Operation(summary = "Get list user deleted", description = "Get list user deleted")
