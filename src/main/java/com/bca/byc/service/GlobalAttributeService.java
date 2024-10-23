@@ -15,10 +15,13 @@ public interface GlobalAttributeService {
 
     List<Map<String, List<?>>> listAttributeRole();
 
+    List<Map<String, List<?>>> listAttributeChannel();
+
     // -------------------------------------
 
     void makeUserBulkDeleteTrue(Set<String> ids);
 
     void makeUserBulkHardDeleteTrue(Set<String> ids);
+
 
 }
