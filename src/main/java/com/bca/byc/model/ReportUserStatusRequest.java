@@ -12,4 +12,7 @@ public class ReportUserStatusRequest {
     @Schema(description = "Status", example = "SUSPEND | WARNING")
     private String status;
 
+    @Schema(example = "This user is not appropriate")
+    private String reason;
+
 }

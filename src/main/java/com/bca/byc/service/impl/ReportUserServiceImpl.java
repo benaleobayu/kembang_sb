@@ -1,16 +1,21 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeLogGeneral;
+import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Report;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.LogGeneralRequest;
 import com.bca.byc.model.ReportUserDetailResponse;
 import com.bca.byc.model.ReportUserIndexResponse;
 import com.bca.byc.model.ReportUserStatusRequest;
 import com.bca.byc.model.projection.ReportUserIndexProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
+import com.bca.byc.repository.LogRequestRepository;
 import com.bca.byc.repository.ReportRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -35,6 +40,9 @@ public class ReportUserServiceImpl implements ReportUserService {
     private final AppUserRepository userRepository;
     private final ReportRepository reportRepository;
     private final UserProjectionService userProjectionService;
+
+    private final AppAdminRepository adminRepository;
+    private final LogRequestRepository logRequestRepository;
 
     @Override
     public ResultPageResponseDTO<ReportUserIndexResponse> listDataReportUser(
@@ -125,24 +133,33 @@ public class ReportUserServiceImpl implements ReportUserService {
 
     @Override
     public String updateStatusReportUser(ReportUserStatusRequest dto) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+
         Report report = HandlerRepository.getEntityBySecureId(dto.getId(), reportRepository, "Report not found");
         AppUser user = HandlerRepository.getEntityById(report.getReportedUser().getId(), userRepository, "User not found");
+
+        LogGeneralRequest newLog = new LogGeneralRequest(report.getId(), "REPORT-USER", dto.getReason());
+        newLog.setLogFrom(user.getAppUserAttribute().getReportStatus());
         String message;
-        switch (dto.getStatus()){
+        switch (dto.getStatus()) {
             case "SUSPEND":
                 report.setStatus("END");
                 user.getAppUserAttribute().setIsSuspended(true);
-                userRepository.save(user);
+                user.getAppUserAttribute().setReportStatus("SUSPENDED");
                 message = "User has been suspended";
                 break;
             case "WARNING":
                 report.setStatus("WARNING");
+                user.getAppUserAttribute().setReportStatus("WARNING");
                 message = "User has been warned";
                 break;
             default:
                 throw new BadRequestException("Invalid status");
         }
 
+        AppUser savedUser = userRepository.save(user);
+        newLog.setLogTo(savedUser.getAppUserAttribute().getReportStatus());
+        TreeLogGeneral.savingToLogGeneral(logRequestRepository, admin, newLog);
         reportRepository.save(report);
         return message;
     }
