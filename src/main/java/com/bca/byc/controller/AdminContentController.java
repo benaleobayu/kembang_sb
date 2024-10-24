@@ -263,10 +263,14 @@ public class AdminContentController {
         Set<com.bca.byc.entity.Tag> tags = new HashSet<>();
         if (taglist != null) {
             for (String tagName : taglist) {
+                tagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "")
+                        .replaceAll("(.)(?=\\s)", String.valueOf(Character.toUpperCase(1)))
+                        .trim();
                 Optional<com.bca.byc.entity.Tag> tag = tagRepository.findByName(tagName);
+                String finalTagName = tagName;
                 tag.ifPresentOrElse(tags::add, () -> {
                     com.bca.byc.entity.Tag newTag = new com.bca.byc.entity.Tag();
-                    newTag.setName(tagName);
+                    newTag.setName(finalTagName);
                     tags.add(tagRepository.save(newTag));
                 });
             }

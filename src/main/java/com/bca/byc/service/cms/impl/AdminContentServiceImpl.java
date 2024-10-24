@@ -54,9 +54,7 @@ public class AdminContentServiceImpl implements AdminContentService {
         if(keyword != null ) {
             pages = 0;
         }
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<Post> pageResult = repository.findDataPostByAdmin(set.keyword(), set.pageable());

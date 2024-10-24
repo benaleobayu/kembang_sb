@@ -2,12 +2,10 @@ package com.bca.byc.service.cms;
 
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
-import com.bca.byc.model.AdminContentCreateUpdateRequest;
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import jakarta.validation.Valid;
-import com.bca.byc.exception.BadRequestException;
 
 import java.util.List;
 

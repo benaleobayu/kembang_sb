@@ -8,6 +8,7 @@ import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 
 import com.bca.byc.model.AdminContentIndexResponse;
+import com.bca.byc.util.helper.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -45,10 +46,12 @@ public class AdminContentDTOConverter {
                 GlobalConverter.getParseImage(thumbnail, baseUrl), // get thumbnail
                 data.getDescription(),
                 GlobalConverter.convertListToArray(String.join(",", tags)),
-                data.getAdmin().getName(),
+                data.getUpdatedBy().getEmail(),
                 data.getIsActive(),
                 data.getPromotedStatus(),
-                data.getPromotedAt() + "-" + data.getPromotedUntil()
+                data.getPromotedAt() + "-" + data.getPromotedUntil(),
+                data.getCreatedBy().getEmail(),
+                Formatter.formatLocalDateTime(data.getCreatedAt())
         );
     }
   // for get data

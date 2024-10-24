@@ -22,7 +22,12 @@ public record AdminContentIndexResponse<S>(
 
         String promotionStatus,
 
-        String promotionPeriod
+        String promotionPeriod,
+
+        String createBy,
+
+        String createDate
+
 
 ) {
 }
