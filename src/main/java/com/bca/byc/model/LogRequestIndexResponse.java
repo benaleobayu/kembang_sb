@@ -1,19 +1,18 @@
 package com.bca.byc.model;
 
-import com.bca.byc.enums.RequestType;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class LogRequestIndexResponse extends AdminModelBaseDTOResponse {
+public class LogRequestIndexResponse {
 
-    private String admin;
-    private RequestType to;
+    private String id;
+    private Long index;
+
+    private Long modelId;
+    private String modelType;
     private String note;
-    private String createdAt;
+    private Long adminId;
+    private String adminName;
 
-    public void setStatus(String to) {
-        this.to = RequestType.valueOf(to);
-    }
+    private String createdAt;
 }

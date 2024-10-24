@@ -21,24 +21,40 @@ public class LogRequestDTOConverter {
 
     public LogRequestIndexResponse convertToIndexResponse(LogRequest data) {
         LogRequestIndexResponse dto = new LogRequestIndexResponse();
-        dto.setAdmin(data.getAdmin().getName());
-        dto.setNote(data.getNote());
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setStatus(data.getLogTo());
-        CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
+        setLogToDto(dto, null, data);
         return dto;
     }
 
     // for get data
     public LogRequestDetailResponse convertToListResponse(LogRequest data) {
-        // mapping Entity with DTO Entity
         LogRequestDetailResponse dto = new LogRequestDetailResponse();
-        dto.setAdmin(data.getAdmin().getName());
-        dto.setNote(data.getNote());
-        dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setStatus(data.getLogTo());
-        CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
-        // return
+        setLogToDto(null, dto, data);
         return dto;
+    }
+
+    // -- parser --
+    private void setLogToDto(LogRequestIndexResponse indexDto, LogRequestDetailResponse detailDto, LogRequest data) {
+        if (indexDto != null) {
+            indexDto.setId(data.getSecureId());
+            indexDto.setIndex(data.getId());
+
+            indexDto.setAdminName(data.getNameCreatedBy());
+            indexDto.setAdminId(data.getIdCreatedBy());
+            indexDto.setNote(data.getNote());
+            indexDto.setModelId(data.getModelId());
+            indexDto.setModelType(data.getModelType());
+
+            indexDto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        } else {
+            detailDto.setId(data.getSecureId());
+
+            detailDto.setAdminName(data.getNameCreatedBy());
+            detailDto.setAdminId(data.getIdCreatedBy());
+            detailDto.setNote(data.getNote());
+            detailDto.setModelId(data.getModelId());
+            detailDto.setModelType(data.getModelType());
+
+            detailDto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
+        }
     }
 }

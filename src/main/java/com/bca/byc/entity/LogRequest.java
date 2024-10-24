@@ -12,19 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "log_requests")
-public class LogRequest extends AbstractBaseEntityCms {
+public class LogRequest extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private AppUser user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
-    private AppAdmin admin;
 
     @Column(name = "model_id", nullable = false)
     private Long modelId;
@@ -37,6 +29,12 @@ public class LogRequest extends AbstractBaseEntityCms {
 
     @Column(name = "log_to", nullable = false)
     private String logTo;
+
+    @Column(name = "created_by")
+    private String nameCreatedBy;
+
+    @Column(name = "created_by_id")
+    private Long idCreatedBy;
 
     @Column(name = "note")
     private String note;

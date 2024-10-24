@@ -6,12 +6,14 @@ import lombok.Data;
 @Data
 public class LogRequestDetailResponse extends AdminModelBaseDTOResponse {
 
-    private String admin;
-    private RequestType to;
+    private String id;
+
+    private Long modelId;
+    private String modelType;
     private String note;
+    private Long adminId;
+    private String adminName;
+
     private String createdAt;
 
-    public void setStatus(String to) {
-        this.to = RequestType.valueOf(to);
-    }
 }

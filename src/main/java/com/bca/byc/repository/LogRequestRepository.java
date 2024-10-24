@@ -24,8 +24,8 @@ public interface LogRequestRepository extends JpaRepository<LogRequest, Long> {
     // --- input attribute ---
     @Query("SELECT lr " +
             "FROM LogRequest lr " +
-            "WHERE lr.modelableId = :id " +
-            "AND lr.note LIKE %:keyword%")
+            "WHERE lr.secureId = :id " +
+            "AND (LOWER(lr.note) LIKE LOWER(:keyword)) ")
     Page<LogRequest> listLogRequestByModelableId(@Param("id") String id,
                                                  @Param("keyword") String keyword,
                                                  Pageable pageable);
