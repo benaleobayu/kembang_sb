@@ -22,7 +22,7 @@ public interface PreRegisterService {
 
     List<PreRegisterDetailResponse> findAllData();
 
-    void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException;
+    void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException;
 
     void updateData(String id, @Valid PreRegisterUpdateRequest dto) throws BadRequestException;
 

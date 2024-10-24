@@ -121,15 +121,12 @@ public class PreRegisterServiceImpl implements PreRegisterService {
 
     @Override
     @Transactional
-    public void saveData(@Valid PreRegisterCreateRequest dto, String email) throws BadRequestException {
+    public void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException {
         if (repository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
 
-        AppAdmin admin = adminService.findByEmail(email);
-        if (admin == null) {
-            throw new BadRequestException("Admin not found");
-        }
         PreRegister data = converter.convertToCreateRequest(dto, admin);
         AdminApprovalStatus isSaved = dto.getStatus() ? AdminApprovalStatus.OPT_APPROVED : AdminApprovalStatus.PENDING;
         data.setStatusApproval(isSaved);

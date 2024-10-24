@@ -124,20 +124,8 @@ public class UserPreRegisterController {
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody PreRegisterCreateRequest item) {
         log.info("POST " + urlRoute + " endpoint hit");
         // principal
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        String email;
-        if (principal instanceof AppAdmin) {
-            email = ((AppAdmin) principal).getEmail();
-        } else if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid authentication principal."));
-        }
-        System.out.println(email);
-
         try {
-            service.saveData(item, email);
+            service.saveData(item);
             return ResponseEntity.created(URI.create("/cms/v1/pre-register/"))
                     .body(new ApiResponse(true, "Successfully created pre-register user"));
         } catch (Exception e) {
