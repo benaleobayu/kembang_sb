@@ -8,7 +8,6 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
@@ -22,36 +21,28 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.AdminContentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.bca.byc.util.PaginationUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.util.StringUtils;
 
 @Service
 @AllArgsConstructor
 public class AdminContentServiceImpl implements AdminContentService {
 
-    @Value("${app.base.url}")
-    private String baseUrl;
-
     private final AppAdminRepository adminRepository;
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
-
+    @Value("${app.base.url}")
+    private String baseUrl;
     private AdminContentRepository repository;
     private AdminContentDTOConverter converter;
 
     @Override
     public ResultPageResponseDTO<AdminContentIndexResponse<Long>> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
 
-        if(keyword != null ) {
+        if (keyword != null) {
             pages = 0;
         }
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
@@ -80,17 +71,27 @@ public class AdminContentServiceImpl implements AdminContentService {
         newPost.setAdmin(admin);
         newPost.setIsAdminPost(true);
 
-        TreePostConverter treePostConverter = new TreePostConverter(null,null);
+        TreePostConverter treePostConverter = new TreePostConverter(null, null);
         String contentType = treePostConverter.getContentTypePost(contentList);
 
         newPost.setContentType(contentType);
-
+        GlobalConverter.CmsAdminCreateAtBy(newPost, admin);
         Post savedPost = postRepository.save(newPost);
 
         for (PostContent postContent : contentList) {
             postContent.setPost(savedPost);
             postContentRepository.save(postContent);
         }
+    }
+
+    @Override
+    public void updateData(Post updatePost) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+
+        // update the updated_at
+        GlobalConverter.CmsAdminUpdateAtBy(updatePost, admin);
+        // save
+        repository.save(updatePost);
     }
 
     @Override
@@ -104,13 +105,5 @@ public class AdminContentServiceImpl implements AdminContentService {
         }
     }
 
-    @Override
-    public void updateData(Post updatePost) {
-        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
 
-        // update the updated_at
-        GlobalConverter.CmsAdminUpdateAtBy(updatePost, admin);
-        // save
-        repository.save(updatePost);
-    }
 }

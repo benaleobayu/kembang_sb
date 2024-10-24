@@ -21,7 +21,7 @@ public record AppRegisterRequest(
         String phone,
 
         @Schema(description = "birthdate of member", example = "1995-01-01")
-        @AgeRange(message = "Member must be at least 18 to 35 years old")
+//        @AgeRange(message = "Member must be at least 18 to 35 years old")
         LocalDate member_birthdate,
 
         @Schema(description = "1234 5678 9012 3456", example = "1234 5678 9012 3456")

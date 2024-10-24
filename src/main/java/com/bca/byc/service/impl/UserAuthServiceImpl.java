@@ -51,7 +51,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final OtpRepository otpRepository;
     private final LogUserManagementRepository logUserManagementRepository;
 
-    private final TestAutocheckRepository testAutocheckRepository;
+    private final AuthCheckPreRegister authCheckPreRegister;
     private final AuthenticationManager authenticationManager;
     private final AppUserService appUserService;
     private final JWTTokenFactory jwtUtil;
@@ -132,15 +132,17 @@ public class UserAuthServiceImpl implements UserAuthService {
         }
 
         // Check the PreRegister data
-        PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
-        boolean member = dataCheck != null && testAutocheckRepository.existsByMemberBankAccount(dto.member_bank_account());
+        PreRegister dataCheck = authCheckPreRegister.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
+        boolean member = dataCheck != null && authCheckPreRegister.existsByMemberBankAccount(dto.member_bank_account());
+        PreRegister dataMemberPreRegister = authCheckPreRegister.findByMemberBankAccountAndStatusApproval(dto.member_bank_account(), AdminApprovalStatus.APPROVED);
         boolean child = dataCheck != null && dataCheck.getParentBankAccount().equals(dto.parent_bank_account());
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        if (dto.parent_bank_account() == null && member ||
-                dto.parent_bank_account().isEmpty() && member ||
-                child) {
+        boolean checkMemberBirthdate = dto.member_birthdate().equals(dataMemberPreRegister.getMemberBirthdate());
+        if (dto.parent_bank_account() == null && member && checkMemberBirthdate||
+                dto.parent_bank_account().isEmpty() && member && checkMemberBirthdate ||
+                member && child && checkMemberBirthdate) {
             user.setAppUserDetail(userDetail);
             userDetail.setStatus(StatusType.APPROVED);
             userDetail.setMemberType(dataCheck.getMemberType() != null ? dataCheck.getMemberType() : null); // set type
@@ -149,11 +151,11 @@ public class UserAuthServiceImpl implements UserAuthService {
             if (dto.parent_bank_account() == null) {
                 userDetail.setUserAs("member");
             } else {
-                userDetail.setParentCin(dataCheck.getParentCin()); // set child cin
-                userDetail.setParentType(dataCheck.getParentType()); // set parent type
-                userDetail.setParentBankAccount(dataCheck.getParentBankAccount()); // set child bank account
                 userDetail.setUserAs("child");
             }
+            userDetail.setParentCin(dataCheck.getParentCin()); // set child cin
+            userDetail.setParentType(dataCheck.getParentType()); // set parent type
+            userDetail.setParentBankAccount(dataCheck.getParentBankAccount()); // set child bank account
             user.setName(dataCheck.getName());
             userDetail.setName(dataCheck.getName());
             userDetail.setAccountType(dataCheck.getAccountType()); // set member type soli / prio
@@ -300,7 +302,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         // save
         AppUser savedUser = userRepository.save(user);
 
-        PreRegister dataCheck = testAutocheckRepository.findByMemberBankAccountAndStatusApproval(savedUser.getAppUserDetail().getMemberBankAccount(), AdminApprovalStatus.APPROVED);
+        PreRegister dataCheck = authCheckPreRegister.findByMemberBankAccountAndStatusApproval(savedUser.getAppUserDetail().getMemberBankAccount(), AdminApprovalStatus.APPROVED);
 
         if (dataCheck != null) {
             dataCheck.setStatusApproval(AdminApprovalStatus.DELETED);
@@ -318,7 +320,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                     newLog,
                     logUserManagementRepository
             );
-            testAutocheckRepository.save(dataCheck);
+            authCheckPreRegister.save(dataCheck);
         }
     }
 
