@@ -19,8 +19,10 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GlobalConverter {
 
@@ -115,6 +117,18 @@ public class GlobalConverter {
             data.add(list.trim());
         }
         return data;
+    }
+
+    // Helper for parsing tag
+    public static String convertTagString(String tagList) {
+        String tagName = tagList.replaceAll("[^a-zA-Z0-9\\s]", "") // Remove special characters
+                .trim()
+                .replaceAll("\\s+", " "); // Normalize spaces
+
+        // Capitalize the first letter of each word and remove spaces
+        return Arrays.stream(tagName.split(" "))
+                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase())
+                .collect(Collectors.joining());
     }
 
     // Helper pagination

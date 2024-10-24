@@ -1,6 +1,7 @@
 package com.bca.byc.controller;
 
 
+import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Channel;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.*;
 
@@ -253,7 +256,7 @@ public class AdminContentController {
         List<String> highlightList = null;
         if (highlight != null) {
             highlightList = highlight.stream()
-                    .map(s -> s.replaceAll("[^a-zA-Z0-9]", "").trim()).toList();
+                    .map(GlobalConverter::convertTagString).toList();
         }
         assert highlightList != null;
         post.setHighlight(String.join(", ", highlightList));
@@ -263,9 +266,9 @@ public class AdminContentController {
         Set<com.bca.byc.entity.Tag> tags = new HashSet<>();
         if (taglist != null) {
             for (String tagName : taglist) {
-                tagName = tagName.replaceAll("[^a-zA-Z0-9 ]", "")
-                        .replaceAll("(.)(?=\\s)", String.valueOf(Character.toUpperCase(1)))
-                        .trim();
+                // Transform the tag name by removing spaces and capitalizing the first letter of each word
+                tagName = GlobalConverter.convertTagString(tagName);
+
                 Optional<com.bca.byc.entity.Tag> tag = tagRepository.findByName(tagName);
                 String finalTagName = tagName;
                 tag.ifPresentOrElse(tags::add, () -> {
@@ -275,10 +278,11 @@ public class AdminContentController {
                 });
             }
         }
+
         post.setTags(tags);
         post.setIsActive(!status);
-        post.setPromotedActive(promotedActive != null ? promotedActive : false);
-        post.setPromotedStatus(promotedActive != null ? "SCHEDULED" : "NOT_DEFINED");
+        post.setPromotedActive(promotedActive ? promotedActive : false);
+        post.setPromotedStatus(promotedActive ? "SCHEDULED" : "NOT_DEFINED");
         post.setPromotedAt(promotedAt);
         post.setPromotedUntil(promotedUntil);
         post.setPostAt(postAt != null ? postAt : LocalDateTime.now());
