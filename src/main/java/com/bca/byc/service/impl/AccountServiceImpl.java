@@ -16,17 +16,20 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AccountService;
+import com.bca.byc.util.FileUploadHelper;
 import com.bca.byc.util.PaginationUtil;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +45,11 @@ public class AccountServiceImpl implements AccountService {
     private final ChannelRepository channelRepository;
     private final AccountHasChannelsRepository accountHasChannelsRepository;
 
-    private AccountDTOConverter converter;
+    @Value("${app.base.url}")
+    private String baseUrl;
+
+    @Value("${upload.dir}")
+    private String UPLOAD_DIR;
 
     @Override
     public ResultPageResponseDTO<AccountIndexResponse> listDataAccountIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -95,20 +102,29 @@ public class AccountServiceImpl implements AccountService {
         return dto;
     }
 
-
     @Override
     @Transactional
-    public void saveData(@Valid AccountCreateUpdateRequest dto) throws BadRequestException {
+    public void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds) throws IOException {
+        FileUploadHelper.validateFileTypeImage(avatar);
+        FileUploadHelper.validateFileTypeImage(cover);
+
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Account data = new Account();
-        data.setName(dto.getName());
-        data.setIsActive(dto.getStatus());
+        data.setName(name);
+        data.setIsActive(status);
+
+        // save avatar
+        String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/account/avatar");
+        data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
+        // save cover
+        String coverUrl = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/account/cover");
+        data.setCover(GlobalConverter.getParseImage(coverUrl, baseUrl));
 
         GlobalConverter.CmsAdminCreateAtBy(data, admin);
         Account savedData = accountRepository.save(data);
 
         // save channel in every new account
-        saveChannelInAccount(savedData, dto.getChannelIds());
+        saveChannelInAccount(savedData, channelIds);
     }
 
     @Override

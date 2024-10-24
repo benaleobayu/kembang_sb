@@ -13,10 +13,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -57,15 +61,21 @@ public class AccountController {
     }
 
     @Operation(summary = "Create Account", description = "Create Account")
-    @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody AccountCreateUpdateRequest item) {
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse> create(
+            @RequestPart("avatar") MultipartFile avatar,
+            @RequestPart("cover") MultipartFile cover,
+            @RequestParam("name") String name,
+            @RequestParam("channelIds") Set<String> channelIds,
+            @RequestParam("status") Boolean status
+    ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            service.saveData(item);
+            service.saveData(avatar, cover, name, status, channelIds);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created accounts"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 

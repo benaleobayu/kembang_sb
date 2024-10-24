@@ -6,8 +6,10 @@ import com.bca.byc.model.AccountIndexResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import jakarta.validation.Valid;
 import com.bca.byc.exception.BadRequestException;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Set;
 
 public interface AccountService {
 
@@ -15,7 +17,7 @@ public interface AccountService {
 
     AccountDetailResponse findDataById(String id) throws BadRequestException;
 
-    void saveData(@Valid AccountCreateUpdateRequest dto) throws BadRequestException;
+    void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds) throws IOException;
 
     void updateData(String id, @Valid AccountCreateUpdateRequest dto) throws BadRequestException;
 
