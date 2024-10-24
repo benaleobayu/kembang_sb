@@ -21,7 +21,7 @@ public class PostLocation extends AbstractBaseEntityTimestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "place_name", nullable = false, length = 50)
+    @Column(name = "place_name", columnDefinition = "text")
     private String placeName;
 
     @Column(name = "place_id")
