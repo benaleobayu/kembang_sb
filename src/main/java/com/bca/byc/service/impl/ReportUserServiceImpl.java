@@ -126,10 +126,10 @@ public class ReportUserServiceImpl implements ReportUserService {
     @Override
     public String updateStatusReportUser(ReportUserStatusRequest dto) {
         Report report = HandlerRepository.getEntityBySecureId(dto.getId(), reportRepository, "Report not found");
-        AppUser user = report.getReportedUser();
+        AppUser user = HandlerRepository.getEntityById(report.getReportedUser().getId(), userRepository, "User not found");
         String message;
         switch (dto.getStatus()){
-            case "SUSPENDED":
+            case "SUSPEND":
                 report.setStatus("END");
                 user.getAppUserAttribute().setIsSuspended(true);
                 userRepository.save(user);
