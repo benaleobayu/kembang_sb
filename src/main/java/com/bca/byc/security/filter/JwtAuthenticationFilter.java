@@ -39,10 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 ErrorResponseDTO errorResponse = null;
 
                 if (request.getRequestURI().contains("cms/")) {
-                    errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.REDIRECT, HttpStatus.FORBIDDEN);
+                    errorResponse = ErrorResponseDTO.of("Please re-login your account", details, ErrorCode.REDIRECT, HttpStatus.FORBIDDEN);
                     response.setStatus(HttpServletResponse.SC_FOUND); // 302
                 } else if (request.getRequestURI().contains("api/")) {
-                    errorResponse = ErrorResponseDTO.of("TOKEN EXPIRED", details, ErrorCode.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+                    errorResponse = ErrorResponseDTO.of("Please re-login your account", details, ErrorCode.UNAUTHORIZED, HttpStatus.FORBIDDEN);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
                 }
                 response.setContentType("application/json");
