@@ -19,7 +19,7 @@ public interface AccountService {
 
     void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds) throws IOException;
 
-    void updateData(String id, @Valid AccountCreateUpdateRequest dto) throws BadRequestException;
+    void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException;
 
     void deleteData(String id) throws BadRequestException;
 }

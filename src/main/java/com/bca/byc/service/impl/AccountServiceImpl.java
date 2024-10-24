@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.util.FileUploadHelper.saveFile;
+
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -129,23 +131,40 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void updateData(String id, AccountCreateUpdateRequest dto) throws BadRequestException {
-        // check exist and get
+    public void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException {
+        FileUploadHelper.validateFileTypeImage(avatar);
+        FileUploadHelper.validateFileTypeImage(cover);
+
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Account data = getEntity(id);
+        Account data = HandlerRepository.getEntityBySecureId(id, accountRepository, "Account not found.");
+        data.setName(name);
+        data.setIsActive(status);
 
-        // update
-        data.setName(dto.getName());
-        data.setIsActive(dto.getStatus());
+        if (avatar != null) {
+            FileUploadHelper.validateFileTypeImage(avatar);
+            String oldAvatar = data.getAvatar();
+            String newAvatar = saveFile(avatar, UPLOAD_DIR + "/account/avatar");
+            data.setAvatar(GlobalConverter.replaceImagePath(newAvatar));
+            if (!oldAvatar.equals(newAvatar)) {
+                FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
+            }
+        }
 
-        // update the updated_at
+        if (cover != null) {
+            FileUploadHelper.validateFileTypeImage(cover);
+            String oldCover = data.getCover();
+            String newCover = saveFile(cover, UPLOAD_DIR + "/account/cover");
+            data.setCover(GlobalConverter.replaceImagePath(newCover));
+            if (!oldCover.equals(newCover)) {
+                FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
+            }
+        }
         GlobalConverter.CmsAdminUpdateAtBy(data, admin);
         Account savedData = accountRepository.save(data);
 
-        // remove old channel
         accountHasChannelsRepository.deleteByAccountId(savedData.getId());
         // save channel in every new account
-        saveChannelInAccount(savedData, dto.getChannelIds());
+        saveChannelInAccount(savedData, channelIds);
     }
 
     @Override
