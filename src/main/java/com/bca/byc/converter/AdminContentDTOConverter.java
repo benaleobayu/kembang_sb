@@ -40,18 +40,18 @@ public class AdminContentDTOConverter {
 
         // return
         return new AdminContentIndexResponse<>(
-                data.getSecureId(), // id
-                data.getId(), // index
-                GlobalConverter.convertListToArray(data.getHighlight()), // get highlight
-                GlobalConverter.getParseImage(thumbnail, baseUrl), // get thumbnail
-                data.getDescription(),
-                GlobalConverter.convertListToArray(String.join(",", tags)),
-                data.getUpdatedBy().getEmail(),
-                data.getIsActive(),
-                data.getPromotedStatus(),
-                data.getPromotedAt() + "-" + data.getPromotedUntil(),
-                data.getCreatedBy().getEmail(),
-                Formatter.formatLocalDateTime(data.getCreatedAt())
+                data.getSecureId() == null ? null : data.getSecureId(), // id
+                data.getId() == null ? null : data.getId(), // index
+                data.getHighlight() == null ? null : GlobalConverter.convertListToArray(data.getHighlight()), // get highlight
+                thumbnail == null ? null : GlobalConverter.getParseImage(thumbnail, baseUrl), // get thumbnail
+                data.getDescription() == null ? null : data.getDescription(),
+                tags == null ? null : GlobalConverter.convertListToArray(String.join(",", tags)),
+                data.getUpdatedBy() == null ? null : data.getUpdatedBy().getEmail(),
+                data.getIsActive() == null ? null : data.getIsActive(),
+                data.getPromotedStatus() == null ? null : data.getPromotedStatus(),
+                data.getPromotedAt() == null || data.getPromotedUntil() == null ? null : data.getPromotedAt() + "-" + data.getPromotedUntil(),
+                data.getCreatedBy() == null ? null : data.getCreatedBy().getEmail(),
+                data.getCreatedAt() == null ? null : Formatter.formatLocalDateTime(data.getCreatedAt())
         );
     }
   // for get data
