@@ -30,7 +30,7 @@ public class PermissionServiceImpl implements PermissionService {
         List<Permission> allPermissions = permissionRepository.findAll();
 
         // Define (view, create, read, update, delete)
-        List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete", "export");
+        List<String> defaultPermissions = Arrays.asList("view", "create", "read", "update", "delete", "export", "import", "approval");
 
         // Group all permissions by category
         Map<String, List<Permission>> permissionsByCategory = allPermissions.stream()

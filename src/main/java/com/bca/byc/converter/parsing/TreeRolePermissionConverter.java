@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class TreeRolePermissionConverter {
 
-    private static final List<String> DEFAULT_PERMISSIONS = Arrays.asList("view", "create", "read", "update", "delete", "export");
+    private static final List<String> DEFAULT_PERMISSIONS = Arrays.asList("view", "create", "read", "update", "delete", "export", "import", "approval");
 
     public List<PermissionListResponse> convertRolePermissions(List<RoleHasPermission> roleHasPermissionList, PermissionRepository permissionRepository, String type) {
         // Group permissions by the prefix (category) before the dot (e.g., role, admin, user)
