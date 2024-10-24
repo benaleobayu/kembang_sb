@@ -24,7 +24,7 @@ public class LogRequestDTOConverter {
         dto.setAdmin(data.getAdmin().getName());
         dto.setNote(data.getNote());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setStatus(data.getTo());
+        dto.setStatus(data.getLogTo());
         CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         return dto;
     }
@@ -36,7 +36,7 @@ public class LogRequestDTOConverter {
         dto.setAdmin(data.getAdmin().getName());
         dto.setNote(data.getNote());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
-        dto.setStatus(data.getTo());
+        dto.setStatus(data.getLogTo());
         CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
         // return
         return dto;

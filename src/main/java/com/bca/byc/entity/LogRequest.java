@@ -1,15 +1,18 @@
 package com.bca.byc.entity;
 
-import com.bca.byc.enums.ActionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name = "log_request")
-public class LogRequest extends AbstractBaseEntityCms implements Modelable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "log_requests")
+public class LogRequest extends AbstractBaseEntityCms {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,23 +26,19 @@ public class LogRequest extends AbstractBaseEntityCms implements Modelable {
     @JoinColumn(name = "admin_id")
     private AppAdmin admin;
 
-    @Column(name = "modelable_id", nullable = false)
-    private Long modelableId;
+    @Column(name = "model_id", nullable = false)
+    private Long modelId;
 
-    @Column(name = "modelable_type", nullable = false)
-    private String modelableType;
+    @Column(name = "model_type", nullable = false)
+    private String modelType;
 
-    @Column(name = "from", nullable = false)
-    private String from;
+    @Column(name = "log_from", nullable = false)
+    private String logFrom;
 
-    @Column(name = "to", nullable = false)
-    private String to;
+    @Column(name = "log_to", nullable = false)
+    private String logTo;
 
     @Column(name = "note")
     private String note;
 
-    @Override
-    public Long getId() {
-        return id;  // Implement the method from Modelable interface
-    }
 }
