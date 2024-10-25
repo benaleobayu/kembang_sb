@@ -80,7 +80,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Update Account", description = "Update Account")
-    @PutMapping("{id}")
+    @PutMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id,
             @RequestPart(name = "avatar", required = false) MultipartFile avatar,
