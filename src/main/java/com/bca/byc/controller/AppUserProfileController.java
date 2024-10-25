@@ -290,7 +290,7 @@ public class AppUserProfileController {
     @GetMapping("/post-comment-activity")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<ProfileActivityPostCommentsResponse>>> MyCommentsActivity(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {

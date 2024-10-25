@@ -9,9 +9,7 @@ import com.bca.byc.entity.*;
 import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.UserInfoResponse;
-import com.bca.byc.model.apps.ListCommentReplyResponse;
-import com.bca.byc.model.apps.PostOwnerResponse;
-import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.model.projection.PostCommentActivityProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
@@ -33,8 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -215,60 +213,63 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     @Override
     public ResultPageResponseDTO<ProfileActivityPostCommentsResponse> listDataPostCommentsActivity(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-        // Get comment form userLogin
-        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userLogin.getId(), set.pageable());
 
-        TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
-        TreePostConverter postConverter = new TreePostConverter(baseUrl);
+        Page<Comment> pageResult = commentRepository.findAllCommentUser(userLogin.getId(), set.pageable());
 
-        List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
-            Comment comment = result.getComment(); // Get comment
-            AppUser commentUser = result.getCommentUser(); // Get userLogin create comment
-            CommentReply commentReply = result.getCommentReply(); // Get commentReply
-            AppUser replyUser = result.getReplyUser(); // Get userLogin create commentReply
-            Post post = comment.getPost(); // Get post dari comment src
+        TreePostConverter converterPost = new TreePostConverter(baseUrl);
 
-            ProfileActivityPostCommentsResponse dto = new ProfileActivityPostCommentsResponse();
+        Map<String, ProfileActivityPostCommentsResponse> postCommentsMap = new HashMap<>();
 
-            // Use TreeProfileActivityConverter for convert data
-            PostHomeResponse postDto = new PostHomeResponse();
-            converter.convertActivityComments(dto, commentUser, userLogin, post, comment, baseUrl, likeDislikeRepository);
+        pageResult.getContent().forEach(comment -> {
+            Post post = comment.getPost();
+            String postId = post.getSecureId();
 
-//            // Set data untuk balasan jika ada
-            if (commentReply != null) {
-                ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
-                replyResponse.setId(commentReply.getSecureId());
-                replyResponse.setComment(commentReply.getComment());
+            ProfileActivityPostCommentsResponse response = postCommentsMap.computeIfAbsent(postId, k -> {
+                ProfileActivityPostCommentsResponse newResponse = new ProfileActivityPostCommentsResponse();
 
-                Business firstBusiness = replyUser.getBusinesses().stream()
-                        .filter(Business::getIsPrimary).findFirst().orElse(null);
-                assert firstBusiness != null;
-                BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
-                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
-                assert firstBusinessCategory != null;
-                replyResponse.setOwner(postConverter.PostOwnerResponse(
-                        new PostOwnerResponse(),
-                        replyUser.getSecureId(),
-                        replyUser.getAppUserDetail().getName(),
-                        replyUser.getAppUserDetail().getAvatar(),
-                        firstBusiness != null ? firstBusiness.getName() : null,
-                        firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
-                        firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                        commentReply.getUser(),
-                        userLogin
+                newResponse.setUserId(userLogin.getSecureId());
+                newResponse.setUserName(userLogin.getName());
+                newResponse.setUserAvatar(GlobalConverter.getAvatarImage(userLogin.getAppUserDetail().getAvatar(), baseUrl));
+
+
+                newResponse.setPost(converterPost.convertToPostHomeResponse(
+                        new PostHomeResponse(),
+                        post,
+                        new TreePostConverter(baseUrl),
+                        userLogin,
+                        likeDislikeRepository
                 ));
-                replyResponse.setCreatedAt(Formatter.formatDateTimeApps(commentReply.getCreatedAt()));
-            }
+                newResponse.setComments(new ArrayList<>()); // Inisialisasi list komentar
 
-            return dto;
-        }).collect(Collectors.toList());
+                return newResponse;
+            });
+
+            ListCommentActivityResponse commentActivityResponse = new ListCommentActivityResponse();
+            commentActivityResponse.setId(comment.getSecureId());
+            commentActivityResponse.setComment(comment.getComment());
+            commentActivityResponse.setCreatedAt(comment.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME));
+
+            List<ListCommentReplyResponse> commentReplies = comment.getCommentReply().stream()
+                    .filter(reply -> reply.getUser().getId().equals(userLogin.getId()))
+                    .map(reply -> {
+                        ListCommentReplyResponse replyResponse = new ListCommentReplyResponse();
+                        replyResponse.setId(reply.getSecureId());
+                        replyResponse.setComment(reply.getComment());
+                        replyResponse.setCreatedAt(reply.getCreatedAt().toString());
+                        return replyResponse;
+                    })
+                    .collect(Collectors.toList());
+
+            commentActivityResponse.setCommentReply(commentReplies);
+
+            response.getComments().add(commentActivityResponse);
+        });
+
+        List<ProfileActivityPostCommentsResponse> dtos = new ArrayList<>(postCommentsMap.values());
 
         return PageCreateReturnApps.create(pageResult, dtos);
     }
-
 
 }

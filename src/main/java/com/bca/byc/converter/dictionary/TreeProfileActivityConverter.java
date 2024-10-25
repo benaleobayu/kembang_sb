@@ -10,7 +10,9 @@ import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import static com.bca.byc.converter.parsing.GlobalConverter.getParseImage;
@@ -52,20 +54,24 @@ public class TreeProfileActivityConverter {
                 userLogin,
                 likeDislikeRepository
         ));
-        dto.setComments(Collections.singletonList(convertToListCommentResponse(
-                new ListCommentActivityResponse(),
-                user,
-                comment,
-                baseUrl,
-                likeDislikeRepository
-        )));
+        List<ListCommentActivityResponse> comments = new ArrayList<>();
+        for (Comment c : post.getComments()) {
+            comments.add(convertToListCommentResponse(
+                    new ListCommentActivityResponse(),
+                    user,
+                    c,
+                    baseUrl,
+                    likeDislikeRepository
+            ));
+        }
+        dto.setComments(comments);
         return dto;
     }
 
     // list comment
     public ListCommentActivityResponse convertToListCommentResponse(
             ListCommentActivityResponse dto,
-            AppUser user,
+            AppUser userLogin,
             Comment data,
             String baseUrl,
             LikeDislikeRepository likeDislikeRepository
@@ -91,13 +97,13 @@ public class TreeProfileActivityConverter {
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                 data.getUser(),
-                user
+                userLogin
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
 
-        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        boolean isOwner = Objects.equals(userLogin.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);
-        boolean isLike = likeDislikeRepository.findByCommentIdAndUserId(data.getId(), user.getId()).isPresent();
+        boolean isLike = likeDislikeRepository.findByCommentIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLike(isLike);
         dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
         dto.setRepliesCount(data.getCommentReply().size());
