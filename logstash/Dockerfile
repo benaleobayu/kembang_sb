@@ -1,8 +1,12 @@
-FROM docker.elastic.co/logstash/logstash:8.7.0
+FROM docker.elastic.co/logstash/logstash:8.15.3
 
-# copy the postgres jdbc driver to the external library folder of logstash
+RUN rm -f /usr/share/logstash/pipeline/logstash.conf
+# Copy the PostgreSQL JDBC driver to the external library folder of Logstash
 COPY bin/ /usr/share/logstash/logstash-core/lib/jars/
 
+# Copy configuration files
+COPY pipeline/ /usr/share/logstash/pipeline/
 COPY config/ /usr/share/logstash/config/
 
-CMD ["logstash", "-f", "/usr/share/logstash/config/usersync.conf"]
+# Use pipelines.yml to load multiple configs
+#CMD ["logstash", "-f", "/usr/share/logstash/config/preregister.conf"]
