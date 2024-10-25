@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "app_user_attribute")
-public class AppUserAttribute {
+public class AppUserAttribute extends AbstractBaseEntityTimestamp{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

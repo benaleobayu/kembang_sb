@@ -65,7 +65,7 @@ public class ChannelController {
             ChanelDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found chanel", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -84,10 +84,8 @@ public class ChannelController {
             service.saveData(data, logo);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created chanel"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to upload image"));
+        } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -107,10 +105,8 @@ public class ChannelController {
             service.updateData(id, data);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created chanel"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Failed to upload image"));
+        } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -124,7 +120,7 @@ public class ChannelController {
             service.updateStatusChannel(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully update status chanel"));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -139,7 +135,7 @@ public class ChannelController {
             ReturnStatusResponse message = service.getUpdateStatusChannel(id, status);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully update status chanel", message));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -150,7 +146,7 @@ public class ChannelController {
             service.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted chanel"));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 

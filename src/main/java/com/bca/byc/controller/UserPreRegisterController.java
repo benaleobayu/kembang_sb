@@ -58,6 +58,7 @@ public class UserPreRegisterController {
             @RequestParam(name = "status", required = false) AdminApprovalStatus status,
             @RequestParam(name = "startDate", required = false) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) LocalDate endDate,
+            @RequestParam(name = "isElastic", required = false, defaultValue = "false") Boolean isElastic,
             @RequestParam(name = "export", required = false) Boolean export, // New parameter to trigger export
             HttpServletResponse response // Add HttpServletResponse as a parameter for export
     ) {
@@ -80,7 +81,12 @@ public class UserPreRegisterController {
             return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
         } else {
             // List data logic
-            ResultPageResponseDTO<PreRegisterDetailResponse> result = service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate);
+            ResultPageResponseDTO<?> result;
+            if (isElastic) {
+                result = service.listDataOnElastic(pages, limit, sortBy, direction, keyword, status, startDate, endDate);
+            } else {
+                result = service.listData(pages, limit, sortBy, direction, keyword, status, startDate, endDate);
+            }
             return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list pre-register", result, attributeService.listAttributePreRegister()));
         }
     }
@@ -196,5 +202,17 @@ public class UserPreRegisterController {
         log.info("GET " + urlRoute + "/attribute endpoint hit");
         return ResponseEntity.ok(new ApiAttributeResponse(true, "Successfully get list attribute", attributeService.listAttributeCreateUpdatePreRegister()));
     }
+
+
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse> getCount(
+            @RequestParam("isElastic") Boolean isElastic
+    ) {
+        log.info("GET " + urlRoute + "/count endpoint hit");
+        String message = service.getCount(isElastic);
+        return ResponseEntity.ok(new ApiResponse(true, message));
+    }
+
+
 
 }

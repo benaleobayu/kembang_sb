@@ -173,10 +173,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             userDetail.setStatus(StatusType.REJECTED);
             int newRejectCount = user.getCountReject() + 1; // increment reject count
             user.setCountReject(newRejectCount);
-
-            userDetail.setCreatedAt(LocalDateTime.now());
             user.setAppUserDetail(userDetail);
-
             userRepository.save(user);
 
             if (newRejectCount >= 3) {
@@ -189,6 +186,9 @@ public class UserAuthServiceImpl implements UserAuthService {
             }
         }
 
+        setCreatedUpdatedAt(user);
+        setCreatedUpdatedAtDetail(user.getAppUserDetail());
+        setCreatedUpdatedAtAttr(user.getAppUserAttribute());
         userRepository.saveAndFlush(user);
 
     }
@@ -336,4 +336,18 @@ public class UserAuthServiceImpl implements UserAuthService {
         logDevice.setActionType(ActionType.LOGIN);
         logDeviceRepository.save(logDevice);
     }
+
+    private void setCreatedUpdatedAt(AppUser dto){
+        dto.setCreatedAt(LocalDateTime.now());
+        dto.setUpdatedAt(LocalDateTime.now());
+    }
+    private void setCreatedUpdatedAtDetail(AppUserDetail dto){
+        dto.setCreatedAt(LocalDateTime.now());
+        dto.setUpdatedAt(LocalDateTime.now());
+    }
+    private void setCreatedUpdatedAtAttr(AppUserAttribute dto){
+        dto.setCreatedAt(LocalDateTime.now());
+        dto.setUpdatedAt(LocalDateTime.now());
+    }
+
 }
