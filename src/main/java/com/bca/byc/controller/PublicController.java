@@ -121,11 +121,12 @@ public class PublicController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "isElastic", required = false, defaultValue = "false") Boolean isElastic,
             @Schema(example = "top-picks", description = "top-picks | following | discover")
             @RequestParam(name = "category", required = false, defaultValue = "top-picks") String category) {
         // response true
 
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(null, pages, limit, sortBy, direction, keyword, category)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(null, pages, limit, sortBy, direction, keyword, category, isElastic)));
     }
 
     // get test pre register

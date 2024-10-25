@@ -2,19 +2,16 @@ package com.bca.byc.converter.dictionary;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
-import com.bca.byc.entity.AppUser;
-import com.bca.byc.entity.Comment;
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostContent;
+import com.bca.byc.entity.*;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.apps.ListCommentResponse;
-import com.bca.byc.model.apps.ProfileActivityPostCommentsResponse;
-import com.bca.byc.model.apps.SimplePostResponse;
+import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.util.helper.Formatter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Objects;
 
 import static com.bca.byc.converter.parsing.GlobalConverter.getParseImage;
 
@@ -42,11 +39,9 @@ public class TreeProfileActivityConverter {
             Post post,
             Comment comment,
             String baseUrl,
-            LikeDislikeRepository likeDislikeRepository,
-            AppUserRepository userRepository
-
+            LikeDislikeRepository likeDislikeRepository
     ) {
-        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
         dto.setUserId(user.getSecureId());
         dto.setUserName(user.getAppUserDetail().getName());
         dto.setUserAvatar(getParseImage(user.getAppUserDetail().getAvatar(), baseUrl));
@@ -57,12 +52,56 @@ public class TreeProfileActivityConverter {
                 userLogin,
                 likeDislikeRepository
         ));
-        dto.setComments(Collections.singletonList(converter.convertToListCommentResponse(
-                new ListCommentResponse(),
+        dto.setComments(Collections.singletonList(convertToListCommentResponse(
+                new ListCommentActivityResponse(),
                 user,
                 comment,
+                baseUrl,
                 likeDislikeRepository
         )));
+        return dto;
+    }
+
+    // list comment
+    public ListCommentActivityResponse convertToListCommentResponse(
+            ListCommentActivityResponse dto,
+            AppUser user,
+            Comment data,
+            String baseUrl,
+            LikeDislikeRepository likeDislikeRepository
+    ) {
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+        dto.setComment(data.getComment());
+        TreePostConverter converter = new TreePostConverter(baseUrl);
+
+        AppUser owner = data.getUser();
+        Business firstBusiness = owner.getBusinesses().stream()
+                .filter(Business::getIsPrimary).findFirst().orElse(null);
+        assert firstBusiness != null;
+        BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
+        assert firstBusinessCategory != null;
+        dto.setOwner(converter.PostOwnerResponse(
+                new PostOwnerResponse(),
+                owner.getSecureId(),
+                owner.getAppUserDetail().getName(),
+                owner.getAppUserDetail().getAvatar(),
+                firstBusiness != null ? firstBusiness.getName() : null,
+                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                data.getUser(),
+                user
+        ));
+        dto.setCreatedAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
+
+        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        dto.setIsOwnerPost(isOwner);
+        boolean isLike = likeDislikeRepository.findByCommentIdAndUserId(data.getId(), user.getId()).isPresent();
+        dto.setIsLike(isLike);
+        dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
+        dto.setRepliesCount(data.getCommentReply().size());
+
         return dto;
     }
 

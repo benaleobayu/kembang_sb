@@ -44,10 +44,10 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category) {
+    public ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category, Boolean isElastic) {
         // Get userLogin
         AppUser userLogin;
-        if (email != null){
+        if (email != null) {
             userLogin = HandlerRepository.getUserByEmail(email, appUserRepository, "User not found");
         } else {
             userLogin = null;
@@ -90,7 +90,7 @@ public class PostServiceImpl implements PostService {
 
         Post data = converter.convertToCreateRequest(user, dto);
 
-        TreePostConverter treePostConverter = new TreePostConverter(null,null);
+        TreePostConverter treePostConverter = new TreePostConverter(null);
         String contentType = treePostConverter.getContentTypePost(contentList);
 
         data.setContentType(contentType);

@@ -126,7 +126,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         // Map results to DTOs
         List<PostOwnerResponse> dtos = pageResult.stream()
                 .map(data -> {
-                    TreePostConverter dataConverter = new TreePostConverter(baseUrl, userRepository);
+                    TreePostConverter dataConverter = new TreePostConverter(baseUrl);
 
                     // Get the first primary business
                     Business firstBusiness = data.getBusinesses() == null ? null :
@@ -220,10 +220,10 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
         // Get comment form userLogin
-        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userLogin.getSecureId(), set.pageable());
+        Page<PostCommentActivityProjection> pageResult = commentRepository.findAllActivityCommentByUser(userLogin.getId(), set.pageable());
 
         TreeProfileActivityConverter converter = new TreeProfileActivityConverter();
-        TreePostConverter postConverter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
 
         List<ProfileActivityPostCommentsResponse> dtos = pageResult.stream().map(result -> {
             Comment comment = result.getComment(); // Get comment
@@ -236,7 +236,7 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
 
             // Use TreeProfileActivityConverter for convert data
             PostHomeResponse postDto = new PostHomeResponse();
-            converter.convertActivityComments(dto, commentUser, userLogin, post, comment, baseUrl, likeDislikeRepository, userRepository);
+            converter.convertActivityComments(dto, commentUser, userLogin, post, comment, baseUrl, likeDislikeRepository);
 
 //            // Set data untuk balasan jika ada
             if (commentReply != null) {

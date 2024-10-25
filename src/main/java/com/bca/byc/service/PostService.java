@@ -12,7 +12,7 @@ public interface PostService {
 
 //    PostHomeResponse findById(Long id) throws Exception;
 
-    ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category);
+    ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category, Boolean isElastic);
 
     PostHomeResponse findBySecureId(String secureId);
 

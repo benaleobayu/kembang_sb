@@ -62,7 +62,7 @@ public class AppSearchServiceImpl implements AppSearchService {
 
         assert pageResult != null;
         List<PostHomeResponse> dtos = pageResult.stream().map((data) -> {
-            TreePostConverter treePostConverter = new TreePostConverter(baseUrl, appUserRepository);
+            TreePostConverter treePostConverter = new TreePostConverter(baseUrl);
             PostHomeResponse dto = treePostConverter.convertToPostHomeResponse(
                     new PostHomeResponse(),
                     data,

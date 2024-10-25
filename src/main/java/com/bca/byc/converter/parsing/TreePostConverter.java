@@ -8,8 +8,6 @@ import com.bca.byc.model.ProfileActivityPostResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.format.DateTimeFormatter;
@@ -20,11 +18,8 @@ public class TreePostConverter {
 
     private final String baseUrl;
 
-    private final AppUserRepository userRepository;
-
-    public TreePostConverter(String baseUrl, AppUserRepository userRepository) {
+    public TreePostConverter(String baseUrl) {
         this.baseUrl = baseUrl;
-        this.userRepository = userRepository;
     }
 
     public PostHomeResponse convertToPostHomeResponse(
@@ -126,7 +121,7 @@ public class TreePostConverter {
     public ListCommentReplyResponse convertToListCommentReplyResponse(
             ListCommentReplyResponse dto,
             CommentReply data,
-            AppUser user,
+            AppUser userLogin,
             LikeDislikeRepository likeDislikeRepository
     ) {
         dto.setId(data.getSecureId());
@@ -149,12 +144,12 @@ public class TreePostConverter {
                 firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                 data.getUser(),
-                user
+                userLogin
         ));
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatterAppsWithSeconds(data.getCreatedAt()) : "No data");
-        boolean isOwner = Objects.equals(user.getId(), owner.getId());
+        boolean isOwner = Objects.equals(userLogin.getId(), owner.getId());
         dto.setIsOwnerPost(isOwner);
-        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), user.getId()).isPresent();
+        boolean isLike = likeDislikeRepository.findByCommentReplyIdAndUserId(data.getId(), userLogin.getId()).isPresent();
         dto.setIsLike(isLike);
         dto.setLikeCount(Math.toIntExact(data.getLikesCount()));
         dto.setParentId(data.getParentComment().getSecureId());

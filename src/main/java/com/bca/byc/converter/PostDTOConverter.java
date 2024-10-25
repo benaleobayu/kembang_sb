@@ -36,7 +36,7 @@ public class PostDTOConverter {
     public PostHomeResponse convertToDetailResponse(Post data, AppUser userLogin) {
         // mapping Entity with DTO Entity
         PostHomeResponse dto = new PostHomeResponse();
-        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
 
         dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());

@@ -69,7 +69,7 @@ public class AdminContentServiceImpl implements AdminContentService {
         newPost.setAdmin(admin);
         newPost.setIsAdminPost(true);
 
-        TreePostConverter treePostConverter = new TreePostConverter(null, null);
+        TreePostConverter treePostConverter = new TreePostConverter(null);
         String contentType = treePostConverter.getContentTypePost(contentList);
 
         newPost.setContentType(contentType);
