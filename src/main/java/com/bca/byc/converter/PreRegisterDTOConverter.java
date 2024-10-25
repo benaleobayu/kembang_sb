@@ -2,14 +2,12 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.entity.elastic.PreRegisterElastic;
 import com.bca.byc.enums.AdminApprovalStatus;
-import com.bca.byc.enums.AdminType;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.BranchCodeResponse;
-import com.bca.byc.model.PreRegisterCreateRequest;
-import com.bca.byc.model.PreRegisterDetailResponse;
-import com.bca.byc.model.PreRegisterUpdateRequest;
+import com.bca.byc.model.*;
+import com.bca.byc.model.Elastic.PreRegisterIndexElasticResponse;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
@@ -25,8 +23,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-
-import static com.bca.byc.enums.AdminType.SUPERADMIN;
 
 @Component
 @AllArgsConstructor
@@ -55,9 +51,9 @@ public class PreRegisterDTOConverter {
         dto.setMemberType(data.getMemberType() != null ? data.getMemberType().toString() : null);
         dto.setParentType(data.getParentType() != null ? data.getParentType().toString() : null);
         dto.setOrders(data.getOrders());
-        dto.setApprovalStatus(data.getStatusApproval());
+        dto.setApprovalStatus(data.getStatusApproval().name());
 
-        Branch branch = data.getBranchCode();
+        Branch branch = data.getBranch();
         BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
         if (branch != null) {
             branchCodeResponse.setId(branch.getSecureId());
@@ -74,6 +70,37 @@ public class PreRegisterDTOConverter {
         // return
         return dto;
     }
+    // for get data
+    public PreRegisterIndexElasticResponse convertToListResponseElastic(PreRegisterElastic data) {
+        PreRegisterIndexElasticResponse dto = new PreRegisterIndexElasticResponse();
+        dto.setId(data.getSecureId());
+        dto.setName(data.getName());
+        dto.setEmail(data.getEmail());
+//        dto.setPhone(data.getPhone());
+//        dto.setMemberBankAccount(data.getMemberBankAccount());
+//        dto.setParentBankAccount(data.getParentBankAccount());
+//        dto.setMemberCin(data.getMemberCin());
+//        dto.setParentCin(data.getParentCin());
+//        dto.setMemberType(data.getMemberType() != null ? data.getMemberType() : null);
+//        dto.setParentType(data.getParentType() != null ? data.getParentType() : null);
+//        dto.setOrders(data.getOrders());
+//        dto.setApprovalStatus(data.getStatusApproval());
+
+//        BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
+//        if (data.getBranchId() != null && data.getBranchName() != null) {
+//            branchCodeResponse.setId(data.getBranchId());
+//            branchCodeResponse.setName(data.getBranchName());
+//        }
+//        dto.setBranchCode(branchCodeResponse);
+//        dto.setPicName(data.getPicName());
+//
+//        dto.setMemberBirthdate(data.getMemberBirthdate() != null ? Formatter.formatLocalDate(data.getMemberBirthdate()) : null);
+//        dto.setParentBirthdate(data.getParentBirthdate() != null ? Formatter.formatLocalDate(data.getParentBirthdate()) : null);
+
+        return dto;
+    }
+
+
 
     // for create data
     public PreRegister convertToCreateRequest(@Valid PreRegisterCreateRequest dto, AppAdmin admin) {
@@ -185,7 +212,7 @@ public class PreRegisterDTOConverter {
         data.setMemberType(dto.getMemberType() != null ? dto.getMemberType() : null);
         data.setParentType(dto.getParentType() != null ? dto.getParentType() : null);
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
-        data.setBranchCode(branch);
+        data.setBranch(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
     }
 
@@ -213,7 +240,7 @@ public class PreRegisterDTOConverter {
         data.setParentBirthdate(dto.getParentBirthdate());
         data.setMemberType(dto.getMemberType() != null ? dto.getMemberType() : null);
         Branch branch = branchRepository.findBySecureId(dto.getBranchCode()).orElse(null);
-        data.setBranchCode(branch);
+        data.setBranch(branch);
         data.setPicName(StringUtils.capitalize(dto.getPicName()));
     }
 
