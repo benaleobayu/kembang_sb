@@ -30,7 +30,8 @@ c.createdAt BETWEEN :startDate AND :endDate AND
 
     @Query("SELECT c.secureId AS secureId, c.name AS name FROM Channel c " +
             "WHERE " +
-            "(LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) )")
+            "(LOWER(c.name) LIKE LOWER(:keyword) ) AND " +
+            "c.isActive = true ")
     Page<CastSecureIdAndNameProjection> findIdAndName(String keyword, Pageable pageable);
 
     @Query("SELECT c FROM Channel c WHERE c.secureId = :channelId ")
