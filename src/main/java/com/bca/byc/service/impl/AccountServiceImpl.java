@@ -65,6 +65,8 @@ public class AccountServiceImpl implements AccountService {
             dto.setStatus(c.getIsActive());
             Set<String> channelNames = c.getAccountHasChannels().stream().map(data -> data.getChannel().getName()).collect(Collectors.toSet());
             dto.setChannelNames(channelNames);
+            dto.setAvatar(GlobalConverter.getAvatarImage(c.getAvatar(), baseUrl));
+            dto.setCover(GlobalConverter.getAvatarImage(c.getCover(), baseUrl));
 
             GlobalConverter.CmsIDTimeStampResponseAndId(dto, c);
             return dto;
@@ -79,6 +81,8 @@ public class AccountServiceImpl implements AccountService {
         AccountDetailResponse dto = new AccountDetailResponse();
         dto.setName(data.getName());
         dto.setStatus(data.getIsActive());
+        dto.setAvatar(GlobalConverter.getAvatarImage(data.getAvatar(), baseUrl));
+        dto.setCover(GlobalConverter.getAvatarImage(data.getCover(), baseUrl));
 
         // get all
         List<Channel> allChannels = channelRepository.findAll();

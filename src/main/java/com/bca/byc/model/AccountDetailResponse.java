@@ -12,4 +12,8 @@ public class AccountDetailResponse {
     private Boolean status;
 
     private List<ChannelChecklistResponse> channels;
+
+    private String avatar;
+
+    private String cover;
 }

@@ -56,7 +56,7 @@ public class AccountController {
             AccountDetailResponse item = service.findDataById(id);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found accounts", item));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -83,8 +83,8 @@ public class AccountController {
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id,
-            @RequestPart("avatar") MultipartFile avatar,
-            @RequestPart("cover") MultipartFile cover,
+            @RequestPart(name = "avatar", required = false) MultipartFile avatar,
+            @RequestPart(name = "cover", required = false) MultipartFile cover,
             @RequestParam("name") String name,
             @RequestParam("channelIds") Set<String> channelIds,
             @RequestParam("status") Boolean status
@@ -106,7 +106,7 @@ public class AccountController {
             service.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted accounts"));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 }

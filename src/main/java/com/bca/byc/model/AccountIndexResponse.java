@@ -14,4 +14,7 @@ public class AccountIndexResponse extends AdminModelBaseDTOResponse<Long>{
     private Boolean status;
     private Set<String> channelNames = new HashSet<>();
 
+    private String avatar;
+    private String cover;
+
 }
