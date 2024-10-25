@@ -10,4 +10,8 @@ public class PreRegisterIndexElasticResponse {
     private String name;
 
     private String email;
+
+    private String branchId;
+
+    private String branchName;
 }

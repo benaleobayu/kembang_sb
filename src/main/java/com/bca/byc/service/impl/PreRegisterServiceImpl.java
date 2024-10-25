@@ -137,7 +137,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
 //        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(listStatus, set.keyword(), status, start, end, set.pageable());
-        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(set.keyword(), set.pageable());
+        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(keyword, set.pageable());
 
         assert pageResult != null;
         List<PreRegisterIndexElasticResponse> dtos = pageResult.stream().map((c) -> {

@@ -15,13 +15,12 @@ public interface PreRegisterElasticRepository extends ElasticsearchRepository<Pr
             {
             "bool": {
                 "should": [
-                { "query_string" : { "query" : "*?*", "fields" : [ "name" ] } },
-                { "query_string" : { "query" : "*?*", "fields" : [ "email" ] } }
+                { "query_string" : { "query" : "?0" , "fields" : [ "name" ] } }
                 ]
             }
             }
             """)
     Page<PreRegisterElastic> FindAllPreRegister(
-            @Param("keyword") String keyword,
+            String name,
             Pageable pageable);
 }

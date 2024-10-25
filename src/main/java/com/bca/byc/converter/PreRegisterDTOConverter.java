@@ -76,6 +76,8 @@ public class PreRegisterDTOConverter {
         dto.setId(data.getSecureId());
         dto.setName(data.getName());
         dto.setEmail(data.getEmail());
+        dto.setBranchId(data.getBranchId());
+        dto.setBranchName(data.getBranchName());
 //        dto.setPhone(data.getPhone());
 //        dto.setMemberBankAccount(data.getMemberBankAccount());
 //        dto.setParentBankAccount(data.getParentBankAccount());

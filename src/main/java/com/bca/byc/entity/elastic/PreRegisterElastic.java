@@ -17,6 +17,9 @@ import java.time.LocalDate;
 public class PreRegisterElastic {
 
     @Id
+    @Field(name = "id", type = FieldType.Long)
+    private Long id;
+
     @Field(name = "secure_id", type = FieldType.Text)
     private String secureId;
 
