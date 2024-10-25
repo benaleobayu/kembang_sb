@@ -1,0 +1,37 @@
+- pipeline.id: app_user
+  path.config: "/usr/share/logstash/pipeline/app_user.conf"
+
+- pipeline.id: app_user_detail
+  path.config: "/usr/share/logstash/pipeline/app_user_detail.conf"
+
+- pipeline.id: app_user_attribute
+  path.config: "/usr/share/logstash/pipeline/app_user_attribute.conf"
+
+- pipeline.id: preregister
+  path.config: "/usr/share/logstash/pipeline/preregister.conf"
+
+- pipeline.id: branch
+  path.config: "/usr/share/logstash/pipeline/branch.conf"
+
+- pipeline.id: business
+  path.config: "/usr/share/logstash/pipeline/business.conf"
+
+- pipeline.id: business_categories
+  path.config: "/usr/share/logstash/pipeline/business_categories.conf"
+
+- pipeline.id: comments
+  path.config: "/usr/share/logstash/pipeline/comments.conf"
+
+- pipeline.id: comment_reply
+  path.config: "/usr/share/logstash/pipeline/comment_reply.conf"
+
+- pipeline.id: locations
+  path.config: "/usr/share/logstash/pipeline/locations.conf"
+
+- pipeline.id: post
+  path.config: "/usr/share/logstash/pipeline/post.conf"
+
+- pipeline.id: tags
+  path.config: "/usr/share/logstash/pipeline/tags.conf"
+
+
