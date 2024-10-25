@@ -64,7 +64,7 @@ public interface PreRegisterRepository extends JpaRepository<PreRegister, Long> 
             "p.statusApproval , p.createdAt, user.name " +
             ") " +
             "FROM PreRegister p " +
-            "LEFT JOIN p.branchCode branch " +
+            "LEFT JOIN p.branch branch " +
             "LEFT JOIN p.createdBy user " +
             "WHERE " +
             "p.createdAt BETWEEN :start AND :end AND " +

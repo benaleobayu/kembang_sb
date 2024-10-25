@@ -5,9 +5,11 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
+import com.bca.byc.entity.elastic.PreRegisterElastic;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.Elastic.PreRegisterIndexElasticResponse;
 import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
@@ -15,6 +17,7 @@ import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
+import com.bca.byc.repository.Elastic.PreRegisterElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -34,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,7 +49,9 @@ import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagem
 @AllArgsConstructor
 public class PreRegisterServiceImpl implements PreRegisterService {
 
-    private PreRegisterRepository repository;
+    private PreRegisterRepository preRegisterRepository;
+    private PreRegisterElasticRepository preRegisterElasticRepository;
+
     private LogUserManagementRepository logUserManagementRepository;
     private PreRegisterDTOConverter converter;
 
@@ -54,13 +60,13 @@ public class PreRegisterServiceImpl implements PreRegisterService {
 
     @Override
     public PreRegisterDetailResponse findDataById(Long id) throws BadRequestException {
-        PreRegister data = HandlerRepository.getEntityById(id, repository, "Data Not Found");
+        PreRegister data = HandlerRepository.getEntityById(id, preRegisterRepository, "Data Not Found");
         return converter.convertToListResponse(data);
     }
 
     @Override
     public PreRegisterDetailResponse findDataBySecureId(String id) {
-        PreRegister data = HandlerRepository.getEntityBySecureId(id, repository, "Data Not Found");
+        PreRegister data = HandlerRepository.getEntityBySecureId(id, preRegisterRepository, "Data Not Found");
         return converter.convertToListResponse(data);
     }
 
@@ -88,15 +94,15 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         Page<PreRegister> pageResult = null;
         if (admin.getRole().getName().equals("SUPERADMIN")) {
             listStatus = List.of(s0, s1, s4, s5, s6);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
+            pageResult = preRegisterRepository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getRole().getName().contains("ADMIN-OPERATOR")) {
             listStatus = List.of(s0, s1, s4, s5);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
+            pageResult = preRegisterRepository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
         if (admin.getRole().getName().contains("ADMIN-SUPERVISOR")) {
             listStatus = List.of(s1, s4, s5);
-            pageResult = repository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
+            pageResult = preRegisterRepository.FindAllDataByKeywordAndStatus(listStatus, set.keyword(), status, start, end, set.pageable());
         }
 
         assert pageResult != null;
@@ -109,9 +115,43 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     }
 
     @Override
+    public ResultPageResponseDTO<PreRegisterIndexElasticResponse> listDataOnElastic(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate) {
+        AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
+        List<Integer> listStatus = Arrays.asList(
+                AdminApprovalStatus.PENDING.ordinal(),
+                AdminApprovalStatus.OPT_APPROVED.ordinal(),
+                AdminApprovalStatus.REJECTED.ordinal(),
+                AdminApprovalStatus.APPROVED.ordinal(),
+                AdminApprovalStatus.DELETED.ordinal()
+        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword,
+                startDate,
+                endDate,
+                status
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        // set date
+        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
+        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+
+//        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(listStatus, set.keyword(), status, start, end, set.pageable());
+        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(set.keyword(), set.pageable());
+
+        assert pageResult != null;
+        List<PreRegisterIndexElasticResponse> dtos = pageResult.stream().map((c) -> {
+            PreRegisterIndexElasticResponse dto = converter.convertToListResponseElastic(c);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
     public List<PreRegisterDetailResponse> findAllData() {
         // Get the list
-        List<PreRegister> datas = repository.findAll();
+        List<PreRegister> datas = preRegisterRepository.findAll();
 
         // stream into the list
         return datas.stream()
@@ -122,7 +162,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     @Override
     @Transactional
     public void saveData(@Valid PreRegisterCreateRequest dto) throws BadRequestException {
-        if (repository.existsByEmail(dto.getEmail())) {
+        if (preRegisterRepository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
@@ -130,29 +170,29 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         PreRegister data = converter.convertToCreateRequest(dto, admin);
         AdminApprovalStatus isSaved = dto.getStatus() ? AdminApprovalStatus.OPT_APPROVED : AdminApprovalStatus.PENDING;
         data.setStatusApproval(isSaved);
-        repository.save(data);
+        preRegisterRepository.save(data);
     }
 
 
     @Override
     @Transactional
     public void updateData(String id, PreRegisterUpdateRequest dto) throws BadRequestException {
-        PreRegister data = HandlerRepository.getEntityBySecureId(id, repository, "Data not found");
+        PreRegister data = HandlerRepository.getEntityBySecureId(id, preRegisterRepository, "Data not found");
         converter.convertToUpdateRequest(data, dto);
         data.setUpdatedAt(LocalDateTime.now());
         AdminApprovalStatus isSaved = dto.getStatus() ? AdminApprovalStatus.OPT_APPROVED : AdminApprovalStatus.PENDING;
         data.setStatusApproval(isSaved);
-        repository.save(data);
+        preRegisterRepository.save(data);
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void bulkDelete(Set<String> ids) throws BadRequestException {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        Set<CmsGetIdFromSecureIdProjection> userProjections = repository.findIdBySecureIdIn(ids);
+        Set<CmsGetIdFromSecureIdProjection> userProjections = preRegisterRepository.findIdBySecureIdIn(ids);
 
         userProjections.forEach(projection -> {
-            PreRegister data = repository.findById(projection.getId())
+            PreRegister data = preRegisterRepository.findById(projection.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
             data.setAccountType(data.getAccountType());
             data.setIsDeleted(true);
@@ -161,7 +201,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             data.setEmail(data.getEmail() + "_deleted");
             data.setMemberCin(data.getMemberCin() + "_deleted");
             GlobalConverter.CmsAdminUpdateAtBy(data, admin);
-            repository.saveAndFlush(data);
+            preRegisterRepository.saveAndFlush(data);
         });
     }
 
@@ -172,12 +212,12 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             throw new BadRequestException("Invalid email admin");
         }
 
-        PreRegister data = repository.findBySecureId(id)
+        PreRegister data = preRegisterRepository.findBySecureId(id)
                 .orElseThrow(() -> new BadRequestException("data pre register not found"));
         // update on converter
         converter.convertToApprovalRequest(data, admin);
         // save
-        repository.save(data);
+        preRegisterRepository.save(data);
     }
 
     @Override
@@ -187,7 +227,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
             throw new BadRequestException("Invalid email admin");
         }
 
-        PreRegister data = repository.findBySecureId(id)
+        PreRegister data = preRegisterRepository.findBySecureId(id)
                 .orElseThrow(() -> new BadRequestException("data pre register not found"));
         // update on converter
         converter.convertToRejectRequest(data, reason, admin);
@@ -205,7 +245,16 @@ public class PreRegisterServiceImpl implements PreRegisterService {
                 logUserManagementRepository
         );
         // save
-        repository.save(data);
+        preRegisterRepository.save(data);
+    }
+
+    @Override
+    public String getCount(Boolean isElastic) {
+        if (isElastic) {
+            return "Total Data : " + preRegisterElasticRepository.count();
+        } else {
+            return "Total Data : " + preRegisterRepository.count();
+        }
     }
 
 

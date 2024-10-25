@@ -85,7 +85,7 @@ public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifi
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
-    private Branch branchCode;
+    private Branch branch;
 
     @Column(name = "pic_name")
     private String picName;
@@ -96,7 +96,5 @@ public class PreRegister extends AbstractBaseEntityCms implements SecureIdentifi
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status_approval")
     private AdminApprovalStatus statusApproval = AdminApprovalStatus.PENDING;
-
-
 
 }
