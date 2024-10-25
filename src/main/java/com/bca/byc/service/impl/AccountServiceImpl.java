@@ -136,8 +136,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException {
-        FileUploadHelper.validateFileTypeImage(avatar);
-        FileUploadHelper.validateFileTypeImage(cover);
 
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Account data = HandlerRepository.getEntityBySecureId(id, accountRepository, "Account not found.");

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,7 @@ public class AccountController {
         }
     }
 
+    @SneakyThrows
     @Operation(summary = "Update Account", description = "Update Account")
     @PutMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
@@ -90,12 +92,8 @@ public class AccountController {
             @RequestParam("status") Boolean status
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
-        try {
             service.updateData(id, avatar, cover, name, channelIds, status);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated accounts"));
-        } catch (BadRequestException | IOException e) {
-            throw new BadRequestException(e.getMessage());
-        }
     }
 
     @Operation(summary = "Delete Account", description = "Delete Account")
