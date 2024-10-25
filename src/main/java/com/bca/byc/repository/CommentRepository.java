@@ -35,9 +35,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "JOIN p.comments c " +
             "LEFT JOIN c.commentReply cr " +
             "LEFT JOIN AppUser u ON c.user.id = u.id " +
+            "LEFT JOIN AppUserDetail audu ON audu.id = u.appUserDetail.id " +
             "LEFT JOIN AppUser ur ON cr.user.id = ur.id " +
-            "WHERE p.user.secureId = :userId")
-    Page<PostCommentActivityProjection> findAllActivityCommentByUser(@Param("userId") String userId, Pageable pageable);
+            "LEFT JOIN AppUserDetail audur ON audur.id = ur.appUserDetail.id " +
+            "WHERE u.id = :userId OR ur.id = :userId " )
+    Page<PostCommentActivityProjection> findAllActivityCommentByUser(@Param("userId") Long userId, Pageable pageable);
 
     Integer countByPostId(Long id);
 

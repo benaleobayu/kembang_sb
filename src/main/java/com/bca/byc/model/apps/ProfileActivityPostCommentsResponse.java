@@ -15,5 +15,5 @@ public class ProfileActivityPostCommentsResponse {
 
     private PostHomeResponse post;
 
-    private List<ListCommentResponse> comments = new ArrayList<>();
+    private List<ListCommentActivityResponse> comments = new ArrayList<>();
 }

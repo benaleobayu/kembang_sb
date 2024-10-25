@@ -3,7 +3,9 @@ package com.bca.byc.converter;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
-import com.bca.byc.model.apps.*;
+import com.bca.byc.model.apps.CommentCreateUpdateRequest;
+import com.bca.byc.model.apps.CommentDetailResponse;
+import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -15,8 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -35,7 +35,7 @@ public class CommentDTOConverter {
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
-        TreePostConverter converter = new TreePostConverter(baseUrl,userRepository);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
 
         AppUser owner = data.getUser();
         Business firstBusiness = owner.getBusinesses().stream()
@@ -50,7 +50,7 @@ public class CommentDTOConverter {
                 owner.getAppUserDetail().getName(),
                 owner.getAppUserDetail().getAvatar(),
                 firstBusiness != null ? firstBusiness.getName() : null,
-                firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
+                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                 owner,
                 userLogin
@@ -64,13 +64,13 @@ public class CommentDTOConverter {
         return dto;
     }
 
-     // for get data replies
+    // for get data replies
     public CommentDetailResponse convertToListRepliesResponse(CommentReply data) {
         AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         // mapping Entity with DTO Entity
         CommentDetailResponse dto = modelMapper.map(data, CommentDetailResponse.class);
         dto.setComment(data.getComment());
-        TreePostConverter converter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter converter = new TreePostConverter(baseUrl);
 
         AppUser owner = data.getUser();
         Business firstBusiness = owner.getBusinesses().stream()
@@ -85,7 +85,7 @@ public class CommentDTOConverter {
                 owner.getAppUserDetail().getName(),
                 owner.getAppUserDetail().getAvatar(),
                 firstBusiness != null ? firstBusiness.getName() : null,
-                firstBusinessCategory != null  ? firstBusinessCategory.getName() : null,
+                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
                 firstBusiness != null ? firstBusiness.getIsPrimary() : null,
                 data.getUser(),
                 userLogin

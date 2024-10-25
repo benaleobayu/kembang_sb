@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
 
         Page<Comment> pageResult = commentRepository.findListDataComment(postId, set.pageable());
         List<ListCommentResponse> dtos = pageResult.stream().map((c) -> {
-            TreePostConverter dataConverter = new TreePostConverter(baseUrl, userRepository);
+            TreePostConverter dataConverter = new TreePostConverter(baseUrl);
             ListCommentResponse dto = new ListCommentResponse();
 
             dataConverter.convertToListCommentResponse(
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
         // set entity to add with model mapper
         Comment data = converter.convertToCreateRequest(post, dto, email);
         // add count comment
-        TreePostConverter postConverter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
         postConverter.countPostComments(post, postRepository, "add");
         data.setCommentsCount(data.getCommentsCount() + 1);
 
@@ -140,7 +140,7 @@ public class CommentServiceImpl implements CommentService {
         checkCommentUser(comment, user, "delete");
 
         // decrease count comment
-        TreePostConverter postConverter = new TreePostConverter(baseUrl, userRepository);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
         postConverter.countPostComments(post, postRepository, "delete");
 
         // delete data

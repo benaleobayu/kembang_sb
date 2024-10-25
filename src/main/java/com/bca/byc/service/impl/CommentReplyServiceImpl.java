@@ -67,7 +67,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
 
         Page<CommentReply> pageResult = commentReplyRepository.findListDataCommentUser(comment.getId(), set.pageable());
         List<ListCommentReplyResponse> dtos = pageResult.stream().map((c) -> {
-            TreePostConverter dataConverter = new TreePostConverter(baseUrl, userRepository);
+            TreePostConverter dataConverter = new TreePostConverter(baseUrl);
             ListCommentReplyResponse dto = new ListCommentReplyResponse();
 
             dataConverter.convertToListCommentReplyResponse(
@@ -100,7 +100,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
         data.setUser(user);
 
         // incrase comment post
-        TreePostConverter postConverter = new TreePostConverter(null, userRepository);
+        TreePostConverter postConverter = new TreePostConverter(null);
         postConverter.countPostComments(post, postRepository, "add");
         data.setCommentsCount(data.getCommentsCount() + 1);
 
@@ -161,7 +161,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
         }
 
         // decrase comment post
-        TreePostConverter postConverter = new TreePostConverter(null, userRepository);
+        TreePostConverter postConverter = new TreePostConverter(null);
         postConverter.countPostComments(post, postRepository, "delete");
 
         commentReplyRepository.delete(data);
