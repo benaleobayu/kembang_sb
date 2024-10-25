@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Formatter {
@@ -39,5 +40,11 @@ public class Formatter {
 
     public static String formatDescription(String description) {
         return Jsoup.parse(description).text();
+    }
+
+    // elastic
+    public static LocalDateTime parseToLocalDateTime(String dateString) {
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateString);
+        return offsetDateTime.toLocalDateTime();
     }
 }

@@ -2,26 +2,23 @@ package com.bca.byc.entity.elastic;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(indexName = "pre_register")
-public class PreRegisterElastic {
-
-    @Id
-    @Field(name = "id", type = FieldType.Long)
-    private Long id;
-
-    @Field(name = "secure_id", type = FieldType.Text)
-    private String secureId;
+public class PreRegisterElastic extends AbstractBaseElastic{
 
     @Field(name = "name", type = FieldType.Text)
     private String name;
@@ -50,20 +47,17 @@ public class PreRegisterElastic {
     @Field(name = "member_birthdate", type = FieldType.Date)
     private LocalDate memberBirthdate;
 
-    @Field(name = "member_type", type = FieldType.Text)
+    @Field(name = "type_member", type = FieldType.Text)
     private String memberType;
 
-    @Field(name = "parent_type", type = FieldType.Text)
+    @Field(name = "type_parent", type = FieldType.Text)
     private String parentType;
 
     @Field(name = "orders", type = FieldType.Integer)
     private Integer orders;
 
-    @Field(name = "approval_status", type = FieldType.Text)
+    @Field(name = "status_approval", type = FieldType.Text)
     private String statusApproval;
-
-    @Field(name = "is_active", type = FieldType.Boolean)
-    private Boolean isActive = false;
 
     @Field(type = FieldType.Text, name = "branch_id")
     private String branchId;
@@ -74,4 +68,18 @@ public class PreRegisterElastic {
     @Field(type = FieldType.Text, name = "pic_name")
     private String picName;
 
+    @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String getSecureId() {
+        return super.getSecureId();
+    }
+
+    @Override
+    public Boolean getIsActive() {
+        return super.getIsActive();
+    }
 }

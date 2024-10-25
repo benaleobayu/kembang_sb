@@ -1,13 +1,19 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Branch;
+import com.bca.byc.entity.PreRegister;
+import com.bca.byc.entity.UserManagementLog;
 import com.bca.byc.entity.elastic.PreRegisterElastic;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.*;
+import com.bca.byc.model.BranchCodeResponse;
 import com.bca.byc.model.Elastic.PreRegisterIndexElasticResponse;
+import com.bca.byc.model.PreRegisterCreateRequest;
+import com.bca.byc.model.PreRegisterDetailResponse;
+import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
@@ -22,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.text.Format;
 import java.time.LocalDateTime;
 
 @Component
@@ -70,39 +77,42 @@ public class PreRegisterDTOConverter {
         // return
         return dto;
     }
+
     // for get data
     public PreRegisterIndexElasticResponse convertToListResponseElastic(PreRegisterElastic data) {
+        // mapping Entity with DTO Entity
         PreRegisterIndexElasticResponse dto = new PreRegisterIndexElasticResponse();
-        dto.setId(data.getSecureId());
         dto.setName(data.getName());
         dto.setEmail(data.getEmail());
-        dto.setBranchId(data.getBranchId());
-        dto.setBranchName(data.getBranchName());
-//        dto.setPhone(data.getPhone());
-//        dto.setMemberBankAccount(data.getMemberBankAccount());
-//        dto.setParentBankAccount(data.getParentBankAccount());
-//        dto.setMemberCin(data.getMemberCin());
-//        dto.setParentCin(data.getParentCin());
-//        dto.setMemberType(data.getMemberType() != null ? data.getMemberType() : null);
-//        dto.setParentType(data.getParentType() != null ? data.getParentType() : null);
-//        dto.setOrders(data.getOrders());
-//        dto.setApprovalStatus(data.getStatusApproval());
+        dto.setPhone(data.getPhone());
+        dto.setMemberBankAccount(data.getMemberBankAccount());
+        dto.setParentBankAccount(data.getParentBankAccount());
+        dto.setMemberCin(data.getMemberCin());
+        dto.setParentCin(data.getParentCin());
+        dto.setMemberType(data.getMemberType() != null ? data.getMemberType() : null);
+        dto.setParentType(data.getParentType() != null ? data.getParentType() : null);
+        dto.setOrders(data.getOrders());
+        dto.setApprovalStatus(data.getStatusApproval());
 
-//        BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
-//        if (data.getBranchId() != null && data.getBranchName() != null) {
-//            branchCodeResponse.setId(data.getBranchId());
-//            branchCodeResponse.setName(data.getBranchName());
-//        }
-//        dto.setBranchCode(branchCodeResponse);
-//        dto.setPicName(data.getPicName());
-//
-//        dto.setMemberBirthdate(data.getMemberBirthdate() != null ? Formatter.formatLocalDate(data.getMemberBirthdate()) : null);
-//        dto.setParentBirthdate(data.getParentBirthdate() != null ? Formatter.formatLocalDate(data.getParentBirthdate()) : null);
+        BranchCodeResponse branchCodeResponse = new BranchCodeResponse();
+        branchCodeResponse.setId(data.getBranchId());
+        branchCodeResponse.setName(data.getBranchName());
 
+        dto.setBranchCode(branchCodeResponse);
+        dto.setPicName(data.getPicName());
+
+        dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
+        dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));
+        // Use DataFormatter here
+        dto.setId(data.getSecureId());
+        dto.setIndex(data.getId());
+
+        LocalDateTime createdAt = Formatter.parseToLocalDateTime(data.getCreatedAt()); // its took String from elastic .e.g 2024-10-24T23:51:18.276455Z
+        LocalDateTime updatedAt = Formatter.parseToLocalDateTime(data.getUpdatedAt()); // its took String from elastic .e.g 2024-10-24T23:51:18.276455Z
+        dto.setCreatedAt(Formatter.formatLocalDateTime(createdAt));
+        dto.setUpdatedAt(Formatter.formatLocalDateTime(updatedAt));
         return dto;
     }
-
-
 
     // for create data
     public PreRegister convertToCreateRequest(@Valid PreRegisterCreateRequest dto, AppAdmin admin) {

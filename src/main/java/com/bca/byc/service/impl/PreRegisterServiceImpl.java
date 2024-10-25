@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -117,13 +116,6 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     @Override
     public ResultPageResponseDTO<PreRegisterIndexElasticResponse> listDataOnElastic(Integer pages, Integer limit, String sortBy, String direction, String keyword, AdminApprovalStatus status, LocalDate startDate, LocalDate endDate) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
-        List<Integer> listStatus = Arrays.asList(
-                AdminApprovalStatus.PENDING.ordinal(),
-                AdminApprovalStatus.OPT_APPROVED.ordinal(),
-                AdminApprovalStatus.REJECTED.ordinal(),
-                AdminApprovalStatus.APPROVED.ordinal(),
-                AdminApprovalStatus.DELETED.ordinal()
-        );
         ListOfFilterPagination filter = new ListOfFilterPagination(
                 keyword,
                 startDate,
@@ -133,11 +125,32 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         // set date
-        LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
-        LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
+        String start = String.valueOf((startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay());
+        String end = String.valueOf((endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59));
 
-//        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(listStatus, set.keyword(), status, start, end, set.pageable());
-        Page<PreRegisterElastic> pageResult = preRegisterElasticRepository.FindAllPreRegister(keyword, set.pageable());
+        String keywords = keyword == null ? " " : keyword;
+        String startStatus = status == null ? "0" : String.valueOf(status.ordinal());
+        String endStatus = status == null ? "6" : String.valueOf(status.ordinal());
+        Page<PreRegisterElastic> pageResult = null;
+
+        String s0 = String.valueOf(AdminApprovalStatus.PENDING.ordinal()); // 0
+        String s1 = String.valueOf(AdminApprovalStatus.OPT_APPROVED.ordinal()); // 1
+        String s4 = String.valueOf(AdminApprovalStatus.REJECTED.ordinal()); // 4
+        String s5 = String.valueOf(AdminApprovalStatus.APPROVED.ordinal()); // 5
+        String s6 = String.valueOf(AdminApprovalStatus.DELETED.ordinal()); // 6
+        List<String> listStatus;
+        if (admin.getRole().getName().equals("SUPERADMIN")) {
+            listStatus = List.of(s0, s1, s4, s5, s6);
+            pageResult = preRegisterElasticRepository.FindAllPreRegister(keywords, start, end, startStatus, endStatus, listStatus, set.pageable());
+        }
+        if (admin.getRole().getName().contains("ADMIN-OPERATOR")) {
+            listStatus = List.of(s0, s1, s4, s5);
+            pageResult = preRegisterElasticRepository.FindAllPreRegister(keywords, start, end, startStatus, endStatus, listStatus, set.pageable());
+        }
+        if (admin.getRole().getName().contains("ADMIN-SUPERVISOR")) {
+            listStatus = List.of(s1, s4, s5);
+            pageResult = preRegisterElasticRepository.FindAllPreRegister(keywords, start, end, startStatus, endStatus, listStatus, set.pageable());
+        }
 
         assert pageResult != null;
         List<PreRegisterIndexElasticResponse> dtos = pageResult.stream().map((c) -> {
