@@ -74,7 +74,7 @@ public class ReportPostJob {
 
         Report newReportPost = new Report();
         newReportPost.setCommentReply(data);
-        newReportPost.setType("COMMENT_REPLIES");
+        newReportPost.setType("COMMENT_REPLY");
         newReportPost.setReason(faker.lorem().sentence());
         newReportPost.setStatus(postStatus[faker.number().numberBetween(0, 4)]);
         newReportPost.setCreatedAt(LocalDateTime.of(2024, 10, 10, 0, 0).plusSeconds(faker.number().numberBetween(0, (int) java.time.Duration.between(LocalDateTime.of(2024, 10, 10, 0, 0), LocalDateTime.now()).getSeconds())));
