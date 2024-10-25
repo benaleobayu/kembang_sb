@@ -18,6 +18,7 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.cms.AdminContentService;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -57,6 +58,8 @@ public class AdminContentController {
     private final TagRepository tagRepository;
     private final ChannelRepository channelRepository;
     private final PostRepository postRepository;
+    
+    private final GlobalAttributeService globalAttributeService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     static final String VIDEO_PATH = "/post/admin-content/";

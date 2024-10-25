@@ -41,11 +41,9 @@ public class AdminContentServiceImpl implements AdminContentService {
 
     @Override
     public ResultPageResponseDTO<AdminContentIndexResponse<Long>> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-
-        if (keyword != null) {
-            pages = 0;
-        }
-        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<Post> pageResult = repository.findDataPostByAdmin(set.keyword(), set.pageable());
