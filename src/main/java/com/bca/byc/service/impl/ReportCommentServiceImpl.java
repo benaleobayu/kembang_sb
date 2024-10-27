@@ -1,12 +1,9 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.Comment;
-import com.bca.byc.entity.Post;
 import com.bca.byc.model.ReportCommentDetailResponse;
 import com.bca.byc.model.ReportCommentIndexResponse;
 import com.bca.byc.model.projection.ReportCommentIndexProjection;
-import com.bca.byc.model.projection.ReportUserIndexProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.CommentReplyRepository;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,15 +40,15 @@ public class ReportCommentServiceImpl implements ReportCommentService {
     private String baseUrl;
 
     @Override
-    public ResultPageResponseDTO<ReportCommentIndexResponse> listDataReportComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate, String reportStatus, String reportType) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, startDate, endDate, reportStatus, reportType);
+    public ResultPageResponseDTO<ReportCommentIndexResponse> listDataReportComment(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate, String reportStatus) {
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, startDate, endDate, reportStatus);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         // set date
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
+        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(null, set.keyword(), set.pageable(), start, end, reportStatus);
 
         List<Long> reportedIds = pageResult.stream()
                 .mapToLong(ReportCommentIndexProjection::getReportId)
@@ -109,7 +105,7 @@ public class ReportCommentServiceImpl implements ReportCommentService {
         // set date
         LocalDateTime start = LocalDateTime.of(1970, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
-        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(id, null, null, start, end, null, null);
+        Page<ReportCommentIndexProjection> pageResult = reportRepository.getDataReportCommentIndex(id, null, null, start, end, null);
         if (pageResult.isEmpty()) {
             throw new EntityNotFoundException("Report Comment not found for ID: " + id);
         }

@@ -7,6 +7,7 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.ReportCommentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,8 @@ public class ReportCommentController {
     static final String urlRoute = "/cms/v1/report/comment";
     private ReportCommentService service;
 
+    private final GlobalAttributeService globalAttributeService;
+
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ReportCommentIndexResponse>>> IndexReportComment(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -38,22 +41,24 @@ public class ReportCommentController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(name = "reportStatus", required = false) String reportStatus,
-            @RequestParam(name = "reportType", required = false) String reportType
+            @RequestParam(name = "reportStatus", required = false) String reportStatus
     ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok()
                 .body(new PaginationCmsResponse<>
-                        (true, "Success get list report Comment", service.listDataReportComment(pages,
-                                limit,
-                                sortBy,
-                                direction,
-                                keyword,
-                                startDate,
-                                endDate,
-                                reportStatus,
-                                reportType)));
+                        (true, "Success get list report Comment",
+                                service.listDataReportComment(pages,
+                                        limit,
+                                        sortBy,
+                                        direction,
+                                        keyword,
+                                        startDate,
+                                        endDate,
+                                        reportStatus
+                                ),
+                                globalAttributeService.listStatusTypeReportContentComment()
+                                ));
     }
 
     @GetMapping("{id}")
