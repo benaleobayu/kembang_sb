@@ -17,11 +17,12 @@ public interface GlobalAttributeService {
 
     List<Map<String, List<?>>> listAttributeChannel();
 
+    List<Map<String, List<?>>> listStatusTypeReportContentComment();
+
     // -------------------------------------
 
     void makeUserBulkDeleteTrue(Set<String> ids);
 
     void makeUserBulkHardDeleteTrue(Set<String> ids);
-
 
 }

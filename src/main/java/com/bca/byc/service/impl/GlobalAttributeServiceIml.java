@@ -1,7 +1,9 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.AppUserAttribute;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.UserType;
 import com.bca.byc.model.attribute.AttributeResponse;
@@ -17,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserManagementServiceImpl implements GlobalAttributeService {
+public class GlobalAttributeServiceIml implements GlobalAttributeService {
 
     private final AppAdminRepository adminRepository;
     private final UserManagementRepository userManagementRepository;
@@ -126,6 +127,24 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
 
         return attributes;
     }
+
+    @Override
+    public List<Map<String, List<?>>> listStatusTypeReportContentComment() {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        List<AttributeResponse<String>> listStatus = Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>("REQUEST", "Request"),
+                new AttributeResponse<>("DRAFT", "Draft"),
+                new AttributeResponse<>("REVIEW", "Review"),
+                new AttributeResponse<>("REJECT", "Reject"),
+                new AttributeResponse<>("TAKE_DOWN", "Take Down")
+        );
+        Map<String, List<?>> listAttr = new HashMap<>();
+        listAttr.put("status", listStatus);
+        attributes.add(listAttr);
+
+        return attributes;
+    }
     // ------------------------------------------------------------------------------------------------
 
     @Override
@@ -166,7 +185,7 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     //----- helper -----
 
     // -- location --
-    private List<AttributeResponse<Long>> getLocationList(){
+    private List<AttributeResponse<Long>> getLocationList() {
         List<AttributeResponse<Long>> listStatusResponse = new ArrayList<>();
         listStatusResponse.add(new AttributeResponse<>(null, "All"));
         listStatusResponse.addAll(locationRepository.findAll().stream()
@@ -182,7 +201,7 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     }
 
     // -- business category --
-    private List<AttributeResponse<Long>> getBusinessCategoryList(){
+    private List<AttributeResponse<Long>> getBusinessCategoryList() {
         List<AttributeResponse<Long>> responses = new ArrayList<>();
         responses.add(new AttributeResponse<>(null, "All"));
         responses.addAll(businessCategoryRepository.findAll().stream()
@@ -197,8 +216,8 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     }
 
     // -- userTypes --
-    private List<AttributeResponse<String>> getUserTypeList(){
-       return Arrays.asList(
+    private List<AttributeResponse<String>> getUserTypeList() {
+        return Arrays.asList(
                 new AttributeResponse<>(null, "All"),
                 new AttributeResponse<>(UserType.MEMBER_SOLITAIRE.name(), "Solitaire"),
                 new AttributeResponse<>(UserType.MEMBER_PRIORITY.name(), "Priority"),
@@ -207,7 +226,7 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     }
 
     // -- status --
-    private List<AttributeResponse<Boolean>> getStatusList(){
+    private List<AttributeResponse<Boolean>> getStatusList() {
         return Arrays.asList(
                 new AttributeResponse<>(null, "All"),
                 new AttributeResponse<>(true, "Active"),
@@ -216,7 +235,7 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     }
 
     // -- role --
-    private List<AttributeResponse<String>> getRoleList(){
+    private List<AttributeResponse<String>> getRoleList() {
         List<AttributeResponse<String>> responses = new ArrayList<>();
         responses.add(new AttributeResponse<>(null, "All"));
         responses.addAll(roleRepository.findAllByIdNotIn(Arrays.asList(1)).stream()
@@ -231,7 +250,7 @@ public class UserManagementServiceImpl implements GlobalAttributeService {
     }
 
     // -- seniority --
-    private List<AttributeResponse<Boolean>> getSeniorityList(){
+    private List<AttributeResponse<Boolean>> getSeniorityList() {
         return Arrays.asList(
                 new AttributeResponse<>(null, "All"),
                 new AttributeResponse<>(true, "Senior"),
