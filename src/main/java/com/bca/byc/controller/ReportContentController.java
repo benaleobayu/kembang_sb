@@ -1,15 +1,14 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.ChangeStatusRequest;
 import com.bca.byc.model.ReportContentDetailResponse;
 import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.ReportContentService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -31,6 +30,8 @@ public class ReportContentController {
     static final String urlRoute = "/cms/v1/report/content";
     private ReportContentService service;
 
+    private final GlobalAttributeService globalAttributeService;
+
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<ReportContentIndexResponse>>> IndexReportContent(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -40,12 +41,14 @@ public class ReportContentController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(name = "reportStatus", required = false) String reportStatus,
-            @RequestParam(name = "reportType", required = false) String reportType
+            @RequestParam(name = "reportStatus", required = false) String reportStatus
     ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list report content", service.listDataReportContent(pages, limit, sortBy, direction, keyword, startDate, endDate, reportStatus, reportType)));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true,
+                "Success get list report content",
+                service.listDataReportContent(pages, limit, sortBy, direction, keyword, startDate, endDate, reportStatus),
+                globalAttributeService.listStatusTypeReportContentComment()));
     }
 
     @GetMapping("{id}")

@@ -15,8 +15,7 @@ public interface ReportContentService {
                                                                             String keyword,
                                                                             LocalDate startDate,
                                                                             LocalDate endDate,
-                                                                            String reportStatus,
-                                                                            String reportType);
+                                                                            String reportStatus);
 
     ReportContentDetailResponse findDataById(String id);
 

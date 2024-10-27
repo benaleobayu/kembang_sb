@@ -33,15 +33,15 @@ public class ReportContentServiceImpl implements ReportContentService {
     private String baseUrl;
 
     @Override
-    public ResultPageResponseDTO<ReportContentIndexResponse> listDataReportContent(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate, String reportStatus, String reportType) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, startDate, endDate, reportStatus, reportType);
+    public ResultPageResponseDTO<ReportContentIndexResponse> listDataReportContent(Integer pages, Integer limit, String sortBy, String direction, String keyword, LocalDate startDate, LocalDate endDate, String reportStatus) {
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, startDate, endDate, reportStatus);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         // set date
         LocalDateTime start = (startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay();
         LocalDateTime end = (endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59);
 
-        Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus, reportType);
+        Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus);
 
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
                 .map(data -> new ReportContentIndexResponse(
@@ -74,7 +74,7 @@ public class ReportContentServiceImpl implements ReportContentService {
         // set date
         LocalDateTime start = LocalDateTime.of(1970, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
-        Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(id, null, null, start, end, null, null);
+        Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(id, null, null, start, end, null);
         if (pageResult.isEmpty()) {
             throw new EntityNotFoundException("Report content not found for ID: " + id);
         }
