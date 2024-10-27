@@ -3,14 +3,14 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.PreRegisterDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeLogGeneral;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.PreRegister;
 import com.bca.byc.entity.elastic.PreRegisterElastic;
 import com.bca.byc.enums.AdminApprovalStatus;
-import com.bca.byc.enums.LogStatus;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.Elastic.PreRegisterIndexElasticResponse;
-import com.bca.byc.model.LogUserManagementRequest;
+import com.bca.byc.model.LogGeneralRequest;
 import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
@@ -18,6 +18,7 @@ import com.bca.byc.model.projection.CmsGetIdFromSecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.Elastic.PreRegisterElasticRepository;
+import com.bca.byc.repository.LogRequestRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -41,8 +42,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.converter.parsing.TreeLogUserManagement.logUserManagement;
-
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -52,10 +51,13 @@ public class PreRegisterServiceImpl implements PreRegisterService {
     private PreRegisterElasticRepository preRegisterElasticRepository;
 
     private LogUserManagementRepository logUserManagementRepository;
+    private LogRequestRepository logRequestRepository;
     private PreRegisterDTOConverter converter;
 
     private AppAdminService adminService;
     private AppAdminRepository adminRepository;
+
+    static final String modelType = "PRE_REGISTER";
 
     @Override
     public PreRegisterDetailResponse findDataById(Long id) throws BadRequestException {
@@ -245,18 +247,15 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         // update on converter
         converter.convertToRejectRequest(data, reason, admin);
 
-        LogUserManagementRequest dto = new LogUserManagementRequest(
-                "REJECT",
-                reason.message()
+        LogGeneralRequest log = new LogGeneralRequest(
+                data.getId(),
+                modelType,
+                reason.message(),
+                data.getStatusApproval().name(),
+                AdminApprovalStatus.REJECTED.name()
         );
-        logUserManagement(
-                data,
-                null,
-                admin,
-                LogStatus.REJECT,
-                dto,
-                logUserManagementRepository
-        );
+
+        TreeLogGeneral.savingToLogGeneral(logRequestRepository, admin, log);
         // save
         preRegisterRepository.save(data);
     }

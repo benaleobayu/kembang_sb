@@ -31,4 +31,6 @@ public class PreRegisterDetailResponse extends AdminModelBaseDTOResponse {
     private Integer orders;
     private String approvalStatus;
 
+    private String reasonRejected;
+
 }

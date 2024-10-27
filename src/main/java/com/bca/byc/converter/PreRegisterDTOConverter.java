@@ -1,10 +1,7 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Branch;
-import com.bca.byc.entity.PreRegister;
-import com.bca.byc.entity.UserManagementLog;
+import com.bca.byc.entity.*;
 import com.bca.byc.entity.elastic.PreRegisterElastic;
 import com.bca.byc.enums.AdminApprovalStatus;
 import com.bca.byc.enums.LogStatus;
@@ -15,6 +12,7 @@ import com.bca.byc.model.PreRegisterCreateRequest;
 import com.bca.byc.model.PreRegisterDetailResponse;
 import com.bca.byc.model.PreRegisterUpdateRequest;
 import com.bca.byc.repository.BranchRepository;
+import com.bca.byc.repository.LogRequestRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.PreRegisterRepository;
 import com.bca.byc.response.RejectRequest;
@@ -39,6 +37,7 @@ public class PreRegisterDTOConverter {
     private final EmailService emailService;
 
     private LogUserManagementRepository logRepository;
+    private LogRequestRepository logRequestRepository;
 
     private ModelMapper modelMapper;
 
@@ -68,6 +67,11 @@ public class PreRegisterDTOConverter {
 
         dto.setBranchCode(branchCodeResponse);
         dto.setPicName(data.getPicName());
+
+        LogRequest logData = logRequestRepository.findMessageOnPreRegisterRejected(data.getId(), "PRE_REGISTER", AdminApprovalStatus.REJECTED.name());
+        if (logData != null){
+            dto.setReasonRejected(logData.getNote());
+        }
 
         dto.setMemberBirthdate(Formatter.formatLocalDate(data.getMemberBirthdate()));
         dto.setParentBirthdate(Formatter.formatLocalDate(data.getParentBirthdate()));

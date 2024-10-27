@@ -18,6 +18,10 @@ public interface LogRequestRepository extends JpaRepository<LogRequest, Long> {
 
     Optional<LogRequest> findById(Long id);
 
+    @Query("SELECT l FROM LogRequest l WHERE l.modelId = :id AND l.modelType = :preRegister AND l.logTo = :logTo ORDER BY l.createdAt DESC")
+    LogRequest findMessageOnPreRegisterRejected(@Param("id") Long id, @Param("preRegister") String preRegister, @Param("logTo") String logTo);
+
+
     @Query("SELECT lr FROM LogRequest lr")
     List<LogRequest> findAllAndOrderByName();
 
@@ -29,6 +33,7 @@ public interface LogRequestRepository extends JpaRepository<LogRequest, Long> {
     Page<LogRequest> listLogRequestByModelableId(@Param("id") String id,
                                                  @Param("keyword") String keyword,
                                                  Pageable pageable);
+
     // --- input attribute ---
 
 
