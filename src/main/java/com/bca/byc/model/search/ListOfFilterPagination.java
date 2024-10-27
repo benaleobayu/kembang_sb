@@ -12,7 +12,6 @@ public class ListOfFilterPagination {
     private LocalDate endDate;
     private AdminApprovalStatus adminApprovalStatus;
     private String reportStatus;
-    private String reportType;
     private String roleId;
     private Boolean status;
 
@@ -46,11 +45,10 @@ public class ListOfFilterPagination {
         this.status = status;
     }
 
-    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, String reportStatus, String reportType) {
+    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, String reportStatus) {
         this.keyword = keyword;
         this.startDate = startDate;
         this.endDate = endDate;
         this.reportStatus = reportStatus;
-        this.reportType = reportType;
     }
 }
