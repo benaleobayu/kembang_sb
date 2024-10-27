@@ -80,8 +80,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "LOWER(r.secureId) LIKE LOWER(:reportId)) AND " +
             "r.createdAt BETWEEN :startDate AND :endDate AND " +
             "(:reportStatus IS NULL OR r.status = :reportStatus) AND " +
-            "(:reportType IS NULL OR r.type = :reportType) AND " +
-            "r.type = 'POST'" +
+            "r.type = 'POST' " +
             "GROUP BY p.id, r.id, u.id, u.appUserDetail.id, u.appUserAttribute.id,  pc.id , t.id, ru.email, c.name " +
             "ORDER BY r.createdAt DESC")
     Page<ReportContentIndexProjection> getDataReportIndex(@Param("reportId") String reportId,
@@ -89,8 +88,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                                                           Pageable pageable,
                                                           @Param("startDate") LocalDateTime start,
                                                           @Param("endDate") LocalDateTime end,
-                                                          @Param("reportStatus") String reportStatus,
-                                                          @Param("reportType") String reportType);
+                                                          @Param("reportStatus") String reportStatus);
 
     @Query("""
                 SELECT new com.bca.byc.model.projection.ReportCommentIndexProjection(
@@ -108,15 +106,14 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                 LOWER(r.secureId) LIKE LOWER(:reportId)) AND
                 r.createdAt BETWEEN :startDate AND :endDate AND
                 (:reportStatus IS NULL OR r.status = :reportStatus) AND
-                (:reportType IS NULL OR r.type = :reportType)
+                r.type IN ('COMMENT' , 'COMMENT_REPLY')
             """)
     Page<ReportCommentIndexProjection> getDataReportCommentIndex(@Param("reportId") String reportId,
                                                                  @Param("keyword") String keyword,
                                                                  Pageable pageable,
                                                                  @Param("startDate") LocalDateTime start,
                                                                  @Param("endDate") LocalDateTime end,
-                                                                 @Param("reportStatus") String reportStatus,
-                                                                 @Param("reportType") String reportType);
+                                                                 @Param("reportStatus") String reportStatus);
 
     @Query("""
             SELECT new com.bca.byc.model.projection.ReportUserIndexProjection(
