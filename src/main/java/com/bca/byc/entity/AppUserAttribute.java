@@ -72,6 +72,6 @@ public class AppUserAttribute extends AbstractBaseEntityTimestamp{
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "NULL" ;
+    private String reportStatus = "REQUEST" ;
 
 }

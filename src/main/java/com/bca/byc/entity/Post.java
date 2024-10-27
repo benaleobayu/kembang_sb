@@ -58,7 +58,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "NULL";
+    private String reportStatus = "REQUEST";
 
     // relations on post user
 
