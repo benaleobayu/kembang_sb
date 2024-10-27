@@ -23,19 +23,9 @@ public interface PreRegisterElasticRepository extends ElasticsearchRepository<Pr
                    }
                  ],
                  "should": [
-                   {
-                     "query_string": {
-                       "query": "*?0*",
-                       "default_field": "email"
-                     }
-                   },
-                   {
-                     "query_string": {
-                       "query": "*?0*",
-                       "default_field": "name"
-                     }
-                   }
-                 ],
+                      { "query_string": { "query": "?0", "default_field": "email" }},
+                      { "query_string": { "query": "?0", "default_field": "name" }}
+                  ],
                  "filter": [
                    {
                      "range": {
@@ -53,7 +43,8 @@ public interface PreRegisterElasticRepository extends ElasticsearchRepository<Pr
                        }
                      }
                    }
-                 ]
+                 ],
+                   "minimum_should_match": 1
                }
              }
             """)

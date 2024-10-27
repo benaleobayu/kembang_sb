@@ -128,7 +128,7 @@ public class PreRegisterServiceImpl implements PreRegisterService {
         String start = String.valueOf((startDate == null) ? LocalDateTime.of(1970, 1, 1, 0, 0) : startDate.atStartOfDay());
         String end = String.valueOf((endDate == null) ? LocalDateTime.now() : endDate.atTime(23, 59, 59));
 
-        String keywords = keyword == null ? " " : keyword;
+        String keywords = (keyword == null || keyword.isBlank()) ? "*" : "*" + keyword + "*";
         String startStatus = status == null ? "0" : String.valueOf(status.ordinal());
         String endStatus = status == null ? "6" : String.valueOf(status.ordinal());
         Page<PreRegisterElastic> pageResult = null;

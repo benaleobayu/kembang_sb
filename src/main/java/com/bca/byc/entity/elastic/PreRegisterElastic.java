@@ -59,14 +59,26 @@ public class PreRegisterElastic extends AbstractBaseElastic{
     @Field(name = "status_approval", type = FieldType.Text)
     private String statusApproval;
 
+    @Field(type = FieldType.Text, name = "pic_name")
+    private String picName;
+
+
+    // -- custom --
+
     @Field(type = FieldType.Text, name = "branch_id")
     private String branchId;
 
     @Field(type = FieldType.Text, name = "branch_name")
     private String branchName;
 
-    @Field(type = FieldType.Text, name = "pic_name")
-    private String picName;
+    @Field(type = FieldType.Text, name = "email_of_created_by")
+    private String emailOfCreatedBy;
+
+    @Field(type = FieldType.Text, name = "email_of_updated_by")
+    private String emailOfUpdatedBy;
+
+    // -- custom --
+
 
     @Override
     public Long getId() {
