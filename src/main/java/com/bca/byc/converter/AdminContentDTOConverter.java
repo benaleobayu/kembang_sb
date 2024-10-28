@@ -8,6 +8,7 @@ import com.bca.byc.model.AdminContentCreateUpdateRequest;
 import com.bca.byc.model.AdminContentDetailResponse;
 
 import com.bca.byc.model.AdminContentIndexResponse;
+import com.bca.byc.model.ChannelChecklistResponse;
 import com.bca.byc.util.helper.Formatter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -68,11 +70,21 @@ public class AdminContentDTOConverter {
 
         List<String> tags = data.getTags().stream().map(Tag::getName).toList();
 
+        ChannelChecklistResponse channel = new ChannelChecklistResponse(
+                data.getChannel().getSecureId(),
+                data.getChannel().getName(),
+                true
+        );
+
+        List<String> contents = data.getPostContents().stream().map(PostContent::getContent).collect(Collectors.toList());
+
         // return
         return new AdminContentDetailResponse(
                 data.getSecureId(), // id
+                channel,
                 GlobalConverter.convertListToArray(data.getHighlight()), // get highlight
                 GlobalConverter.getParseImage(thumbnail, baseUrl), // get thumbnail
+                contents,
                 data.getDescription(),
                 GlobalConverter.convertListToArray(String.join(",", tags)),
                 data.getAdmin().getName(),

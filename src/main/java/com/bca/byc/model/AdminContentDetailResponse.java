@@ -6,9 +6,13 @@ public record AdminContentDetailResponse(
 
         String id,
 
+        ChannelChecklistResponse channel,
+
         List<String> highlight,
 
         String thumbnail,
+
+        List<String> contents,
 
         String description,
 
