@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class SettingDetailResponse {
 
-    private String id;
+    private Long id;
     private String name;
     private String identity;
     private String description;
