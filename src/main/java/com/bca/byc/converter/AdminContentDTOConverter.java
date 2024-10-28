@@ -70,11 +70,10 @@ public class AdminContentDTOConverter {
 
         List<String> tags = data.getTags().stream().map(Tag::getName).toList();
 
-        ChannelChecklistResponse channel = new ChannelChecklistResponse(
-                data.getChannel().getSecureId(),
-                data.getChannel().getName(),
-                true
-        );
+        ChannelChecklistResponse channel = new ChannelChecklistResponse();
+        channel.setId(data.getChannel().getSecureId());
+        channel.setName(data.getChannel().getName());
+        channel.setIsChecked(true);
 
         List<String> contents = data.getPostContents().stream().map(PostContent::getContent).collect(Collectors.toList());
 
