@@ -96,11 +96,11 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
     @Override
     public ResultPageResponseDTO<PostHomeResponse> listDataUserFollowAndFollowing(Integer pages, Integer limit, String sortBy, String direction, String keyword, String type, String userId) {
         AppUser userAccess = GlobalConverter.getUserEntity(userRepository);
-        AppUser userLogin;
+        AppUser userVisit;
         if (userId == null) {
-            userLogin = GlobalConverter.getUserEntity(userRepository);
+            userVisit = GlobalConverter.getUserEntity(userRepository);
         } else {
-            userLogin = HandlerRepository.getEntityBySecureId(userId, userRepository, "user not found");
+            userVisit = HandlerRepository.getEntityBySecureId(userId, userRepository, "user not found");
         }
 
         // Validate parameters
@@ -114,9 +114,9 @@ public class AppUserProfileServiceImpl implements AppUserProfileService {
         // Retrieve followers or following
         Page<AppUser> pageResult;
         if (type.equals("FOLLOWING")) {
-            pageResult = userRepository.findFollowing(userLogin.getId(), userAccess.getId(), set.keyword(), set.pageable());
+            pageResult = userRepository.findFollowing(userVisit.getId(), userAccess.getId(), set.keyword(), set.pageable());
         } else if (type.equals("FOLLOWERS")) {
-            pageResult = userRepository.findFollowers(userLogin.getId(), userAccess.getId(), set.keyword(), set.pageable());
+            pageResult = userRepository.findFollowers(userVisit.getId(), userAccess.getId(), set.keyword(), set.pageable());
         } else {
             throw new IllegalArgumentException("Invalid type. Must be 'FOLLOWING' or 'FOLLOWERS'.");
         }
