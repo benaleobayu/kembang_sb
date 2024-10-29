@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     errorResponse = ErrorResponseDTO.of("Please re-login your account", details, ErrorCode.REDIRECT, HttpStatus.FORBIDDEN);
                     response.setStatus(HttpServletResponse.SC_FOUND); // 302
                 } else if (request.getRequestURI().contains("api/")) {
-                    errorResponse = ErrorResponseDTO.of("Please re-login your account", details, ErrorCode.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+                    errorResponse = ErrorResponseDTO.of("You've been logged out of the BYC App. Log in again to continue building your network!", details, ErrorCode.UNAUTHORIZED, HttpStatus.FORBIDDEN);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
                 }
                 response.setContentType("application/json");
