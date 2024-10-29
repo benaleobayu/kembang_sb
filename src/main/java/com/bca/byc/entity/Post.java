@@ -26,11 +26,6 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 //    private Long id;
 
     @Override
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
     public String getSecureId() {
         return super.getSecureId();
     }
@@ -75,7 +70,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @JoinColumn(name = "post_category_id")
     private BusinessCategory postCategory;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "post_has_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -99,6 +94,9 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostHasTags> postHasTags = new ArrayList<>();
 
     // relation on admin post
 

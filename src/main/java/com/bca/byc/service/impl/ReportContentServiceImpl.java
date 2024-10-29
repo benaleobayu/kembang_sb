@@ -8,6 +8,7 @@ import com.bca.byc.model.ReportContentIndexResponse;
 import com.bca.byc.model.projection.ReportContentIndexProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
+import com.bca.byc.repository.PostHasTagRepository;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportContentService;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class ReportContentServiceImpl implements ReportContentService {
 
     private final ReportRepository reportRepository;
+    private final PostHasTagRepository postHasTagRepository;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -46,9 +48,8 @@ public class ReportContentServiceImpl implements ReportContentService {
 
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
                 .map(data -> {
-                    Set<String> allTags = data.getTags().stream()
-                            .map(Tag::getName)
-                            .collect(Collectors.toSet());
+                    Set<Tag> allTags = postHasTagRepository.getTagsByPostId(data.getId());
+                    Set<String> tagNames = allTags.stream().map(Tag::getName).collect(Collectors.toSet());
 
                     return new ReportContentIndexResponse(
                             data.getId(),
@@ -58,7 +59,7 @@ public class ReportContentServiceImpl implements ReportContentService {
                                     .collect(Collectors.toList()) : null,
                             GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
                             data.getDescription(),
-                            allTags.isEmpty() ? null : allTags,
+                            tagNames.isEmpty() ? null : tagNames,
                             data.getCreator(),
                             data.getReporterEmail(),
                             data.getStatusReport(),
