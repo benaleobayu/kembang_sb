@@ -21,9 +21,9 @@ import java.util.Set;
 })
 public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
     @Override
     public String getSecureId() {
@@ -70,7 +70,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @JoinColumn(name = "post_category_id")
     private BusinessCategory postCategory;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "post_has_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -101,7 +101,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @JoinColumn(name = "channel_id")
     private Channel channel;
 
-    @Column(name = "highlight")
+    @Column(name = "highlight", columnDefinition = "text")
     private String highlight;
 
     @ManyToOne
@@ -113,7 +113,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 
     // promoted
 
-    @Column(name = "promotedStatus")
+    @Column(name = "promoted_status")
     private String promotedStatus = "NOT_DEFINED";
 
     @Column(name = "promoted_active")

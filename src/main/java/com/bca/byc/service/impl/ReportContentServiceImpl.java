@@ -46,7 +46,9 @@ public class ReportContentServiceImpl implements ReportContentService {
 
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
                 .map(data -> {
-                    Set<String> allTags = data.getTags().stream().map(Tag::getName).collect(Collectors.toSet());
+                    Set<String> allTags = data.getTags().stream()
+                            .map(Tag::getName)
+                            .collect(Collectors.toSet());
 
                     return new ReportContentIndexResponse(
                             data.getId(),
@@ -56,7 +58,7 @@ public class ReportContentServiceImpl implements ReportContentService {
                                     .collect(Collectors.toList()) : null,
                             GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
                             data.getDescription(),
-                            data.getTags() != null ? allTags : null,
+                            allTags.isEmpty() ? null : allTags,
                             data.getCreator(),
                             data.getReporterEmail(),
                             data.getStatusReport(),
