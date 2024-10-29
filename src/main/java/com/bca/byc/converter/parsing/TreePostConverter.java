@@ -37,16 +37,16 @@ public class TreePostConverter {
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
         dto.setPostAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
-        AppUser appUser = data.getUser();
+        if (data.getIsAdminPost() == null) {
+            dto.setPostOwner(convertOwnerDataWithBusiness(converter, data.getUser(), userLogin));
+            // check is my post or not
+            dto.setIsMyPost(Objects.equals(data.getUser().getId(), userLogin.getId()));
+        }
 
         dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
-        dto.setPostOwner(convertOwnerDataWithBusiness(converter, appUser, userLogin));
         dto.setPostCategory(data.getPostCategory() == null ? null :convertPostCategory(data.getPostCategory()));
         dto.setPostLocation(data.getPostLocation() == null ? null : convertPostLocation(data.getPostLocation()));
-
-        // check is my post or not
-        dto.setIsMyPost(Objects.equals(appUser.getId(), userLogin.getId()));
 
         // Check if the post is liked by the userLogin
         boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(data.getId(), userLogin.getId()).isPresent();
