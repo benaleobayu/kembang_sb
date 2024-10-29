@@ -198,6 +198,8 @@ public class AdminServiceImpl implements AdminService {
         }
         data.setIsActive(dto.getStatus());
         data.setIsVisible(dto.getIsVisible());
+
+        repository.save(data);
     }
 
 
