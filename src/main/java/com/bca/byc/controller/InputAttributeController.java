@@ -124,6 +124,19 @@ public class InputAttributeController {
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.AdminType(pages, limit, sortBy, direction, keyword)));
     }
 
+    @GetMapping("accounts")
+    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> Accounts(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10000") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+        // response true
+        log.info("GET " + urlRoute + "/accounts endpoint hit");
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.Accounts(pages, limit, sortBy, direction, keyword)));
+    }
+
+
 
 
 }

@@ -22,6 +22,8 @@ public interface InputAttributeService {
 
     ResultPageResponseDTO<AttributeResponse<String>> RoleList(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
+    ResultPageResponseDTO<AttributeResponse<String>> Accounts(Integer pages, Integer limit, String sortBy, String direction, String keyword);
+
     List<Map<String, List<?>>> listReportDetailOf(String detailOf);
 
     List<Map<String, List<?>>> AdminType(Integer pages, Integer limit, String sortBy, String direction, String keyword);

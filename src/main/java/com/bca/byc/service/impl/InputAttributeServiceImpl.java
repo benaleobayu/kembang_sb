@@ -33,6 +33,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     private final LocationRepository locationRepository;
     private final ChannelRepository channelRepository;
     private final RoleRepository roleRepository;
+    private final AccountRepository accountRepository;
 
     private final InputAttributeDTOConverter converter;
 
@@ -136,6 +137,20 @@ public class InputAttributeServiceImpl implements InputAttributeService {
     }
 
     @Override
+    public ResultPageResponseDTO<AttributeResponse<String>> Accounts(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
+        ListOfFilterPagination filter = new ListOfFilterPagination(
+                keyword
+        );
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<CastSecureIdAndNameProjection> pageResult = accountRepository.findSecureIdAndName(set.keyword(), set.pageable());
+        List<AttributeResponse<String>> dtos = pageResult.stream()
+                .map(this::convertToListAttribute)
+                .collect(Collectors.toList());
+
+        return PageCreateReturn.create(pageResult, dtos);
+    }
+
+    @Override
     public List<Map<String, List<?>>> listReportDetailOf(String detailOf) {
         List<Map<String, List<?>>> attributes = new ArrayList<>();
         // Data UserTypes
@@ -174,7 +189,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
         return response;
     }
 
-    public AttributeResponse convertToListAttribute(AttrIdentificable dto) {
+    public AttributeResponse<String> convertToListAttribute(AttrIdentificable dto) {
         AttributeResponse<String> response = new AttributeResponse<>();
         response.setId(dto.getSecureId());
         response.setName(dto.getName());
