@@ -75,39 +75,6 @@ public class PostDTOConverter {
         return dto;
     }
 
-    public PostDiscoverResponse listDataPostDiscoverHome(Channel data, AppUser userLogin) {
-
-        PostDiscoverResponse dto = new PostDiscoverResponse();
-        List<PostOnChannelResponse> categories = new ArrayList<>();
-        for (Post d : data.getContents()){
-            PostOnChannelResponse category = new PostOnChannelResponse();
-            category.setCategoryId(d.getChannel().getSecureId());
-            category.setCategoryName(d.getChannel().getName());
-
-            boolean above7post = d.getChannel().getContents().size() > 7;
-            category.setIsSeeMore(above7post);
-
-            TreePostConverter converter = new TreePostConverter(baseUrl);
-            List<PostHomeResponse> posts = new ArrayList<>();
-            for (Post listdata : d.getChannel().getContents().stream().limit(7).toList()){
-                PostHomeResponse postData = converter.convertToPostHomeResponse(
-                        new PostHomeResponse(),
-                        listdata,
-                        converter,
-                        userLogin,
-                        likeDislikeRepository
-                );
-                posts.add(postData);
-            }
-            category.setPost(posts);
-        }
-
-
-        dto.setCategories(categories);
-
-        return dto;
-    }
-
     // for create data
     public Post convertToCreateRequest(AppUser user, @Valid PostCreateUpdateRequest dto) {
         // mapping DTO Entity with Entity

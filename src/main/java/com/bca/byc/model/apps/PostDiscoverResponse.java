@@ -11,6 +11,8 @@ public class PostDiscoverResponse {
 
     private String channelName;
 
-    private List<PostOnChannelResponse> categories;
+    private Boolean isSeeMore = false;
+
+    private List<ListPostDiscoverResponse> categories;
 
 }

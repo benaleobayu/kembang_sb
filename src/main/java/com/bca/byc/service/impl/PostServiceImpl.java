@@ -13,24 +13,24 @@ import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.apps.ListPostDiscoverResponse;
 import com.bca.byc.model.apps.PostDiscoverResponse;
-import com.bca.byc.model.apps.PostOnChannelResponse;
+import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
-import com.bca.byc.repository.ChannelRepository;
-import com.bca.byc.repository.PostContentRepository;
-import com.bca.byc.repository.PostRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +47,13 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
 
+    private final LikeDislikeRepository likeDislikeRepository;
+    private final UserHasSavedPostRepository userHasSavedPostRepository;
+
     private final ChannelRepository channelRepository;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
 
     @Override
@@ -91,6 +97,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
+        TreePostConverter postConverter = new TreePostConverter(baseUrl);
 
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
@@ -101,10 +108,43 @@ public class PostServiceImpl implements PostService {
             dto.setChannelId(channel.getSecureId());
             dto.setChannelName(channel.getName());
 
-            List<PostOnChannelResponse> posts = channel.getContents().stream().limit(7).map(post -> {
-                PostOnChannelResponse postResponse = new PostOnChannelResponse();
-                postResponse.setCategoryId(post.getChannel().getSecureId());
-                postResponse.setCategoryName(post.getChannel().getName());
+            boolean haveMore7Contents = channel.getContents().size() > 7;
+            dto.setIsSeeMore(haveMore7Contents);
+
+            List<ListPostDiscoverResponse> posts = channel.getContents().stream().limit(7).map(post -> {
+                ListPostDiscoverResponse postResponse = new ListPostDiscoverResponse();
+                postResponse.setPostId(post.getSecureId());
+                postResponse.setPostDescription(post.getDescription());
+                postResponse.setPostAt(post.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME));
+
+                postResponse.setPostTagsList(postConverter.convertTagList(post.getTags()));
+                postResponse.setPostHighlightsList(postConverter.convertPostHighlightsList(post));
+                postResponse.setPostContentList(postConverter.convertPostContents(post.getPostContents(), postConverter, userLogin));
+                postResponse.setPostOwner(postConverter.PostOwnerAdminResponse(
+                        new PostOwnerResponse(),
+                        post.getAdmin(),
+                        userLogin
+                ));
+
+                postResponse.setIsCommentable(post.getIsCommentable());
+                postResponse.setIsShareable(post.getIsShareable());
+                postResponse.setIsShowLikes(post.getIsShowLikes());
+                postResponse.setIsPosted(post.getIsPosted());
+
+                postResponse.setIsMyPost(false);
+                boolean isLiked = likeDislikeRepository.findByPostIdAndUserId(post.getId(), userLogin.getId()).isPresent();
+                postResponse.setIsLiked(isLiked);
+                boolean isSaved = userHasSavedPostRepository.findByPostIdAndUserId(post.getId(), userLogin.getId()).isPresent();
+                postResponse.setIsSaved(isSaved);
+                postResponse.setIsFollowed(false);
+                postResponse.setIsOfficial(true);
+
+                postResponse.setOfficialUrl(null);
+
+                postResponse.setLikeCount(post.getLikesCount());
+                postResponse.setCommentCount(post.getCommentsCount());
+
+
                 return postResponse;
             }).collect(Collectors.toList());
             dto.setCategories(posts);

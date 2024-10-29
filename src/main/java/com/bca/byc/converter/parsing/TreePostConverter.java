@@ -228,6 +228,21 @@ public class TreePostConverter {
         return dto;
     }
 
+    public PostOwnerResponse PostOwnerAdminResponse(PostOwnerResponse dto,
+                                               AppAdmin userPost,
+                                               AppUser userLogin
+    ) {
+        dto.setId(userPost.getSecureId());
+        dto.setName(userPost.getName());
+        dto.setAvatar(GlobalConverter.getAvatarImage(userPost.getAvatar(), baseUrl));
+        boolean isMyAccount = Objects.equals(userPost.getId(), userLogin.getId());
+        dto.setIsMyAccount(isMyAccount);
+        boolean isFollowing = userLogin.getFollows().stream().anyMatch(f -> f.getId().equals(userPost.getId()));
+        dto.setIsFollowed(isFollowing);
+        return dto;
+    }
+
+
 
     public PostContentDetailResponse PostContentDetailResponse(PostContentDetailResponse dto, String contentId, String content, String contentType, String thumbnail, List<PostOwnerResponse> tagsUser
     ) {
@@ -361,6 +376,12 @@ public class TreePostConverter {
         dto.setLongitude(postLocation.getLongitude() == null ? null : postLocation.getLongitude());
         dto.setLatitude(postLocation.getLatitude() == null ? null : postLocation.getLatitude());
         return dto;
+    }
+
+    public List<String> convertPostHighlightsList(Post data) {
+        return data.getHighlight() != null ? Arrays.stream(data.getHighlight().split(","))
+                .map(String::trim)
+                .collect(Collectors.toList()) : null;
     }
 
 }
