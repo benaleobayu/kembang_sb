@@ -211,7 +211,8 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post updatePost = parseToPost(channelId, highlight, description, tags, isPublish, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
+            Post updatePost = HandlerRepository.getEntityBySecureId(id, postRepository, "Post not found");
+            parseToPost(channelId, highlight, description, tags, isPublish, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
             service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
         } catch (BadRequestException | IOException e) {
