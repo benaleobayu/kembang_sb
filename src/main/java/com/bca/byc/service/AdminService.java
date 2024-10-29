@@ -27,7 +27,7 @@ public interface AdminService {
 
     void DeleteAdmin(String id) throws Exception;
 
-    AdminCmsDetailResponse InfoAdmin(String email);
+    AdminCmsDetailResponse InfoAdmin();
 
     AdminPermissionResponse DetailAdmin(String email);
 }

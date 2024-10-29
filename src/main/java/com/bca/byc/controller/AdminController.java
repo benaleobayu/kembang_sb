@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.response.*;
 import com.bca.byc.service.AdminService;
@@ -142,15 +143,13 @@ public class AdminController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get Admin Detail", description = "Get Admin Detail")
     @GetMapping("/info")
-    public ResponseEntity<?> InfoAdmin(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails != null) {
-            String email = userDetails.getUsername(); // Assuming email is used as the username
-            log.info("GET " + urlRoute + "/info endpoint hit on email : {}", userDetails.getUsername());
-            AdminCmsDetailResponse data = service.InfoAdmin(email);
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "User found", data));
-        } else {
-            log.error("GET " + urlRoute + "/info endpoint hit on email : {}", userDetails.getUsername());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized access"));
+    public ResponseEntity<?> InfoAdmin() {
+        log.info("GET " + urlRoute + "/info endpoint hit");
+        try {
+            AdminCmsDetailResponse item = service.InfoAdmin();
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully found admin", item));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

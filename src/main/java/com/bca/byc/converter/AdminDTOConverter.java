@@ -76,6 +76,9 @@ public class AdminDTOConverter {
         List<PermissionListResponse> menuNames = converter.convertRolePermissions(roleHasPermissionList, permissionRepository, "info");
         // Set the grouped permissions to the DTO
         dto.setPermissions(menuNames);
+
+        dto.setStatus(data.getIsActive());
+        dto.setIsVisible(data.getIsVisible());
         // return
         return dto;
     }

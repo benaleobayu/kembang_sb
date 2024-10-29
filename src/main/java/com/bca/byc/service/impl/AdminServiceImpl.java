@@ -238,9 +238,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public AdminCmsDetailResponse InfoAdmin(String email) {
-        AppAdmin data = repository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Admin not found"));
+    public AdminCmsDetailResponse InfoAdmin() {
+        AppAdmin data = GlobalConverter.getAdminEntity(appAdminRepository);
 
         return converter.convertToInfoResponse(data);
     }

@@ -12,6 +12,8 @@ public class AdminCmsDetailResponse {
     private String email;
     private String roleName;
     private List<PermissionListResponse> permissions; // Map<permission, List<SimpleGrantedAuthority>>
+    private Boolean status;
+    private Boolean isVisible;
 
 
 
