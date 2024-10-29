@@ -48,7 +48,7 @@ public class ReportContentServiceImpl implements ReportContentService {
 
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
                 .map(data -> {
-                    Set<Tag> allTags = postHasTagRepository.getTagsByPostId(data.getId());
+                    Set<Tag> allTags = postHasTagRepository.getTagsByPostId(data.getPost().getId());
                     Set<String> tagNames = allTags.stream().map(Tag::getName).collect(Collectors.toSet());
 
                     return new ReportContentIndexResponse(

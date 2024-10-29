@@ -13,5 +13,5 @@ import java.util.Set;
 public interface PostHasTagRepository extends JpaRepository<PostHasTags, Long> {
 
     @Query("SELECT pt.tag FROM PostHasTags pt WHERE pt.post.id = :id")
-    Set<Tag> getTagsByPostId(@Param("id") String id);
+    Set<Tag> getTagsByPostId(@Param("id") Long id);
 }
