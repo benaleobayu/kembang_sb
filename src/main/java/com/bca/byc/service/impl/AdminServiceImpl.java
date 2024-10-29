@@ -5,10 +5,7 @@ import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AccountRepository;
@@ -181,6 +178,26 @@ public class AdminServiceImpl implements AdminService {
         adminHasAccountRepository.deleteByAdminId(data.getId());
         // list of account ids e.g ['abc-def', 'ghi-jkl']
         saveAccountInAdmin(savedAdmin, dto.accountIds());
+    }
+
+    @Override
+    public void UpdateProfileAdmin(UpdateProfileAdminRequest dto) {
+        AppAdmin data = GlobalConverter.getAdminEntity(appAdminRepository);
+
+        data.setName(dto.getName());
+        data.setEmail(dto.getEmail());
+        if (dto.getOldPassword() != null && dto.getNewPassword() != null && dto.getConfirmPassword() != null) {
+            if (!passwordEncoder.matches(dto.getOldPassword(), data.getPassword())) {
+                throw new BadRequestException("Old password is incorrect");
+            }
+            if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+                throw new BadRequestException("Confirm password is incorrect");
+            }
+
+            data.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        }
+        data.setIsActive(dto.getStatus());
+        data.setIsVisible(dto.getIsVisible());
     }
 
 

@@ -1,9 +1,6 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.model.AdminCmsDetailResponse;
-import com.bca.byc.model.AdminCreateRequest;
-import com.bca.byc.model.AdminDetailResponse;
-import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.model.*;
 import com.bca.byc.response.*;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.service.GlobalAttributeService;
@@ -115,6 +112,21 @@ public class AdminController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
+
+      @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Update Admin Profile", description = "Update Admin Profile")
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse> UpdateProfileAdmin(@RequestBody UpdateProfileAdminRequest dto) {
+        log.info("PUT " + urlRoute + "/{id} endpoint hit");
+        try {
+            service.UpdateProfileAdmin(dto);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully updated admin"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+
 
     @PreAuthorize("hasAuthority('admin.delete')")
     @Operation(summary = "Delete Admin", description = "Delete Admin")
