@@ -4,6 +4,7 @@ import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeRolePermissionConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.*;
+import com.bca.byc.repository.AdminHasAccountRepository;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.util.helper.Formatter;
@@ -28,6 +29,7 @@ public class AdminDTOConverter {
 
     private ModelMapper modelMapper;
     private final PermissionRepository permissionRepository;
+    private final AdminHasAccountRepository adminHasAccountRepository;
 
     // for get data
     public AdminDetailResponse convertToListResponse(AppAdmin data) {
@@ -48,16 +50,9 @@ public class AdminDTOConverter {
         boolean haveContent = !data.getPosts().isEmpty();
         dto.setIsHaveContent(haveContent);
 
-        List<Account> accounts = data.getAdminHasAccounts().stream().map(AdminHasAccounts::getAccount).toList();
-        List<CastIdAndNameResponse> listAccounts = new ArrayList<>();
-        for (Account account : accounts) {
-            CastIdAndNameResponse cast = new CastIdAndNameResponse(
-                    account.getSecureId(),
-                    account.getName()
-            );
-            listAccounts.add(cast);
-        }
-        dto.setAccounts(listAccounts);
+        List<AdminHasAccounts> listAccounts = adminHasAccountRepository.findAccountByAdminId(data.getId());
+        List<CastIdAndNameResponse> accounts = listAccounts.stream().map(a -> new CastIdAndNameResponse(a.getAccount().getSecureId(), a.getAccount().getName())).toList();
+        dto.setAccounts(accounts);
         // return
         return dto;
     }
