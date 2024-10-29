@@ -75,22 +75,21 @@ public class PostDTOConverter {
         return dto;
     }
 
-    public PostDiscoverResponse listDataPostDiscoverHome(Post post, AppUser userLogin) {
+    public PostDiscoverResponse listDataPostDiscoverHome(Channel data, AppUser userLogin) {
 
         PostDiscoverResponse dto = new PostDiscoverResponse();
-
         List<PostOnChannelResponse> categories = new ArrayList<>();
-        for (Post data : post.getChannel().getContents()){
+        for (Post d : data.getContents()){
             PostOnChannelResponse category = new PostOnChannelResponse();
-            category.setCategoryId(data.getChannel().getSecureId());
-            category.setCategoryName(data.getChannel().getName());
+            category.setCategoryId(d.getChannel().getSecureId());
+            category.setCategoryName(d.getChannel().getName());
 
-            boolean above7post = data.getChannel().getContents().size() > 7;
+            boolean above7post = d.getChannel().getContents().size() > 7;
             category.setIsSeeMore(above7post);
 
             TreePostConverter converter = new TreePostConverter(baseUrl);
             List<PostHomeResponse> posts = new ArrayList<>();
-            for (Post listdata : data.getChannel().getContents().stream().limit(7).toList()){
+            for (Post listdata : d.getChannel().getContents().stream().limit(7).toList()){
                 PostHomeResponse postData = converter.convertToPostHomeResponse(
                         new PostHomeResponse(),
                         listdata,

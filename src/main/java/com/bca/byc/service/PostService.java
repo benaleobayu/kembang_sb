@@ -15,7 +15,7 @@ public interface PostService {
 
     ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category, Boolean isElastic);
 
-    ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, Boolean isElastic);
+    ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     PostHomeResponse findBySecureId(String secureId);
 

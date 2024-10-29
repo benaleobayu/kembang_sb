@@ -15,13 +15,13 @@ import java.util.Optional;
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
     @Query("""
-SELECT c FROM Channel c
-WHERE
-(LOWER(c.name) LIKE(:keyword) OR
-LOWER(c.description) LIKE(:keyword)) AND
-c.createdAt BETWEEN :startDate AND :endDate AND
-(:status IS NULL OR c.isActive = :status)
-""")
+            SELECT c FROM Channel c
+            WHERE
+            (LOWER(c.name) LIKE(:keyword) OR
+            LOWER(c.description) LIKE(:keyword)) AND
+            c.createdAt BETWEEN :startDate AND :endDate AND
+            (:status IS NULL OR c.isActive = :status)
+            """)
     Page<Channel> findByNameLikeIgnoreCaseOrderByOrders(@Param("keyword") String keyword,
                                                         Pageable pageable,
                                                         @Param("startDate") LocalDateTime start,
@@ -39,4 +39,13 @@ c.createdAt BETWEEN :startDate AND :endDate AND
 
     @Query("SELECT c FROM Channel c WHERE c.secureId = :channelId ")
     Optional<IdSecureIdProjection> findByIdAndSecureId(@Param("channelId") String channelId);
+
+    @Query("""
+            SELECT c FROM Channel c
+            JOIN c.contents cp
+            WHERE c.isActive = true AND
+            cp.isAdminPost = true AND
+            (LOWER(c.name) LIKE(:keyword))
+            """)
+    Page<Channel> findChannels(@Param("keyword") String keyword, Pageable pageable);
 }

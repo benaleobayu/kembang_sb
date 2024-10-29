@@ -37,7 +37,10 @@ public class TreePostConverter {
         dto.setIsShowLikes(data.getIsShowLikes());
         dto.setIsPosted(data.getIsPosted());
         dto.setPostAt(data.getCreatedAt() != null ? data.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME) : null);
-        if (data.getIsAdminPost() == null) {
+
+        boolean isAdminPost = data.getIsAdminPost() != null && data.getIsAdminPost();
+
+        if (!isAdminPost) {
             dto.setPostOwner(convertOwnerDataWithBusiness(converter, data.getUser(), userLogin));
             // check is my post or not
             dto.setIsMyPost(Objects.equals(data.getUser().getId(), userLogin.getId()));
@@ -53,12 +56,12 @@ public class TreePostConverter {
         dto.setIsLiked(isLiked);
 
         // Check if the userLogin is following the post owner
-        boolean isFollowing = data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(userLogin.getId()));
+        boolean isFollowing = !isAdminPost && data.getUser().getFollowers().stream().anyMatch(f -> f.getId().equals(userLogin.getId()));
         dto.setIsFollowed(isFollowing);
 
-        dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
+        dto.setIsOfficial(!isAdminPost && data.getUser().getAppUserAttribute().getIsOfficial());
 
-        String officialUrl = data.getUser().getAppUserAttribute().getOfficialUrl();
+        String officialUrl = !isAdminPost ? data.getUser().getAppUserAttribute().getOfficialUrl() : null;
         dto.setOfficialUrl(officialUrl);
 
         dto.setLikeCount(data.getLikesCount());
@@ -276,35 +279,54 @@ public class TreePostConverter {
 
     // Helper post content
     public List<PostContentDetailResponse> convertPostContents(List<PostContent> postContentList, TreePostConverter converter, AppUser userLogin) {
-        return postContentList.stream().map(postContent -> {
-            AppUser owner = postContent.getPost().getUser();
-            Business firstBusiness = owner.getBusinesses().stream()
-                    .filter(Business::getIsPrimary).findFirst().orElse(null);
-            assert firstBusiness != null;
-            BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
-                    .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
-            assert firstBusinessCategory != null;
 
-            List<PostOwnerResponse> tagUsers = postContent.getTagUsers().stream()
-                    .map(tagUser -> converter.TagUserResponse(
-                            new PostOwnerResponse(),
-                            tagUser.getSecureId(),
-                            tagUser.getAppUserDetail().getName(),
-                            tagUser.getAppUserDetail().getAvatar(),
-                            firstBusiness != null ? firstBusiness.getName() : null,
-                            firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
-                            firstBusiness != null ? firstBusiness.getIsPrimary() : null,
-                            tagUser,
-                            userLogin
-                    )).collect(Collectors.toList());
-            return converter.PostContentDetailResponse(
-                    new PostContentDetailResponse(),
-                    postContent.getSecureId(),
-                    postContent.getContent(),
-                    postContent.getType(),
-                    postContent.getThumbnail(),
-                    tagUsers
-            );
+        return postContentList.stream().map(postContent -> {
+
+            if (postContent.getPost().getIsAdminPost() == null){
+                AppUser owner = postContent.getPost().getUser();
+                Business firstBusiness = owner.getBusinesses().stream()
+                        .filter(Business::getIsPrimary).findFirst().orElse(null);
+                assert firstBusiness != null;
+                BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
+                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
+                assert firstBusinessCategory != null;
+                List<PostOwnerResponse> tagUsers = postContent.getTagUsers().stream()
+                        .map(tagUser -> converter.TagUserResponse(
+                                new PostOwnerResponse(),
+                                tagUser.getSecureId(),
+                                tagUser.getAppUserDetail().getName(),
+                                tagUser.getAppUserDetail().getAvatar(),
+                                firstBusiness != null ? firstBusiness.getName() : null,
+                                firstBusinessCategory != null ? firstBusinessCategory.getName() : null,
+                                firstBusiness != null ? firstBusiness.getIsPrimary() : null,
+                                tagUser,
+                                userLogin
+                        )).collect(Collectors.toList());
+                return converter.PostContentDetailResponse(
+                        new PostContentDetailResponse(),
+                        postContent.getSecureId(),
+                        postContent.getContent(),
+                        postContent.getType(),
+                        postContent.getThumbnail(),
+                        tagUsers
+                );
+            } else {
+                AppAdmin owner = postContent.getPost().getAdmin();
+
+                return converter.PostContentDetailResponse(
+                        new PostContentDetailResponse(),
+                        postContent.getSecureId(),
+                        postContent.getContent(),
+                        postContent.getType(),
+                        postContent.getThumbnail(),
+                        null
+                );
+            }
+
+
+
+
+
         }).collect(Collectors.toList());
     }
 

@@ -5,6 +5,7 @@ import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.Channel;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
@@ -13,8 +14,10 @@ import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.PostDiscoverResponse;
+import com.bca.byc.model.apps.PostOnChannelResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
+import com.bca.byc.repository.ChannelRepository;
 import com.bca.byc.repository.PostContentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.auth.AppUserRepository;
@@ -27,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,6 +46,8 @@ public class PostServiceImpl implements PostService {
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
+
+    private final ChannelRepository channelRepository;
 
 
     @Override
@@ -83,16 +89,27 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, Boolean isElastic) {
+    public ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
 
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Post> pageResult = postRepository.findPostByOfficialUsers(set.keyword(), set.pageable());
-        List<PostDiscoverResponse> dtos = pageResult.stream().map((post) -> {
-            return converter.listDataPostDiscoverHome(post, userLogin);
-        }).toList();
+        Page<Channel> pageResult = channelRepository.findChannels(set.keyword(), set.pageable());
+        List<PostDiscoverResponse> dtos = pageResult.getContent().stream().map(channel -> {
+            PostDiscoverResponse dto = new PostDiscoverResponse();
+            dto.setChannelId(channel.getSecureId());
+            dto.setChannelName(channel.getName());
+
+            List<PostOnChannelResponse> posts = channel.getContents().stream().limit(7).map(post -> {
+                PostOnChannelResponse postResponse = new PostOnChannelResponse();
+                postResponse.setCategoryId(post.getChannel().getSecureId());
+                postResponse.setCategoryName(post.getChannel().getName());
+                return postResponse;
+            }).collect(Collectors.toList());
+            dto.setCategories(posts);
+            return dto;
+        }).collect(Collectors.toList());
 
         return PageCreateReturnApps.create(pageResult, dtos);
     }

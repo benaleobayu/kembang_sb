@@ -30,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,7 +62,7 @@ public class PostController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "isElastic", required = false, defaultValue = "false" ) Boolean isElastic,
+            @RequestParam(name = "isElastic", required = false, defaultValue = "false") Boolean isElastic,
             @Schema(example = "top-picks", description = "top-picks | following | discover")
             @RequestParam(name = "category", required = false, defaultValue = "top-picks") String category) {
         // response true
@@ -72,7 +71,7 @@ public class PostController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(email, pages, limit, sortBy, direction, keyword, category, isElastic)));
     }
 
-     @Operation(summary = "Get list post home", description = "Get list post home")
+    @Operation(summary = "Get list post home", description = "Get list post home")
     @GetMapping("/discover")
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostDiscoverHome(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -80,14 +79,10 @@ public class PostController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "isElastic", required = false, defaultValue = "false" ) Boolean isElastic
-     ){
-        // response true
-        String email = ContextPrincipal.getPrincipal();
-
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostDiscoverHome(email, pages, limit, sortBy, direction, keyword, isElastic)));
+            @RequestParam(name = "isElastic", required = false, defaultValue = "false") Boolean isElastic
+    ) {
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostDiscoverHome(pages, limit, sortBy, direction, keyword)));
     }
-
 
 
     @Operation(summary = "Create Post", description = "Create Post")
