@@ -213,6 +213,9 @@ public class AdminServiceImpl implements AdminService {
         if (data.getId().equals(adminLogin.getId())) {
             throw new BadRequestException("Cannot delete admin itself");
         }
+        if (!data.getPosts().isEmpty()) {
+            throw new BadRequestException("Cannot delete admin with posts");
+        }
         repository.deleteById(data.getId());
     }
 

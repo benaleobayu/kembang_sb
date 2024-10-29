@@ -45,6 +45,9 @@ public class AdminDTOConverter {
         dto.setRoleName(data.getRole().getName());
         dto.setCreatedAt(Formatter.formatLocalDateTime(data.getCreatedAt()));
         dto.setUpdatedAt(Formatter.formatLocalDateTime(data.getUpdatedAt()));
+
+        boolean haveContent = !data.getPosts().isEmpty();
+        dto.setIsHaveContent(haveContent);
         // return
         return dto;
     }

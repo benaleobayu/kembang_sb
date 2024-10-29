@@ -46,6 +46,9 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AdminHasAccounts> adminHasAccounts = new HashSet<>();
 
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude

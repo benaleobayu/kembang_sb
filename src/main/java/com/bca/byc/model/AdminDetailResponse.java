@@ -15,5 +15,7 @@ public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
     private String type;
     private Boolean status;
     private Boolean isVisible;
+
+    private Boolean isHaveContent;
 }
 

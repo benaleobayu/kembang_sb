@@ -126,8 +126,6 @@ public class AdminController {
         }
     }
 
-
-
     @PreAuthorize("hasAuthority('admin.delete')")
     @Operation(summary = "Delete Admin", description = "Delete Admin")
     @DeleteMapping("{id}")
