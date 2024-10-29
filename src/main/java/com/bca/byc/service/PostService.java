@@ -4,6 +4,7 @@ import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.apps.PostDiscoverResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 
 import java.util.List;
@@ -13,6 +14,8 @@ public interface PostService {
 //    PostHomeResponse findById(Long id) throws Exception;
 
     ResultPageResponseDTO<PostHomeResponse> listDataPostHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, String category, Boolean isElastic);
+
+    ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, Boolean isElastic);
 
     PostHomeResponse findBySecureId(String secureId);
 

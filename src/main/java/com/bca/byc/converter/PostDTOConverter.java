@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -71,6 +72,40 @@ public class PostDTOConverter {
 
         dto.setLikeCount(data.getLikesCount());
         dto.setCommentCount(data.getCommentsCount());
+        return dto;
+    }
+
+    public PostDiscoverResponse listDataPostDiscoverHome(Post post, AppUser userLogin) {
+
+        PostDiscoverResponse dto = new PostDiscoverResponse();
+
+        List<PostOnChannelResponse> categories = new ArrayList<>();
+        for (Post data : post.getChannel().getContents()){
+            PostOnChannelResponse category = new PostOnChannelResponse();
+            category.setCategoryId(data.getChannel().getSecureId());
+            category.setCategoryName(data.getChannel().getName());
+
+            boolean above7post = data.getChannel().getContents().size() > 7;
+            category.setIsSeeMore(above7post);
+
+            TreePostConverter converter = new TreePostConverter(baseUrl);
+            List<PostHomeResponse> posts = new ArrayList<>();
+            for (Post listdata : data.getChannel().getContents().stream().limit(7).toList()){
+                PostHomeResponse postData = converter.convertToPostHomeResponse(
+                        new PostHomeResponse(),
+                        listdata,
+                        converter,
+                        userLogin,
+                        likeDislikeRepository
+                );
+                posts.add(postData);
+            }
+            category.setPost(posts);
+        }
+
+
+        dto.setCategories(categories);
+
         return dto;
     }
 
@@ -217,5 +252,6 @@ public class PostDTOConverter {
         return dto;
 
     }
+
 
 }

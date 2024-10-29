@@ -36,10 +36,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdAt DESC")
     Page<Post> findPostByFollowingUsers(@Param("userId") Long userId,@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("SELECT p FROM Post p " +
-            "WHERE p.user.appUserAttribute.isOfficial = true AND " +
-            "LOWER(p.description) LIKE LOWER(:keyword) " +
-            "ORDER BY p.createdAt DESC")
+    @Query("""
+            SELECT p FROM Post p
+            WHERE p.isAdminPost = true AND
+            p.isActive = true AND p.isDeleted = false AND
+            (LOWER(p.description)LIKE (:keyword))
+            """)
     Page<Post> findPostByOfficialUsers(String keyword, Pageable pageable);
     // ------------- show list post home -------------
 

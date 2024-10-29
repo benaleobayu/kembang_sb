@@ -12,6 +12,7 @@ import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
+import com.bca.byc.model.apps.PostDiscoverResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.PostContentRepository;
@@ -53,9 +54,7 @@ public class PostServiceImpl implements PostService {
             userLogin = null;
         }
 
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
         Page<Post> pageResult = null;
@@ -79,6 +78,21 @@ public class PostServiceImpl implements PostService {
         List<PostHomeResponse> dtos = pageResult.stream().map((post) -> {
             return converter.convertToDetailResponse(post, userLogin);
         }).collect(Collectors.toList());
+
+        return PageCreateReturnApps.create(pageResult, dtos);
+    }
+
+    @Override
+    public ResultPageResponseDTO<PostDiscoverResponse> listDataPostDiscoverHome(String email, Integer pages, Integer limit, String sortBy, String direction, String keyword, Boolean isElastic) {
+        AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
+
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Post> pageResult = postRepository.findPostByOfficialUsers(set.keyword(), set.pageable());
+        List<PostDiscoverResponse> dtos = pageResult.stream().map((post) -> {
+            return converter.listDataPostDiscoverHome(post, userLogin);
+        }).toList();
 
         return PageCreateReturnApps.create(pageResult, dtos);
     }

@@ -72,6 +72,24 @@ public class PostController {
         return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostHome(email, pages, limit, sortBy, direction, keyword, category, isElastic)));
     }
 
+     @Operation(summary = "Get list post home", description = "Get list post home")
+    @GetMapping("/discover")
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<PostHomeResponse>>> listDataPostDiscoverHome(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "description") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "isElastic", required = false, defaultValue = "false" ) Boolean isElastic
+     ){
+        // response true
+        String email = ContextPrincipal.getPrincipal();
+
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", postService.listDataPostDiscoverHome(email, pages, limit, sortBy, direction, keyword, isElastic)));
+    }
+
+
+
     @Operation(summary = "Create Post", description = "Create Post")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> createPost(
