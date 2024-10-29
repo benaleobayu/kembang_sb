@@ -43,22 +43,27 @@ public class ReportContentServiceImpl implements ReportContentService {
 
         Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus);
 
+
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
-                .map(data -> new ReportContentIndexResponse(
-                        data.getId(),
-                        data.getIndex(),
-                        data.getHighlight() != null ? Arrays.stream(data.getHighlight().split(","))
-                                .map(String::trim)
-                                .collect(Collectors.toList()) : null,
-                        GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
-                        data.getDescription(),
-                        data.getTags() != null ? data.getTags().stream().map(Tag::getName).collect(Collectors.toSet()) : null,
-                        data.getCreator(),
-                        data.getReporterEmail(),
-                        data.getStatusReport(),
-                        data.getTotalReport(),
-                        data.getLastReportAt() != null ? Formatter.formatLocalDateTime(data.getLastReportAt()) : null
-                )).collect(Collectors.toMap(
+                .map(data -> {
+                    Set<String> allTags = data.getTags().stream().map(Tag::getName).collect(Collectors.toSet());
+
+                    return new ReportContentIndexResponse(
+                            data.getId(),
+                            data.getIndex(),
+                            data.getHighlight() != null ? Arrays.stream(data.getHighlight().split(","))
+                                    .map(String::trim)
+                                    .collect(Collectors.toList()) : null,
+                            GlobalConverter.getParseImage(data.getThumbnail(), baseUrl),
+                            data.getDescription(),
+                            data.getTags() != null ? allTags : null,
+                            data.getCreator(),
+                            data.getReporterEmail(),
+                            data.getStatusReport(),
+                            data.getTotalReport(),
+                            data.getLastReportAt() != null ? Formatter.formatLocalDateTime(data.getLastReportAt()) : null
+                    );
+                }).collect(Collectors.toMap(
                         ReportContentIndexResponse::description,
                         dto -> dto,
                         (existing, replacement) -> existing
