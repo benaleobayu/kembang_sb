@@ -14,6 +14,8 @@ public record AdminContentDetailResponse(
 
         List<String> contents,
 
+        String contentType,
+
         String description,
 
         List<String> tags,

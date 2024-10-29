@@ -75,7 +75,7 @@ public class AdminContentDTOConverter {
         channel.setName(data.getChannel().getName());
         channel.setIsChecked(true);
 
-        List<String> contents = data.getPostContents().stream().map(PostContent::getContent).collect(Collectors.toList());
+        List<String> contents = data.getPostContents().stream().map( d -> GlobalConverter.getParseImage(d.getContent(), baseUrl)).collect(Collectors.toList());
 
         // return
         return new AdminContentDetailResponse(
@@ -84,6 +84,7 @@ public class AdminContentDTOConverter {
                 GlobalConverter.convertListToArray(data.getHighlight()), // get highlight
                 GlobalConverter.getParseImage(thumbnail, baseUrl), // get thumbnail
                 contents,
+                data.getContentType(),
                 data.getDescription(),
                 GlobalConverter.convertListToArray(String.join(",", tags)),
                 data.getAdmin().getName(),

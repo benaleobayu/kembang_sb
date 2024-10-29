@@ -20,7 +20,6 @@ import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.cms.AdminContentService;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,10 +27,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +38,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.bca.byc.util.FileUploadHelper.*;
 
@@ -54,15 +50,13 @@ import static com.bca.byc.util.FileUploadHelper.*;
 public class AdminContentController {
 
     static final String urlRoute = "/cms/v1/content";
+    static final String VIDEO_PATH = "/post/admin-content/";
     private final AdminContentService service;
     private final TagRepository tagRepository;
     private final ChannelRepository channelRepository;
     private final PostRepository postRepository;
-    
     private final GlobalAttributeService globalAttributeService;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
-    static final String VIDEO_PATH = "/post/admin-content/";
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
@@ -97,6 +91,7 @@ public class AdminContentController {
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
+            @RequestParam("isPublish") Boolean isPublish,
             @RequestParam("isSchedule") Boolean isSchedule,
             @RequestParam("totalFile") Integer totalFile,
             @RequestParam(value = "promotedActive", required = false) Boolean promotedActive,
@@ -109,7 +104,7 @@ public class AdminContentController {
         try {
             Post post = new Post();
             List<PostContent> contentList = new ArrayList<>();
-            if (isSchedule){
+            if (isSchedule) {
                 postAt = LocalDateTime.now();
             }
 
@@ -149,15 +144,12 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post newPost = parseToPost(channelId, highlight, description, tags, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
+            Post newPost = parseToPost(channelId, highlight, description, tags, isPublish, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, post);
             service.saveData(contentList, newPost);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created post content"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "Error processing files"));
+        } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -171,6 +163,7 @@ public class AdminContentController {
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
+            @RequestParam("isPublish") Boolean isPublish,
             @RequestParam("isSchedule") Boolean isSchedule,
             @RequestParam(value = "promotedActive") Boolean promotedActive,
             @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
@@ -218,13 +211,11 @@ public class AdminContentController {
                     contentList.add(postContent);
                 }
             }
-            Post updatePost = parseToPost(channelId, highlight, description, tags, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
+            Post updatePost = parseToPost(channelId, highlight, description, tags, isPublish, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
             service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -235,7 +226,7 @@ public class AdminContentController {
             service.deleteData(id);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted post content"));
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+            throw new BadRequestException(e.getMessage());
         }
     }
 
@@ -244,7 +235,8 @@ public class AdminContentController {
                              List<String> highlight,
                              String description,
                              List<String> taglist,
-                             Boolean status,
+                             Boolean isPublished,
+                             Boolean isScheduled,
                              Boolean promotedActive,
                              LocalDateTime promotedAt,
                              LocalDateTime promotedUntil,
@@ -252,7 +244,7 @@ public class AdminContentController {
                              ChannelRepository channelRepository,
                              TagRepository tagRepository,
                              Post post
-                             ) {
+    ) {
         Channel c = HandlerRepository.getEntityBySecureId(channelId, channelRepository, "channel not found");
         post.setChannel(c);
 
@@ -283,7 +275,7 @@ public class AdminContentController {
         }
 
         post.setTags(tags);
-        post.setIsActive(!status);
+        post.setIsActive(isPublished);
         post.setPromotedActive(promotedActive ? promotedActive : false);
         post.setPromotedStatus(promotedActive ? "SCHEDULED" : "NOT_DEFINED");
         post.setPromotedAt(promotedAt);
