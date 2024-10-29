@@ -26,6 +26,11 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 //    private Long id;
 
     @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
     public String getSecureId() {
         return super.getSecureId();
     }
