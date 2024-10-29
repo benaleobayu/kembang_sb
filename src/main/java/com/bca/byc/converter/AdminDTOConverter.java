@@ -2,9 +2,7 @@ package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreeRolePermissionConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Role;
-import com.bca.byc.entity.RoleHasPermission;
+import com.bca.byc.entity.*;
 import com.bca.byc.model.*;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.response.AdminPermissionResponse;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -48,6 +47,17 @@ public class AdminDTOConverter {
 
         boolean haveContent = !data.getPosts().isEmpty();
         dto.setIsHaveContent(haveContent);
+
+        List<Account> accounts = data.getAdminHasAccounts().stream().map(AdminHasAccounts::getAccount).toList();
+        List<CastIdAndNameResponse> listAccounts = new ArrayList<>();
+        for (Account account : accounts) {
+            CastIdAndNameResponse cast = new CastIdAndNameResponse(
+                    account.getSecureId(),
+                    account.getName()
+            );
+            listAccounts.add(cast);
+        }
+        dto.setAccounts(listAccounts);
         // return
         return dto;
     }

@@ -3,6 +3,8 @@ package com.bca.byc.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
@@ -15,6 +17,8 @@ public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
     private String type;
     private Boolean status;
     private Boolean isVisible;
+
+    private List<CastIdAndNameResponse> accounts;
 
     private Boolean isHaveContent;
 }
