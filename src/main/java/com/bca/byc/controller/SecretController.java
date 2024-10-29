@@ -23,4 +23,14 @@ public class SecretController {
         return jwtTokenService.generateToken(email, role);
     }
 
+    @Operation(hidden = true)
+    @GetMapping("/generate-token-exp")
+    public String generateExpiredToken(
+            @RequestParam("email") String email,
+            @RequestParam(value = "role", required = false, defaultValue = "user") String role) {
+        return jwtTokenService.generateTokenExpired(email, role);
+    }
+
+
+
 }

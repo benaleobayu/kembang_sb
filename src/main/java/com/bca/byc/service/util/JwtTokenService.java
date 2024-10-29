@@ -37,4 +37,23 @@ public class JwtTokenService {
                     .compact();
         }
     }
+
+    public String generateTokenExpired(String email, String role) {
+        if (Objects.equals(role, "SUPERADMIN")){
+            return Jwts.builder().subject(email)
+                    .claim("scopes", List.of(role))
+                    .issuer("https://bca.co.id")
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis() - EXPIRATION_TIME * 30))
+                    .signWith(SECRET_KEY)// Sign the token with the secret key
+                    .compact();
+        } else {
+            return Jwts.builder().subject(email)
+                    .issuer("https://bca.co.id")
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis() - EXPIRATION_TIME * 30))
+                    .signWith(SECRET_KEY)// Sign the token with the secret key
+                    .compact();
+        }
+    }
 }
