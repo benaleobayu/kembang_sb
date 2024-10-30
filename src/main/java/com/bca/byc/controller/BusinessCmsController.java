@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,7 +38,7 @@ public class BusinessCmsController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "userId", required = false) String userId,
+            @RequestParam(name = "userId", required = false) List<String> userId,
             @RequestParam(name = "export", required = false, defaultValue = "false") Boolean export,
             HttpServletResponse response
     ) {

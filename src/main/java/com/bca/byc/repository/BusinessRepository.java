@@ -55,8 +55,8 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     @Query("SELECT b FROM Business b " +
             "WHERE " +
             "(LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%') )) AND " +
-            "(:id IS NULL OR b.user.id = :id)")
-    Page<Business> findBusinessOnUser(Long id, String keyword, Pageable pageable);
+            "(:id IS NULL OR b.user.id IN :id)")
+    Page<Business> findBusinessOnUser(@Param("id") List<Long> id, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT b.id, b.name, b.address, bc.name, b.isPrimary, loc.name, bci.name " +
             "FROM Business b " +

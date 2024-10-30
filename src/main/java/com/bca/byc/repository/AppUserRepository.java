@@ -4,6 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
 import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
+import com.bca.byc.model.projection.CastIdBySecureIdProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import com.bca.byc.model.projection.SuggestedUserProjection;
@@ -33,6 +34,15 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("SELECT new com.bca.byc.model.projection.impl.IdSecureIdProjectionImpl(u.id, u.secureId) " +
             "FROM AppUser u WHERE u.secureId = :id")
     Optional<IdSecureIdProjection> findUserBySecureId(@Param("id") String id);
+
+    @Query("""
+            SELECT new com.bca.byc.model.projection.CastIdBySecureIdProjection(
+            u.id, u.secureId)
+            FROM AppUser u
+            WHERE u.secureId IN (:userId)
+            """)
+    List<CastIdBySecureIdProjection> findIdBySecureIdList(List<String> userId);
+
 
 
     List<AppUser> findBySecureIdIn(List<String> secureIds);

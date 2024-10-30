@@ -9,6 +9,7 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.BusinessDetailResponse;
 import com.bca.byc.model.BusinessTreeRequest;
 import com.bca.byc.model.data.BusinessListResponse;
+import com.bca.byc.model.projection.CastIdBySecureIdProjection;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
@@ -157,17 +158,16 @@ public class BusinessService {
         converter.handleUpdateBusinessLocations(dto.getLocationIds(), updatedBusiness, locationRepository, businessHasLocationRepository);
     }
 
-    public ResultPageResponseDTO<BusinessListResponse> listDataBusinessUser(Integer pages, Integer limit, String sortBy, String direction, String keyword, String userId) {
-        AppUser user;
-        if (userId != null) {
-            user = HandlerRepository.getEntityBySecureId(userId, appUserRepository, "User not found");
-        } else {
-            user = null;
-        }
+    public ResultPageResponseDTO<BusinessListResponse> listDataBusinessUser(Integer pages, Integer limit, String sortBy, String direction, String keyword, List<String> userId) {
+
+//      userId is  ["abc", "def", "ghi"] and want to convert to ("abc", "def", "ghi")
+        List<CastIdBySecureIdProjection> idList =  appUserRepository.findIdBySecureIdList(userId);
+        List<Long> ids = !idList.isEmpty() ? idList.stream().map(CastIdBySecureIdProjection::getId).toList() : null;
+
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
 
-        Page<Business> pageResult = businessRepository.findBusinessOnUser(user == null ? null : user.getId(), set.keyword(), set.pageable());
+        Page<Business> pageResult = businessRepository.findBusinessOnUser( ids, set.keyword(), set.pageable());
         List<BusinessListResponse> dtos = TreeUserResponse.convertListBusinesses(pageResult.toList());
 
         return PageCreateReturn.create(pageResult, dtos);
