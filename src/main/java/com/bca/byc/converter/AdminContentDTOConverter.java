@@ -53,7 +53,8 @@ public class AdminContentDTOConverter {
                 data.getPromotedStatus() == null ? null : data.getPromotedStatus(),
                 data.getPromotedAt() == null || data.getPromotedUntil() == null ? null : data.getPromotedAt() + "-" + data.getPromotedUntil(),
                 data.getCreatedBy() == null ? null : data.getCreatedBy().getEmail(),
-                data.getCreatedAt() == null ? null : Formatter.formatLocalDateTime(data.getCreatedAt())
+                data.getCreatedAt() == null ? null : Formatter.formatLocalDateTime(data.getCreatedAt()),
+                data.getIsTeaser()
         );
     }
   // for get data

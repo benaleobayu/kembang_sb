@@ -26,8 +26,9 @@ public record AdminContentIndexResponse<S>(
 
         String createBy,
 
-        String createDate
+        String createDate,
 
+        Boolean isTeaser
 
 ) {
 }
