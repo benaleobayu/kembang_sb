@@ -24,8 +24,12 @@ public record AdminContentDetailResponse(
 
         Boolean status,
 
+        Boolean isPublish,
+
         String promotionStatus,
 
-        String promotionPeriod
+        String promotionPeriod,
+
+        String postAt
 ) {
 }

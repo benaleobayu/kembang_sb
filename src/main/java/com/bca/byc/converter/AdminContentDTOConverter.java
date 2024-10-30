@@ -89,8 +89,10 @@ public class AdminContentDTOConverter {
                 GlobalConverter.convertListToArray(String.join(",", tags)),
                 data.getAdmin().getName(),
                 data.getIsActive(),
+                data.getIsActive(),
                 data.getPromotedStatus(),
-                data.getPromotedAt() + "-" + data.getPromotedUntil()
+                data.getPromotedAt() + "-" + data.getPromotedUntil(),
+                Formatter.formatLocalDateTime(data.getUpdatedAt())
         );
     }
 
