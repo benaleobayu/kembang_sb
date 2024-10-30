@@ -79,8 +79,6 @@ public class AdminContentController {
         return ResponseEntity.ok().body(new ApiDataResponse<>(true, "Success get list post content", data));
     }
 
-
-
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
@@ -225,6 +223,17 @@ public class AdminContentController {
             service.updateData(updatePost);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post content"));
         } catch (BadRequestException | IOException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{postId}/teaser-status")
+    public ResponseEntity<ApiResponse> updateTeaserStatus(@RequestParam("postId") String postId) {
+        log.info("PUT " + urlRoute + "/{}/teaser-status endpoint hit", postId);
+        try {
+            service.updateTeaserStatus(postId);
+            return ResponseEntity.ok(new ApiResponse(true, "Successfully updated post teaser"));
+        } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         }
     }

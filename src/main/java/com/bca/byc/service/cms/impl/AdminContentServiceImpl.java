@@ -99,6 +99,21 @@ public class AdminContentServiceImpl implements AdminContentService {
     }
 
     @Override
+    public void updateTeaserStatus(String postId) {
+        Post data = HandlerRepository.getEntityBySecureId(postId, postRepository, "Admin Content not found");
+
+        if (data.getIsTeaser()) {
+            List<Post> teasers = postRepository.findByIsTeaser(true);
+            teasers.forEach(teaser -> {
+                teaser.setIsTeaser(false);
+                repository.save(teaser);
+            });
+        }
+        data.setIsTeaser(!data.getIsTeaser());
+        repository.save(data);
+    }
+
+    @Override
     public void deleteData(String id) throws BadRequestException {
         Post data = HandlerRepository.getEntityBySecureId(id, repository, "Admin Content not found");
         // delete data

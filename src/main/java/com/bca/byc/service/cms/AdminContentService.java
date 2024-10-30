@@ -22,5 +22,7 @@ public interface AdminContentService {
     void deleteData(String id) throws BadRequestException;
 
     void updateData(Post updatePost);
+
+    void updateTeaserStatus(String postId);
 }
 

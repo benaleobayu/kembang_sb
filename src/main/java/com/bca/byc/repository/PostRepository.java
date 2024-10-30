@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -59,14 +60,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "JOIN pc.tagUsers tu " +
             "WHERE tu.id = :creatorId")
     Page<Post> findTaggedPost(@Param("creatorId") Long creatorId, Pageable pageable);
-
-
-//    @Query("SELECT new com.bca.byc.model.projection.impl.PostContentProjectionImpl(p.secureId, p.id, " +
-//            "MIN(pc.content), MIN(pc.type), MIN(pc.thumbnail)) " +
-//            "FROM Post p JOIN p.postContents pc " +
-//            "WHERE p.user.id = :userId AND LOWER(p.description) LIKE LOWER(:keyword) " +
-//            "GROUP BY p.id, p.secureId")
-//    Page<Post> findMyPost(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
     // ------------- show list my post -------------
 
     // ------------- search -------------
@@ -80,7 +73,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findPostByLobAndDescription(String keyword, Pageable pageable);
     // ------------- search -------------
 
-
     @Query("SELECT p FROM Post p WHERE p.secureId = :secureId")
     Optional<IdSecureIdProjection> findByIdSecureId(@Param("secureId") String secureId);
 
@@ -91,10 +83,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.secureId = :postId")
     Optional<Post> findBySecureId(@Param("postId") String secureId);
-
-    boolean existsBySecureId(String secureId);
-
-    void deleteBySecureId(String secureId);
 
     // ------------- post on channel -------------
     @Query("SELECT p " +
@@ -107,12 +95,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "p.channel.id = :channelId ")
     Page<Post> findPostOnChannel(@Param("keyword") String keyword, Pageable pageable,@Param("channelId") Long channelId);
 
+    // ------------- post on channel -------------
+    // ------------- post on content management -------------
     @Query("""
             SELECT p FROM Post p
             WHERE p.isTeaser = true
             """)
     Post findDataPostTeaserByAdmin();
 
-    // ------------- post on channel -------------
+    List<Post> findByIsTeaser(boolean isTeaser);
+    // ------------- post on content management -------------
 
 }
