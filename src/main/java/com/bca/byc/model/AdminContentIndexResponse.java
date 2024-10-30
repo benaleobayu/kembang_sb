@@ -31,4 +31,8 @@ public record AdminContentIndexResponse<S>(
         Boolean isTeaser
 
 ) {
+
+    public AdminContentIndexResponse {
+        isTeaser = isTeaser != null && isTeaser;
+    }
 }

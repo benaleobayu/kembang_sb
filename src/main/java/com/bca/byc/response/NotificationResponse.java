@@ -25,6 +25,6 @@ public record NotificationResponse(
     String status
 ) {
     public NotificationResponse {
-        isRead = isRead == null ? false : isRead;
+        isRead = isRead != null && isRead;
     }
 }
