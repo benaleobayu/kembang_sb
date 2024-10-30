@@ -209,7 +209,7 @@ public class AppUserProfileController {
     public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<NotificationResponse>>> GetNotifiation(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword
     ) {

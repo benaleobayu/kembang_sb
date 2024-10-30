@@ -1,20 +1,21 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.TreeNotification;
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.PostShared;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PostShareResponse;
+import com.bca.byc.model.apps.NotificationCreateRequest;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.model.returns.ReturnIsSavedResponse;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.AppUserRepository;
-import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.bca.byc.converter.parsing.TreeNotification.saveNotification;
 import static com.bca.byc.repository.handler.HandlerRepository.*;
 
 @Service
@@ -29,6 +30,7 @@ public class UserActionServiceImpl implements UserActionService {
     private final CommentRepository commentRepository;
     private final CommentReplyRepository commentReplyRepository;
     private final PostSharedRepository postSharedRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public void followUser(String userId, String email) {
@@ -65,22 +67,23 @@ public class UserActionServiceImpl implements UserActionService {
 
     @Override
     public TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto) {
-        AppUser user = GlobalConverter.getUserEntity(userRepository);
+        AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         LikeDislike existingLikeDislike = null;
         TotalCountResponse response = new TotalCountResponse();
+        TreeNotification newNotification = new TreeNotification();
 
         if ("POST".equals(dto.getType())) {
             Post post = postRepository.findBySecureId(dto.getTargetId())
                     .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
-            existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, user);
+            existingLikeDislike = likeDislikeRepository.findByPostAndUser(post, userLogin);
         } else if ("COMMENT".equals(dto.getType())) {
             Comment comment = commentRepository.findBySecureId(dto.getTargetId())
                     .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
-            existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, user);
+            existingLikeDislike = likeDislikeRepository.findByCommentAndUser(comment, userLogin);
         } else if ("COMMENT_REPLY".equals(dto.getType())) {
             CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
                     .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
-            existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, user);
+            existingLikeDislike = likeDislikeRepository.findByCommentReplyAndUser(commentReply, userLogin);
         }
 
         // Logic toggle
@@ -109,34 +112,46 @@ public class UserActionServiceImpl implements UserActionService {
             response.setIsLiked(false);
         } else {
             LikeDislike newLikeDislike = new LikeDislike();
+            NotificationCreateRequest request = null;
             if ("POST".equals(dto.getType())) {
                 Post post = postRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
                 newLikeDislike.setPost(post);
-                newLikeDislike.setUser(user);
+                newLikeDislike.setUser(userLogin);
                 likeDislikeRepository.save(newLikeDislike);
                 post.setLikesCount(post.getLikesCount() + 1);
                 Post savedData = postRepository.save(post);
                 response.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                request = new NotificationCreateRequest(
+                        "USER", "LIKE-POST", savedData.getSecureId(), "LIKE", userLogin.getId(), post.getUser()
+                );
             } else if ("COMMENT".equals(dto.getType())) {
                 Comment comment = commentRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
                 newLikeDislike.setComment(comment);
-                newLikeDislike.setUser(user);
+                newLikeDislike.setUser(userLogin);
                 likeDislikeRepository.save(newLikeDislike);
                 comment.setLikesCount(comment.getLikesCount() + 1);
                 Comment savedData = commentRepository.save(comment);
                 response.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                request = new NotificationCreateRequest(
+                        "USER", "LIKE-COMMENT", savedData.getSecureId(), "LIKE", userLogin.getId(), comment.getUser()
+                );
             } else if ("COMMENT_REPLY".equals(dto.getType())) {
                 CommentReply commentReply = commentReplyRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Balasan komentar tidak ditemukan"));
                 newLikeDislike.setCommentReply(commentReply);
-                newLikeDislike.setUser(user);
+                newLikeDislike.setUser(userLogin);
                 likeDislikeRepository.save(newLikeDislike);
                 commentReply.setLikesCount(commentReply.getLikesCount() + 1);
                 CommentReply savedData = commentReplyRepository.save(commentReply);
                 response.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                request = new NotificationCreateRequest(
+                        "USER", "LIKE-COMMENT-REPLY", savedData.getSecureId(), "LIKE", userLogin.getId(), commentReply.getUser()
+                );
             }
+            assert request != null;
+            saveNotification(request, notificationRepository);
             response.setIsLiked(true);
             return response;
         }
@@ -183,7 +198,7 @@ public class UserActionServiceImpl implements UserActionService {
 
         // Share the post with each user in the list
         for (String sharedUserId : dto.getSharedUserIds()) {
-            AppUser sharedUser = HandlerRepository.getEntityUserBySecureId(sharedUserId, userRepository, "Shared user not found");
+            AppUser sharedUser = getEntityUserBySecureId(sharedUserId, userRepository, "Shared user not found");
             PostShared postShared = new PostShared();
             postShared.setPost(post);
             postShared.setFromUser(user);
