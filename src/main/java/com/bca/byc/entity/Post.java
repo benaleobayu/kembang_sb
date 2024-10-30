@@ -114,6 +114,9 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @Column(name = "is_admin_post")
     private Boolean isAdminPost = false;
 
+    @Column(name = "is_teaser")
+    private Boolean isTeaser = false;
+
     // promoted
 
     @Column(name = "promoted_status")
