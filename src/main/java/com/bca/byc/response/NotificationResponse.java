@@ -4,22 +4,25 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class NotificationResponse {
-    private String id;
-    private String notifiableType;
-    private String readAt;
-    private String createdAt;
+public record NotificationResponse(
+    String id,
+    String notifiableType,
+    String readAt,
+    String createdAt,
 
-    private String notifiableMessage;
+    String notifiableMessage,
 
-    private String userid;
-    private String userAvatar;
-    private Boolean isFollowed;
+    String userid,
+    String userAvatar,
+    String userName,
+    Boolean isFollowed,
 
-    private String postId;
-    private String postThumbnail;
+    String postId,
+    String postThumbnail,
 
-    private Boolean isRead = false;
+    Boolean isRead
+) {
+    public NotificationResponse {
+        isRead = isRead == null ? false : isRead;
+    }
 }

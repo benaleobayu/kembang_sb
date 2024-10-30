@@ -99,6 +99,7 @@ public class NotificationService {
                     messages,
                     userFrom.getSecureId(),
                     GlobalConverter.getAvatarImage(userFrom.getAppUserDetail().getAvatar(), baseUrl),
+                    userFrom.getAppUserDetail().getName(),
                     isFollowed,
                     postId,
                     postThumbnail,
