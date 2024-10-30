@@ -12,14 +12,11 @@ import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.ListCommentResponse;
+import com.bca.byc.model.apps.NotificationCreateRequest;
 import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
-import com.bca.byc.repository.CommentReplyRepository;
-import com.bca.byc.repository.CommentRepository;
-import com.bca.byc.repository.LikeDislikeRepository;
-import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.AppUserRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.CommentService;
 import jakarta.validation.Valid;
@@ -32,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeNotification.saveNotification;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentOnPost;
 import static com.bca.byc.exception.MessageExceptionHandler.checkCommentUser;
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
@@ -51,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final AppUserRepository userRepository;
     private final LikeDislikeRepository likeDislikeRepository;
+    private final NotificationRepository notificationRepository;
 
     private CommentDTOConverter converter;
 
@@ -100,6 +99,11 @@ public class CommentServiceImpl implements CommentService {
 
         // save data
         Comment savedComment = commentRepository.save(data);
+
+        NotificationCreateRequest newNotification = new NotificationCreateRequest(
+                "USER", "COMMENT", savedComment.getSecureId(), savedComment.getComment(), savedComment.getUser().getId(), post.getUser()
+                );
+        saveNotification(newNotification, notificationRepository);
 
         int totalComments = savedComment.getPost().getCommentsCount().intValue();
         int totalReplies = savedComment.getCommentReply().size();
