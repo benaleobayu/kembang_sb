@@ -107,6 +107,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "p.channel.id = :channelId ")
     Page<Post> findPostOnChannel(@Param("keyword") String keyword, Pageable pageable,@Param("channelId") Long channelId);
 
+    @Query("""
+            SELECT p FROM Post p
+            WHERE p.isTeaser = true
+            """)
+    Post findDataPostTeaserByAdmin();
+
     // ------------- post on channel -------------
 
 }

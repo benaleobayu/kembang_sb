@@ -13,6 +13,8 @@ public interface AdminContentService {
 
     ResultPageResponseDTO<AdminContentIndexResponse<Long>> listDataAdminContentIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
+    AdminContentIndexResponse<Long> getDataTeaser();
+
     AdminContentDetailResponse findDataById(String id) throws BadRequestException;
 
     void saveData(List<PostContent> contentList, Post newPost);

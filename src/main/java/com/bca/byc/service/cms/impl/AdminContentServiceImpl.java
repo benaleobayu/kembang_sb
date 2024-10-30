@@ -56,6 +56,12 @@ public class AdminContentServiceImpl implements AdminContentService {
     }
 
     @Override
+    public AdminContentIndexResponse<Long> getDataTeaser() {
+        Post data = postRepository.findDataPostTeaserByAdmin();
+        return converter.convertToIndexResponse(data, baseUrl);
+    }
+
+    @Override
     public AdminContentDetailResponse findDataById(String id) throws BadRequestException {
         Post data = HandlerRepository.getEntityBySecureId(id, repository, "Admin Content not found");
 

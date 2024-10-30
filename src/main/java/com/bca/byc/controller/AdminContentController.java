@@ -72,6 +72,15 @@ public class AdminContentController {
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list post content", service.listDataAdminContentIndex(pages, limit, sortBy, direction, keyword)));
     }
 
+     @GetMapping("/teaser")
+    public ResponseEntity<?> DataTeaser() {
+        log.info("GET " + urlRoute + "/teaser endpoint hit");
+         AdminContentIndexResponse<Long> data = service.getDataTeaser();
+        return ResponseEntity.ok().body(new ApiDataResponse<>(true, "Success get list post content", data));
+    }
+
+
+
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
         log.info("GET " + urlRoute + "/{id} endpoint hit");
