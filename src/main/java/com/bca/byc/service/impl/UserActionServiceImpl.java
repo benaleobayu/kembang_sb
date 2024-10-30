@@ -45,6 +45,12 @@ public class UserActionServiceImpl implements UserActionService {
         if (!user.getFollows().contains(userToFollow)) {
             user.getFollows().add(userToFollow);
             userActionRepository.save(user);
+
+            NotificationCreateRequest newNotification = new NotificationCreateRequest(
+                    "USER", "FOLLOWER", userId, user.getAppUserDetail().getName() + " started following " + userToFollow.getAppUserDetail().getName(), user.getId(), userToFollow
+            );
+
+            saveNotification(newNotification, notificationRepository);
         }
 
     }
