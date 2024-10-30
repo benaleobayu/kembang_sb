@@ -23,7 +23,7 @@ public class TreeLogUserManagement {
         log.setStatus(status);
         log.setPreRegister(preRegister);
         log.setUser(user);
-        log.setMessage(dto.getType());
+        log.setMessage(dto.getReason());
         log.setType(dto.getType());
         log.setCreatedAt(LocalDateTime.now());
         log.setUpdatedAt(LocalDateTime.now());
