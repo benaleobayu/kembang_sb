@@ -82,9 +82,7 @@ public class AppSearchController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword) {
         // response true
-        String email = ContextPrincipal.getPrincipal();
-
-        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get list post", service.listResultAccounts(email, pages, limit, sortBy, direction, keyword)));
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Success get result of accounts", service.listResultAccounts( pages, limit, sortBy, direction, keyword)));
     }
 
 

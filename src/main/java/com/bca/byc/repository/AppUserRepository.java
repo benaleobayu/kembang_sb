@@ -1,4 +1,4 @@
-package com.bca.byc.repository.auth;
+package com.bca.byc.repository;
 
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.enums.StatusType;
@@ -6,6 +6,7 @@ import com.bca.byc.model.UserActivityCounts;
 import com.bca.byc.model.data.UserProfileActivityCountsProjection;
 import com.bca.byc.model.projection.IdEmailProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
+import com.bca.byc.model.projection.SuggestedUserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,6 +36,11 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
 
     List<AppUser> findBySecureIdIn(List<String> secureIds);
+
+    @Query("""
+            SELECT u.followers FROM AppUser u WHERE u.id = :userId
+            """)
+    List<AppUser> findFollowersByUserId(Long userId);
 
     //    @Query(value = "SELECT au, aud, aua FROM AppUser au " +
 //            "LEFT JOIN au.appUserDetail aud ON aud.id = au.appUserDetail.id " +
@@ -93,20 +99,23 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     // --- suggested user ---
 
     // --- search ---
-    @Query("SELECT u FROM AppUser u " +
+    @Query("SELECT new com.bca.byc.model.projection.SuggestedUserProjection(" +
+            "u.id, u.secureId, detail.name, detail.avatar) " +
+            "FROM AppUser u " +
             "LEFT JOIN AppUserDetail detail ON detail.id = u.appUserDetail.id " +
             "LEFT JOIN AppUserAttribute attribute ON attribute.id = u.appUserAttribute.id " +
             "LEFT JOIN Business b ON b.user.id = u.id " +
             "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
             "LEFT JOIN BusinessCategory bbc ON bbc.id = bhc.businessCategoryParent.id " +
             "WHERE " +
-            "(LOWER(u.appUserDetail.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(bbc.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND " +
+            "(LOWER(u.appUserDetail.name) LIKE LOWER(:keyword) OR " +
+            "LOWER(bbc.name) LIKE LOWER(:keyword)) AND " +
             "detail.status = 6 AND " +
             "attribute.isSuspended = false AND " +
             "attribute.isDeleted = false AND " +
-            "u.id != :id) ")
-    Page<AppUser> findUserByNameAndLob(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
+            "u.id != :id " +
+            "GROUP BY u.id, u.secureId, detail.name, detail.avatar")
+    Page<SuggestedUserProjection> findUserByNameAndLob(@Param("id") Long id, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("""
             SELECT u FROM AppUser u

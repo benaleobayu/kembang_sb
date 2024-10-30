@@ -19,7 +19,7 @@ import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AppUserNotificationRepository;
 import com.bca.byc.repository.AppUserRequestContactRepository;
 import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AppUserRequestContactResponse;
 import com.bca.byc.response.NotificationSettingsRequest;
