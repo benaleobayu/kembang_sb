@@ -8,13 +8,18 @@ import lombok.Data;
 @AllArgsConstructor
 public class NotificationResponse {
     private String id;
-    private String type;
     private String notifiableType;
-    private String notifiableId;
-    private String message;
     private String readAt;
     private String createdAt;
-    private String updatedAt;
 
-    private Boolean isRead;
+    private String notifiableMessage;
+
+    private String userid;
+    private String userAvatar;
+    private Boolean isFollowed;
+
+    private String postId;
+    private String postThumbnail;
+
+    private Boolean isRead = false;
 }
