@@ -5,7 +5,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 

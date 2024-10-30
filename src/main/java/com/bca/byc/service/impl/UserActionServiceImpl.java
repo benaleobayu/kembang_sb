@@ -9,7 +9,7 @@ import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
 import com.bca.byc.model.returns.ReturnIsSavedResponse;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;

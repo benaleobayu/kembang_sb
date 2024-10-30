@@ -7,10 +7,9 @@ import com.bca.byc.repository.AppUserAttributeRepository;
 import com.bca.byc.repository.AppUserDetailRepository;
 import com.bca.byc.repository.BranchRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

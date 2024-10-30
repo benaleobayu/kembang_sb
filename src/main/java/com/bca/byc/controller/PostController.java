@@ -7,7 +7,7 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationAppsResponse;

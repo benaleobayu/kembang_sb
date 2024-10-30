@@ -22,7 +22,7 @@ import com.bca.byc.repository.Elastic.UserActiveElasticRepository;
 import com.bca.byc.repository.LogUserManagementRepository;
 import com.bca.byc.repository.UserActiveRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;

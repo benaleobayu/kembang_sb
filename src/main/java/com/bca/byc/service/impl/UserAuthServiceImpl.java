@@ -12,7 +12,7 @@ import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;

@@ -5,7 +5,7 @@ import com.bca.byc.entity.AppUserDetail;
 import com.bca.byc.model.AppRegisterRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.model.UserUpdateRequest;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.service.AppUserService;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;

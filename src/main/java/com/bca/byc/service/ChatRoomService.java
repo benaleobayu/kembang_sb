@@ -6,7 +6,7 @@ import com.bca.byc.entity.ChatRoomUser;
 import com.bca.byc.enums.RoomType;
 import com.bca.byc.repository.ChatRoomRepository;
 import com.bca.byc.repository.ChatRoomUserRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

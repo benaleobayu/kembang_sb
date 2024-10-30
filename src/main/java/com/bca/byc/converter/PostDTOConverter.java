@@ -7,7 +7,7 @@ import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Component

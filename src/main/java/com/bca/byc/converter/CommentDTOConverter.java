@@ -7,7 +7,7 @@ import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.repository.LikeDislikeRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;

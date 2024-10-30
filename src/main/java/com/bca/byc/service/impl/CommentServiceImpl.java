@@ -19,7 +19,7 @@ import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.CommentService;
 import jakarta.validation.Valid;

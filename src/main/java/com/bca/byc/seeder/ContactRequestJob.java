@@ -4,7 +4,7 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.AppUserRequestContact;
 import com.bca.byc.enums.RequestType;
 import com.bca.byc.repository.AppUserRequestContactRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

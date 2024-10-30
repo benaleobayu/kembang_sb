@@ -6,12 +6,10 @@ import com.bca.byc.entity.*;
 import com.bca.byc.model.PostHomeResponse;
 import com.bca.byc.model.apps.*;
 import com.bca.byc.repository.LikeDislikeRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 

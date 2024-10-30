@@ -22,6 +22,11 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     // Method to find a Business by secure_id and user ID
     Optional<Business> findBySecureIdAndUser_Id(String secureId, Long userId);
 
+    @Query("""
+            SELECT b FROM Business b WHERE b.user.id = :userId
+            """)
+    List<Business> findBusinessByUserId(@Param("userId") Long userId);
+
     // // Find a Business by user ID
     // Optional<Business> findByUserId(Long userId);
 

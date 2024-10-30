@@ -19,7 +19,7 @@ import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
@@ -203,7 +203,7 @@ public class PostServiceImpl implements PostService {
     public void deleteData(String secureId) throws Exception {
         Post data = HandlerRepository.getIdBySecureId(
                 secureId,
-                postRepository::findBySecureId,
+                postRepository::findByIdSecureId,
                 projection -> postRepository.findById(projection.getId()),
                 "Post not found"
         );

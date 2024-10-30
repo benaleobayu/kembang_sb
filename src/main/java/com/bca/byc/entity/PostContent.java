@@ -41,7 +41,7 @@ public class PostContent extends AbstractBaseEntity {
     @Column(name = "type")
     private String type;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
 

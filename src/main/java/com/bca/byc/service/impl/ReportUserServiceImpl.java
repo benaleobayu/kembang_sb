@@ -16,7 +16,7 @@ import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.LogRequestRepository;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportUserService;

@@ -5,10 +5,9 @@ import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.ReportRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

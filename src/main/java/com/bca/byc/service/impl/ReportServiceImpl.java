@@ -16,7 +16,7 @@ import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.PostRepository;
 import com.bca.byc.repository.ReportRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.ReportService;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
-import static com.bca.byc.repository.handler.HandlerRepository.getIdBySecureId;
 
 @Service
 @AllArgsConstructor

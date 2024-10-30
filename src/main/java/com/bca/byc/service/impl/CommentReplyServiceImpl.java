@@ -1,7 +1,6 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.CommentDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
@@ -20,7 +19,7 @@ import com.bca.byc.repository.CommentReplyRepository;
 import com.bca.byc.repository.CommentRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;

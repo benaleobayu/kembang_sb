@@ -11,7 +11,7 @@ import com.bca.byc.model.ExpectCategoryTreeRequest;
 import com.bca.byc.model.OnboardingCreateRequest;
 import com.bca.byc.model.OnboardingListUserResponse;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.OnboardingService;

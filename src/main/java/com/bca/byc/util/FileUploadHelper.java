@@ -6,7 +6,7 @@ import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.InvalidFileTypeImageVideoException;
 import com.bca.byc.model.attribute.PostContentRequest;
 import com.bca.byc.model.projection.IdSecureIdProjection;
-import com.bca.byc.repository.auth.AppUserRepository;
+import com.bca.byc.repository.AppUserRepository;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
