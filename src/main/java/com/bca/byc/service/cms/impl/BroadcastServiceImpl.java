@@ -49,6 +49,8 @@ public class BroadcastServiceImpl implements BroadcastService {
             dto.setStatus(c.getStatus());
             dto.setPostAt(Formatter.formatLocalDateTime(c.getPostAt()));
 
+            dto.setIsSent(c.getIsSent());
+
             GlobalConverter.CmsIDTimeStampResponseAndId(dto, c);
             return dto;
         }).collect(Collectors.toList());
