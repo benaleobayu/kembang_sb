@@ -206,27 +206,15 @@ public class AppUserProfileController {
 
     @GetMapping("/my-notifications")
     @Operation(summary = "Notifications", description = "List Notifications")
-    public ResponseEntity<Page<NotificationResponse>> GetNotifiation(Pageable pageable) {
-        // Assuming `ContextPrincipal.getId()` retrieves the current user's ID
-        Long userId = ContextPrincipal.getId();
-
-        // Fetch paginated notifications for the user
-        Page<Notification> notifications = notificationService.getNotificationsByUserId(userId, pageable);
-
-        // Map each notification to a response object
-        Page<NotificationResponse> responseMessages = notifications.map(notification -> new NotificationResponse(
-                notification.getSecureId(),                       // Secure ID or primary key
-                notification.getType(),                     // Type of notification
-                notification.getNotifiableType(),           // Polymorphic type of the notification
-                notification.getNotifiableId(),             // Polymorphic ID of the related entity
-                notification.getData(),                     // JSON data or any message
-                notification.getReadAt(),                   // When the notification was read
-                notification.getCreatedAt(),                // Creation timestamp
-                notification.getUpdatedAt()                 // Last updated timestamp
-        ));
-
-        // Return the paginated response
-        return ResponseEntity.ok(responseMessages);
+    public ResponseEntity<PaginationAppsResponse<ResultPageResponseDTO<NotificationResponse>>> GetNotifiation(
+            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+            @RequestParam(name = "limit", required = false, defaultValue = "12") Integer limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "direction", required = false, defaultValue = "desc") String direction,
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+        ResultPageResponseDTO<NotificationResponse> notifications = notificationService.getNotificationsByUserId(pages, limit, sortBy, direction, keyword);
+        return ResponseEntity.ok().body(new PaginationAppsResponse<>(true, "Notifications retrieved successfully", notifications));
     }
 
     @Operation(summary = "Get user activity counts", description = "Get user activity counts")
