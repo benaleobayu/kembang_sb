@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,6 +89,17 @@ public class NotificationService {
                     break;
             }
 
+            String status;
+            LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime endOfWeek = today.plusDays(6);
+            if (data.getCreatedAt().toLocalDate().equals(LocalDate.now())) {
+                status = "Recent";
+            } else if (data.getCreatedAt().isAfter(today) && data.getCreatedAt().isBefore(endOfWeek)) {
+                status = "This week";
+            } else {
+                status = "Other";
+            }
+
             List<AppUser> followers = userRepository.findFollowersByUserId(data.getId());
             boolean isFollowed = followers.stream().anyMatch(f -> f.getId().equals(userLogin.getId()));
 
@@ -102,8 +115,9 @@ public class NotificationService {
                     userFrom.getAppUserDetail().getName(),
                     isFollowed,
                     postId,
-                    postThumbnail,
-                    data.getIsRead()
+                    GlobalConverter.getParseImage(postThumbnail, baseUrl),
+                    data.getIsRead(),
+                    status
             );
         }).collect(Collectors.toList());
 

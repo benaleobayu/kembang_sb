@@ -20,7 +20,9 @@ public record NotificationResponse(
     String postId,
     String postThumbnail,
 
-    Boolean isRead
+    Boolean isRead,
+
+    String status
 ) {
     public NotificationResponse {
         isRead = isRead == null ? false : isRead;
