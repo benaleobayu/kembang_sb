@@ -12,14 +12,11 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.ListCommentReplyResponse;
+import com.bca.byc.model.apps.NotificationCreateRequest;
 import com.bca.byc.model.returns.ReturnCommentResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
-import com.bca.byc.repository.CommentReplyRepository;
-import com.bca.byc.repository.CommentRepository;
-import com.bca.byc.repository.LikeDislikeRepository;
-import com.bca.byc.repository.PostRepository;
-import com.bca.byc.repository.AppUserRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
@@ -32,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bca.byc.converter.parsing.TreeNotification.saveNotification;
 import static com.bca.byc.repository.handler.HandlerRepository.getEntityBySecureId;
 
 @Service
@@ -47,6 +45,8 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     private final AppUserRepository userRepository;
 
     private final LikeDislikeRepository likeDislikeRepository;
+
+    private final NotificationRepository notificationRepository;
 
     private CommentDTOConverter converter;
 
@@ -105,6 +105,11 @@ public class CommentReplyServiceImpl implements CommentReplyService {
 
         // save data
         CommentReply savedReply = commentReplyRepository.save(data);
+
+        NotificationCreateRequest newNotification = new NotificationCreateRequest(
+                "USER", "COMMENT-REPLY", savedReply.getSecureId(), savedReply.getComment(), savedReply.getUser().getId(), post.getUser()
+        );
+        saveNotification(newNotification, notificationRepository);
 
         int totalComments = savedReply.getParentComment().getPost().getCommentsCount().intValue();
         int totalReplies = savedReply.getParentComment().getCommentReply().size();
