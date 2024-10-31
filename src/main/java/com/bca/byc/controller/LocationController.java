@@ -5,19 +5,26 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.LocationCreateUpdateRequest;
 import com.bca.byc.model.LocationDetailResponse;
 import com.bca.byc.model.LocationIndexResponse;
-import com.bca.byc.response.*;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationCmsResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.MasterDataImportService;
 import com.bca.byc.service.cms.LocationService;
+import com.bca.byc.util.FileUploadHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Slf4j
@@ -29,6 +36,7 @@ import java.net.URI;
 public class LocationController {
 
     static final String urlRoute = "/cms/v1/ms/location";
+    private final MasterDataImportService importService;
     private LocationService service;
 
     @PreAuthorize("hasAuthority('location.view')")
@@ -98,5 +106,32 @@ public class LocationController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    @PreAuthorize("hasAuthority('location.import')")
+    @Operation(summary = "Import Location", description = "Import Location")
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importData(@RequestPart(value = "file", required = false) MultipartFile file, @RequestParam(value = "isDownloadSample", required = false, defaultValue = "false" ) Boolean isDownloadSample) {
+        if (Boolean.TRUE.equals(isDownloadSample)) {
+            try {
+                String filename = "sample-location.xlsx";
+                String urlFile = "http://localhost:8090/uploads/documents/02e852da-11a0-42e9-afe7-8a0105bd0594.xlsx";
+                FileUploadHelper.downloadFileFromUrl(urlFile, filename);
+                return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully get link download", urlFile));
+            } catch (IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
+        } else {
+            if (file.isEmpty() || file == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "File is empty"));
+            }
+            try {
+                importService.importLocation(file);
+                return ResponseEntity.ok(new ApiResponse(true, "Successfully imported location"));
+            } catch (BadRequestException | IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
+        }
+
     }
 }
