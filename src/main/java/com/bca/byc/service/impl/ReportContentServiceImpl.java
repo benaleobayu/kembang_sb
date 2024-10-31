@@ -45,7 +45,6 @@ public class ReportContentServiceImpl implements ReportContentService {
 
         Page<ReportContentIndexProjection> pageResult = reportRepository.getDataReportIndex(null, set.keyword(), set.pageable(), start, end, reportStatus);
 
-
         List<ReportContentIndexResponse> dtos = new ArrayList<>(pageResult.getContent().stream()
                 .map(data -> {
                     Set<Tag> allTags = postHasTagRepository.getTagsByPostId(data.getPost().getId());
@@ -97,6 +96,9 @@ public class ReportContentServiceImpl implements ReportContentService {
                 })
                 .collect(Collectors.toList());
 
+        Set<Tag> allTags = postHasTagRepository.getTagsByPostId(data.getPost().getId());
+        Set<String> tagNames = allTags.stream().map(Tag::getName).collect(Collectors.toSet());
+
         return new ReportContentDetailResponse(
                 data.getId(),
                 data.getCreator(),
@@ -105,7 +107,7 @@ public class ReportContentServiceImpl implements ReportContentService {
                 data.getPost().getIsActive(),
                 data.getPost().getDescription(),
                 GlobalConverter.convertListToArray(data.getPost().getHighlight()),
-                data.getTags() != null ? data.getTags().stream().map(Tag::getName).collect(Collectors.toSet()) : null,
+                tagNames.isEmpty() ? null : tagNames,
                 postContent
         );
     }
