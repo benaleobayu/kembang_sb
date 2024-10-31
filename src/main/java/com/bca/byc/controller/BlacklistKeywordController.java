@@ -10,6 +10,7 @@ import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.service.BlacklistKeywordService;
 import com.bca.byc.service.MasterDataImportService;
 import com.bca.byc.service.cms.MasterDataExportService;
+import com.bca.byc.util.FileUploadHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +41,7 @@ public class BlacklistKeywordController {
     private final MasterDataExportService exportService;
     private final MasterDataImportService importService;
 
-    @PreAuthorize("hasAuthority('blacklist.view')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.view')")
     @Operation(summary = "Get list Blacklist Keyword and Export", description = "Get list Blacklist Keyword and Export")
     @GetMapping
     public ResponseEntity<?> listDataBlacklist(
@@ -73,7 +74,7 @@ public class BlacklistKeywordController {
         }
     }
 
-    @PreAuthorize("hasAuthority('blacklist.read')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.read')")
     @Operation(summary = "Get detail Blacklist Keyword", description = "Get detail Blacklist Keyword")
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
@@ -86,7 +87,7 @@ public class BlacklistKeywordController {
         }
     }
 
-    @PreAuthorize("hasAuthority('blacklist.create')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.create')")
     @Operation(summary = "Create Blacklist Keyword", description = "Create Blacklist Keyword")
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody BlacklistKeywordCreateUpdateRequest item) {
@@ -100,7 +101,7 @@ public class BlacklistKeywordController {
         }
     }
 
-    @PreAuthorize("hasAuthority('blacklist.update')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.update')")
     @Operation(summary = "Update Blacklist Keyword", description = "Update Blacklist Keyword")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody BlacklistKeywordCreateUpdateRequest item) {
@@ -113,7 +114,7 @@ public class BlacklistKeywordController {
         }
     }
 
-    @PreAuthorize("hasAuthority('blacklist.delete')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.delete')")
     @Operation(summary = "Delete Blacklist Keyword", description = "Delete Blacklist Keyword")
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") String id) {
@@ -127,18 +128,29 @@ public class BlacklistKeywordController {
     }
 
 
-    @PreAuthorize("hasAuthority('blacklist.import')")
+    @PreAuthorize("hasAuthority('blacklist_keyword.import')")
     @Operation(summary = "Import Blacklist Keyword", description = "Import Blacklist Keyword")
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> importData(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "File is empty"));
-        }
-        try {
-            importService.importBlacklistKeyword(file);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully imported blacklist keyword"));
-        } catch (BadRequestException | IOException e) {
-            throw new BadRequestException(e.getMessage());
+    public ResponseEntity<?> importData(@RequestPart(value = "file", required = false) MultipartFile file, @RequestParam(value = "isDownloadSample", required = false, defaultValue = "false" ) Boolean isDownloadSample) {
+        if (Boolean.TRUE.equals(isDownloadSample)) {
+            try {
+                String filename = "sample-blacklist.xlsx";
+                String urlFile = "http://localhost:8090/uploads/documents/a3910bd3-bd5b-4ae1-a60b-5f156787ef4b.xlsx";
+                FileUploadHelper.downloadFileFromUrl(urlFile, filename);
+                return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully get link download", urlFile));
+            } catch (IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
+        } else {
+            if (file.isEmpty() || file == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "File is empty"));
+            }
+            try {
+                importService.importBlacklistKeyword(file);
+                return ResponseEntity.ok(new ApiResponse(true, "Successfully imported blacklist keyword"));
+            } catch (BadRequestException | IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
         }
     }
 
