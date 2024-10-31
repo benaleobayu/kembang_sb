@@ -94,11 +94,18 @@ public class AccountController {
             @RequestPart(name = "avatar", required = false) MultipartFile avatar,
             @RequestPart(name = "cover", required = false) MultipartFile cover,
             @RequestParam("name") String name,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "oldPassword", required = false) String oldPassword,
+            @RequestParam(value = "newPassword", required = false) String newPassword,
+            @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
             @RequestParam(value = "channelIds", required = false) Set<String> channelIds,
             @RequestParam("status") Boolean status
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
-        service.updateData(id, avatar, cover, name, channelIds, status);
+        if (newPassword != null && confirmPassword != null && !newPassword.equals(confirmPassword)) {
+            throw new BadRequestException("Password and confirm password not match");
+        }
+        service.updateData(id, avatar, cover, name, channelIds, status, email, oldPassword, newPassword);
         return ResponseEntity.ok(new ApiResponse(true, "Successfully updated accounts"));
     }
 

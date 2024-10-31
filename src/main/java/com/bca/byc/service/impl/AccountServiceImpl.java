@@ -141,12 +141,21 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException {
+    public void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status, String email, String oldPassword, String newPassword) throws IOException {
 
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         Account data = HandlerRepository.getEntityBySecureId(id, accountRepository, "Account not found.");
         data.setName(name);
         data.setIsActive(status);
+
+        if (oldPassword != null && !passwordEncoder.matches(oldPassword, data.getUser().getPassword())) {
+            throw new BadRequestException("Old password is incorrect.");
+        }
+        if (!email.equals(data.getUser().getEmail())) {
+            data.getUser().setEmail(email);
+        }
+
+        data.getUser().setPassword(passwordEncoder.encode(newPassword));
 
         if (avatar != null) {
             FileUploadHelper.validateFileTypeImage(avatar);

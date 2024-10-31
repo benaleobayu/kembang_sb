@@ -17,7 +17,7 @@ public interface AccountService {
 
     void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds, String email, String password) throws IOException;
 
-    void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException;
+    void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status, String email, String oldPassword, String newPassword) throws IOException;
 
     void deleteData(String id) throws BadRequestException;
 }
