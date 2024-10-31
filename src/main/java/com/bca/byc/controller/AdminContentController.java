@@ -163,15 +163,15 @@ public class AdminContentController {
     @PutMapping(value = "{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ApiResponse> update(
             @PathVariable("postId") String id,
-            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
-            @RequestPart(value = "content") String contentString,
             @RequestParam("channelId") String channelId,
             @RequestParam("highlight") List<String> highlight,
             @RequestParam("description") String description,
             @RequestParam("tags") List<String> tags,
             @RequestParam("isPublish") Boolean isPublish,
             @RequestParam("isSchedule") Boolean isSchedule,
+            @RequestParam("totalFile") Integer totalFile,
             @RequestParam(value = "promotedActive") Boolean promotedActive,
             @RequestParam(value = "promotedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedAt,
             @RequestParam(value = "promotedUntil", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime promotedUntil,
@@ -180,20 +180,23 @@ public class AdminContentController {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
             Post existingPost = HandlerRepository.getEntityBySecureId(id, postRepository, "Post not found");
-            for (PostContent existingContent : existingPost.getPostContents()) {
-                String filePath = existingContent.getContent();
-                deleteFile(filePath, UPLOAD_DIR);
-            }
-
             List<PostContent> contentList = new ArrayList<>();
-
-            // Validate contentString
-            if (contentString == null || contentString.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(false, "Content data is missing"));
+            if (isSchedule) {
+                postAt = LocalDateTime.now();
             }
-            List<PostContentRequest> contentRequests = objectMapper.readValue(contentString,
-                    new TypeReference<List<PostContentRequest>>() {
-                    });
+
+            List<ContentStringRequest> contentString = new ArrayList<>();
+            for (int i = 0; i < totalFile; i++) {
+                String name = RandomStringUtils.randomAlphanumeric(8);
+                contentString.add(new ContentStringRequest(name));
+            }
+
+            List<PostContentRequest> contentRequests = new ArrayList<>();
+            for (ContentStringRequest contentStringRequest : contentString) {
+                PostContentRequest postContentRequest = new PostContentRequest();
+                postContentRequest.setOriginalName(contentStringRequest.getOriginalName());
+                contentRequests.add(postContentRequest);
+            }
             // Validate if contentRequests and files match in size
             if (files.size() != contentRequests.size()) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "Mismatch between files and content data"));
@@ -299,7 +302,7 @@ public class AdminContentController {
         post.setPromotedStatus(promotedActive ? "SCHEDULED" : "NOT_DEFINED");
         post.setPromotedAt(promotedAt);
         post.setPromotedUntil(promotedUntil);
-        post.setPostAt(postAt != null ? postAt : LocalDateTime.now());
+        post.setPostAt(isScheduled ? postAt : LocalDateTime.now());
         return post;
     }
 }
