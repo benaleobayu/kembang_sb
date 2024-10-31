@@ -72,7 +72,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
 
-            ErrorResponseDTO errorResponse = new ErrorResponseDTO("Unauthorized", UNAUTHORIZED, List.of("Unauthorized"), HttpStatus.UNAUTHORIZED);
+            ErrorResponseDTO errorResponse = new ErrorResponseDTO("You've been logged out of the BYC App. Log in again to continue building your network!", UNAUTHORIZED, List.of("Please re-login your account"), HttpStatus.UNAUTHORIZED);
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
         }
     }

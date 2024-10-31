@@ -40,15 +40,15 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleUnauthorizedException(ResourceNotFoundException ex, WebRequest request) {
-        List<String> details = new ArrayList<String>();
-        details.add(ex.getMessage());
-        ErrorResponseDTO errorResponse = ErrorResponseDTO.of("Unauthorized", details, ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Access-Control-Allow-Origin", "*");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
+//    @ExceptionHandler(UnauthorizedException.class)
+//    protected ResponseEntity<ErrorResponseDTO> handleUnauthorizedException(ResourceNotFoundException ex, WebRequest request) {
+//        List<String> details = new ArrayList<String>();
+//        details.add(ex.getMessage());
+//        ErrorResponseDTO errorResponse = ErrorResponseDTO.of("Unauthorized", details, ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Access-Control-Allow-Origin", "*");
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+//    }
 
     @ExceptionHandler(ForbiddenException.class)
     protected ResponseEntity<ErrorResponseDTO> handleForbiddenException(ResourceNotFoundException ex, WebRequest request) {

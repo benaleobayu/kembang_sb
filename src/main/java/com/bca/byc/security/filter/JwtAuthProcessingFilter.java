@@ -37,13 +37,10 @@ public class JwtAuthProcessingFilter extends AbstractAuthenticationProcessingFil
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
-		//intercept, mengambil header dari request
 		String authorizationHeader =  request.getHeader("Authorization");
 		
-		//extract header tersebut untuk mendapatkan jwt-nya
 		String jwt = tokenExtractor.extract(authorizationHeader);
 		
-		//bungkus object token untuk proses otentikasi
 		RawAccessJwtToken rawToken = new RawAccessJwtToken(jwt);
 
 		return this.getAuthenticationManager().authenticate(new JwtAuthenticationToken(rawToken));
