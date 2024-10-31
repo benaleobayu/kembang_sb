@@ -35,6 +35,7 @@ public interface UserActiveRepository extends JpaRepository<AppUser, Long> {
             "u.appUserAttribute.isSuspended IN (false) AND " +
             "u.appUserAttribute.isDeleted IN (false) AND " +
             "u.appUserAttribute.isHardDeleted IN (false) AND " +
+            "u.appUserAttribute.isOfficial IN (false) AND " +
             "u.appUserDetail.createdAt BETWEEN :startDate AND :endDate")
     Page<AppUser> getDataActiveIndex(@Param("keyword") String keyword,
                                      Pageable pageable,
