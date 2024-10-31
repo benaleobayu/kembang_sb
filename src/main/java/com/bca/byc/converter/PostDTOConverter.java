@@ -1,6 +1,7 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.MaskingBlacklistKeyword;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
@@ -30,6 +31,9 @@ public class PostDTOConverter {
     private final LikeDislikeRepository likeDislikeRepository;
     private final AppUserRepository userRepository;
     private final UserHasSavedPostRepository savedPostRepository;
+
+    private final BlacklistKeywordRepository blacklistKeywordRepository;
+
     @Value("${app.base.url}")
     private String baseUrl;
 
@@ -79,20 +83,26 @@ public class PostDTOConverter {
         // mapping DTO Entity with Entity
         Post data = new Post();
         data.setId(null);
+
+        MaskingBlacklistKeyword.sanitizeWord(dto.getDescription(), blacklistKeywordRepository);
         data.setDescription(dto.getDescription());
         data.setUser(user);
         data.setPostAt(dto.getIsPosted().equals(true) ? LocalDateTime.now() : null);
 
-        // Set list of Tags
         Set<Tag> tags = new HashSet<>();
         if (dto.getTagName() != null) {
             for (String tagName : dto.getTagName()) {
-                Optional<Tag> tag = tagRepository.findByName(tagName);
-                tag.ifPresentOrElse(tags::add, () -> {
-                    Tag newTag = new Tag();
-                    newTag.setName(tagName);
-                    tags.add(tagRepository.save(newTag));
-                });
+                boolean containsBlacklistedWord = MaskingBlacklistKeyword.blacklistWords(blacklistKeywordRepository).stream()
+                        .anyMatch(blacklistedWord -> tagName.toLowerCase().contains(blacklistedWord.toLowerCase()));
+
+                if (!containsBlacklistedWord) { // Tambahkan hanya jika tidak mengandung blacklist
+                    Optional<Tag> tag = tagRepository.findByName(tagName);
+                    tag.ifPresentOrElse(tags::add, () -> {
+                        Tag newTag = new Tag();
+                        newTag.setName(tagName);
+                        tags.add(tagRepository.save(newTag));
+                    });
+                }
             }
         }
         data.setTags(tags);
