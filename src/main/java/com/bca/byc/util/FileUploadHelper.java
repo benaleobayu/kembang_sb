@@ -10,7 +10,11 @@ import com.bca.byc.repository.AppUserRepository;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -228,5 +232,11 @@ public class FileUploadHelper {
 
         return postContent;
     }
-
+    public static void downloadFileFromUrl(String url, String originalFilename) throws IOException {
+        String fileName = originalFilename;
+        URL website = new URL(url);
+        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+        FileOutputStream fos = new FileOutputStream(fileName);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+    }
 }
