@@ -9,7 +9,6 @@ import com.bca.byc.model.BlacklistIndexResponse;
 import com.bca.byc.model.BlacklistKeywordCreateUpdateRequest;
 import com.bca.byc.model.BlacklistKeywordDetailResponse;
 import com.bca.byc.model.export.BlacklistKeywordExportResponse;
-import com.bca.byc.model.export.UserActiveExportResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.BlacklistKeywordRepository;
@@ -26,14 +25,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,34 +113,4 @@ public class BlacklistKeywordServiceImpl implements BlacklistKeywordService {
         }
     }
 
-    @Override
-    public void exportExcel(HttpServletResponse response) throws IOException {
-        List<BlacklistKeywordExportResponse> datas = repository.findDataForExport();
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("User Deleted");
-
-        HSSFRow headerRow = sheet.createRow(0);
-        String[] rowNames = {"ID", "Keyword", "Status", "Orders", "Created At", "Created By", "Updated At", "Updated By"};
-        for (int i = 0; i < rowNames.length; i++) {
-            createRow(sheet, headerRow, i, rowNames[i]);
-        }
-
-        int dataRowIndex = 1;
-        for (BlacklistKeywordExportResponse data : datas) {
-            HSSFRow dataRow = sheet.createRow(dataRowIndex++);
-            dataRow.createCell(0).setCellValue(data.getId());
-            dataRow.createCell(1).setCellValue(data.getKeyword());
-            dataRow.createCell(2).setCellValue(data.getStatus());
-            dataRow.createCell(3).setCellValue(data.getOrders());
-            dataRow.createCell(4).setCellValue(data.getCreatedAt() != null ? data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
-            dataRow.createCell(5).setCellValue(data.getCreatedBy() != null ? data.getCreatedBy() : "");
-            dataRow.createCell(6).setCellValue(data.getUpdatedAt() != null ? data.getUpdatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
-            dataRow.createCell(7).setCellValue(data.getUpdatedBy() != null ? data.getUpdatedBy() : "");
-        }
-
-        ServletOutputStream ops = response.getOutputStream();
-        workbook.write(ops);
-        workbook.close();
-        ops.close();
-    }
 }

@@ -22,5 +22,4 @@ public interface BlacklistKeywordService {
 
     void deleteData(String id) throws BadRequestException;
 
-    void exportExcel(HttpServletResponse response) throws IOException;
 }
