@@ -56,6 +56,10 @@ public class AppUser extends AbstractBaseEntityCms implements UserDetails , Secu
     @JoinColumn(name = "app_user_attribute_id", referencedColumnName = "id")
     private AppUserAttribute appUserAttribute;
 
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Account account;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<UserManagementLog> log = new ArrayList<>();

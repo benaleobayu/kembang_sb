@@ -26,4 +26,8 @@ public class Account extends AbstractBaseEntityCms implements SecureIdentifiable
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountHasChannels> accountHasChannels = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private AppUser user;
+
 }
