@@ -140,7 +140,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         AppUserDetail userDetail = user.getAppUserDetail();
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
-        boolean checkMemberBirthdate = dto.member_birthdate().equals(dataMemberPreRegister.getMemberBirthdate());
+        boolean checkMemberBirthdate = dataMemberPreRegister != null && dataMemberPreRegister.getMemberBirthdate() != null && dto.member_birthdate().equals(dataMemberPreRegister.getMemberBirthdate());
         if (dto.parent_bank_account() == null && member && checkMemberBirthdate ||
                 dto.parent_bank_account().isEmpty() && member && checkMemberBirthdate ||
                 member && child && checkMemberBirthdate) {
