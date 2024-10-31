@@ -9,6 +9,7 @@ import com.bca.byc.entity.Channel;
 import com.bca.byc.entity.Post;
 import com.bca.byc.entity.PostContent;
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.exception.ForbiddenException;
 import com.bca.byc.exception.InvalidFileTypeImageException;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.model.PostCreateUpdateRequest;
@@ -19,7 +20,6 @@ import com.bca.byc.model.apps.PostOwnerResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.PostService;
@@ -46,6 +46,8 @@ public class PostServiceImpl implements PostService {
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
+
+    private final CommentRepository commentRepository;
 
     private final LikeDislikeRepository likeDislikeRepository;
     private final UserHasSavedPostRepository userHasSavedPostRepository;
@@ -201,18 +203,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deleteData(String secureId) throws Exception {
-        Post data = HandlerRepository.getIdBySecureId(
-                secureId,
-                postRepository::findByIdSecureId,
-                projection -> postRepository.findById(projection.getId()),
-                "Post not found"
-        );
+        AppUser userLogin = GlobalConverter.getUserEntity(appUserRepository);
+        Post data = HandlerRepository.getEntityBySecureId(secureId, postRepository, "Post not found");
 
-        if (!postRepository.existsById(data.getId())) {
-            throw new ResourceNotFoundException("Post not found");
+        if (!data.getUser().getId().equals(userLogin.getId())) {
+            throw new ForbiddenException("You don't have permission to delete this post");
         } else {
+            commentRepository.deleteCommentsByPost(data);
+            postContentRepository.deletePostContentByPost(data);
             postRepository.deletePostById(data.getId());
         }
+
     }
 
 }

@@ -91,8 +91,11 @@ public class AdminContentDTOConverter {
                 data.getAdmin().getName(),
                 data.getIsActive(),
                 data.getIsActive(),
+                data.getPromotedActive(),
                 data.getPromotedStatus(),
                 data.getPromotedAt() + "-" + data.getPromotedUntil(),
+                Formatter.formatLocalDateTime(data.getPromotedAt()),
+                Formatter.formatLocalDateTime(data.getPromotedUntil()),
                 Formatter.formatLocalDateTime(data.getUpdatedAt())
         );
     }

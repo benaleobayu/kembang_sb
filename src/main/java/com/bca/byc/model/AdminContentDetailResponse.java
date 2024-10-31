@@ -22,13 +22,19 @@ public record AdminContentDetailResponse(
 
         String updatedBy,
 
-        Boolean status,
+        Boolean isSchedule,
 
         Boolean isPublish,
+
+        Boolean promotionActive,
 
         String promotionStatus,
 
         String promotionPeriod,
+
+        String promotionAt,
+
+        String promotionUntil,
 
         String postAt
 ) {

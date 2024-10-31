@@ -119,7 +119,7 @@ public class AdminContentServiceImpl implements AdminContentService {
         // delete data
         if (!repository.existsById(data.getId())) {
             throw new BadRequestException("AdminContent not found");
-        } else {
+        } else {// Ensure comments are loaded
             repository.deleteById(data.getId());
         }
     }
