@@ -18,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -155,9 +156,12 @@ public class GlobalAttributeServiceIml implements GlobalAttributeService {
         userProjections.forEach(projection -> {
             AppUser data = userManagementRepository.findById(projection.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            AppUserAttribute userAttribute = data.getAppUserAttribute();
-            userAttribute.setIsDeleted(true);
-            data.setAppUserAttribute(userAttribute);
+
+            data.setEmail(data.getEmail().concat("_deleted"));
+            data.getAppUserAttribute().setIsDeleted(true);
+            data.getAppUserAttribute().setDeletedAt(LocalDateTime.now());
+            data.getAppUserDetail().setIsDeleted(true);
+            data.getAppUserDetail().setMemberCin(data.getAppUserDetail().getMemberCin() + "_deleted");
 
             GlobalConverter.CmsAdminUpdateAtBy(data, admin);
             userManagementRepository.save(data);

@@ -83,9 +83,13 @@ public class UserSuspendedServiceImpl implements UserSuspendedService {
     public void makeUserIsDeletedTrue(String id, @Valid ActionMessageRequest dto) {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         AppUser data = HandlerRepository.getEntityBySecureId(id, repository, "User not found");
-        AppUserAttribute userAttribute = data.getAppUserAttribute();
-        userAttribute.setIsDeleted(true);
-        data.setAppUserAttribute(userAttribute);
+
+        data.setEmail(data.getEmail().concat("_deleted"));
+        data.getAppUserAttribute().setIsDeleted(true);
+        data.getAppUserAttribute().setDeletedAt(LocalDateTime.now());
+        data.getAppUserDetail().setIsDeleted(true);
+        data.getAppUserDetail().setMemberCin(data.getAppUserDetail().getMemberCin() + "_deleted");
+
         LogUserManagementRequest newLog = new LogUserManagementRequest(
                 "DELETED",
                 dto.getMessage()

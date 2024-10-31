@@ -132,8 +132,13 @@ public class UserActiveServiceImpl implements UserActiveService {
         if (!repository.existsBySecureId(id)) {
             throw new BadRequestException("user not found");
         } else {
+            data.setEmail(data.getEmail().concat("_deleted"));
             data.getAppUserAttribute().setIsSuspended(true);
             data.getAppUserAttribute().setIsDeleted(true);
+            data.getAppUserAttribute().setDeletedAt(LocalDateTime.now());
+            data.getAppUserDetail().setIsDeleted(true);
+            data.getAppUserDetail().setMemberCin(data.getAppUserDetail().getMemberCin() + "_deleted");
+
             GlobalConverter.CmsAdminUpdateAtBy(data, admin);
 
             repository.save(data);
