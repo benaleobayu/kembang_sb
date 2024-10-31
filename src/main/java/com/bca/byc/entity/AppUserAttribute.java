@@ -1,18 +1,22 @@
 package com.bca.byc.entity;
 
+import com.bca.byc.entity.listener.AppUserAttributeListener;
 import com.bca.byc.validator.annotation.ReportStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "app_user_attribute")
+@EntityListeners(AppUserAttributeListener.class)
 public class AppUserAttribute extends AbstractBaseEntityTimestamp{
 
     @Id
@@ -72,6 +76,6 @@ public class AppUserAttribute extends AbstractBaseEntityTimestamp{
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "REQUEST" ;
+    private String reportStatus = "NULL" ;
 
 }

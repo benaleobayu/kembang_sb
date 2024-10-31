@@ -1,17 +1,14 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.AccountDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
+import com.bca.byc.enums.StatusType;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AccountCreateUpdateRequest;
 import com.bca.byc.model.AccountDetailResponse;
 import com.bca.byc.model.AccountIndexResponse;
 import com.bca.byc.model.ChannelChecklistResponse;
-import com.bca.byc.repository.AccountHasChannelsRepository;
-import com.bca.byc.repository.AccountRepository;
-import com.bca.byc.repository.ChannelRepository;
+import com.bca.byc.repository.*;
 import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
@@ -25,11 +22,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +45,12 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final ChannelRepository channelRepository;
     private final AccountHasChannelsRepository accountHasChannelsRepository;
+
+    private final AppUserRepository userRepository;
+    private final AppUserDetailRepository userDetailRepository;
+    private final AppUserAttributeRepository userAttributeRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -110,7 +115,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds) throws IOException {
+    public void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds, String email, String password) throws IOException {
         FileUploadHelper.validateFileTypeImage(avatar);
         FileUploadHelper.validateFileTypeImage(cover);
 
@@ -131,6 +136,7 @@ public class AccountServiceImpl implements AccountService {
 
         // save channel in every new account
         saveChannelInAccount(savedData, channelIds);
+        saveNewUser(avatarUrl, coverUrl, name, status, email, password);
     }
 
     @Override
@@ -205,6 +211,39 @@ public class AccountServiceImpl implements AccountService {
                 accountHasChannelsRepository.save(accountHasChannels);
             }
         }
+    }
+
+    // -- helper --
+    private void saveNewUser(String avatar, String cover, String name, Boolean status, String email, String password) {
+        AppUserDetail newUserDetail = new AppUserDetail();
+        newUserDetail.setName(name);
+        newUserDetail.setStatus(StatusType.ACTIVATED);
+        newUserDetail.setAvatar(avatar);
+        newUserDetail.setCover(cover);
+        newUserDetail.setIsActive(status);
+        newUserDetail.setCreatedAt(LocalDateTime.now());
+        newUserDetail.setUpdatedAt(LocalDateTime.now());
+        AppUserDetail savedUserDetail = userDetailRepository.save(newUserDetail);
+
+        AppUserAttribute newUserAttribute = new AppUserAttribute();
+        newUserAttribute.setIsApproved(true);
+        newUserAttribute.setApprovedAt(LocalDateTime.now());
+        newUserAttribute.setIsVerified(true);
+        newUserAttribute.setVerifiedAt(LocalDateTime.now());
+        newUserAttribute.setIsSuspended(false);
+        newUserAttribute.setIsDeleted(false);
+        newUserAttribute.setIsOfficial(true);
+        AppUserAttribute savedUserAttribute = userAttributeRepository.save(newUserAttribute);
+
+        AppUser newUser = new AppUser();
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
+
+        newUser.setAppUserDetail(savedUserDetail);
+        newUser.setAppUserAttribute(savedUserAttribute);
+
+        userRepository.save(newUser);
+
     }
 }
 

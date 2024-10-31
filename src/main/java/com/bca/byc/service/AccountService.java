@@ -1,10 +1,8 @@
 package com.bca.byc.service;
 
-import com.bca.byc.model.AccountCreateUpdateRequest;
 import com.bca.byc.model.AccountDetailResponse;
 import com.bca.byc.model.AccountIndexResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
-import jakarta.validation.Valid;
 import com.bca.byc.exception.BadRequestException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +15,7 @@ public interface AccountService {
 
     AccountDetailResponse findDataById(String id) throws BadRequestException;
 
-    void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds) throws IOException;
+    void saveData(MultipartFile avatar, MultipartFile cover, String name, Boolean status, Set<String> channelIds, String email, String password) throws IOException;
 
     void updateData(String id, MultipartFile avatar, MultipartFile cover, String name, Set<String> channelIds, Boolean status) throws IOException;
 

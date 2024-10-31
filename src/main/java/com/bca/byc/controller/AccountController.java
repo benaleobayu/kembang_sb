@@ -1,16 +1,16 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.AccountCreateUpdateRequest;
 import com.bca.byc.model.AccountDetailResponse;
 import com.bca.byc.model.AccountIndexResponse;
-import com.bca.byc.response.*;
+import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationCmsResponse;
+import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class AccountController {
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "export", required = false) Boolean export // TODO export account
-            ) {
+    ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list accounts", service.listDataAccountIndex(pages, limit, sortBy, direction, keyword)));
@@ -67,12 +67,18 @@ public class AccountController {
             @RequestPart("avatar") MultipartFile avatar,
             @RequestPart("cover") MultipartFile cover,
             @RequestParam("name") String name,
-            @RequestParam("channelIds") Set<String> channelIds,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("confirmPassword") String confirmPassword,
+            @RequestParam(value = "channelIds", required = false) Set<String> channelIds,
             @RequestParam("status") Boolean status
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            service.saveData(avatar, cover, name, status, channelIds);
+            if (!password.equals(confirmPassword)) {
+                throw new BadRequestException("Password and confirm password not match");
+            }
+            service.saveData(avatar, cover, name, status, channelIds, email, password);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created accounts"));
         } catch (BadRequestException | IOException e) {
@@ -88,12 +94,12 @@ public class AccountController {
             @RequestPart(name = "avatar", required = false) MultipartFile avatar,
             @RequestPart(name = "cover", required = false) MultipartFile cover,
             @RequestParam("name") String name,
-            @RequestParam("channelIds") Set<String> channelIds,
+            @RequestParam(value = "channelIds", required = false) Set<String> channelIds,
             @RequestParam("status") Boolean status
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
-            service.updateData(id, avatar, cover, name, channelIds, status);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully updated accounts"));
+        service.updateData(id, avatar, cover, name, channelIds, status);
+        return ResponseEntity.ok(new ApiResponse(true, "Successfully updated accounts"));
     }
 
     @Operation(summary = "Delete Account", description = "Delete Account")
