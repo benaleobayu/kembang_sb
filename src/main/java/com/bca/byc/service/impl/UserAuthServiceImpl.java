@@ -12,7 +12,6 @@ import com.bca.byc.model.LogUserManagementRequest;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.model.UserSetPasswordRequest;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
@@ -61,14 +60,14 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public ResponseEntity<?> authenticate(String deviceId, String version, LoginRequestDTO dto, HttpServletRequest request) {
-        AppUser user = appUserService.findByEmail(dto.email());
+        AppUser user = HandlerRepository.getUserByEmail(dto.email(), userRepository, "Your email is not registered. Please create an account to continue.");
 
         if (user.getAppUserAttribute().getIsSuspended()) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Your account has been suspended. Please contact the administrator."));
         }
 
         if (user.getAppUserAttribute().getIsDeleted()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Your account has been deleted. Please contact the administrator."));
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Your email is not registered. Please create an account to continue."));
         }
 
         try {
@@ -142,7 +141,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         AppUserAttribute userAttribute = user.getAppUserAttribute();
 
         boolean checkMemberBirthdate = dto.member_birthdate().equals(dataMemberPreRegister.getMemberBirthdate());
-        if (dto.parent_bank_account() == null && member && checkMemberBirthdate||
+        if (dto.parent_bank_account() == null && member && checkMemberBirthdate ||
                 dto.parent_bank_account().isEmpty() && member && checkMemberBirthdate ||
                 member && child && checkMemberBirthdate) {
             user.setAppUserDetail(userDetail);
@@ -340,15 +339,17 @@ public class UserAuthServiceImpl implements UserAuthService {
         logDeviceRepository.save(logDevice);
     }
 
-    private void setCreatedUpdatedAt(AppUser dto){
+    private void setCreatedUpdatedAt(AppUser dto) {
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
     }
-    private void setCreatedUpdatedAtDetail(AppUserDetail dto){
+
+    private void setCreatedUpdatedAtDetail(AppUserDetail dto) {
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
     }
-    private void setCreatedUpdatedAtAttr(AppUserAttribute dto){
+
+    private void setCreatedUpdatedAtAttr(AppUserAttribute dto) {
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
     }
