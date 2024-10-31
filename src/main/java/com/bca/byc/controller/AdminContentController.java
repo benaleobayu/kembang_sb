@@ -181,6 +181,7 @@ public class AdminContentController {
         try {
             Post existingPost = HandlerRepository.getEntityBySecureId(id, postRepository, "Post not found");
             List<PostContent> contentList = new ArrayList<>();
+
             if (isSchedule) {
                 postAt = LocalDateTime.now();
             }
@@ -197,30 +198,32 @@ public class AdminContentController {
                 postContentRequest.setOriginalName(contentStringRequest.getOriginalName());
                 contentRequests.add(postContentRequest);
             }
-            // Validate if contentRequests and files match in size
-            if (files.size() != contentRequests.size()) {
+
+            // Pastikan `files` tidak null sebelum validasi ukuran
+            if (files != null && files.size() != contentRequests.size()) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "Mismatch between files and content data"));
             }
 
-            // Process files and content
-            for (int i = 0; i < files.size(); i++) {
-                MultipartFile file = files.get(i);
-                PostContentRequest contentRequest = contentRequests.get(i);
+            // Proses file hanya jika `files` tidak null
+            if (files != null) {
+                for (int i = 0; i < files.size(); i++) {
+                    MultipartFile file = files.get(i);
+                    PostContentRequest contentRequest = contentRequests.get(i);
 
-                // Check if the file is a video and convert it if necessary
-                if (isVideoFile(file)) {
-                    String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
-                    String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
-                    PostContent postContent = processFile(file, thumbnail, contentRequest, i, UPLOAD_DIR, null);
-                    postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
-                    postContent.setMediaUrl(videoPath.replaceAll(UPLOAD_DIR, "uploads"));
-                    contentList.add(postContent);
-                } else {
-                    // Handle other file types as necessary
-                    PostContent postContent = processFile(file, null, contentRequest, i, UPLOAD_DIR, null);
-                    contentList.add(postContent);
+                    if (isVideoFile(file)) {
+                        String videoPath = saveFile(file, UPLOAD_DIR + VIDEO_PATH);
+                        String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, VIDEO_PATH);
+                        PostContent postContent = processFile(file, thumbnail, contentRequest, i, UPLOAD_DIR, null);
+                        postContent.setContent(m3u8Path.replaceAll(UPLOAD_DIR, "uploads"));
+                        postContent.setMediaUrl(videoPath.replaceAll(UPLOAD_DIR, "uploads"));
+                        contentList.add(postContent);
+                    } else {
+                        PostContent postContent = processFile(file, null, contentRequest, i, UPLOAD_DIR, null);
+                        contentList.add(postContent);
+                    }
                 }
             }
+
             Post updatePost = HandlerRepository.getEntityBySecureId(id, postRepository, "Post not found");
             parseToPost(channelId, highlight, description, tags, isPublish, isSchedule, promotedActive, promotedAt, promotedUntil, postAt, channelRepository, tagRepository, existingPost);
             service.updateData(updatePost);

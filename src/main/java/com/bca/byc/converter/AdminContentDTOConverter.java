@@ -94,8 +94,8 @@ public class AdminContentDTOConverter {
                 data.getPromotedActive(),
                 data.getPromotedStatus(),
                 data.getPromotedAt() + "-" + data.getPromotedUntil(),
-                Formatter.formatLocalDateTime(data.getPromotedAt()),
-                Formatter.formatLocalDateTime(data.getPromotedUntil()),
+                data.getPromotedAt() == null ? "" : Formatter.formatLocalDateTime(data.getPromotedAt()),
+                data.getPromotedUntil() == null ? "" : Formatter.formatLocalDateTime(data.getPromotedUntil()) ,
                 Formatter.formatLocalDateTime(data.getUpdatedAt())
         );
     }
