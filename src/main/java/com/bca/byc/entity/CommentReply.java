@@ -43,7 +43,7 @@ public class CommentReply extends AbstractBaseEntity implements SecureIdentifiab
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "REQUEST";
+    private String reportStatus = "NULL";
 
     // relations
     @ManyToOne

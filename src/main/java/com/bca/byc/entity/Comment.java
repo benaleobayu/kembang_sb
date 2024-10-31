@@ -31,7 +31,7 @@ public class Comment extends AbstractBaseEntity implements SecureIdentifiable {
 
     @ReportStatusEnum
     @Column(name = "report_status")
-    private String reportStatus = "REQUEST";
+    private String reportStatus = "NULL";
 
     // relations
 
