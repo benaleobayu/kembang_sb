@@ -1,5 +1,6 @@
 package com.bca.byc.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class BroadcastCreateUpdateRequest {
     @Schema(example = "DRAFT", description = "DRAFT | SENT | SCHEDULED")
     private String status;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime postAt;
 
 }

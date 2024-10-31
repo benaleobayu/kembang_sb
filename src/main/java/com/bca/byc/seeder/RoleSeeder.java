@@ -47,7 +47,8 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("report_chat", List.of("view", "read", "update", "delete", "export"));
         actionByResource.put("report_request", List.of("view", "read", "update", "delete", "export"));
 
-        actionByResource.put("broadcast", List.of("view", "read", "update", "delete", "export"));
+        // inbox
+        actionByResource.put("broadcast", List.of("view", "create","read", "update", "delete", "export"));
 
         // master data
         actionByResource.put("faq", List.of("view", "create", "read", "update", "delete"));
@@ -61,9 +62,6 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("setting", List.of("view", "create", "read", "update", "delete"));
 
         actionByResource.put("request_contact", List.of("view", "read", "update", "delete"));
-        actionByResource.put("accounts", List.of("view", "create" , "read","update", "delete", "export"));
-
-        // inbox
         actionByResource.put("accounts", List.of("view", "create" , "read","update", "delete", "export"));
 
 

@@ -1,6 +1,7 @@
 package com.bca.byc.entity;
 
 import com.bca.byc.entity.impl.SecureIdentifiable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -36,6 +37,7 @@ public class BroadcastManagement extends AbstractBaseEntityCms implements Secure
     private Boolean isSent;
 
     @Column(name = "post_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime postAt;
 
     @Override
