@@ -111,6 +111,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             userDetail.setMemberBankAccount(dto.member_bank_account());
             userDetail.setParentBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
+            userDetail.setStatus(StatusType.PRE_REGISTER);
             user.setAppUserDetail(userDetail);
 
             AppUserAttribute userAttribute = new AppUserAttribute();
@@ -128,6 +129,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             userDetail.setMemberBankAccount(dto.member_bank_account());
             userDetail.setParentBankAccount(dto.parent_bank_account());
             userDetail.setMemberBirthdate(dto.member_birthdate());
+            userDetail.setStatus(StatusType.PRE_REGISTER);
             user.setAppUserDetail(userDetail);
         }
 
@@ -170,7 +172,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             String identity = "get"; // identity send registration otp
             sendRegistrationOtp(identity, savedUser.getEmail());
         } else {
-            userDetail.setStatus(StatusType.REJECTED);
+            userDetail.setStatus(StatusType.PRE_REGISTER);
             int newRejectCount = user.getCountReject() + 1; // increment reject count
             user.setCountReject(newRejectCount);
             user.setAppUserDetail(userDetail);
@@ -178,6 +180,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
             if (newRejectCount >= 3) {
                 userAttribute.setIsRejected(true);
+                user.getAppUserDetail().setStatus(StatusType.REJECTED);
                 user.setAppUserAttribute(userAttribute);
                 userRepository.save(user);
                 throw new BadRequestException("Your account can't be created anymore. Please contact admin.");
