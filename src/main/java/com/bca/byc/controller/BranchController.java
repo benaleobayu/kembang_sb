@@ -8,17 +8,22 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.MasterDataImportService;
 import com.bca.byc.service.cms.BranchService;
+import com.bca.byc.util.FileUploadHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Slf4j
@@ -31,6 +36,7 @@ public class BranchController {
 
     static final String urlRoute = "/cms/v1/ms/branch";
     private BranchService service;
+    private final MasterDataImportService importService;
 
     @PreAuthorize("hasAuthority('branch.view')")
     @Operation(summary = "Get list branch", description = "Get list branch")
@@ -98,6 +104,32 @@ public class BranchController {
             return ResponseEntity.ok(new ApiResponse(true, "Successfully deleted branch"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasAuthority('branch.import')")
+    @Operation(summary = "Import Branch Keyword", description = "Import Branch Keyword")
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importData(@RequestPart(value = "file", required = false) MultipartFile file, @RequestParam(value = "isDownloadSample", required = false, defaultValue = "false" ) Boolean isDownloadSample) {
+        if (Boolean.TRUE.equals(isDownloadSample)) {
+            try {
+                String filename = "sample-branch.xlsx";
+                String urlFile = "http://localhost:8090/uploads/documents/c7fbb5e7-d6a1-4adb-a4f5-b8d392ba5f96.xlsx";
+                FileUploadHelper.downloadFileFromUrl(urlFile, filename);
+                return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully get link download", urlFile));
+            } catch (IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
+        } else {
+            if (file.isEmpty() || file == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(false, "File is empty"));
+            }
+            try {
+                importService.importBranch(file);
+                return ResponseEntity.ok(new ApiResponse(true, "Successfully imported branch"));
+            } catch (BadRequestException | IOException e) {
+                throw new BadRequestException(e.getMessage());
+            }
         }
     }
 }
