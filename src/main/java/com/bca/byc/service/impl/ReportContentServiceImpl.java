@@ -92,6 +92,8 @@ public class ReportContentServiceImpl implements ReportContentService {
                 .map(pc -> {
                     Map<String, String> contentMap = new HashMap<>();
                     contentMap.put("content", GlobalConverter.getParseImage(pc.getContent(), baseUrl));
+                    String thumbnail = pc.getPost().getContentType().equals("video") ? pc.getThumbnail() : pc.getContent();
+                    contentMap.put("thumbnail", GlobalConverter.getParseImage(thumbnail, baseUrl));
                     return contentMap;
                 })
                 .collect(Collectors.toList());
