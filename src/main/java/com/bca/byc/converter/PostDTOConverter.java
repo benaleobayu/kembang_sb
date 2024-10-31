@@ -84,8 +84,8 @@ public class PostDTOConverter {
         Post data = new Post();
         data.setId(null);
 
-        MaskingBlacklistKeyword.sanitizeWord(dto.getDescription(), blacklistKeywordRepository);
-        data.setDescription(dto.getDescription());
+        String sanitizeDescription = MaskingBlacklistKeyword.sanitizeWord(dto.getDescription(), blacklistKeywordRepository);
+        data.setDescription(sanitizeDescription);
         data.setUser(user);
         data.setPostAt(dto.getIsPosted().equals(true) ? LocalDateTime.now() : null);
 
