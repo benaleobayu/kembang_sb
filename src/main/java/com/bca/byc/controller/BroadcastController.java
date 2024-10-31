@@ -8,6 +8,7 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.cms.BroadcastService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,6 +33,7 @@ public class BroadcastController {
 
     static final String urlRoute = "/cms/v1/broadcast";
     private BroadcastService service;
+    private final GlobalAttributeService globalAttributeService;
 
     @PreAuthorize("hasAuthority('broadcast.view')")
     @Operation(summary = "Get list broadcast", description = "Get list broadcast")
@@ -49,7 +51,7 @@ public class BroadcastController {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         ResultPageResponseDTO<BroadcastIndexResponse> result = service.listDataBroadcast(pages, limit, sortBy, direction, keyword, status, postAt);
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list broadcast", result));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list broadcast", result, globalAttributeService.listAttributeBroadcast()));
     }
 
     @PreAuthorize("hasAuthority('broadcast.read')")

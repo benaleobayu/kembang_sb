@@ -146,6 +146,22 @@ public class GlobalAttributeServiceIml implements GlobalAttributeService {
 
         return attributes;
     }
+
+    @Override
+    public List<Map<String, List<?>>> listAttributeBroadcast() {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        List<AttributeResponse<String>> listStatus = Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>("DRAFT", "Draft"),
+                new AttributeResponse<>("SENT", "Sent"),
+                new AttributeResponse<>("SCHEDULED", "Scheduled")
+        );
+        Map<String, List<?>> listAttr = new HashMap<>();
+        listAttr.put("status", listStatus);
+        attributes.add(listAttr);
+
+        return attributes;
+    }
     // ------------------------------------------------------------------------------------------------
 
     @Override

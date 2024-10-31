@@ -19,10 +19,11 @@ public interface GlobalAttributeService {
 
     List<Map<String, List<?>>> listStatusTypeReportContentComment();
 
+    List<Map<String, List<?>>> listAttributeBroadcast();
+
     // -------------------------------------
 
     void makeUserBulkDeleteTrue(Set<String> ids);
 
     void makeUserBulkHardDeleteTrue(Set<String> ids);
-
 }
