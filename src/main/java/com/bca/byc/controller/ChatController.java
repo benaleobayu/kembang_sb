@@ -47,12 +47,14 @@ import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.util.FileUploadHelper;
 import java.util.Map;
 import com.bca.byc.repository.ChatMessageRepository;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import com.bca.byc.repository.ChatRoomRepository;
 import com.bca.byc.repository.ChatRoomUserRepository;
 import com.bca.byc.response.UpdateChatRoomChannelRequest;
 import com.bca.byc.response.KickParticipantsRequest;
-
+import com.bca.byc.response.MakeAdminRequest;
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -582,6 +584,44 @@ public class ChatController {
             return ResponseEntity.status(500).body("Error removing participants from chat room.");
         }
     }
+
+    @PutMapping("/channel-room/make-admin/{secureId}")
+    public ResponseEntity<?> makeAdmin(@PathVariable String secureId, @RequestBody MakeAdminRequest request) {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+    
+        // Authorization check
+        if (tokenSecureId == null || !tokenSecureId.equals(request.getFromUserSecureId())) {
+            return ResponseEntity.status(403).body("You are not authorized to modify this chat room on behalf of another user");
+        }
+    
+        // Check if the user is an admin in this chat room
+        boolean isAdmin = chatRoomUserRepository
+                .findByChatRoomSecureIdAndAppUserSecureIdAndIsAdminTrue(secureId, tokenSecureId)
+                .isPresent();
+    
+        if (!isAdmin) {
+            return ResponseEntity.status(403).body("You are not authorized to modify this chat room as you are not an admin.");
+        }
+    
+        try {
+            // Update the admin status of specified participants
+            List<ChatRoomUser> participantsToMakeAdmin = chatRoomUserRepository
+                    .findByChatRoomSecureIdAndAppUserSecureIdIn(secureId, request.getAdminParticipantSecureIds());
+            
+            participantsToMakeAdmin.forEach(participant -> participant.setAdmin(true));
+            chatRoomUserRepository.saveAll(participantsToMakeAdmin);
+    
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully updated participants to admin in Channel",null));
+    
+        } catch (Exception e) {
+            log.error("Error updating channel chat room", e);
+            return ResponseEntity.status(500).body("Error updating admin status for participants.");
+        }
+    }
+    
+
+
+
 
 
     

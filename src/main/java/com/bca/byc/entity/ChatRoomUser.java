@@ -17,13 +17,13 @@ public class ChatRoomUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_secure_id", nullable = false, referencedColumnName = "secure_id")
-    private ChatRoom chatRoom;  // Reference to ChatRoom
+    private ChatRoom chatRoom;  // Reference to ChatRoom, loaded lazily
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_user_secure_id", nullable = false, referencedColumnName = "secure_id")
-    private AppUser appUser;  // Reference to AppUser by secureId
+    private AppUser appUser;  // Reference to AppUser by secureId, loaded lazily
 
     @Column(nullable = true)
     private boolean isCreator = false;  // Whether this user is the creator of the chat room, default to false
