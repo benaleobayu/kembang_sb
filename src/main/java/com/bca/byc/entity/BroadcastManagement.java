@@ -30,6 +30,9 @@ public class BroadcastManagement extends AbstractBaseEntityCms implements Secure
     @Column(name = "file", columnDefinition = "text")
     private String file;
 
+    @Column(name = "originalFile", columnDefinition = "text")
+    private String originalFile;
+
     @Column(name = "status")
     private String status;
 
