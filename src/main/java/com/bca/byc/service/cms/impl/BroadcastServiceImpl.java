@@ -60,7 +60,13 @@ public class BroadcastServiceImpl implements BroadcastService {
 
     @Override
     public BroadcastDetailResponse findDataBySecureId(String id) {
-        return null;
+        BroadcastManagement data = HandlerRepository.getEntityBySecureId(id, broadcastRepository, "Broadcast not found");
+        return new BroadcastDetailResponse(
+                data.getTitle(),
+                data.getMessage(),
+                data.getIsActive(),
+                Formatter.formatLocalDateTime(data.getPostAt())
+        );
     }
 
     @Override

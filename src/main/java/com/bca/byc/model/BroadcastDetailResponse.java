@@ -1,16 +1,12 @@
 package com.bca.byc.model;
 
-import lombok.Data;
+public record BroadcastDetailResponse(
 
-@Data
-public class BroadcastDetailResponse {
+        String title,
 
-    private String title;
+        String message,
 
-    private String message;
+        Boolean status,
 
-    private String status;
-
-    private String postAt;
-
-}
+        String postAt
+) { }
