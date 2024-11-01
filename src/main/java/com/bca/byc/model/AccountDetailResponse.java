@@ -9,6 +9,8 @@ public class AccountDetailResponse {
 
     private String name;
 
+    private String email;
+
     private Boolean status;
 
     private List<ChannelChecklistResponse> channels;

@@ -85,6 +85,7 @@ public class AccountServiceImpl implements AccountService {
         Account data = getEntity(id);
         AccountDetailResponse dto = new AccountDetailResponse();
         dto.setName(data.getName());
+        dto.setEmail(data.getUser().getEmail());
         dto.setStatus(data.getIsActive());
         dto.setAvatar(GlobalConverter.getAvatarImage(data.getAvatar(), baseUrl));
         dto.setCover(GlobalConverter.getAvatarImage(data.getCover(), baseUrl));
