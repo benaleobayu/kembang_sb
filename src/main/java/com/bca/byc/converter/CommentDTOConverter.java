@@ -1,11 +1,13 @@
 package com.bca.byc.converter;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.MaskingBlacklistKeyword;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.apps.CommentCreateUpdateRequest;
 import com.bca.byc.model.apps.CommentDetailResponse;
 import com.bca.byc.model.apps.PostOwnerResponse;
+import com.bca.byc.repository.BlacklistKeywordRepository;
 import com.bca.byc.repository.LikeDislikeRepository;
 import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
@@ -25,6 +27,7 @@ public class CommentDTOConverter {
 
     private final AppUserRepository userRepository;
     private final LikeDislikeRepository likeDislikeRepository;
+    private final BlacklistKeywordRepository blacklistKeywordRepository;
     @Value("${app.base.url}")
     private String baseUrl;
     private ModelMapper modelMapper;
@@ -103,8 +106,12 @@ public class CommentDTOConverter {
     // for create data
     public Comment convertToCreateRequest(Post postData, @Valid CommentCreateUpdateRequest dto, String email) {
         // mapping DTO Entity with Entity
-        Comment data = modelMapper.map(dto, Comment.class);
+        Comment data = new Comment();
         AppUser user = HandlerRepository.getUserByEmail(email, userRepository, "User not found");
+
+        String sanitizedWord = MaskingBlacklistKeyword.sanitizeWord(dto.getComment(), blacklistKeywordRepository);
+        data.setComment(sanitizedWord);
+
         data.setUser(user);
         data.setPost(postData);
         // return
