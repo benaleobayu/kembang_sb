@@ -47,6 +47,9 @@ import com.bca.byc.util.FileUploadHelper;
 import java.util.Map;
 import com.bca.byc.repository.ChatMessageRepository;
 import java.util.Collections;
+import com.bca.byc.repository.ChatRoomRepository;
+import com.bca.byc.repository.ChatRoomUserRepository;
+import com.bca.byc.response.UpdateChatRoomChannelRequest;
 
 
 @RestController
@@ -73,8 +76,12 @@ public class ChatController {
     @Autowired
     ChatMessageRepository chatMessageRepository;
 
+    @Autowired
+    ChatRoomRepository chatRoomRepository;
 
-    
+
+    @Autowired
+    ChatRoomUserRepository chatRoomUserRepository;    
     
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -410,7 +417,17 @@ public class ChatController {
                 .map(AppUser::getSecureId)
                 .collect(Collectors.toList());
     
-        ChatRoom newRoom = chatRoomService.createRoom("Private Chat", participantSecureIds, RoomType.PRIVATE, fromUser.getSecureId());
+                ChatRoom newRoom = chatRoomService.createRoom(
+                   "Private Chat",
+                    "",  // Add description
+                    participantSecureIds,
+                    RoomType.PRIVATE,
+                    fromUser.getSecureId(),
+                    true,  // Add isNotifications
+                    true    // Add isAdminMessage
+            );
+            
+       // ChatRoom newRoom = chatRoomService.createRoom("Private Chat", participantSecureIds, RoomType.PRIVATE, fromUser.getSecureId(),);
         log.info("Created new private chat room: " + newRoom.getSecureId());
         return newRoom;
     }
@@ -419,20 +436,21 @@ public class ChatController {
 
     @PostMapping("/channel-room/create")
     public ResponseEntity<?> createChannelRoom(@RequestBody CreateChatRoomChannelRequest request) {
-        String tokenSecureId  = ContextPrincipal.getSecureUserId();
-        if(tokenSecureId != null && !tokenSecureId.equals(request.getFromUserSecureId())){
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+        if (tokenSecureId != null && !tokenSecureId.equals(request.getFromUserSecureId())) {
             return ResponseEntity.status(403).body("You are not authorized to send messages on behalf of another user");
         }
-    
 
         try {
             // Fetch participants based on secure_ids from request
             List<AppUser> participants = appUserService.findUsersBySecureIds(request.getParticipantSecureIds());
             AppUser fromUser = appUserService.findBySecureId(request.getFromUserSecureId());
+            
             // Add fromUser to the participants list if they are not already in it
             if (!participants.contains(fromUser)) {
                 participants.add(fromUser);
             }
+            
             if (participants.isEmpty()) {
                 return ResponseEntity.badRequest().body("Participants not found.");
             }
@@ -442,24 +460,79 @@ public class ChatController {
                     .map(AppUser::getSecureId)
                     .collect(Collectors.toList());
 
+            // Create the chat room with additional fields: description, isNotifications, and isAdminMessage
             ChatRoom newRoom = chatRoomService.createRoom(
-                    request.getChannelName(), 
-                    participantSecureIds, 
-                    RoomType.CHANNEL, 
-                    request.getFromUserSecureId()
+                    request.getChannelName(),
+                    request.getDescription(),  // Add description
+                    participantSecureIds,
+                    RoomType.CHANNEL,
+                    request.getFromUserSecureId(),
+                    request.isNotifications(),  // Add isNotifications
+                    request.isAdminMessage()    // Add isAdminMessage
             );
 
             // Log and return the newly created chat room
             log.info("Created new Channel chat room: " + newRoom.getSecureId());
             Map<String, String> dataObject = new HashMap<>();
             dataObject.put("chat_room_secure_id", newRoom.getSecureId());
-            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully create Channel", dataObject));
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully created Channel", dataObject));
 
         } catch (Exception e) {
             log.error("Error creating channel chat room", e);
             return ResponseEntity.status(500).body("Error creating chat room.");
         }
     }
+
+
+    @PutMapping("/channel-room/edit/{secureId}")
+    public ResponseEntity<?> editChannelRoom(@PathVariable String secureId, @RequestBody UpdateChatRoomChannelRequest request) {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+        
+        if (tokenSecureId != null && !tokenSecureId.equals(request.getFromUserSecureId())) {
+            return ResponseEntity.status(403).body("You are not authorized to update this chat room on behalf of another user");
+        }
+        boolean isAdmin = chatRoomUserRepository
+        .findByChatRoomSecureIdAndAppUserSecureIdAndIsAdminTrue(secureId, tokenSecureId)
+        .isPresent();
+
+        if (!isAdmin) {
+            return ResponseEntity.status(403).body("You are not authorized to update this chat room as you are not an admin.");
+        }
+        try {
+            // Fetch the existing chat room by its secure ID
+            ChatRoom existingRoom = chatRoomService.findBySecureId(secureId)
+                    .orElseThrow(() -> new RuntimeException("Chat room not found"));
+
+            // Update fields in the chat room
+            existingRoom.setRoomName(request.getChannelName());
+            existingRoom.setDescription(request.getDescription());
+            existingRoom.setNotifications(request.isNotifications());
+            existingRoom.setAdminMessage(request.isAdminMessage());
+
+            // Update participants if provided
+            if (request.getParticipantSecureIds() != null && !request.getParticipantSecureIds().isEmpty()) {
+                List<AppUser> participants = appUserService.findUsersBySecureIds(request.getParticipantSecureIds());
+                if (participants.isEmpty()) {
+                    return ResponseEntity.badRequest().body("Participants not found.");
+                }
+                existingRoom.setParticipants(participants);
+            }
+
+            // Save the updated chat room
+            ChatRoom updatedRoom = chatRoomRepository.save(existingRoom);
+
+            // Log and return the updated chat room
+            log.info("Updated Channel chat room: " + updatedRoom.getSecureId());
+            Map<String, String> dataObject = new HashMap<>();
+            dataObject.put("chat_room_secure_id", updatedRoom.getSecureId());
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully updated Channel", dataObject));
+
+        } catch (Exception e) {
+            log.error("Error updating channel chat room", e);
+            return ResponseEntity.status(500).body("Error updating chat room.");
+        }
+    }
+
 
     
     

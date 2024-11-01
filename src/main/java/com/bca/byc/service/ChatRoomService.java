@@ -32,25 +32,27 @@ public class ChatRoomService {
      * @return The newly created ChatRoom.
      */
     @Transactional // This ensures the entire method is executed within a single transaction
-    public ChatRoom createRoom(String roomName, List<String> participantSecureIds, RoomType roomType, String creatorSecureId) {
+    public ChatRoom createRoom(String roomName, String description, List<String> participantSecureIds, RoomType roomType, String creatorSecureId, boolean isNotifications, boolean isAdminMessage) {
         // Fetch participants based on their secure IDs
         List<AppUser> participants = appUserRepository.findBySecureIdIn(participantSecureIds);
-
+    
         // Fetch the creator from AppUserRepository
         AppUser creator = appUserRepository.findBySecureId(creatorSecureId)
                 .orElseThrow(() -> new RuntimeException("Creator not found"));
-
+    
         // Create a new ChatRoom entity
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setRoomName(roomName);
+        chatRoom.setDescription(description);  // Set description
         chatRoom.setType(roomType);
         chatRoom.setCreatedAt(LocalDateTime.now());
         chatRoom.setCreator(creator);  // Set the creator in ChatRoom
-        // chatRoom.setParticipants(participants); // Set participants as List<AppUser>
-
+        chatRoom.setNotifications(isNotifications);  // Set notifications preference
+        chatRoom.setAdminMessage(isAdminMessage);  // Set admin message preference
+    
         // Save the chat room first
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-
+    
         // Create and save ChatRoomUser entities for each participant
         List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
         for (AppUser user : participants) {
@@ -61,14 +63,13 @@ public class ChatRoomService {
             chatRoomUser.setAdmin(user.getSecureId().equals(creatorSecureId));  // Mark the creator
             chatRoomUsers.add(chatRoomUser);
         }
-
+    
         // Save ChatRoomUser entities
         chatRoomUserRepository.saveAll(chatRoomUsers);
-
+    
         return savedChatRoom;
     }
-
-
+    
     /**
      * Retrieves all chat rooms for a particular user based on their secure ID.
      *
