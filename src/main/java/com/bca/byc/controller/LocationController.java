@@ -59,7 +59,7 @@ public class LocationController {
             // Export logic
             response.setContentType("application/octet-stream");
             String headerKey = "Content-Disposition";
-            String headerValue = "attachment; filename=pre-register.xls";
+            String headerValue = "attachment; filename=location.xls";
             response.setHeader(headerKey, headerValue);
 
             try {
