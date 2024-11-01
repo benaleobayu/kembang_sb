@@ -1,6 +1,5 @@
 package com.bca.byc.service;
 
-import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
@@ -13,13 +12,13 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,56 +36,73 @@ public class NotificationService {
     @Value("${app.base.url}")
     private String baseUrl;
 
-    public Page<Notification> getNotificationsByUserId(Long userId, Pageable pageable) {
-        return notificationRepository.findByUserId(userId, pageable);
-    }
-
     public ResultPageResponseDTO<NotificationResponse> getNotificationsByUserId(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
 
         ListOfFilterPagination filter = new ListOfFilterPagination(keyword);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
         Page<Notification> pageResult = notificationRepository.findByUserIdAndKeyword(userLogin.getId(), set.keyword(), set.pageable());
-        List<NotificationResponse> dtos = pageResult.stream().map((data) -> {
 
+        Map<String, List<Notification>> likePostGroups = pageResult.stream()
+                .filter(f -> "LIKE-POST".equals(f.getNotifiableType()))
+                .collect(Collectors.groupingBy(Notification::getNotifiableId));
+
+        List<NotificationResponse> dtos = pageResult.stream().map((data) -> {
             String postId = null;
             String postThumbnail = null;
             String messages;
-            switch (data.getNotifiableType()){
-                case "LIKE-POST":
-                    Post post = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), postRepository, "Post not found");
-                    postId = data.getNotifiableId();
-                    postThumbnail = getPostThumbnail(post);
-                    messages = "Liked your post";
-                    break;
-                case "LIKE-COMMENT":
-                    Comment comment = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentRepository, "Comment not found");
-                    postId = comment.getPost().getSecureId();
-                    postThumbnail = getPostThumbnail(comment.getPost());
-                    messages = "Liked your comment";
-                    break;
-                case "LIKE-COMMENT-REPLY":
-                    CommentReply reply = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentReplyRepository, "Comment not found");
-                    postId = reply.getParentComment().getPost().getSecureId();
-                    postThumbnail = getPostThumbnail(reply.getParentComment().getPost());
-                    messages = "Liked your comment reply";
-                    break;
-                case "FOLLOWERS":
-                    messages = "Starting following you";
-                    break;
-                case "COMMENT":
-                    Comment cComment = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentRepository, "Comment not found");
-                    postThumbnail = getPostThumbnail(cComment.getPost());
-                    messages = data.getMessage();
-                    break;
-                case "COMMENT-REPLY":
-                    CommentReply cReply = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentReplyRepository, "Comment not found");
-                    postThumbnail = getPostThumbnail(cReply.getParentComment().getPost());
-                    messages = data.getMessage();
-                    break;
-                default:
-                    messages = "Error";
-                    break;
+
+            if ("LIKE-POST".equals(data.getNotifiableType()) && likePostGroups.containsKey(data.getNotifiableId())) {
+                List<Notification> likePosts = likePostGroups.get(data.getNotifiableId());
+
+                if (likePosts.size() > 3) {
+                    List<String> userNames = likePosts.stream()
+                            .limit(3)
+                            .map((notif) -> {
+                                AppUser liker = HandlerRepository.getEntityById(notif.getCreatedBy(), userRepository, "User not found");
+                                return liker.getAppUserDetail().getName();
+                            }).collect(Collectors.toList());
+                    int others = likePosts.size() - 3;
+                    messages = String.join(", ", userNames) + " and other " + others + "others";
+                } else {
+                    AppUser liker = HandlerRepository.getEntityById(data.getCreatedBy(), userRepository, "User not found");
+                    messages = liker.getAppUserDetail().getName();
+                }
+
+                Post post = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), postRepository, "Post not found");
+                postId = data.getNotifiableId();
+                postThumbnail = getPostThumbnail(post);
+            } else {
+                switch (data.getNotifiableType()) {
+                    case "LIKE-COMMENT":
+                        Comment comment = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentRepository, "Comment not found");
+                        postId = comment.getPost().getSecureId();
+                        postThumbnail = getPostThumbnail(comment.getPost());
+                        messages = "Liked your comment : " + comment.getComment();
+                        break;
+                    case "LIKE-COMMENT-REPLY":
+                        CommentReply reply = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentReplyRepository, "Comment not found");
+                        postId = reply.getParentComment().getPost().getSecureId();
+                        postThumbnail = getPostThumbnail(reply.getParentComment().getPost());
+                        messages = "Liked your comment : " + reply.getComment();
+                        break;
+                    case "FOLLOWERS":
+                        messages = "Started following you";
+                        break;
+                    case "COMMENT":
+                        Comment cComment = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentRepository, "Comment not found");
+                        postThumbnail = getPostThumbnail(cComment.getPost());
+                        messages = "Commented on: \"" + (cComment.getComment().length() > 20 ? cComment.getComment().substring(0, 20) + "..." : cComment.getComment()) + "\"";
+                        break;
+                    case "COMMENT-REPLY":
+                        CommentReply cReply = HandlerRepository.getEntityBySecureId(data.getNotifiableId(), commentReplyRepository, "Comment not found");
+                        postThumbnail = getPostThumbnail(cReply.getParentComment().getPost());
+                        messages = "Commented on: \"" + (cReply.getComment().length() > 20 ? cReply.getComment().substring(0, 20) + "..." : cReply.getComment()) + "\"";
+                        break;
+                    default:
+                        messages = "Error";
+                        break;
+                }
             }
 
             String status;
@@ -125,9 +141,9 @@ public class NotificationService {
     }
 
     // --helper
-    private String getPostThumbnail(Post post){
+    private String getPostThumbnail(Post post) {
         return post.getContentType().equals("video") ?
-                post.getPostContents().stream().filter( f -> f.getType().equals("video")).map(PostContent::getThumbnail).findFirst().orElse(null) :
-                post.getPostContents().stream().filter( f -> f.getType().equals("image")).map(PostContent::getThumbnail).findFirst().orElse(null);
+                post.getPostContents().stream().filter(f -> f.getType().equals("video")).map(PostContent::getThumbnail).findFirst().orElse(null) :
+                post.getPostContents().stream().filter(f -> f.getType().equals("image")).map(PostContent::getThumbnail).findFirst().orElse(null);
     }
 }
