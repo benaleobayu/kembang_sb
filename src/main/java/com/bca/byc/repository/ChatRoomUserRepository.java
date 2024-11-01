@@ -14,5 +14,8 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
     Optional<ChatRoomUser> findByChatRoomSecureIdAndAppUserSecureIdAndIsAdminTrue(String chatRoomSecureId, String appUserSecureId);
     List<ChatRoomUser> findByChatRoomSecureIdAndAppUserSecureIdIn(String chatRoomSecureId, List<String> appUserSecureIds);
 
+    List<ChatRoomUser> findByChatRoomSecureId(String chatRoomSecureId);
+    Optional<ChatRoomUser> findByChatRoomSecureIdAndAppUserSecureId(String chatRoomSecureId, String appUserSecureId);
+
 
 }

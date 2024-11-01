@@ -8,6 +8,7 @@ import com.bca.byc.enums.ChatType;
 import com.bca.byc.enums.RoomType;
 import com.bca.byc.exception.ResourceNotFoundException;
 import com.bca.byc.exception.UnauthorizedException;
+import com.bca.byc.model.dto.ParticipantDto;
 import com.bca.byc.service.ChatService;
 
 import com.bca.byc.service.impl.AppUserServiceImpl;
@@ -618,13 +619,43 @@ public class ChatController {
             return ResponseEntity.status(500).body("Error updating admin status for participants.");
         }
     }
+    @GetMapping("/channel-room/all-participants/{secureId}")
+    public ResponseEntity<?> getAllParticipants(@PathVariable String secureId) {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+    
+        try {
+            // Check if the requesting user is a participant in the chat room
+            boolean isParticipant = chatRoomUserRepository
+                .findByChatRoomSecureIdAndAppUserSecureId(secureId, tokenSecureId)
+                .isPresent();
+    
+            if (!isParticipant) {
+                return ResponseEntity.status(403).body("You are not authorized to view participants of this chat room.");
+            }
+    
+            // Retrieve and map participants to ParticipantDto
+            List<ParticipantDto> participants = chatRoomUserRepository.findByChatRoomSecureId(secureId).stream()
+                .map(user -> new ParticipantDto(
+                    user.getAppUser().getSecureId(),
+                    user.getAppUser().getName(),
+                    user.getAppUser().getEmail(),
+                    user.isAdmin(),
+                    user.isCreator()
+                ))
+                .collect(Collectors.toList());
+    
+            if (participants.isEmpty()) {
+                return ResponseEntity.status(404).body("No participants found for the given chat room.");
+            }
+    
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Participants retrieved successfully", participants));
+    
+        } catch (Exception e) {
+            log.error("Error retrieving participants for chat room: " + secureId, e);
+            return ResponseEntity.status(500).body("Error retrieving participants.");
+        }
+    }
     
 
-
-
-
-
-    
-    
     
 }
