@@ -8,5 +8,7 @@ public record BroadcastDetailResponse(
 
         Boolean status,
 
-        String postAt
+        String postAt,
+
+        String urlFile
 ) { }
