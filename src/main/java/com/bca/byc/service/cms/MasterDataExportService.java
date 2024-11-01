@@ -11,4 +11,6 @@ public interface MasterDataExportService {
     void exportBlacklistKeyword(HttpServletResponse response) throws IOException;
 
     void exportLocation(HttpServletResponse response) throws IOException;
+
+    void exportBranch(HttpServletResponse response) throws IOException;
 }
