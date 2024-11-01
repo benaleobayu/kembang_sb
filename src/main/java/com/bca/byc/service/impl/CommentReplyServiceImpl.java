@@ -3,6 +3,7 @@ package com.bca.byc.service.impl;
 import com.bca.byc.converter.CommentDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
+import com.bca.byc.converter.parsing.MaskingBlacklistKeyword;
 import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Comment;
@@ -45,6 +46,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     private final AppUserRepository userRepository;
 
     private final LikeDislikeRepository likeDislikeRepository;
+    private final BlacklistKeywordRepository blacklistKeywordRepository;
 
     private final NotificationRepository notificationRepository;
 
@@ -94,7 +96,8 @@ public class CommentReplyServiceImpl implements CommentReplyService {
         }
         // set entity to add with model mapper
         CommentReply data = new CommentReply();
-        data.setComment(dto.getComment());
+        String sanitizedWord = MaskingBlacklistKeyword.sanitizeWord(dto.getComment(), blacklistKeywordRepository);
+        data.setComment(sanitizedWord);
         data.setParentComment(comment);
         data.setUser(user);
 
