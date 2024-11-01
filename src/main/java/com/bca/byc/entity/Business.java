@@ -27,13 +27,16 @@ public class Business extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "province", length = 50)
+    @Column(name = "position")
+    private String position;
+
+    @Column(name = "province")
     private String province;
 
-    @Column(name = "address", length = 80)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "website", length = 50)
+    @Column(name = "website")
     private String website;
 
     @Column(name = "description", columnDefinition = "text")
