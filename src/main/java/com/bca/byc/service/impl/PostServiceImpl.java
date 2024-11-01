@@ -211,6 +211,7 @@ public class PostServiceImpl implements PostService {
         } else {
             commentRepository.deleteCommentsByPost(data);
             postContentRepository.deletePostContentByPost(data);
+            likeDislikeRepository.deletePostLikeByPost(data);
             postRepository.deletePostById(data.getId());
         }
 
