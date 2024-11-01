@@ -2,8 +2,10 @@ package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.model.export.BlacklistKeywordExportResponse;
 import com.bca.byc.model.export.BusinessExportResponse;
+import com.bca.byc.model.export.LocationExportResponse;
 import com.bca.byc.repository.BlacklistKeywordRepository;
 import com.bca.byc.repository.BusinessRepository;
+import com.bca.byc.repository.LocationRepository;
 import com.bca.byc.service.cms.MasterDataExportService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +29,7 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
 
     private final BusinessRepository businessRepository;
     private final BlacklistKeywordRepository blacklistKeywordRepository;
-
+    private final LocationRepository locationRepository;
 
     @Override
     public void exportBusinessUser(HttpServletResponse response) throws IOException {
@@ -91,6 +93,38 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
             dataRow.createCell(5).setCellValue(data.getCreatedBy() != null ? data.getCreatedBy() : "");
             dataRow.createCell(6).setCellValue(data.getUpdatedAt() != null ? data.getUpdatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
             dataRow.createCell(7).setCellValue(data.getUpdatedBy() != null ? data.getUpdatedBy() : "");
+        }
+
+        ServletOutputStream ops = response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
+    }
+
+    @Override
+    public void exportLocation(HttpServletResponse response) throws IOException {
+        List<LocationExportResponse> datas = locationRepository.findDataForExport();
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Location");
+
+        HSSFRow headerRow = sheet.createRow(0);
+        String[] rowNames = {"ID", "Province", "Name", "Status", "Orders", "Created At", "Created By", "Updated At", "Updated By"};
+        for (int i = 0; i < rowNames.length; i++) {
+            createRow(sheet, headerRow, i, rowNames[i]);
+        }
+
+        int dataRowIndex = 1;
+        for (LocationExportResponse data : datas) {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex++);
+            dataRow.createCell(0).setCellValue(data.getId());
+            dataRow.createCell(1).setCellValue(data.getProvince());
+            dataRow.createCell(2).setCellValue(data.getName());
+            dataRow.createCell(3).setCellValue(data.getStatus());
+            dataRow.createCell(4).setCellValue(data.getOrders());
+            dataRow.createCell(5).setCellValue(data.getCreatedAt() != null ? data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
+            dataRow.createCell(6).setCellValue(data.getCreatedBy() != null ? data.getCreatedBy() : "");
+            dataRow.createCell(7).setCellValue(data.getUpdatedAt() != null ? data.getUpdatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
+            dataRow.createCell(8).setCellValue(data.getUpdatedBy() != null ? data.getUpdatedBy() : "");
         }
 
         ServletOutputStream ops = response.getOutputStream();

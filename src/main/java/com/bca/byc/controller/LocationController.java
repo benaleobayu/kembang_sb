@@ -5,16 +5,19 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.LocationCreateUpdateRequest;
 import com.bca.byc.model.LocationDetailResponse;
 import com.bca.byc.model.LocationIndexResponse;
+import com.bca.byc.model.export.ExportFilterRequest;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.MasterDataImportService;
 import com.bca.byc.service.cms.LocationService;
+import com.bca.byc.service.cms.MasterDataExportService;
 import com.bca.byc.util.FileUploadHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,22 +40,40 @@ public class LocationController {
 
     static final String urlRoute = "/cms/v1/ms/location";
     private final MasterDataImportService importService;
+    private final MasterDataExportService exportService;
     private LocationService service;
 
     @PreAuthorize("hasAuthority('location.view')")
     @Operation(summary = "Get list Location", description = "Get list Location")
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<LocationIndexResponse>>> listDataLocation(
+    public ResponseEntity<?> listDataLocation(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "export", required = false) Boolean export // TODO export location
+            @RequestParam(name = "export", required = false) Boolean export,
+            HttpServletResponse response
     ) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list location", service.listDataLocation(pages, limit, sortBy, direction, keyword)));
+        if (Boolean.TRUE.equals(export)) {
+            // Export logic
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=pre-register.xls";
+            response.setHeader(headerKey, headerValue);
+
+            try {
+                exportService.exportLocation(response);
+            } catch (IOException e) {
+                log.error("Error exporting data", e);
+                return ResponseEntity.internalServerError().body("Error exporting data");
+            }
+            return ResponseEntity.ok().build(); // Return an empty response as the file is handled in the export method
+        } else {
+            // response true
+            log.info("GET " + urlRoute + " endpoint hit");
+            return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list location", service.listDataLocation(pages, limit, sortBy, direction, keyword)));
+        }
     }
 
     @PreAuthorize("hasAuthority('location.read')")

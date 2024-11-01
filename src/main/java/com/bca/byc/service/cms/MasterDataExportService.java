@@ -9,4 +9,6 @@ public interface MasterDataExportService {
     void exportBusinessUser(HttpServletResponse response) throws IOException;
 
     void exportBlacklistKeyword(HttpServletResponse response) throws IOException;
+
+    void exportLocation(HttpServletResponse response) throws IOException;
 }

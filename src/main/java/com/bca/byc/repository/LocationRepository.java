@@ -1,6 +1,7 @@
 package com.bca.byc.repository;
 
 import com.bca.byc.entity.Location;
+import com.bca.byc.model.export.LocationExportResponse;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,5 +38,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "LOWER(l.address) LIKE LOWER(CONCAT('%', :keyword, '%'))) ")
     Page<Location> findIdAndName(String keyword, Pageable pageable);
     // --- input attribute ---
+
+    // --- export ---
+    @Query("SELECT new com.bca.byc.model.export.LocationExportResponse(" +
+            "l.id, l.province, l.name, l.isActive, l.orders, l.createdAt, l.createdBy.name, l.updatedAt, l.createdBy.name) " +
+            "FROM Location l")
+    List<LocationExportResponse> findDataForExport();
 
 }
