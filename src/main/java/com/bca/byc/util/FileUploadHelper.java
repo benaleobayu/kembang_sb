@@ -181,17 +181,10 @@ public class FileUploadHelper {
         String fileName = file.getOriginalFilename();
         if (fileName != null) {
             if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")
-//                    || fileName.endsWith(".gif") || fileName.endsWith(".bmp") ||
-//                    fileName.endsWith(".tiff") || fileName.endsWith(".webp") ||
-//                    fileName.endsWith(".svg") || fileName.endsWith(".ico")
             ) {
                 contentType = "image/webp"; // Default to WEBP
                 fileType = "image";
             } else if (fileName.endsWith(".mp4")
-//                    || fileName.endsWith(".avi") ||
-//                    fileName.endsWith(".mkv") || fileName.endsWith(".mov") ||
-//                    fileName.endsWith(".wmv") || fileName.endsWith(".flv") ||
-//                    fileName.endsWith(".mpeg") || fileName.endsWith(".3gp")
             ) {
                 contentType = "video/mp4"; // Default to MP4
                 fileType = "video";
@@ -199,8 +192,6 @@ public class FileUploadHelper {
                 throw new RuntimeException("Unsupported file type: " + fileName);
             }
         }
-
-
         // Membuat PostContent dari file dan contentRequest yang sesuai
         PostContent postContent = new PostContent();
         postContent.setIndex(index);
