@@ -19,6 +19,7 @@ import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.*;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.CommentService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,6 +88,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public ReturnCommentResponse saveData(String postId, @Valid CommentCreateUpdateRequest dto, String email) throws BadRequestException {
         Post post = getEntityBySecureId(postId, postRepository, "Post not found");
 
@@ -105,7 +107,7 @@ public class CommentServiceImpl implements CommentService {
                 );
         saveNotification(newNotification, notificationRepository);
 
-        int totalComments = savedComment.getPost().getCommentsCount().intValue();
+        int totalComments = savedComment.getPost().getStats().getCommentsCount().intValue();
         int totalReplies = savedComment.getCommentReply().size();
 
         ReturnCommentResponse message = new ReturnCommentResponse();

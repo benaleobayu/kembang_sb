@@ -114,7 +114,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
         );
         saveNotification(newNotification, notificationRepository);
 
-        int totalComments = savedReply.getParentComment().getPost().getCommentsCount().intValue();
+        int totalComments = savedReply.getParentComment().getPost().getStats().getCommentsCount().intValue();
         int totalReplies = savedReply.getParentComment().getCommentReply().size();
 
         ReturnCommentResponse message = new ReturnCommentResponse();
