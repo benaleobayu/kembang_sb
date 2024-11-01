@@ -3,6 +3,7 @@ package com.bca.byc.controller;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.ChatMessage;
 import com.bca.byc.entity.ChatRoom;
+import com.bca.byc.entity.ChatRoomUser;
 import com.bca.byc.enums.ChatType;
 import com.bca.byc.enums.RoomType;
 import com.bca.byc.exception.ResourceNotFoundException;
@@ -50,6 +51,7 @@ import java.util.Collections;
 import com.bca.byc.repository.ChatRoomRepository;
 import com.bca.byc.repository.ChatRoomUserRepository;
 import com.bca.byc.response.UpdateChatRoomChannelRequest;
+import com.bca.byc.response.KickParticipantsRequest;
 
 
 @RestController
@@ -530,6 +532,54 @@ public class ChatController {
         } catch (Exception e) {
             log.error("Error updating channel chat room", e);
             return ResponseEntity.status(500).body("Error updating chat room.");
+        }
+    }
+
+
+
+    @PutMapping("/channel-room/kicks/{secureId}")
+    public ResponseEntity<?> kickParticipants(@PathVariable String secureId, @RequestBody KickParticipantsRequest request) {
+        String tokenSecureId = ContextPrincipal.getSecureUserId();
+
+        // Authorization check: Only allow if the user is the requester or an admin
+        if (tokenSecureId != null && !tokenSecureId.equals(request.getFromUserSecureId())) {
+            return ResponseEntity.status(403).body("You are not authorized to modify this chat room on behalf of another user");
+        }
+
+        // Check if the user is an admin in this chat room
+        boolean isAdmin = chatRoomUserRepository
+                .findByChatRoomSecureIdAndAppUserSecureIdAndIsAdminTrue(secureId, tokenSecureId)
+                .isPresent();
+
+        if (!isAdmin) {
+            return ResponseEntity.status(403).body("You are not authorized to modify this chat room as you are not an admin.");
+        }
+
+        try {
+            // Fetch the existing chat room by its secure ID
+            ChatRoom existingRoom = chatRoomService.findBySecureId(secureId)
+                    .orElseThrow(() -> new RuntimeException("Chat room not found"));
+
+            // Remove specified participants
+             List<String> kickParticipantSecureIds = request.getKickParticipantSecureIds();
+            if (kickParticipantSecureIds != null && !kickParticipantSecureIds.isEmpty()) {
+                // Retrieve and delete ChatRoomUser entries for participants to be removed
+                List<ChatRoomUser> usersToRemove = chatRoomUserRepository.findByChatRoomSecureIdAndAppUserSecureIdIn(secureId, kickParticipantSecureIds);
+                chatRoomUserRepository.deleteAll(usersToRemove);
+            }
+
+            // Save the updated chat room
+            ChatRoom updatedRoom = chatRoomRepository.save(existingRoom);
+
+            // Log and return the updated chat room
+            log.info("Updated Channel chat room after kicking participants: " + updatedRoom.getSecureId());
+            Map<String, String> dataObject = new HashMap<>();
+            dataObject.put("chat_room_secure_id", updatedRoom.getSecureId());
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Successfully removed participants from Channel", dataObject));
+
+        } catch (Exception e) {
+            log.error("Error updating channel chat room", e);
+            return ResponseEntity.status(500).body("Error removing participants from chat room.");
         }
     }
 
