@@ -40,6 +40,8 @@ public class AdminDTOConverter {
         // get role name
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
+        dto.setName(data.getName());
+        dto.setEmail(data.getEmail());
         dto.setStatus(data.getIsActive());
         dto.setIsVisible(data.getIsVisible());
         dto.setRoleId(data.getRole().getSecureId());
