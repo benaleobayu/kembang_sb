@@ -1,5 +1,6 @@
 package com.bca.byc.controller;
 
+import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.PostShareResponse;
 import com.bca.byc.model.attribute.SetLikeDislikeRequest;
 import com.bca.byc.model.attribute.TotalCountResponse;
@@ -11,8 +12,10 @@ import com.bca.byc.service.UserActionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +53,22 @@ public class AppUserActionController {
 
     @Operation(summary = "Like or dislike post | comment | comment-reply", description = "Like or dislike  post | comment | comment-reply")
     @PostMapping("/action/like-dislike")
-    public ResponseEntity<?> likeDislikePost(@RequestBody SetLikeDislikeRequest dto) {
-        log.info("POST " + urlRoute + "/post/like-dislike endpoint hit");
+    public ResponseEntity<?> likeDislikePost(@Valid @RequestBody SetLikeDislikeRequest dto) {
+        log.info("POST " + urlRoute + "/action/like-dislike endpoint hit with data: {}", dto);
         String email = ContextPrincipal.getPrincipal();
-        TotalCountResponse message = userActionService.likeDislike(email, dto);
 
-        return ResponseEntity.ok(new ApiDataResponse<>(true, "Success", message != null ? message : new TotalCountResponse(0)));
+        try {
+            TotalCountResponse message = userActionService.likeDislike(email, dto);
+            log.info("Successfully processed like/dislike action for user: {}", email);
+            return ResponseEntity.ok(new ApiDataResponse<>(true, "Success", message != null ? message : new TotalCountResponse(0)));
+        } catch (BadRequestException e) {
+            log.error("Bad request error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiDataResponse<>(false, e.getMessage(), null));
+        } catch (Exception e) {
+            log.error("An unexpected error occurred: {}", e.getMessage(), e); // log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiDataResponse<>(false, "An unexpected error occurred", null));
+        }
     }
 
     @Operation(summary = "Save or unsave post", description = "Save or unsave post")
