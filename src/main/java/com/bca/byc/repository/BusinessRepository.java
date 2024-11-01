@@ -3,6 +3,8 @@ package com.bca.byc.repository;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.Business;
 import com.bca.byc.model.BusinessCatalogCountsResponse;
+import com.bca.byc.model.export.BusinessExportResponse;
+import com.bca.byc.model.projection.BusinessExportProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -58,13 +60,12 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "(:id IS NULL OR b.user.id IN :id)")
     Page<Business> findBusinessOnUser(@Param("id") List<Long> id, @Param("keyword") String keyword, Pageable pageable);
 
-    @Query("SELECT b.id, b.name, b.address, bc.name, b.isPrimary, loc.name, bci.name " +
+    @Query("SELECT b.id as id, b.name as name, b.address as address, bc.name as lineOfBusiness, b.isPrimary as isPrimary, " +
+            "u.email as userEmail, u.appUserDetail.name as userName, u.appUserDetail.memberCin as userCin " +
             "FROM Business b " +
             "LEFT JOIN BusinessHasCategory bhc ON bhc.business.id = b.id " +
             "LEFT JOIN BusinessCategory bc ON bc.id = bhc.businessCategoryParent.id " +
-            "LEFT JOIN BusinessCategory bci ON bci.id = bhc.businessCategoryChild.id " +
-            "LEFT JOIN BusinessHasLocation bhl ON bhl.business.id = b.id " +
-            "LEFT JOIN Location loc ON loc.id = bhl.location.id ")
-    List<Object[]> findDataForExportByUserId();
+            "LEFT JOIN AppUser u ON u.id = b.user.id")
+    List<BusinessExportProjection> findDataForExportByUserId();
     // --- for detail usermanagement ---
 }

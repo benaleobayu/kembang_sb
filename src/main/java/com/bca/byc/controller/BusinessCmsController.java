@@ -47,7 +47,7 @@ public class BusinessCmsController {
             // Export logic
             response.setContentType("application/octet-stream");
             String headerKey = "Content-Disposition";
-            String headerValue = "attachment; filename=active-user.xls";
+            String headerValue = "attachment; filename=business.xls";
             response.setHeader(headerKey, headerValue);
 
             try {
@@ -64,15 +64,5 @@ public class BusinessCmsController {
         // response true
     }
 
-    @Operation(summary = "Get list business", description = "Get list business", hidden = true)
-    @PreAuthorize("hasAuthority('pre-registration.export')")
-    @GetMapping("/{userId}/export")
-    public void exportExcel(HttpServletResponse response, @PathVariable("userId") String userId) throws IOException {
-        response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pre-register.xls";
-        response.setHeader(headerKey, headerValue);
-        exportService.exportBusinessUser(response);
-    }
 
 }
