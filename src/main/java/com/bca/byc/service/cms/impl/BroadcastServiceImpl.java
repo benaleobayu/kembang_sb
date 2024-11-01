@@ -29,19 +29,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.bca.byc.util.FileUploadHelper.saveFile;
+import static com.bca.byc.util.FileUploadHelper.*;
 
 @Service
 @AllArgsConstructor
 public class BroadcastServiceImpl implements BroadcastService {
 
     private final AppAdminRepository adminRepository;
-
     private final BroadcastRepository broadcastRepository;
-
     @Value("${app.base.url}")
     private String baseUrl;
-
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
 
@@ -77,7 +74,8 @@ public class BroadcastServiceImpl implements BroadcastService {
                 data.getTitle(),
                 data.getMessage(),
                 data.getIsActive(),
-                Formatter.formatLocalDateTime(data.getPostAt())
+                Formatter.formatLocalDateTime(data.getPostAt()),
+                GlobalConverter.getParseImage(data.getFile(), baseUrl)
         );
     }
 
@@ -128,17 +126,33 @@ public class BroadcastServiceImpl implements BroadcastService {
         } else {
             GlobalConverter.CmsAdminUpdateAtBy(data, adminLogin);
         }
-
         if (item.getFile() != null) {
-            FileUploadHelper.validateFileTypeImage(item.getFile());
-            String newCover = saveFile(item.getFile(), UPLOAD_DIR + "/broadcast");
-            data.setFile(GlobalConverter.replaceImagePath(newCover));
-            if (type.equals("update") && data.getFile() != null && !data.getFile().equals(newCover)) {
-                FileUploadHelper.deleteFile(data.getFile(), UPLOAD_DIR);
+            if (isVideoFile(item.getFile())) {
+                handleVideoFile(data, item.getFile());
+            } else {
+                handleImageFile(data, item.getFile(), type);
             }
         }
 
         data.setIsScheduled(item.getStatus().equals("SCHEDULED"));
         data.setIsSent(item.getStatus().equals("SENT"));
+    }
+
+    private void handleVideoFile(BroadcastManagement data, MultipartFile file) throws IOException {
+        String videoPath = saveFile(file, UPLOAD_DIR + "/broadcast");
+        String m3u8Path = convertVideoToM3U8(videoPath, UPLOAD_DIR, "/broadcast");
+        data.setFile(m3u8Path.replace(UPLOAD_DIR, "uploads"));
+        data.setOriginalFile(videoPath.replace(UPLOAD_DIR, "uploads"));
+    }
+
+    private void handleImageFile(BroadcastManagement data, MultipartFile file, String type) throws IOException {
+        FileUploadHelper.validateFileTypeImage(file);
+        String newCover = saveFile(file, UPLOAD_DIR + "/broadcast");
+        String formattedPath = GlobalConverter.replaceImagePath(newCover);
+
+        if ("update".equals(type) && data.getFile() != null && !data.getFile().equals(formattedPath)) {
+            FileUploadHelper.deleteFile(data.getFile(), UPLOAD_DIR);
+        }
+        data.setFile(formattedPath);
     }
 }
