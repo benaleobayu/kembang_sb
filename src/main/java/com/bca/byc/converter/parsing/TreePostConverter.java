@@ -11,7 +11,10 @@ import com.bca.byc.repository.PostRepository;
 import com.bca.byc.util.helper.Formatter;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TreePostConverter {
@@ -28,7 +31,7 @@ public class TreePostConverter {
             TreePostConverter converter,
             AppUser userLogin,
             LikeDislikeRepository likeDislikeRepository
-    ){
+    ) {
 
         dto.setPostId(data.getSecureId());
         dto.setPostDescription(data.getDescription());
@@ -48,7 +51,7 @@ public class TreePostConverter {
 
         dto.setPostTagsList(convertTagList(data.getTags()));
         dto.setPostContentList(convertPostContents(data.getPostContents(), converter, userLogin));
-        dto.setPostCategory(data.getPostCategory() == null ? null :convertPostCategory(data.getPostCategory()));
+        dto.setPostCategory(data.getPostCategory() == null ? null : convertPostCategory(data.getPostCategory()));
         dto.setPostLocation(data.getPostLocation() == null ? null : convertPostLocation(data.getPostLocation()));
 
         // Check if the post is liked by the userLogin
@@ -64,8 +67,8 @@ public class TreePostConverter {
         String officialUrl = !isAdminPost ? data.getUser().getAppUserAttribute().getOfficialUrl() : null;
         dto.setOfficialUrl(officialUrl);
 
-        dto.setLikeCount(data.getLikesCount());
-        dto.setCommentCount(data.getCommentsCount());
+        dto.setLikeCount(data.getStats().getLikesCount());
+        dto.setCommentCount(data.getStats().getCommentsCount());
         return dto;
     }
 
@@ -96,7 +99,7 @@ public class TreePostConverter {
                 .filter(Business::getIsPrimary).findFirst().orElse(null);
         assert firstBusiness != null;
         BusinessCategory firstBusinessCategory = firstBusiness != null ? firstBusiness.getBusinessCategories().stream()
-                        .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
+                .findFirst().map(BusinessHasCategory::getBusinessCategoryParent).orElse(null) : null;
         assert firstBusinessCategory != null;
         dto.setOwner(PostOwnerResponse(
                 new PostOwnerResponse(),
@@ -158,6 +161,7 @@ public class TreePostConverter {
         dto.setParentId(data.getParentComment().getSecureId());
         return dto;
     }
+
     // Helper owner with business
     public PostOwnerResponse convertOwnerDataWithBusiness(TreePostConverter converter, AppUser appUser, AppUser userLogin) {
         return converter.PostOwnerResponse(
@@ -183,6 +187,7 @@ public class TreePostConverter {
                 userLogin
         );
     }
+
     public PostOwnerResponse PostOwnerResponse(PostOwnerResponse dto,
                                                String id,
                                                String name,
@@ -205,15 +210,16 @@ public class TreePostConverter {
         dto.setIsPrimary(isPrimary);
         return dto;
     }
+
     public PostOwnerResponse TagUserResponse(PostOwnerResponse dto,
-                                               String id,
-                                               String name,
-                                               String avatar,
-                                               String businessName,
-                                               String lineOfBusiness,
-                                               Boolean isPrimary,
-                                               AppUser userTagged,
-                                               AppUser userLogin
+                                             String id,
+                                             String name,
+                                             String avatar,
+                                             String businessName,
+                                             String lineOfBusiness,
+                                             Boolean isPrimary,
+                                             AppUser userTagged,
+                                             AppUser userLogin
     ) {
         dto.setId(id);
         dto.setName(name);
@@ -229,8 +235,8 @@ public class TreePostConverter {
     }
 
     public PostOwnerResponse PostOwnerAdminResponse(PostOwnerResponse dto,
-                                               AppAdmin userPost,
-                                               AppUser userLogin
+                                                    AppAdmin userPost,
+                                                    AppUser userLogin
     ) {
         dto.setId(userPost.getSecureId());
         dto.setName(userPost.getName());
@@ -243,13 +249,12 @@ public class TreePostConverter {
     }
 
 
-
     public PostContentDetailResponse PostContentDetailResponse(PostContentDetailResponse dto, String contentId, String content, String contentType, String thumbnail, List<PostOwnerResponse> tagsUser
     ) {
         dto.setContentId(contentId);
         dto.setContent(GlobalConverter.getParseImage(content, baseUrl));
         dto.setContentType(contentType);
-        if (contentType.equals("image")){
+        if (contentType.equals("image")) {
             dto.setThumbnail(GlobalConverter.getParseImage(content, baseUrl));
         } else {
             dto.setThumbnail(GlobalConverter.getParseImage(thumbnail, baseUrl));
@@ -279,9 +284,9 @@ public class TreePostConverter {
 
     public Post countPostComments(Post post, PostRepository repository, String type) {
         if (type.equals("add")) {
-            post.setCommentsCount(post.getCommentsCount() + 1);
+            post.getStats().setCommentsCount(post.getStats().getCommentsCount() + 1);
         } else if (type.equals("delete")) {
-            post.setCommentsCount(post.getCommentsCount() - 1);
+            post.getStats().setCommentsCount(post.getStats().getCommentsCount() - 1);
         }
         return repository.save(post);
     }
@@ -297,7 +302,7 @@ public class TreePostConverter {
 
         return postContentList.stream().map(postContent -> {
 
-            if (postContent.getPost().getIsAdminPost() == null){
+            if (postContent.getPost().getIsAdminPost() == null) {
                 AppUser owner = postContent.getPost().getUser();
                 Business firstBusiness = owner.getBusinesses().stream()
                         .filter(Business::getIsPrimary).findFirst().orElse(null);
@@ -339,21 +344,18 @@ public class TreePostConverter {
             }
 
 
-
-
-
         }).collect(Collectors.toList());
     }
 
     // Helper post category
-    public PostCategoryResponse convertPostCategory(BusinessCategory data ) {
+    public PostCategoryResponse convertPostCategory(BusinessCategory data) {
         PostCategoryResponse dto = new PostCategoryResponse();
         dto.setPostCategoryId(data.getSecureId());
         dto.setPostCategoryName(data.getName());
         return dto;
     }
 
-    public String getContentTypePost(List<PostContent> contentList){
+    public String getContentTypePost(List<PostContent> contentList) {
         String contentType = "text";
 
         boolean hasImage = contentList.stream().anyMatch(pc -> pc.getType().contains("image"));

@@ -12,6 +12,7 @@ public class BusinessListResponse {
     private String id;
     private Long index;
     private String name;
+    private String position;
     private String address;
     private String lineOfBusiness;
     private Boolean isPrimary;

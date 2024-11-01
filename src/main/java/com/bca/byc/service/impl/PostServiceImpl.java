@@ -143,8 +143,8 @@ public class PostServiceImpl implements PostService {
 
                 postResponse.setOfficialUrl(null);
 
-                postResponse.setLikeCount(post.getLikesCount());
-                postResponse.setCommentCount(post.getCommentsCount());
+                postResponse.setLikeCount(post.getStats().getLikesCount());
+                postResponse.setCommentCount(post.getStats().getCommentsCount());
 
 
                 return postResponse;

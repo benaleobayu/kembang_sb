@@ -13,6 +13,7 @@ import com.bca.byc.model.apps.ExpectCategoryList;
 import com.bca.byc.util.helper.Formatter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TreeUserManagementConverter {
 
@@ -38,6 +39,12 @@ public class TreeUserManagementConverter {
 
         String senior = data.getAppUserDetail().getIsSenior() == null ? null : data.getAppUserDetail().getIsSenior() ? "Senior" : "Youth";
         dto.setSenior(senior);
+
+        List<String> locations = data.getBusinesses().stream()
+                .filter(Business::getIsPrimary)
+                .flatMap(b -> b.getBusinessHasLocations().stream().map(l -> l.getLocation().getName()))
+                .collect(Collectors.toList());
+        dto.setLocations(locations);
     }
 
     public void DetailResponse(

@@ -25,6 +25,10 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long id;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     @Override
     public String getSecureId() {
         return super.getSecureId();
@@ -80,7 +84,7 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @JoinColumn(name = "post_location_id", nullable = true)
     private PostLocation postLocation;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -131,21 +135,14 @@ public class Post extends AbstractBaseEntityCms implements SecureIdentifiable {
     @Column(name = "promoted_until")
     private LocalDateTime promotedUntil;
 
-    // stats
+    @Embedded
+    private PostStats stats = new PostStats();
 
-    @Column(name = "likes_count")
-    private Long LikesCount = 0L;
-
-    @Column(name = "shares_count")
-    private Long SharesCount = 0L;
-
-    @Column(name = "comments_count")
-    private Long CommentsCount = 0L;
-
-//    @PrePersist
-//    @PreUpdate
-//    private void prePersistAndUpdate(){
-//        updatePromotedStatus();
-//    }
-
+    public void setLikesCount(Long likesCount) {
+        if (likesCount < 0) {
+            throw new IllegalArgumentException("Likes count cannot be negative");
+        }
+        this.stats.setLikesCount(likesCount);
+    }
 }
+

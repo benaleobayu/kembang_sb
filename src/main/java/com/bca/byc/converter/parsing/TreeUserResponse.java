@@ -21,6 +21,7 @@ public class TreeUserResponse {
             businessResponse.setId(business.getSecureId());
             businessResponse.setIndex(business.getId());
             businessResponse.setName(business.getName());
+            businessResponse.setPosition(business.getPosition());
             businessResponse.setAddress(business.getAddress());
             businessResponse.setDescription(business.getDescription());
             businessResponse.setLineOfBusiness(business.getBusinessCategories().stream().findFirst().get().getBusinessCategoryParent().getName());

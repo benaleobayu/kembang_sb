@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -22,5 +23,6 @@ public class UserManagementListResponse extends AdminModelBaseDTOResponse<Long> 
     private String approveAt;
     private String approveBy;
     private String senior;
+    private List<String> locations;
 
 }

@@ -6,9 +6,8 @@ import com.bca.byc.converter.parsing.TreePostConverter;
 import com.bca.byc.entity.*;
 import com.bca.byc.model.PostCreateUpdateRequest;
 import com.bca.byc.model.PostHomeResponse;
-import com.bca.byc.model.apps.*;
+import com.bca.byc.model.apps.ProfilePostResponse;
 import com.bca.byc.repository.*;
-import com.bca.byc.repository.AppUserRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.util.helper.Formatter;
 import jakarta.validation.Valid;
@@ -18,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Component
@@ -73,8 +74,8 @@ public class PostDTOConverter {
 
         dto.setIsOfficial(data.getUser().getAppUserAttribute().getIsOfficial());
 
-        dto.setLikeCount(data.getLikesCount());
-        dto.setCommentCount(data.getCommentsCount());
+        dto.setLikeCount(data.getStats().getLikesCount());
+        dto.setCommentCount(data.getStats().getCommentsCount());
         return dto;
     }
 

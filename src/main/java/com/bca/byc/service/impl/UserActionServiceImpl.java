@@ -1,7 +1,6 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.converter.parsing.TreeNotification;
 import com.bca.byc.entity.*;
 import com.bca.byc.entity.auth.PostShared;
 import com.bca.byc.exception.BadRequestException;
@@ -14,6 +13,7 @@ import com.bca.byc.repository.*;
 import com.bca.byc.service.UserActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.bca.byc.converter.parsing.TreeNotification.saveNotification;
 import static com.bca.byc.repository.handler.HandlerRepository.*;
@@ -72,11 +72,11 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
+    @Transactional(noRollbackFor = BadRequestException.class)
     public TotalCountResponse likeDislike(String email, SetLikeDislikeRequest dto) {
         AppUser userLogin = GlobalConverter.getUserEntity(userRepository);
         LikeDislike existingLikeDislike = null;
         TotalCountResponse response = new TotalCountResponse();
-        TreeNotification newNotification = new TreeNotification();
 
         if ("POST".equals(dto.getType())) {
             Post post = postRepository.findBySecureId(dto.getTargetId())
@@ -99,9 +99,9 @@ public class UserActionServiceImpl implements UserActionService {
             if ("POST".equals(dto.getType())) {
                 Post post = postRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Post tidak ditemukan"));
-                post.setLikesCount(post.getLikesCount() - 1);
+                post.setLikesCount(post.getStats().getLikesCount() - 1);
                 Post savedData = postRepository.save(post);
-                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                response.setTotal(Math.toIntExact(savedData.getStats().getLikesCount()));
             } else if ("COMMENT".equals(dto.getType())) {
                 Comment comment = commentRepository.findBySecureId(dto.getTargetId())
                         .orElseThrow(() -> new BadRequestException("Komentar tidak ditemukan"));
@@ -125,9 +125,9 @@ public class UserActionServiceImpl implements UserActionService {
                 newLikeDislike.setPost(post);
                 newLikeDislike.setUser(userLogin);
                 likeDislikeRepository.save(newLikeDislike);
-                post.setLikesCount(post.getLikesCount() + 1);
+                post.setLikesCount(post.getStats().getLikesCount() + 1);
                 Post savedData = postRepository.save(post);
-                response.setTotal(Math.toIntExact(savedData.getLikesCount()));
+                response.setTotal(Math.toIntExact(savedData.getStats().getLikesCount()));
                 request = new NotificationCreateRequest(
                         "USER", "LIKE-POST", savedData.getSecureId(), "LIKE", userLogin.getId(), post.getUser()
                 );
@@ -161,7 +161,6 @@ public class UserActionServiceImpl implements UserActionService {
             response.setIsLiked(true);
             return response;
         }
-
         return response;
     }
 
