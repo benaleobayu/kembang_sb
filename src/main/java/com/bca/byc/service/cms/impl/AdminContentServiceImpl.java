@@ -4,9 +4,7 @@ import com.bca.byc.converter.AdminContentDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.converter.parsing.TreePostConverter;
-import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.Post;
-import com.bca.byc.entity.PostContent;
+import com.bca.byc.entity.*;
 import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.AdminContentDetailResponse;
 import com.bca.byc.model.AdminContentIndexResponse;
@@ -74,6 +72,10 @@ public class AdminContentServiceImpl implements AdminContentService {
 
         newPost.setAdmin(admin);
         newPost.setIsAdminPost(true);
+        Account userAccount = admin.getAdminHasAccounts().stream().map(AdminHasAccounts::getAccount).findFirst().orElse(null);
+        if (userAccount != null) {
+            newPost.setUser(userAccount.getUser());
+        }
 
         TreePostConverter treePostConverter = new TreePostConverter(null);
         String contentType = treePostConverter.getContentTypePost(contentList);
