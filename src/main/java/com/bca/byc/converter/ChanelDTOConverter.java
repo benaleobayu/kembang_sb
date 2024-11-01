@@ -101,9 +101,9 @@ public class ChanelDTOConverter {
                 admin.getName(),
                 GlobalConverter.getAvatarImage(admin.getAvatar(), baseUrl),
                 admin.getAccountType() != null ? admin.getAccountType() : null,
-                data.getLikesCount(),
-                data.getCommentsCount(),
-                data.getSharesCount()
+                data.getStats().getLikesCount(),
+                data.getStats().getCommentsCount(),
+                data.getStats().getSharesCount()
         );
     }
 }
