@@ -132,12 +132,16 @@ public class AccountServiceImpl implements AccountService {
         String coverUrl = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/account/cover");
         data.setCover(GlobalConverter.getParseImage(coverUrl, baseUrl));
 
+        AppUser newUser = saveNewUser(avatarUrl, coverUrl, name, status, email, password);
+        data.setUser(newUser);
+
         GlobalConverter.CmsAdminCreateAtBy(data, admin);
         Account savedData = accountRepository.save(data);
 
         // save channel in every new account
+
         saveChannelInAccount(savedData, channelIds);
-        saveNewUser(avatarUrl, coverUrl, name, status, email, password);
+
     }
 
     @Override
@@ -224,7 +228,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // -- helper --
-    private void saveNewUser(String avatar, String cover, String name, Boolean status, String email, String password) {
+    private AppUser saveNewUser(String avatar, String cover, String name, Boolean status, String email, String password) {
         AppUserDetail newUserDetail = new AppUserDetail();
         newUserDetail.setName(name);
         newUserDetail.setStatus(StatusType.ACTIVATED);
@@ -252,8 +256,7 @@ public class AccountServiceImpl implements AccountService {
         newUser.setAppUserDetail(savedUserDetail);
         newUser.setAppUserAttribute(savedUserAttribute);
 
-        userRepository.save(newUser);
-
+        return userRepository.save(newUser);
     }
 }
 
