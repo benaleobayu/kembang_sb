@@ -11,17 +11,22 @@ import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.GlobalAttributeService;
 import com.bca.byc.service.cms.BroadcastService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -70,13 +75,20 @@ public class BroadcastController {
     @PreAuthorize("hasAuthority('broadcast.create')")
     @Operation(summary = "Create new broadcast", description = "Create new broadcast")
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody BroadcastCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> create(
+            @RequestPart(name = "file", required = false)MultipartFile file,
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "message") String message,
+            @Schema(example = "DRAFT", description = "DRAFT | SENT | SCHEDULED")
+            @RequestParam(name = "status") String status,
+            @RequestParam(name = "postAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+            ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            service.saveData(item);
+            service.saveData(file, title, message, status, postAt);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created broadcast"));
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | IOException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }
@@ -84,12 +96,20 @@ public class BroadcastController {
     @PreAuthorize("hasAuthority('broadcast.update')")
     @Operation(summary = "Update broadcast by id", description = "Update broadcast by id")
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") String id, @Valid @RequestBody BroadcastCreateUpdateRequest item) {
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable("id") String id,
+            @RequestPart(name = "file", required = false)MultipartFile file,
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "message") String message,
+            @Schema(example = "DRAFT", description = "DRAFT | SENT | SCHEDULED")
+            @RequestParam(name = "status") String status,
+            @RequestParam(name = "postAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime postAt
+    ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            service.updateData(id, item);
+            service.updateData(id, file, title, message, status, postAt);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated broadcast"));
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | IOException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
     }

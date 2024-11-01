@@ -15,15 +15,21 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.service.cms.BroadcastService;
+import com.bca.byc.util.FileUploadHelper;
 import com.bca.byc.util.helper.Formatter;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.bca.byc.util.FileUploadHelper.saveFile;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +38,12 @@ public class BroadcastServiceImpl implements BroadcastService {
     private final AppAdminRepository adminRepository;
 
     private final BroadcastRepository broadcastRepository;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
+
+    @Value("${upload.dir}")
+    private String UPLOAD_DIR;
 
     @Override
     public ResultPageResponseDTO<BroadcastIndexResponse> listDataBroadcast(Integer pages, Integer limit, String sortBy, String direction, String keyword, String status, LocalDate postAt) {
@@ -70,18 +82,22 @@ public class BroadcastServiceImpl implements BroadcastService {
     }
 
     @Override
-    public void saveData(BroadcastCreateUpdateRequest item) {
+    public void saveData(MultipartFile file, String title, String message, String status, LocalDateTime postAt) throws IOException {
         AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
-
+        BroadcastCreateUpdateRequest item = new BroadcastCreateUpdateRequest(
+                file, title, message, status, postAt
+        );
         BroadcastManagement data = new BroadcastManagement();
         saveData(data, item, adminLogin, "create");
         broadcastRepository.save(data);
     }
 
     @Override
-    public void updateData(String id, BroadcastCreateUpdateRequest item) {
+    public void updateData(String id, MultipartFile file, String title, String message, String status, LocalDateTime postAt) throws IOException {
         AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
-
+        BroadcastCreateUpdateRequest item = new BroadcastCreateUpdateRequest(
+                file, title, message, status, postAt
+        );
         BroadcastManagement data = HandlerRepository.getEntityBySecureId(id, broadcastRepository, "Broadcast not found");
         saveData(data, item, adminLogin, "update");
         broadcastRepository.save(data);
@@ -101,7 +117,7 @@ public class BroadcastServiceImpl implements BroadcastService {
 
     // -- helper --
 
-    private void saveData(BroadcastManagement data, BroadcastCreateUpdateRequest item, AppAdmin adminLogin, String type) {
+    private void saveData(BroadcastManagement data, BroadcastCreateUpdateRequest item, AppAdmin adminLogin, String type) throws IOException {
         data.setTitle(item.getTitle());
         data.setMessage(item.getMessage());
         data.setStatus(item.getStatus());
@@ -109,9 +125,17 @@ public class BroadcastServiceImpl implements BroadcastService {
 
         if (type.equals("create")) {
             GlobalConverter.CmsAdminCreateAtBy(data, adminLogin);
-        }
-        if (type.equals("update")) {
+        } else {
             GlobalConverter.CmsAdminUpdateAtBy(data, adminLogin);
+        }
+
+        if (item.getFile() != null) {
+            FileUploadHelper.validateFileTypeImage(item.getFile());
+            String newCover = saveFile(item.getFile(), UPLOAD_DIR + "/broadcast");
+            data.setFile(GlobalConverter.replaceImagePath(newCover));
+            if (type.equals("update") && data.getFile() != null && !data.getFile().equals(newCover)) {
+                FileUploadHelper.deleteFile(data.getFile(), UPLOAD_DIR);
+            }
         }
 
         data.setIsScheduled(item.getStatus().equals("SCHEDULED"));
