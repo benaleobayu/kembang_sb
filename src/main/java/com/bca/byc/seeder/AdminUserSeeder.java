@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Order(2)
 @AllArgsConstructor
 public class AdminUserSeeder implements CommandLineRunner {
-//public class AdminUserSeeder  {
 
     private final AppAdminRepository appAdminRepository;
     private final RoleRepository roleRepository;
@@ -25,10 +24,10 @@ public class AdminUserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //create admin
-        if (appAdminRepository.findByEmail("admin@unictive.net").isEmpty()) {
+        if (appAdminRepository.findByEmail("admin@apps.net").isEmpty()) {
             AppAdmin admin = new AppAdmin();
             admin.setName("admin");
-            admin.setEmail("admin@unictive.net");
+            admin.setEmail("admin@apps.net");
             admin.setPassword(passwordEncoder.encode("janganpassword"));
             admin.setIsActive(true);
             admin.setCreatedAt(LocalDateTime.now());
@@ -49,22 +48,22 @@ public class AdminUserSeeder implements CommandLineRunner {
             appAdminRepository.save(admin);
         }
 
-        if (appAdminRepository.findByEmail("admin-opt@unictive.net").isEmpty()) {
+        if (appAdminRepository.findByEmail("admin-opt@apps.net").isEmpty()) {
             AppAdmin adminOperator = new AppAdmin();
-            adminOperator.setName("admin-operator");
-            adminOperator.setEmail("admin-opt@unictive.net");
+            adminOperator.setName("admin-product");
+            adminOperator.setEmail("admin-product@apps.net");
             adminOperator.setPassword(passwordEncoder.encode("janganpassword"));
             adminOperator.setIsActive(true);
             adminOperator.setCreatedAt(LocalDateTime.now());
             adminOperator.setUpdatedAt(LocalDateTime.now());
 
             Role adminOperatorRole;
-            if (roleRepository.findByName("ADMIN-OPERATOR").isPresent()) {
-                adminOperatorRole = roleRepository.findByName("ADMIN-OPERATOR")
+            if (roleRepository.findByName("ADMIN-PRODUCT").isPresent()) {
+                adminOperatorRole = roleRepository.findByName("ADMIN-PRODUCT")
                         .orElseThrow(() -> new RuntimeException("Role not found"));
             } else {
                 adminOperatorRole = new Role();
-                adminOperatorRole.setName("ADMIN-OPERATOR");
+                adminOperatorRole.setName("ADMIN-PRODUCT");
                 roleRepository.save(adminOperatorRole);
             }
             adminOperator.setRole(adminOperatorRole);
@@ -72,93 +71,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             appAdminRepository.save(adminOperator);
         }
 
-        if (appAdminRepository.findByEmail("admin-spv@unictive.net").isEmpty()) {
-            AppAdmin adminSPV = new AppAdmin();
-            adminSPV.setName("admin-spv");
-            adminSPV.setEmail("admin-spv@unictive.net");
-            adminSPV.setPassword(passwordEncoder.encode("janganpassword"));
-            adminSPV.setIsActive(true);
-            adminSPV.setCreatedAt(LocalDateTime.now());
-            adminSPV.setUpdatedAt(LocalDateTime.now());
 
-            Role adminSPVRole;
-            if (roleRepository.findByName("ADMIN-SUPERVISOR").isPresent()) {
-                adminSPVRole = roleRepository.findByName("ADMIN-SUPERVISOR")
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-            } else {
-                adminSPVRole = new Role();
-                adminSPVRole.setName("ADMIN-SUPERVISOR");
-                roleRepository.save(adminSPVRole);
-            }
-            adminSPV.setRole(adminSPVRole);
-
-            appAdminRepository.save(adminSPV);
-        }
-
-        if (appAdminRepository.findByEmail("admin-mgr@unictive.net").isEmpty()) {
-            AppAdmin adminManager = new AppAdmin();
-            adminManager.setName("admin-manager");
-            adminManager.setEmail("admin-mgr@unictive.net");
-            adminManager.setPassword(passwordEncoder.encode("janganpassword"));
-            adminManager.setIsActive(true);
-            adminManager.setCreatedAt(LocalDateTime.now());
-            adminManager.setUpdatedAt(LocalDateTime.now());
-
-            Role adminManagerRole;
-            if (roleRepository.findByName("ADMIN-MANAGER").isPresent()) {
-                adminManagerRole = roleRepository.findByName("ADMIN-MANAGER")
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-            } else {
-                adminManagerRole = new Role();
-                adminManagerRole.setName("ADMIN-MANAGER");
-                roleRepository.save(adminManagerRole);
-            }
-            adminManager.setRole(adminManagerRole);
-
-            appAdminRepository.save(adminManager);
-        }
-
-        if (appAdminRepository.findByEmail("admin-content@unictive.net").isEmpty()) {
-            AppAdmin adminManager = new AppAdmin();
-            adminManager.setName("admin-content");
-            adminManager.setEmail("admin-content@unictive.net");
-            adminManager.setPassword(passwordEncoder.encode("janganpassword"));
-            adminManager.setIsActive(true);
-            adminManager.setCreatedAt(LocalDateTime.now());
-            adminManager.setUpdatedAt(LocalDateTime.now());
-
-            Role adminManagerRole;
-            if (roleRepository.findByName("ADMIN-CONTENT").isPresent()) {
-                adminManagerRole = roleRepository.findByName("ADMIN-CONTENT")
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-            } else {
-                adminManagerRole = new Role();
-                adminManagerRole.setName("ADMIN-CONTENT");
-                roleRepository.save(adminManagerRole);
-            }
-            adminManager.setRole(adminManagerRole);
-
-            appAdminRepository.save(adminManager);
-        }
-
-
-        // create user
-//        if (appUserRepository.count() == 0) {
-//            AppUser user = new AppUser();
-//            user.setName("user");
-//            user.setEmail("user@unictive.net");
-//            user.setPassword(passwordEncoder.encode("janganpassword"));
-//            user.setActive(true);
-//            user.setCreatedAt(LocalDateTime.now());
-//            user.setUpdatedAt(LocalDateTime.now());
-//
-//            // set role
-//            Role userRole = roleRepository.findByName("USER")
-//                    .orElseThrow(() -> new RuntimeException("Role not found"));
-//            user.setRole(userRole);
-//
-//            appUserRepository.save(user);
-//        }
 
     }
 }

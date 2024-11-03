@@ -31,39 +31,8 @@ public class RoleSeeder implements CommandLineRunner {
         Map<String, List<String>> actionByResource = new LinkedHashMap<>();
         actionByResource.put("admin", List.of("view", "create", "read", "update", "delete"));
         actionByResource.put("role", List.of("view", "create", "read", "update", "delete"));
-        // user management
-        actionByResource.put("pre-registration", List.of("view", "create", "read", "update", "delete", "export", "import", "approval"));
-        actionByResource.put("user-active", List.of("view", "read", "update", "delete", "export","import", "approval"));
-        actionByResource.put("user-suspended", List.of("view", "read", "update", "delete", "export","import", "approval"));
-        actionByResource.put("user-deleted", List.of("view", "read", "update", "delete", "export","import", "approval"));
 
-        // content management
-        actionByResource.put("channel_management", List.of("view", "read", "create", "update", "delete", "export"));
-        actionByResource.put("content_management", List.of("view", "read", "create", "update", "delete", "export"));
-        // report
-        actionByResource.put("report_content", List.of("view", "read", "update", "delete", "export"));
-        actionByResource.put("report_comment", List.of("view", "read", "update", "delete", "export"));
-        actionByResource.put("report_user", List.of("view", "read", "update", "delete", "export"));
-        actionByResource.put("report_chat", List.of("view", "read", "update", "delete", "export"));
-        actionByResource.put("report_request", List.of("view", "read", "update", "delete", "export"));
-
-        // inbox
-        actionByResource.put("broadcast", List.of("view", "create","read", "update", "delete", "export"));
-
-        // master data
-        actionByResource.put("faq", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("business_category", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("expect_category", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("location", List.of("view", "create", "read", "update", "delete", "import"));
-        actionByResource.put("branch", List.of("view", "create", "read", "update", "delete", "import"));
-        actionByResource.put("tag", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("reason_report", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("blacklist_keyword", List.of("view", "create", "read", "update", "delete", "export", "import"));
-        actionByResource.put("document", List.of("view", "create", "read", "update", "delete"));
-        actionByResource.put("setting", List.of("view", "create", "read", "update", "delete"));
-
-        actionByResource.put("request_contact", List.of("view", "read", "update", "delete"));
-        actionByResource.put("accounts", List.of("view", "create" , "read","update", "delete", "export"));
+        actionByResource.put("product", List.of("view", "create" , "read","update", "delete", "export"));
 
 
         List<Permission> allPermissions = new ArrayList<>();
