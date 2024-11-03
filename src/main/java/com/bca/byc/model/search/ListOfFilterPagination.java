@@ -16,6 +16,8 @@ public class ListOfFilterPagination {
     private Boolean status;
     private String stringStatus;
     private LocalDate postAt;
+    private String location;
+    private Boolean isSubscriber;
 
     public ListOfFilterPagination(String keyword) {
         this.keyword = keyword;
@@ -33,30 +35,4 @@ public class ListOfFilterPagination {
         this.status = status;
     }
 
-    public ListOfFilterPagination(String keyword, String stringStatus, LocalDate postAt) {
-        this.keyword = keyword;
-        this.stringStatus = stringStatus;
-        this.postAt = postAt;
-    }
-
-    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, AdminApprovalStatus adminApprovalStatus) {
-        this.keyword = keyword;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.adminApprovalStatus = adminApprovalStatus;
-    }
-
-    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, Boolean status) {
-        this.keyword = keyword;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
-    }
-
-    public ListOfFilterPagination(String keyword, LocalDate startDate, LocalDate endDate, String reportStatus) {
-        this.keyword = keyword;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.reportStatus = reportStatus;
-    }
 }
