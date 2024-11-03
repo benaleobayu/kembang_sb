@@ -53,6 +53,17 @@ public class GlobalAttributeServiceIml implements GlobalAttributeService {
         return attributes;
     }
 
+    @Override
+    public List<Map<String, List<?>>> listAttributeCustomer() {
+        List<Map<String, List<?>>> attributes = new ArrayList<>();
+        Map<String, List<?>> listAttr = new HashMap<>();
+        listAttr.put("location", getLocationList());
+        listAttr.put("subscribe", getSubsribedStatusList());
+        attributes.add(listAttr);
+
+        return attributes;
+    }
+
 
     // ------------------------------------------------------------------------------------------------
 
@@ -90,6 +101,17 @@ public class GlobalAttributeServiceIml implements GlobalAttributeService {
                 new AttributeResponse<>(false, "Deactive")
         );
     }
+
+     // -- status --
+    private List<AttributeResponse<Boolean>> getSubsribedStatusList() {
+        return Arrays.asList(
+                new AttributeResponse<>(null, "All"),
+                new AttributeResponse<>(true, "Yes"),
+                new AttributeResponse<>(false, "No")
+        );
+    }
+
+
 
     // -- role --
     private List<AttributeResponse<String>> getRoleList() {

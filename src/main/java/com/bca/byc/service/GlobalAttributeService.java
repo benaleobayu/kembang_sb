@@ -12,4 +12,5 @@ public interface GlobalAttributeService {
 
     List<Map<String, List<?>>> listAttributeChannel();
 
+    List<Map<String, List<?>>> listAttributeCustomer();
 }
