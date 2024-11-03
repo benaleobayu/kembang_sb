@@ -1,7 +1,13 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.model.*;
-import com.bca.byc.response.*;
+import com.bca.byc.model.AdminCmsDetailResponse;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
+import com.bca.byc.response.AdminPermissionResponse;
+import com.bca.byc.response.ApiDataResponse;
+import com.bca.byc.response.ApiResponse;
+import com.bca.byc.response.PaginationCmsResponse;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.service.GlobalAttributeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,14 +44,14 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin.view')")
     @Operation(summary = "Get List Admin", description = "Get List Admin")
     @GetMapping
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-                                                                                                        @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                                                                                        @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-                                                                                                        @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-                                                                                                        @RequestParam(name = "keyword", required = false) String keyword,
-                                                                                                        @RequestParam(name = "roleId", required = false) String roleId,
-                                                                                                        @RequestParam(name = "status", required = false) Boolean status,
-                                                                                                        @RequestParam(name = "export", required = false) Boolean export // TODO export admin
+    public ResponseEntity<?> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
+                                        @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                        @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+                                        @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+                                        @RequestParam(name = "keyword", required = false) String keyword,
+                                        @RequestParam(name = "roleId", required = false) String roleId,
+                                        @RequestParam(name = "status", required = false) Boolean status,
+                                        @RequestParam(name = "export", required = false) Boolean export // TODO export admin
     ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
