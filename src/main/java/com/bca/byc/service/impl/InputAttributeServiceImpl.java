@@ -1,6 +1,6 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.Location;
 import com.bca.byc.entity.impl.AttrIdentificable;
@@ -38,7 +38,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     public ResultPageResponseDTO<AttributeResponse<String>> RoleList(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
@@ -51,7 +51,7 @@ public class InputAttributeServiceImpl implements InputAttributeService {
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     // ------

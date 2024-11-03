@@ -1,10 +1,15 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
-import com.bca.byc.entity.*;
+import com.bca.byc.entity.AppAdmin;
+import com.bca.byc.entity.Role;
+import com.bca.byc.entity.RoleHasPermission;
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.model.*;
+import com.bca.byc.model.AdminCmsDetailResponse;
+import com.bca.byc.model.AdminCreateRequest;
+import com.bca.byc.model.AdminDetailResponse;
+import com.bca.byc.model.AdminUpdateRequest;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.AdminRepository;
@@ -26,12 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.bca.byc.util.FileUploadHelper.saveFile;
 
 @Service
 @AllArgsConstructor
@@ -167,7 +168,7 @@ public class AdminServiceImpl implements AdminService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override

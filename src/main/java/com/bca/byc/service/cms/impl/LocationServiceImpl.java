@@ -1,7 +1,7 @@
 package com.bca.byc.service.cms.impl;
 
 import com.bca.byc.converter.LocationDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Location;
@@ -57,7 +57,7 @@ public class LocationServiceImpl implements LocationService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.bca.byc.service.impl;
 
 import com.bca.byc.converter.RoleDTOConverter;
-import com.bca.byc.converter.dictionary.PageCreateReturn;
+import com.bca.byc.converter.dictionary.PageCreateReturnApps;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.Role;
@@ -118,7 +118,7 @@ public class RoleServiceImpl implements RoleService {
             return dto;
         }).collect(Collectors.toList());
 
-        return PageCreateReturn.create(pageResult, dtos);
+        return PageCreateReturnApps.create(pageResult, dtos);
     }
 
     @Override
