@@ -28,4 +28,6 @@ public interface AdminService {
     AdminCmsDetailResponse InfoAdmin();
 
     AdminPermissionResponse DetailAdmin(String email);
+
+    void revalidateToken(String token);
 }

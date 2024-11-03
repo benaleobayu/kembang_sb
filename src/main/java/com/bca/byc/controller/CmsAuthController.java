@@ -1,6 +1,7 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
+import com.bca.byc.model.RevalidateTokenRequest;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.JWTHeaderTokenExtractor;
 import com.bca.byc.service.util.ClientInfoService;
@@ -59,14 +60,24 @@ public class CmsAuthController {
     }
 
     @SecurityRequirement(name = "Authorization")
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<ApiResponse> logout(
-            @RequestParam(name = "deviceId") String deviceId,
-            @RequestParam(name = "version") String version,
+            @RequestParam(name = "deviceId", required = false) String deviceId,
+            @RequestParam(name = "version", required = false) String version,
             HttpServletRequest request) {
         String token = jwtHeaderTokenExtractor.extract(request.getHeader("Authorization"));
         tokenBlacklist.addToBlacklist(token);
         return ResponseEntity.ok().body(new ApiResponse(true, "User logged out successfully"));
+    }
+
+    @SecurityRequirement(name = "Authorization")
+    @GetMapping("/revalidate-token")
+    public ResponseEntity<ApiResponse> revalidateToken(
+        @RequestParam("token") String dto
+    ){
+        adminService.revalidateToken(dto);
+
+        return ResponseEntity.ok().body(new ApiResponse(true, "Token revalidated successfully"));
     }
 
 

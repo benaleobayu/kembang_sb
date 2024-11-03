@@ -80,4 +80,12 @@ public class JWTTokenFactory {
     private void blacklistToken(String token) {
         System.out.println("Token: " + token);
     }
+
+    public AppAdmin parseToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) secret)
+                .build().parseSignedClaims(token)
+                .getPayload();
+        return adminService.findByEmail(claims.getSubject());
+    }
 }

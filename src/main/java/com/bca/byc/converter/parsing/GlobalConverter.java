@@ -6,18 +6,16 @@ import com.bca.byc.entity.AppUser;
 import com.bca.byc.model.ModelBaseDTOResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
-import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.AppUserRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.util.PaginationUtil;
 import com.bca.byc.util.helper.Formatter;
-import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,15 +49,15 @@ public class GlobalConverter {
         dto.setIndex(data.getId());
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
-        AppAdmin createdBy = HandlerRepository.getEntityById(data.getCreatedBy(), adminRepository, "Admin not found");
-        AppAdmin updatedBy = HandlerRepository.getEntityById(data.getUpdatedBy(), adminRepository, "Admin not found");
+        AppAdmin createdBy = data.getCreatedBy() == null ? null : HandlerRepository.getEntityById(data.getCreatedBy(), adminRepository, "Admin not found");
+        AppAdmin updatedBy = data.getUpdatedBy() == null ? null : HandlerRepository.getEntityById(data.getUpdatedBy(), adminRepository, "Admin not found");
 
         dto.setCreatedBy(data.getCreatedBy() != null ? createdBy.getName() : null);
         dto.setUpdatedBy(data.getUpdatedBy() != null ? updatedBy.getName() : null);
     }
 
     public static <T extends ModelBaseDTOResponse<Integer>, D extends AbstractBaseEntity> void CmsTimeStampResponse(
-            T dto, D data , AppAdminRepository adminRepository
+            T dto, D data, AppAdminRepository adminRepository
     ) {
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
@@ -102,6 +100,7 @@ public class GlobalConverter {
                         baseUrl + "/" + imageUrl :
                         imageUrl.startsWith("/uploads/") ? baseUrl + imageUrl : imageUrl;
     }
+
     public static String getAvatarImage(
             String imageUrl,
             String baseUrl
@@ -158,7 +157,7 @@ public class GlobalConverter {
         if (discardList.getEndDate() != null && discardList.getEndDate().toString().length() >= 3) {
             pages = 0;
         }
-        if (discardList.getAdminApprovalStatus() != null ) {
+        if (discardList.getAdminApprovalStatus() != null) {
             pages = 0;
         }
 

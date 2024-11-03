@@ -18,6 +18,7 @@ import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.response.ResultPageResponseDTO;
+import com.bca.byc.security.util.JWTTokenFactory;
 import com.bca.byc.service.AdminService;
 import com.bca.byc.util.FileUploadHelper;
 import jakarta.transaction.Transactional;
@@ -43,6 +44,8 @@ public class AdminServiceImpl implements AdminService {
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private JWTTokenFactory jwtUtil;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -84,6 +87,18 @@ public class AdminServiceImpl implements AdminService {
 
         dto.setPermissions(permissions);
         return dto;
+    }
+
+    @Override
+    public void revalidateToken(String token) {
+        AppAdmin data = jwtUtil.parseToken(token);
+
+        AppAdmin exist = repository.findByEmail(data.getEmail())
+                .orElseThrow(() -> new BadRequestException("Admin not found"));
+
+        if (!exist.getIsActive()) {
+            throw new BadRequestException("Admin is not active");
+        }
     }
 
     @Override

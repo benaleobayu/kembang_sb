@@ -48,7 +48,7 @@ public class AdminUserSeeder implements CommandLineRunner {
             appAdminRepository.save(admin);
         }
 
-        if (appAdminRepository.findByEmail("admin-opt@apps.net").isEmpty()) {
+        if (appAdminRepository.findByEmail("admin-product@apps.net").isEmpty()) {
             AppAdmin adminOperator = new AppAdmin();
             adminOperator.setName("admin-product");
             adminOperator.setEmail("admin-product@apps.net");
