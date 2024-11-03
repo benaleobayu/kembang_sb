@@ -72,7 +72,7 @@ public class LocationServiceImpl implements LocationService {
         AppAdmin admin = GlobalConverter.getAdminEntity(adminRepository);
         // set entity to add with model mapper
         Location data = converter.convertToCreateRequest(dto);
-        data.setCreatedBy(admin);
+        data.setCreatedBy(admin.getId());
         // save data
         repository.save(data);
     }
@@ -85,7 +85,7 @@ public class LocationServiceImpl implements LocationService {
         // update
         converter.convertToUpdateRequest(data, dto);
         // update the updated_at
-        data.setUpdatedBy(admin);
+        data.setUpdatedBy(admin.getId());
         // save
         repository.save(data);
     }

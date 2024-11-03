@@ -1,7 +1,5 @@
 package com.bca.byc.repository;
 
-import com.bca.byc.entity.AppUserRequestContact;
-import com.bca.byc.entity.BusinessCategory;
 import com.bca.byc.entity.LogRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

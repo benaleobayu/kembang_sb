@@ -7,7 +7,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
+public class AdminDetailResponse extends ModelBaseDTOResponse<Long> {
     private String avatar;
     private String cover;
     private String name;
@@ -17,8 +17,6 @@ public class AdminDetailResponse extends AdminModelBaseDTOResponse<Long>{
     private String type;
     private Boolean status;
     private Boolean isVisible;
-
-    private List<CastIdAndNameResponse> accounts;
 
     private Boolean isHaveContent;
 }

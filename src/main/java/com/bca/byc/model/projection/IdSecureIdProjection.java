@@ -1,11 +1,11 @@
 package com.bca.byc.model.projection;
 
-import com.bca.byc.entity.AppUser;
+import lombok.Data;
 
-public interface IdSecureIdProjection {
-    Long getId();
+@Data
+public class IdSecureIdProjection {
 
-    String getSecureId();
+    private Long id;
 
-    AppUser toAppUser();
+    private String secureId;
 }

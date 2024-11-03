@@ -1,6 +1,5 @@
 package com.bca.byc.controller;
 
-import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.response.*;
 import com.bca.byc.service.AdminService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 
 import static com.bca.byc.controller.AdminController.urlRoute;
@@ -34,22 +32,21 @@ import static com.bca.byc.controller.AdminController.urlRoute;
 public class AdminController {
 
     static final String urlRoute = "/cms/v1/am/admin";
-
-    private AdminService service;
     private final GlobalAttributeService attributeService;
+    private AdminService service;
 
     @PreAuthorize("hasAuthority('admin.view')")
     @Operation(summary = "Get List Admin", description = "Get List Admin")
     @GetMapping
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AdminDetailResponse>>> AdminIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-                                                                                                         @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-                                                                                                         @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-                                                                                                         @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-                                                                                                         @RequestParam(name = "keyword", required = false) String keyword,
-                                                                                                         @RequestParam(name = "roleId", required = false) String roleId,
-                                                                                                         @RequestParam(name = "status", required = false) Boolean status,
-                                                                                                         @RequestParam(name = "export", required = false) Boolean export // TODO export admin
-                                                                                                         ) {
+                                                                                                        @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+                                                                                                        @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+                                                                                                        @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
+                                                                                                        @RequestParam(name = "keyword", required = false) String keyword,
+                                                                                                        @RequestParam(name = "roleId", required = false) String roleId,
+                                                                                                        @RequestParam(name = "status", required = false) Boolean status,
+                                                                                                        @RequestParam(name = "export", required = false) Boolean export // TODO export admin
+    ) {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", service.AdminIndex(pages, limit, sortBy, direction, keyword, roleId, status), attributeService.listAttributeRole()));
@@ -114,18 +111,6 @@ public class AdminController {
         }
     }
 
-      @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update Admin Profile", description = "Update Admin Profile")
-    @PutMapping("/profile")
-    public ResponseEntity<ApiResponse> UpdateProfileAdmin(@RequestBody UpdateProfileAdminRequest dto) {
-        log.info("PUT " + urlRoute + "/{id} endpoint hit");
-        try {
-            service.UpdateProfileAdmin(dto);
-            return ResponseEntity.ok(new ApiResponse(true, "Successfully updated admin"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
-        }
-    }
 
     @PreAuthorize("hasAuthority('admin.delete')")
     @Operation(summary = "Delete Admin", description = "Delete Admin")

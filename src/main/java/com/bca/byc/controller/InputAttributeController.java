@@ -27,54 +27,6 @@ public class InputAttributeController {
     static final String urlRoute = "/cms/v1/attribute";
     private InputAttributeService service;
 
-    @GetMapping("subcategory-business")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse>>> listDataAttributeList(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataSubCategoryBusiness(pages, limit, sortBy, direction, keyword)));
-    }
-
-    @GetMapping("subcategory-expect")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse>>> listDataSubExpect(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataSubCategoryExpect(pages, limit, sortBy, direction, keyword)));
-    }
-
-    @GetMapping("branch")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse>>> listDataBranch(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataBranch(pages, limit, sortBy, direction, keyword)));
-    }
-
-    @GetMapping("kanwil")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse>>> listDataKanwil(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataKanwil(pages, limit, sortBy, direction, keyword)));
-    }
-
     @GetMapping("location")
     public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> listDataLocation(
             @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -85,18 +37,6 @@ public class InputAttributeController {
         // response true
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataLocation(pages, limit, sortBy, direction, keyword)));
-    }
-
-   @GetMapping("channel")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> listDataChannel(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + " endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute", service.listDataChannel(pages, limit, sortBy, direction, keyword)));
     }
 
   @GetMapping("role")
@@ -110,33 +50,5 @@ public class InputAttributeController {
         log.info("GET " + urlRoute + " endpoint hit");
         return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.RoleList(pages, limit, sortBy, direction, keyword)));
     }
-
-    @Operation(summary = "For input attribute admin")
-    @GetMapping("admin-type")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> AdminType(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "100") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + "/admin-type endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.AdminType(pages, limit, sortBy, direction, keyword)));
-    }
-
-    @GetMapping("accounts")
-    public ResponseEntity<PaginationCmsResponse<ResultPageResponseDTO<AttributeResponse<Long>>>> Accounts(
-            @RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
-            @RequestParam(name = "limit", required = false, defaultValue = "10000") Integer limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
-            @RequestParam(name = "keyword", required = false) String keyword) {
-        // response true
-        log.info("GET " + urlRoute + "/accounts endpoint hit");
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list attribute role", service.Accounts(pages, limit, sortBy, direction, keyword)));
-    }
-
-
-
 
 }

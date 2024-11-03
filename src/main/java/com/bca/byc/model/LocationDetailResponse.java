@@ -3,7 +3,7 @@ package com.bca.byc.model;
 import lombok.Data;
 
 @Data
-public class LocationDetailResponse extends AdminModelBaseDTOResponse {
+public class LocationDetailResponse extends ModelBaseDTOResponse {
 
     private String name;
     private String address;

@@ -18,10 +18,6 @@ import java.util.*;
 })
 public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureIdentifiable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -31,67 +27,31 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "password")
     private String password;
 
-    @Column(name = "avatar" , columnDefinition = "text")
-    private String avatar;
-
-    @Column(name = "cover", columnDefinition = "text")
-    private String cover;
-
-    @Column(name = "account_type")
-    private String accountType = "Official";
-
-    @Column(name = "is_visible")
-    private Boolean isVisible = true;
-
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AdminHasAccounts> adminHasAccounts = new HashSet<>();
-
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
     private Role role;
 
-
-
     // ------------------------------------
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
-    }
 
     @Override
-    public String getUsername() {
-        return email;
-    }
+    public Collection<? extends GrantedAuthority> getAuthorities() {return role.getAuthorities();}
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public String getUsername() {return email;}
 
     @Override
-    public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        return true;
-    }
+    public boolean isAccountNonExpired() {return true;}
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
-        return true;
-    }
+    public boolean isAccountNonLocked() {return true;}
 
     @Override
-    public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        return true;
-    }
+    public boolean isCredentialsNonExpired() {return true;}
 
     @Override
-    public Boolean getIsActive() {
-        return super.getIsActive();
-    }
+    public boolean isEnabled() {return true;}
+
+    @Override
+    public Boolean getIsActive() {return super.getIsActive();}
 }

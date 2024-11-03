@@ -1,13 +1,10 @@
 package com.bca.byc.controller;
 
 import com.bca.byc.exception.BadRequestException;
-import com.bca.byc.repository.LogDeviceRepository;
 import com.bca.byc.response.ApiResponse;
 import com.bca.byc.security.util.JWTHeaderTokenExtractor;
 import com.bca.byc.service.util.ClientInfoService;
 import com.bca.byc.entity.AppAdmin;
-import com.bca.byc.entity.LogDevice;
-import com.bca.byc.enums.ActionType;
 import com.bca.byc.model.LoginRequestDTO;
 import com.bca.byc.response.ApiDataResponse;
 import com.bca.byc.response.DataAccessResponse;
@@ -20,10 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +39,6 @@ public class CmsAuthController {
     private final JWTHeaderTokenExtractor jwtHeaderTokenExtractor;
     private final PasswordEncoder passwordEncoder;
 
-    private final LogDeviceRepository logDeviceRepository;
     private final ClientInfoService clientInfoService;
     private final TokenBlacklistService tokenBlacklist;
 
@@ -62,18 +55,6 @@ public class CmsAuthController {
 
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
         final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
-
-        final String ipAddress = clientInfoService.getClientIp(request);
-        final String deviceId = clientInfoService.getBrowser(request);
-
-        LogDevice logDevice = new LogDevice();
-        logDevice.setAdmin(admin);
-        logDevice.setDeviceId(deviceId);
-        logDevice.setVersion("1.0.0");
-        logDevice.setIpAddress(ipAddress);
-        logDevice.setActionType(ActionType.LOGIN);
-        logDeviceRepository.save(logDevice);
-
         return ResponseEntity.ok().body(new ApiDataResponse(true, "success", dataAccess));
     }
 
@@ -85,16 +66,6 @@ public class CmsAuthController {
             HttpServletRequest request) {
         String token = jwtHeaderTokenExtractor.extract(request.getHeader("Authorization"));
         tokenBlacklist.addToBlacklist(token);
-
-        final String ipAddress = clientInfoService.getClientIp(request);
-
-        LogDevice logDevice = new LogDevice();
-        logDevice.setDeviceId(deviceId);
-        logDevice.setVersion(version);
-        logDevice.setIpAddress(ipAddress);
-        logDevice.setActionType(ActionType.LOGOUT);
-        logDeviceRepository.save(logDevice);
-
         return ResponseEntity.ok().body(new ApiResponse(true, "User logged out successfully"));
     }
 

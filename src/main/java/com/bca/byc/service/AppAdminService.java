@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AppAdminService extends UserDetailsService {
 
-    public UserDetailResponseDTO findUserDetail();
+    UserDetailResponseDTO findUserDetail();
 
     AppAdmin findByEmail(String email);
 }

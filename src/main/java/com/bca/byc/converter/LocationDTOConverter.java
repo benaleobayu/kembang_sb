@@ -5,6 +5,7 @@ import com.bca.byc.entity.Location;
 import com.bca.byc.model.LocationCreateUpdateRequest;
 import com.bca.byc.model.LocationDetailResponse;
 import com.bca.byc.model.LocationIndexResponse;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Component
 @AllArgsConstructor
 public class LocationDTOConverter {
+    private final AppAdminRepository adminRepository;
 
     private ModelMapper modelMapper;
 
@@ -24,7 +26,7 @@ public class LocationDTOConverter {
         dto.setAddress(data.getAddress());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data, adminRepository); // timestamp and id
         return dto;
     }
 
@@ -36,7 +38,7 @@ public class LocationDTOConverter {
         dto.setAddress(data.getAddress());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data); // timestamp and id
+        GlobalConverter.CmsIDTimeStampResponseAndId(dto, data, adminRepository); // timestamp and id
         // return
         return dto;
     }

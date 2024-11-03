@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LocationIndexResponse extends AdminModelBaseDTOResponse {
+public class LocationIndexResponse extends ModelBaseDTOResponse {
 
     private String name;
     private String address;

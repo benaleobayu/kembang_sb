@@ -17,10 +17,10 @@ public class TreeLogGeneral {
         log.setModelId(r.getModelId());
         log.setModelType(r.getModelType());
         log.setNameCreatedBy(admin.getName());
-        log.setIdCreatedBy(admin.getId());
         log.setNote(r.getNote());
         log.setLogFrom(r.getLogFrom());
         log.setLogTo(r.getLogTo());
+        log.setCreatedBy(admin.getId());
 
         repository.save(log);
     }

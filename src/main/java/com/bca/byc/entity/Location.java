@@ -13,11 +13,16 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "locations")
-public class Location extends AbstractBaseEntityCms implements SecureIdentifiable, AttrIdentificable {
+public class Location extends AbstractBaseEntity implements SecureIdentifiable, AttrIdentificable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Override
+    public Long getId() {return super.getId();}
+
+    @Override
+    public String getSecureId() {return super.getSecureId();}
+
+    @Override
+    public Boolean getIsActive() {return super.getIsActive();}
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -32,17 +37,5 @@ public class Location extends AbstractBaseEntityCms implements SecureIdentifiabl
     private Integer orders;
 
     // relations
-    @OneToMany(mappedBy = "location")
-    private Set<BusinessHasLocation> businessHasLocations = new HashSet<>();
-
-    @Override
-    public String getSecureId() {
-        return super.getSecureId();
-    }
-
-    @Override
-    public Boolean getIsActive() {
-        return super.getIsActive();
-    }
 
 }

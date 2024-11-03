@@ -30,11 +30,8 @@ public class LogRequest extends AbstractBaseEntity {
     @Column(name = "log_to", nullable = false)
     private String logTo;
 
-    @Column(name = "created_by")
+    @Column(name = "name_created_by")
     private String nameCreatedBy;
-
-    @Column(name = "created_by_id")
-    private Long idCreatedBy;
 
     @Column(name = "note")
     private String note;

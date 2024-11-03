@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleListResponse extends AdminModelBaseDTOResponse {
+public class RoleListResponse extends ModelBaseDTOResponse {
     private String name;
     private Boolean status;
     private Integer orders;

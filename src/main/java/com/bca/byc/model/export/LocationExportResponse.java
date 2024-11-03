@@ -17,7 +17,7 @@ public class LocationExportResponse {
     private Boolean status;
     private Integer orders;
     private LocalDateTime createdAt;
-    private String createdBy;
+    private Long createdBy;
     private LocalDateTime updatedAt;
-    private String updatedBy;
+    private Long updatedBy;
 }

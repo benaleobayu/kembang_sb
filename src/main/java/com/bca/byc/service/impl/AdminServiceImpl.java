@@ -1,6 +1,5 @@
 package com.bca.byc.service.impl;
 
-import com.bca.byc.converter.AdminDTOConverter;
 import com.bca.byc.converter.dictionary.PageCreateReturn;
 import com.bca.byc.converter.parsing.GlobalConverter;
 import com.bca.byc.entity.*;
@@ -8,8 +7,6 @@ import com.bca.byc.exception.BadRequestException;
 import com.bca.byc.model.*;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
-import com.bca.byc.repository.AccountRepository;
-import com.bca.byc.repository.AdminHasAccountRepository;
 import com.bca.byc.repository.AdminRepository;
 import com.bca.byc.repository.RoleRepository;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -43,12 +40,8 @@ public class AdminServiceImpl implements AdminService {
     private final AppAdminRepository appAdminRepository;
     private final AdminRepository repository;
     private final RoleRepository roleRepository;
-    private final AccountRepository accountRepository;
-    private final AdminHasAccountRepository adminHasAccountRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    private final AdminDTOConverter converter;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -67,7 +60,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminDetailResponse FindAdminById(String id) throws BadRequestException {
         AppAdmin data = HandlerRepository.getEntityBySecureId(id, repository, "Admin not found");
 
-        return converter.convertToListResponse(data);
+        return null;
     }
 
     @Override
@@ -98,9 +91,7 @@ public class AdminServiceImpl implements AdminService {
         List<AppAdmin> datas = repository.findAll();
 
         // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
-                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -115,20 +106,9 @@ public class AdminServiceImpl implements AdminService {
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
-        data.setIsVisible(dto.isVisible());
-
-        String avatarUrl = FileUploadHelper.saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
-        data.setAvatar(GlobalConverter.getParseImage(avatarUrl, baseUrl));
-
-        String coverUrl = FileUploadHelper.saveFile(cover, UPLOAD_DIR + "/admin/cover");
-        data.setCover(GlobalConverter.getParseImage(coverUrl, baseUrl));
-
 
         // save data
         AppAdmin savedAdmin = repository.save(data);
-
-        // list of account ids e.g ['abc-def', 'ghi-jkl']
-        saveAccountInAdmin(savedAdmin, dto.accountIds());
     }
 
     @Override
@@ -151,57 +131,10 @@ public class AdminServiceImpl implements AdminService {
         Role role = HandlerRepository.getEntityBySecureId(dto.roleId(), roleRepository, "Role not found");
         data.setRole(role);
         data.setIsActive(dto.status());
-        data.setIsVisible(dto.isVisible());
-        if (avatar != null) {
-            FileUploadHelper.validateFileTypeImage(avatar);
-            String oldAvatar = data.getAvatar();
-            String newAvatar = saveFile(avatar, UPLOAD_DIR + "/admin/avatar");
-            data.setAvatar(GlobalConverter.replaceImagePath(newAvatar));
-            if (!oldAvatar.equals(newAvatar)) {
-                FileUploadHelper.deleteFile(oldAvatar, UPLOAD_DIR);
-            }
-        }
 
-        if (cover != null) {
-            FileUploadHelper.validateFileTypeImage(cover);
-            String oldCover = data.getCover();
-            String newCover = saveFile(cover, UPLOAD_DIR + "/admin/cover");
-            data.setCover(GlobalConverter.replaceImagePath(newCover));
-            if (!oldCover.equals(newCover)) {
-                FileUploadHelper.deleteFile(oldCover, UPLOAD_DIR);
-            }
-        }
         // Save the updated admin data
         AppAdmin savedAdmin = repository.save(data);
-
-        // remove first of all data
-        adminHasAccountRepository.deleteByAdminId(data.getId());
-        // list of account ids e.g ['abc-def', 'ghi-jkl']
-        saveAccountInAdmin(savedAdmin, dto.accountIds());
     }
-
-    @Override
-    public void UpdateProfileAdmin(UpdateProfileAdminRequest dto) {
-        AppAdmin data = GlobalConverter.getAdminEntity(appAdminRepository);
-
-        data.setName(dto.getName());
-        data.setEmail(dto.getEmail());
-        if (dto.getOldPassword() != null && dto.getNewPassword() != null && dto.getConfirmPassword() != null) {
-            if (!passwordEncoder.matches(dto.getOldPassword(), data.getPassword())) {
-                throw new BadRequestException("Old password is incorrect");
-            }
-            if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
-                throw new BadRequestException("Confirm password is incorrect");
-            }
-
-            data.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        }
-        data.setIsActive(dto.getStatus());
-        data.setIsVisible(dto.getIsVisible());
-
-        repository.save(data);
-    }
-
 
     @Override
     public void DeleteAdmin(String id) throws BadRequestException {
@@ -215,9 +148,7 @@ public class AdminServiceImpl implements AdminService {
         if (data.getId().equals(adminLogin.getId())) {
             throw new BadRequestException("Cannot delete admin itself");
         }
-        if (!data.getPosts().isEmpty()) {
-            throw new BadRequestException("Cannot delete admin with posts");
-        }
+
         repository.deleteById(data.getId());
     }
 
@@ -232,7 +163,7 @@ public class AdminServiceImpl implements AdminService {
         Long idRole = roleId != null ? getRoleId(roleId) : null;
         Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable(), idRole, status);
         List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
-            AdminDetailResponse dto = converter.convertToListResponse(c);
+            AdminDetailResponse dto = new AdminDetailResponse();
             return dto;
         }).collect(Collectors.toList());
 
@@ -243,7 +174,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminCmsDetailResponse InfoAdmin() {
         AppAdmin data = GlobalConverter.getAdminEntity(appAdminRepository);
 
-        return converter.convertToInfoResponse(data);
+        return null;
     }
 
 
@@ -251,27 +182,6 @@ public class AdminServiceImpl implements AdminService {
 
     public boolean emailExists(String email, AppAdminRepository repository) {
         return repository.existsByEmail(email);
-    }
-
-    private void saveAccountInAdmin(AppAdmin savedAdmin, Set<String> accountIds) {
-        if (accountIds != null) {
-            Set<Account> accounts = new HashSet<>();
-            for (String accountId : accountIds) {
-                Account account = HandlerRepository.getIdBySecureId(
-                        accountId,
-                        accountRepository::findByIdAndSecureId,
-                        projection -> accountRepository.findById(projection.getId()),
-                        "Account not found for ID: " + accountId
-                );
-                accounts.add(account);
-            }
-            for (Account account : accounts) {
-                AdminHasAccounts adminHasAccount = new AdminHasAccounts();
-                adminHasAccount.setAdmin(savedAdmin);
-                adminHasAccount.setAccount(account);
-                adminHasAccountRepository.save(adminHasAccount);
-            }
-        }
     }
 
     // -- helper --

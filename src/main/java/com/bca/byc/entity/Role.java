@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Data
 @Table(name = "role" , indexes = @Index(name = "idx_role_secure_id", columnList = "secure_id", unique = true))
 @Entity
-public class Role extends AbstractBaseEntityCms implements Serializable, SecureIdentifiable {
+public class Role extends AbstractBaseEntity implements Serializable, SecureIdentifiable {
 
     /**
      *

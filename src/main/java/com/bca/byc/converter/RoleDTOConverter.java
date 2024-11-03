@@ -10,6 +10,7 @@ import com.bca.byc.model.*;
 import com.bca.byc.repository.PermissionRepository;
 import com.bca.byc.repository.RoleHasPermissionRepository;
 import com.bca.byc.repository.RoleRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.handler.HandlerRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class RoleDTOConverter {
+    private final AppAdminRepository adminRepository;
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
@@ -42,7 +44,7 @@ public class RoleDTOConverter {
         dto.setStatus(data.getIsActive());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
-        converter.CmsIDTimeStampResponseAndId(dto, data);
+        converter.CmsIDTimeStampResponseAndId(dto, data, adminRepository);
 
         // return the DTO
         return dto;
@@ -121,7 +123,7 @@ public class RoleDTOConverter {
             }
         }
 
-        savedRole.setCreatedBy(admin);
+        savedRole.setCreatedBy(admin.getId());
         savedRole.setUpdatedAt(LocalDateTime.now());
 
         // Return the saved role
@@ -196,7 +198,7 @@ public class RoleDTOConverter {
         log.info("removeList : {}", removePermissionIds);
 
         // Set updated metadata
-        data.setUpdatedBy(admin);
+        data.setUpdatedBy(admin.getId());
         data.setUpdatedAt(LocalDateTime.now());
     }
 

@@ -23,8 +23,6 @@ public interface AdminService {
 
     void UpdateAdmin(String id, @Valid AdminUpdateRequest dto, MultipartFile avatar, MultipartFile cover) throws Exception;
 
-    void UpdateProfileAdmin(UpdateProfileAdminRequest dto);
-
     void DeleteAdmin(String id) throws Exception;
 
     AdminCmsDetailResponse InfoAdmin();

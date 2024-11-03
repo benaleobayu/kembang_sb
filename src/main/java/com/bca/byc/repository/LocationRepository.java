@@ -41,7 +41,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     // --- export ---
     @Query("SELECT new com.bca.byc.model.export.LocationExportResponse(" +
-            "l.id, l.province, l.name, l.isActive, l.orders, l.createdAt, l.createdBy.name, l.updatedAt, l.createdBy.name) " +
+            "l.id, l.province, l.name, l.isActive, l.orders, l.createdAt, l.createdBy, l.updatedAt, l.updatedBy) " +
             "FROM Location l")
     List<LocationExportResponse> findDataForExport();
 

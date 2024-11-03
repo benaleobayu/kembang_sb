@@ -4,8 +4,8 @@ import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
 import com.bca.byc.entity.impl.SecureIdentifiable;
 import com.bca.byc.exception.ResourceNotFoundException;
-import com.bca.byc.repository.auth.AppAdminRepository;
 import com.bca.byc.repository.AppUserRepository;
+import com.bca.byc.repository.auth.AppAdminRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -38,13 +38,6 @@ public class HandlerRepository {
                 .filter(entity -> entity.getSecureId().equals(secureId))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(notFoundMessage));
-    }
-
-    public static AppUser getEntityUserBySecureId(String secureId, AppUserRepository userRepository, String errorMessage) {
-        return userRepository.findUserBySecureId(secureId)
-                .map(projection -> userRepository.findById(projection.getId())
-                        .orElseThrow(() -> new EntityNotFoundException(errorMessage)))
-                .orElseThrow(() -> new EntityNotFoundException(errorMessage));
     }
 
     public static <T, U> U getIdBySecureId(

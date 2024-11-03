@@ -1,9 +1,9 @@
 package com.bca.byc.converter.parsing;
 
-import com.bca.byc.entity.AbstractBaseEntityCms;
+import com.bca.byc.entity.AbstractBaseEntity;
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
-import com.bca.byc.model.AdminModelBaseDTOResponse;
+import com.bca.byc.model.ModelBaseDTOResponse;
 import com.bca.byc.model.search.ListOfFilterPagination;
 import com.bca.byc.model.search.SavedKeywordAndPageable;
 import com.bca.byc.repository.auth.AppAdminRepository;
@@ -12,10 +12,12 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.util.PaginationUtil;
 import com.bca.byc.util.helper.Formatter;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,40 +28,46 @@ import java.util.stream.Collectors;
 
 public class GlobalConverter {
 
-    public static <D extends AbstractBaseEntityCms> void CmsAdminCreateAtBy(
-            D data, AppAdmin admin
+    public static <D extends AbstractBaseEntity> void CmsAdminCreateAtBy(
+            D data, Long admin
     ) {
         data.setCreatedAt(LocalDateTime.now());
         data.setUpdatedAt(LocalDateTime.now());
         data.setCreatedBy(admin);
     }
 
-    public static <D extends AbstractBaseEntityCms> void CmsAdminUpdateAtBy(
-            D data, AppAdmin admin
+    public static <D extends AbstractBaseEntity> void CmsAdminUpdateAtBy(
+            D data, Long admin
     ) {
         data.setUpdatedAt(LocalDateTime.now());
         data.setUpdatedBy(admin);
     }
 
 
-    public static <T extends AdminModelBaseDTOResponse<Long>, D extends AbstractBaseEntityCms> void CmsIDTimeStampResponseAndId(
-            T dto, D data
+    public static <T extends ModelBaseDTOResponse<Long>, D extends AbstractBaseEntity> void CmsIDTimeStampResponseAndId(
+            T dto, D data, AppAdminRepository adminRepository
     ) {
         dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
-        dto.setCreatedBy(data.getCreatedBy() != null ? data.getCreatedBy().getName() : null);
-        dto.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy().getName() : null);
+        AppAdmin createdBy = HandlerRepository.getEntityById(data.getCreatedBy(), adminRepository, "Admin not found");
+        AppAdmin updatedBy = HandlerRepository.getEntityById(data.getUpdatedBy(), adminRepository, "Admin not found");
+
+        dto.setCreatedBy(data.getCreatedBy() != null ? createdBy.getName() : null);
+        dto.setUpdatedBy(data.getUpdatedBy() != null ? updatedBy.getName() : null);
     }
 
-    public static <T extends AdminModelBaseDTOResponse<Integer>, D extends AbstractBaseEntityCms> void CmsTimeStampResponse(
-            T dto, D data
+    public static <T extends ModelBaseDTOResponse<Integer>, D extends AbstractBaseEntity> void CmsTimeStampResponse(
+            T dto, D data , AppAdminRepository adminRepository
     ) {
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
-        dto.setCreatedBy(data.getCreatedBy() != null ? data.getCreatedBy().getName() : null);
-        dto.setUpdatedBy(data.getUpdatedBy() != null ? data.getUpdatedBy().getName() : null);
+        AppAdmin createdBy = HandlerRepository.getEntityById(data.getCreatedBy(), adminRepository, "Admin not found");
+        AppAdmin updatedBy = HandlerRepository.getEntityById(data.getUpdatedBy(), adminRepository, "Admin not found");
+
+        dto.setCreatedBy(data.getCreatedBy() != null ? createdBy.getName() : null);
+        dto.setUpdatedBy(data.getUpdatedBy() != null ? updatedBy.getName() : null);
     }
 
     public static String getUuidUser(
