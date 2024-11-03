@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.Collection;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,23 +24,37 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     private static final long serialVersionUID = 3423593371835697230L;
 
     @Override
-    public String getSecureId() {
-        return super.getSecureId();
-    }
+    public Long getId() {return super.getId();}
 
     @Override
-    public Boolean getIsActive() {
-        return super.getIsActive();
-    }
+    public String getSecureId() {return super.getSecureId();}
 
-    @Column(name = "name", columnDefinition = "varchar(255) default ''")
-    private String name = "";
+    @Override
+    public Boolean getIsActive() {return super.getIsActive();}
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "address", columnDefinition = "text")
+    private String address;
+
+    @Column(name = "location")
+    private Long location;
+
+    @Column(name = "day_subscribed")
+    private String daySubscribed;
+
+    @Column(name = "is_subscribed")
+    private Boolean isSubscribed;
 
 
     // ------------------------------------
