@@ -2,6 +2,7 @@ package com.bca.byc.repository;
 
 import com.bca.byc.entity.Location;
 import com.bca.byc.model.export.LocationExportResponse;
+import com.bca.byc.model.projection.CastIdBySecureIdProjection;
 import com.bca.byc.model.projection.IdSecureIdProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,4 +46,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "FROM Location l")
     List<LocationExportResponse> findDataForExport();
 
+    // -- projection ---
+
+    @Query("SELECT l.id, l.secureId FROM Location l WHERE l.secureId = :location")
+    CastIdBySecureIdProjection findIdBySecureId(@Param("location") String location);
 }
