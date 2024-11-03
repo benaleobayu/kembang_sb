@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.bca</groupId>
-    <artifactId>byc</artifactId>
+    <artifactId>kembang</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Staging</name>
     <description>BCA BYC</description>
