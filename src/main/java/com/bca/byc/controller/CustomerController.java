@@ -73,7 +73,7 @@ public class CustomerController {
 
     @PreAuthorize("hasAuthority('customer.create')")
     @Operation(summary = "Create Customer", description = "Create Customer")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ResponseEntity<ApiResponse> CreateCustomer(@Valid @RequestBody CustomerCreateUpdateRequest dto) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {

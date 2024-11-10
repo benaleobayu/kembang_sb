@@ -105,8 +105,10 @@ public class CustomerServiceImpl implements CustomerService {
     private void saveCustomer(AppUser newUser, CustomerCreateUpdateRequest dto, String type) {
         AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
         newUser.setName(dto.name());
-        newUser.setEmail(dto.email());
-        newUser.setPassword(passwordEncoder.encode(dto.password()));
+
+        String prefixEmail = dto.name().replaceAll("[^a-zA-Z0-9]+", "_").replaceAll("\\s", "_").toLowerCase();
+        newUser.setEmail(prefixEmail + "@apps.net");
+        newUser.setPassword(passwordEncoder.encode("janganpassword"));
         newUser.setPhone(dto.phone());
         newUser.setAddress(dto.address());
         newUser.setLocation(dto.location());
