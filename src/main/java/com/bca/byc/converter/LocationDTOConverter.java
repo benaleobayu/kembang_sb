@@ -23,7 +23,7 @@ public class LocationDTOConverter {
     public LocationIndexResponse convertToIndexResponse(Location data) {
         LocationIndexResponse dto = new LocationIndexResponse();
         dto.setName(data.getName());
-        dto.setAddress(data.getAddress());
+        dto.setProvince(data.getProvince());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
         GlobalConverter.CmsIDTimeStampResponseAndId(dto, data, adminRepository); // timestamp and id
@@ -35,7 +35,7 @@ public class LocationDTOConverter {
         // mapping Entity with DTO Entity
         LocationDetailResponse dto = new LocationDetailResponse();
         dto.setName(data.getName());
-        dto.setAddress(data.getAddress());
+        dto.setProvince(data.getProvince());
         dto.setOrders(data.getOrders());
         dto.setStatus(data.getIsActive());
         GlobalConverter.CmsIDTimeStampResponseAndId(dto, data, adminRepository); // timestamp and id
@@ -48,8 +48,6 @@ public class LocationDTOConverter {
         // mapping DTO Entity with Entity
         Location data = modelMapper.map(dto, Location.class);
         data.setIsActive(dto.getStatus());
-        data.setCreatedAt(LocalDateTime.now());
-        data.setUpdatedAt(LocalDateTime.now());
         // return
         return data;
     }

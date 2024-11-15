@@ -6,7 +6,7 @@ import lombok.Data;
 public class LocationDetailResponse extends ModelBaseDTOResponse {
 
     private String name;
-    private String address;
+    private String province;
     private String description;
     private Integer orders;
     private Boolean status;

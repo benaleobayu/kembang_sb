@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 public class LocationIndexResponse extends ModelBaseDTOResponse {
 
     private String name;
-    private String address;
+    private String province;
     private Integer orders;
     private Boolean status;
 

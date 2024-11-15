@@ -7,8 +7,7 @@ public class LocationCreateUpdateRequest {
 
     private String name;
     private String province;
-    private String address;
-    private String order;
+    private Integer orders;
     private Boolean status;
 
 }
