@@ -8,4 +8,5 @@ public interface MasterDataExportService {
 
     void exportLocation(HttpServletResponse response) throws IOException;
 
+    void exportProductCategory(HttpServletResponse response)throws IOException;
 }
