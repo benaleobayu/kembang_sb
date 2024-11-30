@@ -35,6 +35,7 @@ public class RoleSeeder implements CommandLineRunner {
         actionByResource.put("location", List.of("view", "create" , "read","update", "delete", "export"));
         
         actionByResource.put("product", List.of("view", "create" , "read","update", "delete", "export"));
+        actionByResource.put("product_category", List.of("view", "create" , "read","update", "delete", "export"));
 
 
         List<Permission> allPermissions = new ArrayList<>();
