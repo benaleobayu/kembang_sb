@@ -24,7 +24,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     List<String> findAllAdminRoles();
 
     @Query("SELECT r.secureId AS secureId, r.name AS name FROM Role r " +
-            "WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND r.isActive = true AND r.isDeleted = false AND " +
+            "WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND r.isActive = true AND " +
             "r.id != 1")
     Page<CastSecureIdAndNameProjection> findSecureIdAndName(String keyword, Pageable pageable);
 

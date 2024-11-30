@@ -30,9 +30,6 @@ public abstract class AbstractBaseEntity implements Serializable {
     @Column(name = "is_active", columnDefinition = "boolean default true")
     private Boolean isActive = true;
 
-    @Column(name = "is_deleted", columnDefinition = "boolean default false")
-    private Boolean isDeleted = false;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

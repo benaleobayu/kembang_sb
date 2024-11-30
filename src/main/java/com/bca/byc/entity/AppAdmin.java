@@ -27,6 +27,9 @@ public class AppAdmin extends AbstractBaseEntity implements UserDetails, SecureI
     @Column(name = "password")
     private String password;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     @EqualsAndHashCode.Exclude
