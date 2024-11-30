@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -38,7 +38,7 @@ public class CustomerController {
     private final GlobalAttributeService attributeService;
     private final CustomerService service;
 
-    @PreAuthorize("hasAuthority('customer.view')")
+//    @PreAuthorize("hasAuthority('customer.view')")
     @Operation(summary = "Get List Customer", description = "Get List Customer")
     @GetMapping
     public ResponseEntity<?> CustomerIndex(@RequestParam(name = "pages", required = false, defaultValue = "0") Integer pages,
@@ -54,11 +54,11 @@ public class CustomerController {
         log.info("GET " + urlRoute + " endpoint hit");
         ResultPageResponseDTO<CustomerIndexResponse> dto = service.ListCustomerIndex(pages, limit, sortBy, direction, keyword, location, isSubscriber, export);
         List<Map<String, List<?>>> attribute = attributeService.listAttributeCustomer();
-        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", dto, attributeService.listAttributeRole()));
+        return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list user", dto, attribute));
 
     }
 
-    @PreAuthorize("hasAuthority('customer.view')")
+//    @PreAuthorize("hasAuthority('customer.view')")
     @Operation(summary = "Get Customer Detail", description = "Get Customer Detail")
     @GetMapping("{id}")
     public ResponseEntity<?> FindCustomerById(@PathVariable("id") String id) {
@@ -71,7 +71,7 @@ public class CustomerController {
         }
     }
 
-    @PreAuthorize("hasAuthority('customer.create')")
+//    @PreAuthorize("hasAuthority('customer.create')")
     @Operation(summary = "Create Customer", description = "Create Customer")
     @PostMapping
     public ResponseEntity<ApiResponse> CreateCustomer(@Valid @RequestBody CustomerCreateUpdateRequest dto) {
@@ -84,7 +84,7 @@ public class CustomerController {
         }
     }
 
-    @PreAuthorize("hasAuthority('customer.update')")
+//    @PreAuthorize("hasAuthority('customer.update')")
     @Operation(summary = "Update Customer", description = "Update Customer")
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse> UpdateCustomer(@PathVariable("id") String id, @Valid @RequestBody CustomerCreateUpdateRequest dto) {
@@ -98,7 +98,7 @@ public class CustomerController {
     }
 
 
-    @PreAuthorize("hasAuthority('customer.delete')")
+//    @PreAuthorize("hasAuthority('customer.delete')")
     @Operation(summary = "Delete Customer", description = "Delete Customer")
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse> DeleteCustomer(@PathVariable("id") String id) {

@@ -48,7 +48,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     private String address;
 
     @Column(name = "location")
-    private Long location;
+    private String location;
 
     @Column(name = "day_subscribed")
     private String daySubscribed;

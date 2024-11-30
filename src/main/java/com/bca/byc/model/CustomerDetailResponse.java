@@ -8,7 +8,6 @@ public record CustomerDetailResponse(
         String email,
         String phone,
         String address,
-        Long locationId,
         String locationName,
         List<String> daySubscribed,
         Boolean isSubscribed,

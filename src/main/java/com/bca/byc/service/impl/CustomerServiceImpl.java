@@ -38,23 +38,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ResultPageResponseDTO<CustomerIndexResponse> ListCustomerIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String location, Boolean isSubscriber, Boolean export) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword,
-                location,
-                isSubscriber
-        );
+        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, location, isSubscriber);
         CastIdBySecureIdProjection locProjection = locationRepository.findIdBySecureId(location);
+
+        Long locationId = locProjection != null ? locProjection.getId() : null;
+
         SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
-        Page<AppUser> pageResult = customerRepository.getCustomerIndex(set.keyword(), set.pageable(), locProjection.getId(), isSubscriber);
+        Page<AppUser> pageResult = customerRepository.getCustomerIndex(set.keyword(), set.pageable(), locationId, isSubscriber);
         List<CustomerIndexResponse> dtos = pageResult.stream().map((c) -> {
             CustomerIndexResponse dto = new CustomerIndexResponse();
             dto.setName(c.getName());
             dto.setPhone(c.getPhone());
             dto.setAddress(c.getAddress());
-
-            Location loc = HandlerRepository.getEntityById(c.getLocation(), locationRepository, "Location not found");
-            dto.setLocation(loc.getName());
-
+            dto.setLocation(c.getLocation());
             List<String> days = c.getDaySubscribed() != null ? Arrays.asList(c.getDaySubscribed().split(", ")) : List.of();
             dto.setDaySubscribed(days);
             dto.setIsSubscribed(c.getIsSubscribed());
@@ -68,7 +64,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDetailResponse FindCustomerById(String id) {
         AppUser user = HandlerRepository.getEntityBySecureId(id, customerRepository, "Customer not found");
-        Location loc = HandlerRepository.getEntityById(user.getLocation(), locationRepository, "Location not found");
         return new CustomerDetailResponse(
                 user.getSecureId(),
                 user.getName(),
@@ -76,7 +71,6 @@ public class CustomerServiceImpl implements CustomerService {
                 user.getPhone(),
                 user.getAddress(),
                 user.getLocation(),
-                loc.getName(),
                 user.getDaySubscribed() != null ? Arrays.asList(user.getDaySubscribed().split(", ")) : List.of(),
                 user.getIsSubscribed(),
                 user.getIsActive()

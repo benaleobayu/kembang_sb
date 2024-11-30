@@ -6,7 +6,7 @@ public record CustomerCreateUpdateRequest(
         String name,
         String phone,
         String address,
-        Long location,
+        String location,
         List<String> daySubscribed,
         Boolean isSubscribed,
         Boolean isActive
