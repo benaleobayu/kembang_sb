@@ -1,6 +1,7 @@
 package com.bca.byc.security.util;
 
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.auth.CustomAdminDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,10 +37,25 @@ public class ContextPrincipal {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long id = null;
-        if (principal instanceof AppUser) {
-            id =  ((AppUser)principal).getId();
-        } else if (principal instanceof UserDetails) {
-            id = Long.parseLong(((UserDetails) principal).getUsername());
+
+        if (principal instanceof CustomAdminDetails) {
+            id = ((CustomAdminDetails) principal).getId();  // Ambil ID dari CustomAdminDetails
+        } else if (principal instanceof AppUser) {
+            id = ((AppUser) principal).getId();
+        }
+
+        return id;
+    }
+
+    public static String getRoleName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String id = null;
+
+        if (principal instanceof CustomAdminDetails) {
+            id = ((CustomAdminDetails) principal).getRoleName();  // Ambil ID dari CustomAdminDetails
+        } else if (principal instanceof AppUser) {
+            id = null;
         }
 
         return id;

@@ -2,6 +2,7 @@ package com.bca.byc.security.provider;
 
 import com.bca.byc.entity.AppAdmin;
 import com.bca.byc.entity.AppUser;
+import com.bca.byc.entity.auth.CustomAdminDetails;
 import com.bca.byc.response.AdminPermissionResponse;
 import com.bca.byc.security.model.JwtAuthenticationToken;
 import com.bca.byc.security.model.RawAccessJwtToken;
@@ -57,42 +58,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     .anyMatch(role -> admin.getRole().getName().equalsIgnoreCase(role));
 
             if (isAdmin) {
-                UserDetails adminDetails = new UserDetails() {
-                    @Override
-                    public String getUsername() {
-                        return subject;
-                    }
-
-                    @Override
-                    public Collection<? extends GrantedAuthority> getAuthorities() {
-                        return authorities;
-                    }
-
-                    @Override
-                    public boolean isEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isCredentialsNonExpired() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isAccountNonLocked() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isAccountNonExpired() {
-                        return true;
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return null; // Admin password tidak diperlukan di sini
-                    }
-                };
+                CustomAdminDetails adminDetails = new CustomAdminDetails(admin, authorities);
                 return new JwtAuthenticationToken(adminDetails, authorities);
             }
         }
