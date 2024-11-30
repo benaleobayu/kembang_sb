@@ -13,6 +13,8 @@ public class ProductIndexResponse extends ModelBaseDTOResponse<Long>{
 
     private String name;
 
+    private String code;
+
     private String description;
 
     private String image;

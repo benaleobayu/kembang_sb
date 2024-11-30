@@ -20,6 +20,9 @@ public class Product extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "code", unique = true)
+    private String code;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
 

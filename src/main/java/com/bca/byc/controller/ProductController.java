@@ -91,16 +91,17 @@ public class ProductController {
     @Operation(summary = "Create new product", description = "Create new product")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> create(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("name") String name,
-            @RequestPart(value = "description", required = false) String description,
-            @RequestPart("categoryId") String categoryId,
-            @RequestPart(value = "price", required = false) Integer price,
-            @RequestPart("isActive") Boolean isActive
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestParam("name") String name,
+            @RequestParam("code") String code,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("categoryId") String categoryId,
+            @RequestParam(value = "price", required = false) Integer price,
+            @RequestParam("isActive") Boolean isActive
     ) {
         log.info("POST " + urlRoute + " endpoint hit");
         try {
-            service.saveData(file, name, description, categoryId, price, isActive);
+            service.saveData(file, name, code, description, categoryId, price, isActive);
             return ResponseEntity.created(URI.create(urlRoute))
                     .body(new ApiResponse(true, "Successfully created product"));
         } catch (BadRequestException e) {
@@ -115,16 +116,17 @@ public class ProductController {
     @PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> update(
             @PathVariable("id") String id,
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("name") String name,
-            @RequestPart(value = "description", required = false) String description,
-            @RequestPart("categoryId") String categoryId,
-            @RequestPart(value = "price", required = false) Integer price,
-            @RequestPart("isActive") Boolean isActive
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestParam("name") String name,
+            @RequestParam("code") String code,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("categoryId") String categoryId,
+            @RequestParam(value = "price", required = false) Integer price,
+            @RequestParam("isActive") Boolean isActive
     ) {
         log.info("PUT " + urlRoute + "/{id} endpoint hit");
         try {
-            service.updateData(id, file, name, description, categoryId, price, isActive);
+            service.updateData(id, file, name, code, description, categoryId, price, isActive);
             return ResponseEntity.ok(new ApiResponse(true, "Successfully updated product"));
         } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());

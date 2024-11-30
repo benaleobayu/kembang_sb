@@ -16,6 +16,7 @@ import com.bca.byc.repository.handler.HandlerRepository;
 import com.bca.byc.response.ResultPageResponseDTO;
 import com.bca.byc.security.util.ContextPrincipal;
 import com.bca.byc.service.ProductService;
+import com.bca.byc.util.FileUploadHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductIndexResponse> dtos = pageResult.stream().map((c) -> {
             ProductIndexResponse dto = new ProductIndexResponse();
             dto.setName(c.getName());
+            dto.setCode(c.getCode());
             dto.setDescription(c.getDescription());
             dto.setPrice(c.getPrice());
             dto.setImage(GlobalConverter.getAvatarImage(c.getImage(), baseUrl));
@@ -65,56 +67,67 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDetailResponse findDataBySecureId(String id) {
-        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Business position not found");
+        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Product not found");
         return new ProductDetailResponse(
                 data.getSecureId(),
                 data.getName(),
+                data.getCode(),
                 data.getDescription(),
                 GlobalConverter.getAvatarImage(data.getImage(), baseUrl),
-                data.getCategory().getName(),
+                data.getCategory().getSecureId(),
                 data.getPrice(),
                 data.getIsActive()
         );
     }
 
     @Override
-    public void saveData(MultipartFile file, String name, String description, String categoryId, Integer price, Boolean isActive) throws IOException {
+    public void saveData(MultipartFile file, String name, String code, String description, String categoryId, Integer price, Boolean isActive) throws IOException {
         Product data = new Product();
-        saveDataParsing(data, file, name, description, categoryId, price, isActive);
+        saveDataParsing(data, file, name, code, description, categoryId, price, isActive, "create");
     }
 
     @Override
-    public void updateData(String id, MultipartFile file, String name, String description, String categoryId, Integer price, Boolean isActive) throws IOException {
-        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Business position not found");
-        saveDataParsing(data, file, name, description, categoryId, price, isActive);
+    public void updateData(String id, MultipartFile file, String name, String code, String description, String categoryId, Integer price, Boolean isActive) throws IOException {
+        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Product not found");
+        saveDataParsing(data, file, name, code, description, categoryId, price, isActive, "update");
     }
 
     @Override
     public void deleteData(String id) {
-        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Business position not found");
+        Product data = HandlerRepository.getEntityBySecureId(id, productRepository, "Product not found");
         productRepository.delete(data);
     }
 
     // -- parsing
 
-    private void saveDataParsing(Product data, MultipartFile file, String name, String description, String categoryId, Integer price, Boolean isActive) throws IOException {
+    private void saveDataParsing(Product data, MultipartFile file, String name, String code,String description, String categoryId, Integer price, Boolean isActive, String type) throws IOException {
         Long adminLoginId = ContextPrincipal.getId();
 
         data.setName(name); // set name
+        data.setCode(code); // set code
         data.setDescription(description); // set description
-        ProductCategory category = HandlerRepository.getEntityBySecureId(categoryId, productCategoryRepository, "Business position not found");
+        ProductCategory category = HandlerRepository.getEntityBySecureId(categoryId, productCategoryRepository, "Product not found");
         data.setCategory(category); // set category
         data.setPrice(price); // set price
         data.setIsActive(isActive); // set isActive
 
         if (file != null) {
-            String imageUrl = saveFile(file, UPLOAD_DIR + "/admin/image");
-            String imagePath = GlobalConverter.replaceImagePath(imageUrl);
-            data.setImage(imagePath);
+            handleImageFile(data, file, type);
         }
 
         GlobalConverter.CmsAdminCreateAtBy(data, adminLoginId);
 
         productRepository.save(data);
+    }
+
+    private void handleImageFile(Product data, MultipartFile file, String type) throws IOException {
+        FileUploadHelper.validateFileTypeImage(file);
+        String newCover = saveFile(file, UPLOAD_DIR + "/product");
+        String formattedPath = GlobalConverter.replaceImagePath(newCover);
+
+        if ("update".equals(type) && data.getImage() != null && !data.getImage().equals(formattedPath)) {
+            FileUploadHelper.deleteFile(data.getImage(), UPLOAD_DIR);
+        }
+        data.setImage(formattedPath);
     }
 }

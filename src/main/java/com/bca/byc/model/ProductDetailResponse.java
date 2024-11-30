@@ -11,6 +11,8 @@ public class ProductDetailResponse{
 
     private String name;
 
+    private String code;
+
     private String description;
 
     private String image;

@@ -14,9 +14,9 @@ public interface ProductService {
 
     ProductDetailResponse findDataBySecureId(String id);
 
-    void saveData(MultipartFile file, String name, String description, String categoryId, Integer price, Boolean isActive) throws IOException;
+    void saveData(MultipartFile file, String name, String code, String description, String categoryId, Integer price, Boolean isActive) throws IOException;
 
-    void updateData(String id, MultipartFile file, String name, String description, String categoryId, Integer price, Boolean isActive) throws IOException;
+    void updateData(String id, MultipartFile file, String name, String code, String description, String categoryId, Integer price, Boolean isActive) throws IOException;
 
     void deleteData(String id);
 }
