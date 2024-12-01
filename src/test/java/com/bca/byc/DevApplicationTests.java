@@ -1,4 +1,4 @@
-package com.bca.byc;
+package com.kembang;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
