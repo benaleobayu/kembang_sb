@@ -9,6 +9,7 @@ public record CustomerDetailResponse(
         String phone,
         String address,
         String locationName,
+        Integer distance,
         List<String> daySubscribed,
         Boolean isSubscribed,
         Boolean isActive

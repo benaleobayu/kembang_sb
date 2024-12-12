@@ -13,6 +13,7 @@ public class CustomerIndexResponse extends ModelBaseDTOResponse<Long>{
     private String address;
     private String location;
     private String phone;
+    private Integer distance = 0;
     private List<String> daySubscribed;
     private Boolean isSubscribed;
 }

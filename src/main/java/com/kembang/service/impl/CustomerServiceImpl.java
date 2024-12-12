@@ -4,7 +4,6 @@ import com.kembang.converter.dictionary.PageCreateReturnApps;
 import com.kembang.converter.parsing.GlobalConverter;
 import com.kembang.entity.AppAdmin;
 import com.kembang.entity.AppUser;
-import com.kembang.entity.Location;
 import com.kembang.model.CustomerCreateUpdateRequest;
 import com.kembang.model.CustomerDetailResponse;
 import com.kembang.model.CustomerIndexResponse;
@@ -51,6 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
             dto.setPhone(c.getPhone());
             dto.setAddress(c.getAddress());
             dto.setLocation(c.getLocation());
+            dto.setDistance(c.getDistance());
             List<String> days = c.getDaySubscribed() != null ? Arrays.asList(c.getDaySubscribed().split(", ")) : List.of();
             dto.setDaySubscribed(days);
             dto.setIsSubscribed(c.getIsSubscribed());
@@ -71,6 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
                 user.getPhone(),
                 user.getAddress(),
                 user.getLocation(),
+                user.getDistance(),
                 user.getDaySubscribed() != null ? Arrays.asList(user.getDaySubscribed().split(", ")) : List.of(),
                 user.getIsSubscribed(),
                 user.getIsActive()
@@ -99,16 +100,19 @@ public class CustomerServiceImpl implements CustomerService {
     private void saveCustomer(AppUser newUser, CustomerCreateUpdateRequest dto, String type) {
         AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
         newUser.setName(dto.name());
+        String password = "janganpassword";
 
         String prefixEmail = dto.name().replaceAll("[^a-zA-Z0-9]+", "_").replaceAll("\\s", "_").toLowerCase();
+        newUser.setName(dto.name() != null ? dto.name() : newUser.getName());
         newUser.setEmail(prefixEmail + "@apps.net");
-        newUser.setPassword(passwordEncoder.encode("janganpassword"));
-        newUser.setPhone(dto.phone());
-        newUser.setAddress(dto.address());
-        newUser.setLocation(dto.location());
-        newUser.setDaySubscribed(String.join(", ", dto.daySubscribed()));
-        newUser.setIsSubscribed(dto.isSubscribed());
-        newUser.setIsActive(dto.isActive());
+        newUser.setPassword(password != null ? passwordEncoder.encode(password) : newUser.getPassword());
+        newUser.setPhone(dto.phone() != null ? dto.phone() : newUser.getPhone());
+        newUser.setAddress(dto.address() != null ? dto.address() : newUser.getAddress());
+        newUser.setDistance(dto.distance() != null ? dto.distance() : newUser.getDistance());
+        newUser.setLocation(dto.location() != null ? dto.location() : newUser.getLocation());
+        newUser.setDaySubscribed(dto.daySubscribed() != null ? String.join(", ", dto.daySubscribed()) : newUser.getDaySubscribed());
+        newUser.setIsSubscribed(dto.isSubscribed() != null ? dto.isSubscribed() : newUser.getIsSubscribed());
+        newUser.setIsActive(dto.isActive() != null ? dto.isActive() : newUser.getIsActive());
 
         if (type.equals("create")) {
             GlobalConverter.CmsAdminCreateAtBy(newUser, adminLogin.getId());
