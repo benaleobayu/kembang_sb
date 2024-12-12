@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class AppUser extends AbstractBaseEntity implements UserDetails , SecureI
     private String address;
 
     @Column(name = "distance")
-    private Integer distance = 0;
+    private BigDecimal distance = BigDecimal.ZERO;
 
     @Column(name = "location")
     private String location;

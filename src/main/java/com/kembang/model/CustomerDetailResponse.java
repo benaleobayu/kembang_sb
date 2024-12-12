@@ -1,5 +1,6 @@
 package com.kembang.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record CustomerDetailResponse(
@@ -9,7 +10,7 @@ public record CustomerDetailResponse(
         String phone,
         String address,
         String locationName,
-        Integer distance,
+        BigDecimal distance,
         List<String> daySubscribed,
         Boolean isSubscribed,
         Boolean isActive

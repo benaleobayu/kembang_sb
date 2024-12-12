@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,6 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
         AppAdmin adminLogin = GlobalConverter.getAdminEntity(adminRepository);
         newUser.setName(dto.name());
         String password = "janganpassword";
+        BigDecimal distance = new BigDecimal(dto.distance());
 
         String prefixEmail = dto.name().replaceAll("[^a-zA-Z0-9]+", "_").replaceAll("\\s", "_").toLowerCase();
         newUser.setName(dto.name() != null ? dto.name() : newUser.getName());
@@ -108,7 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
         newUser.setPassword(password != null ? passwordEncoder.encode(password) : newUser.getPassword());
         newUser.setPhone(dto.phone() != null ? dto.phone() : newUser.getPhone());
         newUser.setAddress(dto.address() != null ? dto.address() : newUser.getAddress());
-        newUser.setDistance(dto.distance() != null ? dto.distance() : newUser.getDistance());
+        newUser.setDistance(dto.distance() != null ? distance : newUser.getDistance());
         newUser.setLocation(dto.location() != null ? dto.location() : newUser.getLocation());
         newUser.setDaySubscribed(dto.daySubscribed() != null ? String.join(", ", dto.daySubscribed()) : newUser.getDaySubscribed());
         newUser.setIsSubscribed(dto.isSubscribed() != null ? dto.isSubscribed() : newUser.getIsSubscribed());
