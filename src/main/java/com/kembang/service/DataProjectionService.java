@@ -10,4 +10,6 @@ public interface DataProjectionService {
     // product --
     Map<String, Integer> listDataProductPriceByProductSecureId(List<String> productIdList);
 
+    // order has product --
+    Map<Long, List<String>> listOrderHasProductSecureIdByOrderId(List<Long> idList);
 }
