@@ -24,8 +24,6 @@ public class OrderIndexResponse extends ModelBaseDTOResponse<Integer> {
 
     private List<ListOrderDTO> listOrder;
 
-    private String orderDate;
-
     private String deliveryDate;
 
     private String driverName;

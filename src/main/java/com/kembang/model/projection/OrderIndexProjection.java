@@ -28,8 +28,6 @@ public class OrderIndexProjection {
 
     private String customerLocation;
 
-    private LocalDate orderDate;
-
     private LocalDate deliveryDate;
 
     private String driverName;

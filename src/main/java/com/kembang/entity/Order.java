@@ -46,20 +46,26 @@ public class Order extends AbstractBaseEntity implements SecureIdentifiable {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "order_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate orderDate;
+    @Column(name = "short_note", columnDefinition = "varchar(100)")
+    private String shortNote;
 
     @Column(name = "delivery_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
 
-    @Column(name = "driver_name")
-    private String driverName;
-
-    @Column(name = "route")
-    private Integer route;
+    @Column(name = "orders")
+    private Integer orders;
 
     @Column(name = "is_paid")
     private Boolean isPaid;
+
+    @ManyToOne
+    @JoinColumn(name = "route_id", referencedColumnName = "secure_id")
+    private OrderRoute orderRoute;
+
+    @Column(name = "costRoute")
+    private Integer costRoute;
+
+    @Column(name = "costOrder")
+    private Integer costOrder;
 }

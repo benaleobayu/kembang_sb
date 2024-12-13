@@ -5,15 +5,13 @@ import com.kembang.converter.parsing.GlobalConverter;
 import com.kembang.entity.AppUser;
 import com.kembang.entity.Order;
 import com.kembang.entity.OrderHasProduct;
+import com.kembang.entity.OrderRoute;
 import com.kembang.model.*;
 import com.kembang.model.projection.DataOrderResponse;
 import com.kembang.model.projection.OrderIndexProjection;
 import com.kembang.model.search.ListOfFilterPagination;
 import com.kembang.model.search.SavedKeywordAndPageable;
-import com.kembang.repository.AppUserRepository;
-import com.kembang.repository.OrderHasProductRepository;
-import com.kembang.repository.OrderRepository;
-import com.kembang.repository.ProductRepository;
+import com.kembang.repository.*;
 import com.kembang.repository.auth.AppAdminRepository;
 import com.kembang.repository.handler.HandlerRepository;
 import com.kembang.response.ResultPageResponseDTO;
@@ -27,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final OrderRouteRepository orderRouteRepository;
     private final OrderHasProductRepository orderHasProductRepository;
 
 
@@ -64,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
             dto.setCustomerAddress(c.getCustomerAddress());
             dto.setCustomerPhone(c.getCustomerPhone());
             dto.setCustomerLocation(c.getCustomerLocation());
-            dto.setOrderDate(Formatter.formatLocalDate(c.getOrderDate()));
             dto.setDeliveryDate(Formatter.formatLocalDate(c.getDeliveryDate()));
             dto.setDriverName(c.getDriverName());
             dto.setRoute(c.getRoute());
@@ -104,7 +103,6 @@ public class OrderServiceImpl implements OrderService {
                 data.getCustomerAddress(),
                 data.getCustomerLocation(),
                 listOrder,
-                Formatter.formatLocalDate(data.getOrderDate()),
                 Formatter.formatLocalDate(data.getDeliveryDate()),
                 data.getDriverName(),
                 data.getRoute(),
@@ -116,13 +114,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void saveData(OrderCreateUpdateRequest dto) throws IOException {
         Order data = new Order();
-        saveDataParsing(data, dto, "create", false);
+        saveDataParsing(data, dto, "create");
     }
 
     @Override
     public void updateData(String id, OrderCreateUpdateRequest dto, Boolean isRoute) throws IOException {
         Order data = HandlerRepository.getEntityBySecureId(id, orderRepository, "Order not found");
-        saveDataParsing(data, dto, "update", isRoute);
+        saveDataParsing(data, dto, "update");
     }
 
     @Override
@@ -133,27 +131,51 @@ public class OrderServiceImpl implements OrderService {
 
     // -- parsing
 
-    private void saveDataParsing(Order data, OrderCreateUpdateRequest dto, String type, Boolean isRoute) throws IOException {
+    private void saveDataParsing(Order data, OrderCreateUpdateRequest dto, String type) throws IOException {
         Long adminLoginId = ContextPrincipal.getId();
 
         AppUser user = null;
         if (dto.getCustomerId() != null) {
             user = HandlerRepository.getEntityBySecureId(dto.getCustomerId(), userRepository, "User not found");
         }
-        if (!isRoute) {
+        if (type.equals("create")) {
             data.setCustomer(user); // set customer
             data.setForwardName(dto.getForwardName()); // set forward name
             data.setForwardAddress(dto.getForwardAddress()); // set forward address
             data.setDescription(dto.getDescription()); // set description
+            data.setShortNote(dto.getShortNote()); // set short description
 
-            data.setOrderDate(dto.getOrderDate()); // set order date
             data.setDeliveryDate(dto.getDeliveryDate()); // set delivery date
             data.setIsPaid(dto.getIsPaid()); // set isPaid
             data.setIsActive(dto.getIsActive()); // set isActive
         }
 
-        data.setDriverName(dto.getDriverName()); // set driver name
-        data.setRoute(dto.getRoute()); // set route
+        // if value route is 1_2024-12-12 from dto.getRoute, i will separate 1 and 2024-12-12 and check on OrderRouteRepository about Integer route and LocalDate date
+        if (dto.getRoute() != null && !dto.getRoute().isEmpty()) {
+            String[] routeParts = dto.getRoute().split("_");
+            if (routeParts.length == 2) {
+                try {
+                    Integer routeId = Integer.parseInt(routeParts[0]);
+                    LocalDate routeDate = LocalDate.parse(routeParts[1]);
+                    OrderRoute orderRoute = orderRouteRepository.findByRouteAndDate(routeId, routeDate);
+                    OrderRoute savedOrderRoute = null;
+                    if (orderRoute == null) {
+                        OrderRoute newOrderRoute = new OrderRoute();
+                        newOrderRoute.setRoute(routeId);
+                        newOrderRoute.setDate(routeDate);
+                        savedOrderRoute = orderRouteRepository.save(newOrderRoute);
+                        data.setOrderRoute(savedOrderRoute); // set route
+                    } else {
+                        data.setOrderRoute(orderRoute); // set route
+                    }
+                } catch (NumberFormatException | DateTimeParseException e) {
+                    throw new IOException("Invalid route format: " + dto.getRoute(), e);
+                }
+            } else {
+                throw new IOException("Route format is invalid. Expected format: '1_2024-12-12'");
+            }
+        }
+
 
         if (type.equals("create")) {
             GlobalConverter.CmsAdminCreateAtBy(data, adminLoginId);
@@ -163,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedData = orderRepository.save(data);
 
-        if (!isRoute) {
+        if (type.equals("create")) {
             handleSaveListOrder(savedData, dto, type);
         }
     }

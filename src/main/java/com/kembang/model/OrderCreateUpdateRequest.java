@@ -16,15 +16,15 @@ public class OrderCreateUpdateRequest {
 
     private String description;
 
-    private LocalDate orderDate;
+    private String shortNote;
 
     private LocalDate deliveryDate;
 
     private List<AddOrderRequest> orderProducts;
 
-    private String driverName;
+    private String route;
 
-    private Integer route;
+    private Integer orders;
 
     private Boolean isPaid;
 

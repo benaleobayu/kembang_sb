@@ -18,15 +18,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             SELECT new com.kembang.model.projection.OrderIndexProjection(
                 o.id, o.secureId, o.forwardName, o.forwardAddress,
                 u.secureId, u.name, u.address, u.phone, u.location,
-                o.orderDate, o.deliveryDate, o.driverName, o.route,
+                o.deliveryDate, or.driverName, or.route,
                 o.isPaid, o.isActive, o.createdAt)
             FROM Order o
             LEFT JOIN o.customer u
+            LEFT JOIN o.orderRoute or
             WHERE
             LOWER(u.name) LIKE LOWER(:keyword) AND
             o.deliveryDate BETWEEN :startDate AND :endDate AND
             (:location IS NULL OR u.location = :location) AND
-            (:route IS NULL OR o.route = :route)
+            (:route IS NULL OR or.route = :route)
             """)
     Page<OrderIndexProjection> listDataOrder(@Param("keyword") String keyword,
                                              Pageable pageable,
@@ -39,10 +40,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             SELECT new com.kembang.model.projection.OrderIndexProjection(
                 o.id, o.secureId, o.forwardName, o.forwardAddress,
                 u.secureId, u.name, u.address, u.phone, u.location,
-                o.orderDate, o.deliveryDate, o.driverName, o.route,
+                o.deliveryDate, or.driverName, or.route,
                 o.isPaid, o.isActive, o.createdAt)
             FROM Order o
             JOIN o.customer u
+            LEFT JOIN o.orderRoute or
             WHERE o.secureId = :id
             """)
     OrderIndexProjection findDataBySecureIdProjection(String id);

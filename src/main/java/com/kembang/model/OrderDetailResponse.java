@@ -23,8 +23,6 @@ public record OrderDetailResponse(
 
         List<ListOrderDTO> listOrders,
 
-        String orderDate,
-
         String deliveryDate,
 
         String driverName,
