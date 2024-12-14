@@ -20,14 +20,14 @@ public class ContextPrincipal {
 
         return email;
     }
-    public static String getSecureUserId() {
+    public static String getSecureId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         String secureId = null;
-        if (principal instanceof AppUser) {
-            secureId =  ((AppUser)principal).getSecureId();
-        } else if (principal instanceof UserDetails) {
-            secureId = ((UserDetails) principal).getUsername();
+        if (principal instanceof CustomAdminDetails) {
+            secureId = ((CustomAdminDetails) principal).getSecureId();  // Ambil ID dari CustomAdminDetails
+        } else if (principal instanceof AppUser) {
+            secureId = ((AppUser) principal).getSecureId();
         }
 
         return secureId;

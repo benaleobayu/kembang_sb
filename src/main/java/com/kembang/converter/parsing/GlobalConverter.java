@@ -13,6 +13,7 @@ import com.kembang.security.util.ContextPrincipal;
 import com.kembang.util.PaginationUtil;
 import com.kembang.util.helper.Formatter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -139,7 +140,7 @@ public class GlobalConverter {
     }
 
     // Helper pagination
-    public static SavedKeywordAndPageable createPageable(
+    public static SavedKeywordAndPageable appsCreatePageable(
             Integer pages,
             Integer limit,
             String sortBy,
@@ -169,6 +170,27 @@ public class GlobalConverter {
 
 
         keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        return new SavedKeywordAndPageable(keyword, pageable);
+    }
+
+    public static SavedKeywordAndPageable createPageable(
+            Integer pages,
+            Integer limit,
+            String sortBy,
+            String direction,
+            String keyword,
+            Page<?> firstResult
+    ) {
+
+        long totalRecords = firstResult.getTotalElements();
+        int totalPages = (int) Math.ceil((double) totalRecords / limit);
+        if (pages >= totalPages) {
+            pages = 0;
+        }
+
+        keyword = StringUtils.isEmpty(keyword) ? "%" : "%" + keyword + "%";
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
         return new SavedKeywordAndPageable(keyword, pageable);

@@ -170,13 +170,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String roleId, Boolean status) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword,
-                roleId,
-                status
-        );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
         Long idRole = roleId != null ? getRoleId(roleId) : null;
+        // pageable element
+        Page<AppAdmin> firstResult = repository.getAdminList(null, null, idRole, status);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+
+        // get data & stream
         Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable(), idRole, status);
         List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
             AdminDetailResponse dto = new AdminDetailResponse();

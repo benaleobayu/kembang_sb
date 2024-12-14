@@ -7,7 +7,6 @@ import com.kembang.entity.ProductCategory;
 import com.kembang.model.CompilerFilterRequest;
 import com.kembang.model.SimpleCmsResponse;
 import com.kembang.model.SimpleCreateUpdateRequest;
-import com.kembang.model.search.ListOfFilterPagination;
 import com.kembang.model.search.SavedKeywordAndPageable;
 import com.kembang.repository.ProductCategoryRepository;
 import com.kembang.repository.auth.AppAdminRepository;
@@ -30,8 +29,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ResultPageResponseDTO<SimpleCmsResponse> listDataProductCategory(CompilerFilterRequest f) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(f.keyword());
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), filter);
+        Page<ProductCategory> firstResult = businessPositionRepository.listDataProductCategory(null, null);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
 
         Page<ProductCategory> pageResult = businessPositionRepository.listDataProductCategory(set.keyword(), set.pageable());
         List<SimpleCmsResponse> dtos = pageResult.stream().map((c) -> {

@@ -13,4 +13,6 @@ public interface MasterDataExportService {
     void exportProduct(HttpServletResponse response) throws IOException;
 
     void exportOrder(HttpServletResponse response) throws IOException;
+
+    void exportOrderRoute(HttpServletResponse response) throws IOException;
 }

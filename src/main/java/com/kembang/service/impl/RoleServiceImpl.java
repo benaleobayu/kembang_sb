@@ -9,7 +9,6 @@ import com.kembang.exception.BadRequestException;
 import com.kembang.model.RoleCreateUpdateRequest;
 import com.kembang.model.RoleDetailResponse;
 import com.kembang.model.RoleListResponse;
-import com.kembang.model.search.ListOfFilterPagination;
 import com.kembang.model.search.SavedKeywordAndPageable;
 import com.kembang.repository.RoleHasPermissionRepository;
 import com.kembang.repository.RoleRepository;
@@ -27,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.kembang.converter.parsing.TreeGetEntityProjection.getParsingAdminByProjection;
 
 @Slf4j
 @Service
@@ -51,8 +52,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public void saveData(@Valid RoleCreateUpdateRequest dto) throws BadRequestException {
-        String email = ContextPrincipal.getSecureUserId();
-        AppAdmin admin = HandlerRepository.getAdminByEmail(email, adminRepository, "user" + notFoundMessage);
+        AppAdmin admin = getParsingAdminByProjection(ContextPrincipal.getSecureId(), adminRepository);
         // set entity to add with model mapper
         Role data = converter.convertToCreateRequest(dto, admin);
         // save data
@@ -107,10 +107,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Role> firstResult = roleRepository.findByNameLikeIgnoreCase(null, null);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
 
         Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<RoleListResponse> dtos = pageResult.stream().map((c) -> {

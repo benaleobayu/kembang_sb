@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kembang.converter.parsing.TreeGetEntityProjection.getParsingLocationByProjection;
+
 @Service
 @AllArgsConstructor
 public class LocationServiceImpl implements LocationService {
@@ -34,22 +36,10 @@ public class LocationServiceImpl implements LocationService {
     private LocationDTOConverter converter;
 
     @Override
-    public List<LocationDetailResponse> findAllData() {
-        // Get the list
-        List<Location> datas = repository.findAllAndOrderByName();
-
-        // stream into the list
-        return datas.stream()
-                .map(converter::convertToListResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public ResultPageResponseDTO<LocationIndexResponse> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(
-                keyword
-        );
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+
+        Page<Location> firstResult = repository.findByNameLikeIgnoreCase(null,null);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
 
         Page<Location> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
         List<LocationIndexResponse> dtos = pageResult.stream().map((c) -> {
@@ -62,7 +52,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDetailResponse findDataById(String id) throws BadRequestException {
-        Location data = HandlerRepository.getEntityBySecureId(id, repository, "Location not found");
+        Location data = getParsingLocationByProjection(id, repository);
 
         return converter.convertToListResponse(data);
     }

@@ -9,7 +9,6 @@ import com.kembang.entity.OrderRoute;
 import com.kembang.model.*;
 import com.kembang.model.projection.DataOrderResponse;
 import com.kembang.model.projection.OrderIndexProjection;
-import com.kembang.model.search.ListOfFilterPagination;
 import com.kembang.model.search.SavedKeywordAndPageable;
 import com.kembang.repository.*;
 import com.kembang.repository.auth.AppAdminRepository;
@@ -46,11 +45,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResultPageResponseDTO<OrderIndexResponse> listDataOrder(CompilerFilterRequest f, LocalDate date, String location, Integer route) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(f.keyword(), date, location);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), filter);
-
+        // set default date
         LocalDate startDate = (date != null) ? date : LocalDate.of(1970, 1, 1);
         LocalDate endDate = (date != null) ? date : LocalDate.now().plusYears(1);
+        //pageable
+        Page<OrderIndexProjection> firstResult = orderRepository.listDataOrder(null, null, startDate, endDate, location, route);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
+
+        // get data and stream
         Page<OrderIndexProjection> pageResult = orderRepository.listDataOrder(set.keyword(), set.pageable(), startDate, endDate, location, route);
 
         AtomicInteger count = new AtomicInteger(1);

@@ -11,10 +11,6 @@ import java.util.List;
 
 public interface LocationService {
 
-    // --- public ---
-    List<LocationDetailResponse> findAllData();
-    // --- public ---
-
     ResultPageResponseDTO<LocationIndexResponse> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword);
 
     LocationDetailResponse findDataById(String id) throws BadRequestException;

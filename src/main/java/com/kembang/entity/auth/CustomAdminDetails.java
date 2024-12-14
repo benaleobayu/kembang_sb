@@ -19,6 +19,8 @@ public class CustomAdminDetails implements UserDetails {
     // Mengembalikan ID admin
     public Long getId() {return admin.getId();}
 
+    public String getSecureId() {return admin.getSecureId();}
+
     public String getRoleName(){ return admin.getRole().getName();}
 
     @Override

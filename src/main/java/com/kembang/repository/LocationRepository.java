@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     // -- projection ---
 
-    @Query("SELECT l.id, l.secureId FROM Location l WHERE l.secureId = :location")
-    CastIdBySecureIdProjection findIdBySecureId(@Param("location") String location);
+    @Query("SELECT new com.kembang.model.projection.CastIdBySecureIdProjection(l.id, l.secureId) FROM Location l WHERE l.secureId = :location")
+    Optional<CastIdBySecureIdProjection> findIdBySecureId(@Param("location") String location);
 }

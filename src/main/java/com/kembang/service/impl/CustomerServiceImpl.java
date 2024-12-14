@@ -4,11 +4,11 @@ import com.kembang.converter.dictionary.PageCreateReturnApps;
 import com.kembang.converter.parsing.GlobalConverter;
 import com.kembang.entity.AppAdmin;
 import com.kembang.entity.AppUser;
+import com.kembang.entity.Location;
 import com.kembang.model.CustomerCreateUpdateRequest;
 import com.kembang.model.CustomerDetailResponse;
 import com.kembang.model.CustomerIndexResponse;
 import com.kembang.model.projection.CastIdBySecureIdProjection;
-import com.kembang.model.search.ListOfFilterPagination;
 import com.kembang.model.search.SavedKeywordAndPageable;
 import com.kembang.repository.CustomerRepository;
 import com.kembang.repository.LocationRepository;
@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kembang.converter.parsing.TreeGetEntityProjection.getParsingLocationByProjection;
+
 @Service
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
@@ -38,12 +40,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ResultPageResponseDTO<CustomerIndexResponse> ListCustomerIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String location, Boolean isSubscriber, Boolean export) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(keyword, location, isSubscriber);
-        CastIdBySecureIdProjection locProjection = locationRepository.findIdBySecureId(location);
+        Location dataLocation = getParsingLocationByProjection(location, locationRepository);
 
-        Long locationId = locProjection != null ? locProjection.getId() : null;
+        Long locationId = dataLocation != null ? dataLocation.getId() : null;
 
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, filter);
+        Page<AppUser> firstResult = customerRepository.getCustomerIndex(null, null, locationId, isSubscriber);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+
         Page<AppUser> pageResult = customerRepository.getCustomerIndex(set.keyword(), set.pageable(), locationId, isSubscriber);
         List<CustomerIndexResponse> dtos = pageResult.stream().map((c) -> {
             CustomerIndexResponse dto = new CustomerIndexResponse();

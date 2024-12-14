@@ -45,9 +45,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResultPageResponseDTO<ProductIndexResponse> listDataProduct(CompilerFilterRequest f) {
-        ListOfFilterPagination filter = new ListOfFilterPagination(f.keyword());
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), filter);
+        // pageable
+        Page<Product> firstResult = productRepository.listDataProduct(null , null);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
 
+        // get data and stream
         Page<Product> pageResult = productRepository.listDataProduct(set.keyword(), set.pageable());
         List<ProductIndexResponse> dtos = pageResult.stream().map((c) -> {
             ProductIndexResponse dto = new ProductIndexResponse();

@@ -33,7 +33,7 @@ public class AppUserProfileController {
         log.info("GET " + urlRoute + "/info endpoint hit");
         try {
             if (userId == null || userId.isEmpty()) {
-                userId = ContextPrincipal.getSecureUserId();
+                userId = ContextPrincipal.getSecureId();
             }
             UserInfoResponse user = userService.getUserDetails(userId);
             return ResponseEntity.ok(new ApiDataResponse<>(true, "User found", user));

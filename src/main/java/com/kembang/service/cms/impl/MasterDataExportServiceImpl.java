@@ -161,5 +161,36 @@ public class MasterDataExportServiceImpl implements MasterDataExportService {
         ops.close();
     }
 
+    @Override
+    public void exportOrderRoute(HttpServletResponse response) throws IOException {
+        List<SimpleExportResponse> datas = productRepository.findDataForExport();
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Product");
+
+        HSSFRow headerRow = sheet.createRow(0);
+        String[] rowNames = {"ID", "Name", "Status", "Created At", "Created By", "Updated At", "Updated By"};
+        for (int i = 0; i < rowNames.length; i++) {
+            createRow(sheet, headerRow, i, rowNames[i]);
+        }
+
+        AtomicLong index = new AtomicLong();
+        int dataRowIndex = 1;
+        for (SimpleExportResponse data : datas) {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex++);
+            dataRow.createCell(0).setCellValue(index.getAndIncrement());
+            dataRow.createCell(1).setCellValue(data.getName());
+            dataRow.createCell(2).setCellValue(data.getStatus());
+            dataRow.createCell(3).setCellValue(data.getCreatedAt() != null ? data.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
+            dataRow.createCell(4).setCellValue(data.getCreatedBy() != null ? data.getCreatedBy() : "");
+            dataRow.createCell(5).setCellValue(data.getUpdatedAt() != null ? data.getUpdatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "");
+            dataRow.createCell(6).setCellValue(data.getUpdatedBy() != null ? data.getUpdatedBy() : "");
+        }
+
+        ServletOutputStream ops = response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
+    }
+
 
 }
