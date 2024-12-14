@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,10 +36,12 @@ public class OrderRoute extends AbstractBaseEntity implements SecureIdentifiable
     private LocalDate date;
 
     @Column(name = "total_distance")
-    private Integer totalDistance;
+    private BigDecimal totalDistance;
 
+    @Column(name = "total_cost")
     private Integer totalCost;
 
+    @Column(name = "total_remaining_cost")
     private Integer totalRemainingCost;
 
     @OneToMany(mappedBy = "orderRoute")
