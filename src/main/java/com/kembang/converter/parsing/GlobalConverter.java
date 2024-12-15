@@ -18,11 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class GlobalConverter {
@@ -46,18 +48,31 @@ public class GlobalConverter {
     public static <T extends ModelBaseDTOResponse<Long>, D extends AbstractBaseEntity> void CmsIDTimeStampResponseAndId(
             T dto, D data, AppAdminRepository adminRepository
     ) {
-        dto.setId(data.getSecureId());
         dto.setIndex(data.getId());
+        parseCmsIDTimeStampResponse(dto, data, adminRepository);
+    }
+    public static <T extends ModelBaseDTOResponse<Integer>, D extends AbstractBaseEntity> void CmsIDTimeStampResponseAndIdAtomic(
+            T dto, D data, AppAdminRepository adminRepository, AtomicInteger index
+    ) {
+        dto.setIndex(index.getAndIncrement());
+        parseCmsIDTimeStampResponse(dto, data, adminRepository);
+    }
+
+    private static <T extends ModelBaseDTOResponse<?>, D extends AbstractBaseEntity> void parseCmsIDTimeStampResponse(
+            T dto, D data, AppAdminRepository adminRepository
+    ) {
+        dto.setId(data.getSecureId());
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
         dto.setUpdatedAt(data.getUpdatedAt() != null ? Formatter.formatLocalDateTime(data.getUpdatedAt()) : null);
         AppAdmin createdBy = data.getCreatedBy() == null ? null : HandlerRepository.getEntityById(data.getCreatedBy(), adminRepository, "Admin not found");
         AppAdmin updatedBy = data.getUpdatedBy() == null ? null : HandlerRepository.getEntityById(data.getUpdatedBy(), adminRepository, "Admin not found");
 
-        dto.setCreatedBy(data.getCreatedBy() != null ? createdBy.getName() : null);
-        dto.setUpdatedBy(data.getUpdatedBy() != null ? updatedBy.getName() : null);
+        dto.setCreatedBy(data.getCreatedBy() != null ? Objects.requireNonNull(createdBy).getName() : null);
+        dto.setUpdatedBy(data.getUpdatedBy() != null ? Objects.requireNonNull(updatedBy).getName() : null);
     }
 
-    public static <T extends ModelBaseDTOResponse<Integer>, D extends AbstractBaseEntity> void CmsTimeStampResponse(
+
+    public static <T extends ModelBaseDTOResponse<Integer>, D extends AbstractBaseEntity> void SetCmsTimeStampResponse(
             T dto, D data, AppAdminRepository adminRepository
     ) {
         dto.setCreatedAt(data.getCreatedAt() != null ? Formatter.formatLocalDateTime(data.getCreatedAt()) : null);
@@ -138,6 +153,16 @@ public class GlobalConverter {
                 .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase())
                 .collect(Collectors.joining());
     }
+
+    // Helper get start date
+    public static LocalDate getDefaultLocalDate(LocalDate date, String type){
+        LocalDate startDate = (date != null) ? date : LocalDate.of(1970, 1, 1);
+        LocalDate endDate = (date != null) ? date : LocalDate.now().plusYears(1);
+
+        return type.equals("start") ? startDate : endDate;
+    }
+
+
 
     // Helper pagination
     public static SavedKeywordAndPageable appsCreatePageable(

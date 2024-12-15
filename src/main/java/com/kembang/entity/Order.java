@@ -63,9 +63,9 @@ public class Order extends AbstractBaseEntity implements SecureIdentifiable {
     @JoinColumn(name = "route_id", referencedColumnName = "secure_id")
     private OrderRoute orderRoute;
 
-    @Column(name = "costRoute")
+    @Column(name = "cost_route")
     private Integer costRoute;
 
-    @Column(name = "costOrder")
+    @Column(name = "cost_order")
     private Integer costOrder;
 }

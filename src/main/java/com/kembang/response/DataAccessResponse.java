@@ -1,8 +1,12 @@
 package com.kembang.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DataAccessResponse {
     private String accessToken;
     private String tokenType;
@@ -14,12 +18,6 @@ public class DataAccessResponse {
         this.expiresIn = expiresIn;
     }
 
-    private String status;
+    private String restrict_code;
 
-    public DataAccessResponse(String accessToken, String tokenType, long expiresIn, String status) {
-        this.accessToken = accessToken;
-        this.tokenType = tokenType;
-        this.expiresIn = expiresIn;
-        this.status = status;
-    }
 }

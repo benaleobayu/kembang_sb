@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +44,9 @@ public class CmsAuthController {
     private final ClientInfoService clientInfoService;
     private final TokenBlacklistService tokenBlacklist;
 
+    @Value("${app.restrictCode}")
+    private String restrictCode;
+
     @PostMapping("/login")
     public ResponseEntity<?> authLogin(@RequestBody LoginRequestDTO dto, HttpServletRequest request) {
 
@@ -54,8 +58,10 @@ public class CmsAuthController {
 
         final UserDetails userDetails = appAdminService.loadUserByUsername(dto.email());
 
+        String restrictCode = admin.getRole().getName().equals("SUPERADMIN") ? this.restrictCode : null;
+
         final String tokens = jwtUtil.createAccessJWTToken(userDetails.getUsername(), new ArrayList<GrantedAuthority>(userDetails.getAuthorities())).getToken();
-        final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime());
+        final DataAccessResponse dataAccess = new DataAccessResponse(tokens, "Bearer", jwtUtil.getExpirationTime(), restrictCode);
         return ResponseEntity.ok().body(new ApiDataResponse(true, "success", dataAccess));
     }
 

@@ -24,7 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             LEFT JOIN o.customer u
             LEFT JOIN o.orderRoute or
             WHERE
-            LOWER(u.name) LIKE LOWER(:keyword) AND
+            (LOWER(u.name) LIKE LOWER(:keyword)) AND
             o.deliveryDate BETWEEN :startDate AND :endDate AND
             (:location IS NULL OR u.location = :location) AND
             (:route IS NULL OR or.route = :route)

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 public class Formatter {
 
@@ -23,6 +24,12 @@ public class Formatter {
 
     public static String formatterAppsWithSeconds(LocalDateTime formatDate) {
         return formatDate != null ? formatDate.format(formatterAppsWithSeconds) : null;
+    }
+
+    // day Name in indonesia
+    public static String formatGetDayName (LocalDate date) {
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", new Locale("id", "ID"));
+        return date.format(dayFormatter);
     }
 
 
