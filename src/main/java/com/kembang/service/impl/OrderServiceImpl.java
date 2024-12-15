@@ -46,8 +46,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResultPageResponseDTO<OrderIndexResponse> listDataOrder(CompilerFilterRequest f, LocalDate date, String location, Integer route) {
         // set default date
-        LocalDate startDate = (date != null) ? date : LocalDate.of(1970, 1, 1);
-        LocalDate endDate = (date != null) ? date : LocalDate.now().plusYears(1);
+        LocalDate startDate = GlobalConverter.getDefaultLocalDate(date, "start");
+        LocalDate endDate = GlobalConverter.getDefaultLocalDate(date, "end");
         //pageable
         Page<OrderIndexProjection> firstResult = orderRepository.listDataOrder(null, null, startDate, endDate, location, route);
         SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
@@ -165,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
                         OrderRoute newOrderRoute = new OrderRoute();
                         newOrderRoute.setRoute(routeId);
                         newOrderRoute.setDate(routeDate);
+                        GlobalConverter.CmsAdminCreateAtBy(newOrderRoute, adminLoginId);
                         savedOrderRoute = orderRouteRepository.save(newOrderRoute);
                         data.setOrderRoute(savedOrderRoute); // set route
                     } else {
