@@ -19,7 +19,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.kembang.converter.parsing.TreeGetEntityProjection.getParsingAdminByProjection;
@@ -34,17 +36,21 @@ public class OrderRouteServiceImpl implements OrderRouteService {
     private OrderRouteDTOConverter converter;
 
     @Override
-    public ResultPageResponseDTO<OrderRouteIndexResponse> listDataOrderRoute(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        Page<OrderRoute> firstResult = repository.listDataOrderRoute(null,null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+    public ResultPageResponseDTO<OrderRouteIndexResponse> listDataOrderRoute(CompilerFilterRequest f, LocalDate date) {
+        // set default date
+        LocalDate startDate = GlobalConverter.getDefaultLocalDate(date, "start");
+        LocalDate endDate = GlobalConverter.getDefaultLocalDate(date, "end");
 
-        Page<OrderRoute> pageResult = repository.listDataOrderRoute(set.keyword(), set.pageable());
-        List<OrderRouteIndexResponse> dtos = pageResult.stream().map((c) -> {
-            OrderRouteIndexResponse dto = converter.convertToIndexResponse(c);
-            return dto;
-        }).collect(Collectors.toList());
+        Page<OrderRoute> firstResult = repository.listDataOrderRoute(null, null, null);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
 
-        return PageCreateReturnApps.create(pageResult, dtos);
+        Page<OrderRoute> pageResult = repository.listDataOrderRoute(set.pageable(), startDate, endDate);
+        AtomicInteger index = new AtomicInteger(1);
+        List<OrderRouteIndexResponse> result = pageResult.stream().map((c) ->
+            converter.convertToIndexResponse(c, index)
+        ).collect(Collectors.toList());
+
+        return PageCreateReturnApps.create(pageResult, result);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.kembang.controller;
 
 import com.kembang.exception.BadRequestException;
+import com.kembang.model.CompilerFilterRequest;
 import com.kembang.model.OrderRouteCreateUpdateRequest;
 import com.kembang.model.OrderRouteDetailResponse;
 import com.kembang.model.OrderRouteIndexResponse;
@@ -11,6 +12,7 @@ import com.kembang.response.ResultPageResponseDTO;
 import com.kembang.service.MasterDataImportService;
 import com.kembang.service.OrderRouteService;
 import com.kembang.service.cms.MasterDataExportService;
+import com.kembang.util.helper.Formatter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,16 +26,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping(OrderRouteController.urlRoute)
-@Tag(name = "OrderRoute API")
+@Tag(name = "Order Route API")
 @SecurityRequirement(name = "Authorization")
 public class OrderRouteController {
 
-    static final String urlRoute = "/cms/v1/ms/order-route";
+    static final String urlRoute = "/cms/v1/order-route";
     private final MasterDataImportService importService;
     private final MasterDataExportService exportService;
     private final OrderRouteService service;
@@ -47,6 +50,7 @@ public class OrderRouteController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(name = "direction", required = false, defaultValue = "asc") String direction,
             @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "date", required = false) String date,
             @RequestParam(name = "export", required = false) Boolean export,
             HttpServletResponse response
     ) {
@@ -67,7 +71,9 @@ public class OrderRouteController {
         } else {
             // response true
             log.info("GET " + urlRoute + " endpoint hit");
-            ResultPageResponseDTO<OrderRouteIndexResponse> data = service.listDataOrderRoute(pages, limit, sortBy, direction, keyword);
+            LocalDate parseDate = Formatter.stringToLocalDate(date);
+            CompilerFilterRequest f = new CompilerFilterRequest(pages, limit, sortBy, direction, keyword);
+            ResultPageResponseDTO<OrderRouteIndexResponse> data = service.listDataOrderRoute(f, parseDate);
             return ResponseEntity.ok().body(new PaginationCmsResponse<>(true, "Success get list order-route", data));
         }
     }

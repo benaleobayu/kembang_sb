@@ -7,7 +7,7 @@ public record OrderRouteDetailResponse(
         String id,
         Integer route,
         String driverName,
-        LocalDate date,
+        String date,
         BigDecimal totalDistance,
         Integer totalCost,
         Integer totalRemainingCost

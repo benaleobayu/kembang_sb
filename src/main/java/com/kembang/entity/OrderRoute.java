@@ -44,6 +44,6 @@ public class OrderRoute extends AbstractBaseEntity implements SecureIdentifiable
     @Column(name = "total_remaining_cost")
     private Integer totalRemainingCost;
 
-    @OneToMany(mappedBy = "orderRoute")
+    @OneToMany(mappedBy = "orderRoute", fetch = FetchType.LAZY)
     private List<Order> orders;
 }

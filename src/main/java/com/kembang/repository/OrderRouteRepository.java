@@ -22,7 +22,7 @@ public interface OrderRouteRepository extends JpaRepository<OrderRoute, Long> {
     @Query("""
             SELECT or FROM OrderRoute or
             WHERE
-            (LOWER(or.driverName) LIKE LOWER(:keyword))
+            or.date BETWEEN :startDate AND :endDate
             """)
-    Page<OrderRoute> listDataOrderRoute(String keyword, Pageable pageable);
+    Page<OrderRoute> listDataOrderRoute(Pageable pageable, LocalDate startDate, LocalDate endDate);
 }
