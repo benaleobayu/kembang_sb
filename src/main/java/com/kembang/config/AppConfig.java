@@ -29,6 +29,9 @@ public class AppConfig {
     @Value("${app.base.url}")
     public String baseUrl;
 
+    @Value("${app.dev}")
+    public Boolean isDev;
+
     @Autowired
     private AppAdminService adminService;
 
@@ -63,6 +66,9 @@ public class AppConfig {
     public String baseUrl() {
         return baseUrl;
     }
+
+    @Bean
+    public Boolean isDev() { return isDev;}
 
     @Bean
     public Integer jwtExpirationMs() {
