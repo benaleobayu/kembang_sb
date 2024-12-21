@@ -18,6 +18,7 @@ import com.kembang.response.ResultPageResponseDTO;
 import com.kembang.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,20 +41,23 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ResultPageResponseDTO<CustomerIndexResponse> ListCustomerIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String location, Boolean isSubscriber, Boolean export) {
-        Location dataLocation = getParsingLocationByProjection(location, locationRepository);
-
+        Location dataLocation = null;
+        if (location != null && !location.isEmpty() && !location.isBlank()){
+            dataLocation = getParsingLocationByProjection(location, locationRepository);
+        }
         Long locationId = dataLocation != null ? dataLocation.getId() : null;
 
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
         Page<AppUser> firstResult = customerRepository.getCustomerIndex(null, null, locationId, isSubscriber);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
-        Page<AppUser> pageResult = customerRepository.getCustomerIndex(set.keyword(), set.pageable(), locationId, isSubscriber);
+        Page<AppUser> pageResult = customerRepository.getCustomerIndex(set.keyword(), pageable, locationId, isSubscriber);
         List<CustomerIndexResponse> dtos = pageResult.stream().map((c) -> {
             CustomerIndexResponse dto = new CustomerIndexResponse();
             dto.setName(c.getName());
             dto.setPhone(c.getPhone());
             dto.setAddress(c.getAddress());
-            dto.setLocation(c.getLocation());
+            dto.setLocation(c.getLocation() != null ? c.getLocation() : null);
             dto.setDistance(c.getDistance());
             List<String> days = c.getDaySubscribed() != null ? Arrays.asList(c.getDaySubscribed().split(", ")) : List.of();
             dto.setDaySubscribed(days);
