@@ -12,6 +12,7 @@ import com.kembang.repository.handler.HandlerRepository;
 import com.kembang.security.util.ContextPrincipal;
 import com.kembang.util.PaginationUtil;
 import com.kembang.util.helper.Formatter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class GlobalConverter {
 
     public static <D extends AbstractBaseEntity> void CmsAdminCreateAtBy(
@@ -173,46 +175,59 @@ public class GlobalConverter {
             String keyword,
             ListOfFilterPagination discardList
     ) {
-        // Check if any of the fields in discardList are not null or empty
-        if (discardList.getKeyword() != null && discardList.getKeyword().length() >= 3) {
-            pages = 0;
-        }
-        if (discardList.getStartDate() != null && discardList.getStartDate().toString().length() >= 3) {
-            pages = 0;
-        }
-        if (discardList.getEndDate() != null && discardList.getEndDate().toString().length() >= 3) {
-            pages = 0;
-        }
-        if (discardList.getAdminApprovalStatus() != null) {
-            pages = 0;
-        }
-        if (discardList.getString() != null) {
-            pages = 0;
-        }
-        if (discardList.getLocalDate() != null) {
-            pages = 0;
-        }
 
+        // Add wildcard to keyword for SQL LIKE queries
+        keyword = StringUtils.isEmpty(keyword) ? "%" : "%" + keyword + "%";
 
-        keyword = StringUtils.isEmpty(keyword) ? "%" : keyword + "%";
+        // Create pageable with sort direction and sorting field
         Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
         Pageable pageable = PageRequest.of(pages, limit, sort);
+
         return new SavedKeywordAndPageable(keyword, pageable);
     }
 
+    // Helper pagination
     public static SavedKeywordAndPageable createPageable(
             Integer pages,
             Integer limit,
             String sortBy,
             String direction,
-            String keyword,
-            Page<?> firstResult
+            String keyword
     ) {
 
-        long totalRecords = firstResult.getTotalElements();
+        keyword = StringUtils.isEmpty(keyword) ? "%" : "%" + keyword + "%";
+        Sort sort = Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy));
+        Pageable pageable = PageRequest.of(pages, limit, sort);
+        return new SavedKeywordAndPageable(keyword, pageable);
+    }
+
+    public static Pageable oldSetPageable(Integer pages, Integer limit, String sortBy, String direction, Page<?> firstResult, Long totalData) {
+        long totalRecords = firstResult != null ? firstResult.getTotalElements() : totalData;
         int totalPages = (int) Math.ceil((double) totalRecords / limit);
         if (pages >= totalPages) {
             pages = 0;
+        }
+        return PageRequest.of(pages, limit, Sort.by(new Sort.Order(PaginationUtil.getSortBy(direction), sortBy)));
+    }
+
+
+
+    public static SavedKeywordAndPageable eZcreatePageable(
+            Integer pages,
+            Integer limit,
+            String sortBy,
+            String direction,
+            String keyword,
+            Page<?> firstResult,
+            Long totalData) {
+
+        long totalRecords = firstResult != null ? firstResult.getTotalElements() : totalData;
+        log.info("Total records: " + totalRecords);
+        int totalPages = (int) Math.ceil((double) totalRecords / limit);
+        log.info("Total pages: " + totalPages);
+        if (pages >= totalPages) {
+            pages = 0;
+            log.info("Reset pages to 0");
         }
 
         keyword = StringUtils.isEmpty(keyword) ? "%" : "%" + keyword + "%";
@@ -220,6 +235,7 @@ public class GlobalConverter {
         Pageable pageable = PageRequest.of(pages, limit, sort);
         return new SavedKeywordAndPageable(keyword, pageable);
     }
+
 
 
 }

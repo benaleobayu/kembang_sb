@@ -15,6 +15,7 @@ import com.kembang.response.ResultPageResponseDTO;
 import com.kembang.service.ProductCategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +30,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ResultPageResponseDTO<SimpleCmsResponse> listDataProductCategory(CompilerFilterRequest f) {
-        Page<ProductCategory> firstResult = businessPositionRepository.listDataProductCategory(null, null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword());
+        Page<ProductCategory> firstResult = businessPositionRepository.listDataProductCategory(set.keyword(), set.pageable());
+        Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
 
-        Page<ProductCategory> pageResult = businessPositionRepository.listDataProductCategory(set.keyword(), set.pageable());
+        Page<ProductCategory> pageResult = businessPositionRepository.listDataProductCategory(set.keyword(), pageable);
         List<SimpleCmsResponse> dtos = pageResult.stream().map((c) -> {
             SimpleCmsResponse dto = new SimpleCmsResponse();
             dto.setName(c.getName());

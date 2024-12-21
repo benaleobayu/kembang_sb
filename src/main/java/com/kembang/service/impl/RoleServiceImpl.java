@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -108,10 +109,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public ResultPageResponseDTO<RoleListResponse> listData(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
 
-        Page<Role> firstResult = roleRepository.findByNameLikeIgnoreCase(null, null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
+        Page<Role> firstResult = roleRepository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
-        Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
+        Page<Role> pageResult = roleRepository.findByNameLikeIgnoreCase(set.keyword(), pageable);
         List<RoleListResponse> dtos = pageResult.stream().map((c) -> {
             RoleListResponse dto = converter.convertToListResponse(c);
             return dto;

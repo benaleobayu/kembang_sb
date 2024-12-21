@@ -20,6 +20,7 @@ import com.kembang.service.OrderService;
 import com.kembang.util.helper.Formatter;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -49,11 +50,12 @@ public class OrderServiceImpl implements OrderService {
         LocalDate startDate = GlobalConverter.getDefaultLocalDate(date, "start");
         LocalDate endDate = GlobalConverter.getDefaultLocalDate(date, "end");
         //pageable
-        Page<OrderIndexProjection> firstResult = orderRepository.listDataOrder(null, null, startDate, endDate, location, route);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword());
+        Page<OrderIndexProjection> firstResult = orderRepository.listDataOrder(set.keyword(), set.pageable(), startDate, endDate, location, route);
+        Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
 
         // get data and stream
-        Page<OrderIndexProjection> pageResult = orderRepository.listDataOrder(set.keyword(), set.pageable(), startDate, endDate, location, route);
+        Page<OrderIndexProjection> pageResult = orderRepository.listDataOrder(set.keyword(), pageable, startDate, endDate, location, route);
 
         AtomicInteger count = new AtomicInteger(1);
         List<OrderIndexResponse> dtos = pageResult.stream().map((c) -> {

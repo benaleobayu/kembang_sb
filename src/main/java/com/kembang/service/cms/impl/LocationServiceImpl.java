@@ -19,6 +19,7 @@ import com.kembang.service.cms.LocationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,10 +39,11 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public ResultPageResponseDTO<LocationIndexResponse> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
 
-        Page<Location> firstResult = repository.findByNameLikeIgnoreCase(null,null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
+        Page<Location> firstResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
-        Page<Location> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), set.pageable());
+        Page<Location> pageResult = repository.findByNameLikeIgnoreCase(set.keyword(), pageable);
         List<LocationIndexResponse> dtos = pageResult.stream().map((c) -> {
             LocationIndexResponse dto = converter.convertToIndexResponse(c);
             return dto;

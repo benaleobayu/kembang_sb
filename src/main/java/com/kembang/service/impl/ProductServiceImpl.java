@@ -20,6 +20,7 @@ import com.kembang.util.FileUploadHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,11 +47,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResultPageResponseDTO<ProductIndexResponse> listDataProduct(CompilerFilterRequest f) {
         // pageable
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword());
         Page<Product> firstResult = productRepository.listDataProduct(null , null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
+        Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
 
         // get data and stream
-        Page<Product> pageResult = productRepository.listDataProduct(set.keyword(), set.pageable());
+        Page<Product> pageResult = productRepository.listDataProduct(set.keyword(), pageable);
         List<ProductIndexResponse> dtos = pageResult.stream().map((c) -> {
             ProductIndexResponse dto = new ProductIndexResponse();
             dto.setName(c.getName() + " - [" + c.getCode() + "]");

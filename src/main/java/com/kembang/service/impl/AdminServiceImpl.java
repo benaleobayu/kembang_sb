@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -172,11 +173,12 @@ public class AdminServiceImpl implements AdminService {
     public ResultPageResponseDTO<AdminDetailResponse> AdminIndex(Integer pages, Integer limit, String sortBy, String direction, String keyword, String roleId, Boolean status) {
         Long idRole = roleId != null ? getRoleId(roleId) : null;
         // pageable element
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
         Page<AppAdmin> firstResult = repository.getAdminList(null, null, idRole, status);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
         // get data & stream
-        Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), set.pageable(), idRole, status);
+        Page<AppAdmin> pageResult = repository.getAdminList(set.keyword(), pageable, idRole, status);
         List<AdminDetailResponse> dtos = pageResult.stream().map((c) -> {
             AdminDetailResponse dto = new AdminDetailResponse();
             return dto;

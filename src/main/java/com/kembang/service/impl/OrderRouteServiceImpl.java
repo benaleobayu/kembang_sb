@@ -17,6 +17,7 @@ import com.kembang.service.OrderRouteService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,10 +42,11 @@ public class OrderRouteServiceImpl implements OrderRouteService {
         LocalDate startDate = GlobalConverter.getDefaultLocalDate(date, "start");
         LocalDate endDate = GlobalConverter.getDefaultLocalDate(date, "end");
 
-        Page<OrderRoute> firstResult = repository.listDataOrderRoute(null, null, null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword(), firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), f.keyword());
+        Page<OrderRoute> firstResult = repository.listDataOrderRoute(set.pageable(), startDate, endDate);
+        Pageable pageable = GlobalConverter.oldSetPageable(f.pages(), f.limit(), f.sortBy(), f.direction(), firstResult, null);
 
-        Page<OrderRoute> pageResult = repository.listDataOrderRoute(set.pageable(), startDate, endDate);
+        Page<OrderRoute> pageResult = repository.listDataOrderRoute(pageable, startDate, endDate);
         AtomicInteger index = new AtomicInteger(1);
         List<OrderRouteIndexResponse> result = pageResult.stream().map((c) ->
             converter.convertToIndexResponse(c, index)

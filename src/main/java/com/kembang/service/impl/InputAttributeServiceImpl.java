@@ -14,6 +14,7 @@ import com.kembang.response.ResultPageResponseDTO;
 import com.kembang.service.InputAttributeService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +29,11 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     @Override
     public ResultPageResponseDTO<AttributeResponse<Long>> listDataLocation(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
-        Page<Location> firstResult = locationRepository.findIdAndName(null, null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
+        Page<Location> firstResult = locationRepository.findIdAndName(set.keyword(), set.pageable());
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
-        Page<Location> pageResult = locationRepository.findIdAndName(set.keyword(), set.pageable());
+        Page<Location> pageResult = locationRepository.findIdAndName(set.keyword(), pageable);
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
@@ -41,11 +43,12 @@ public class InputAttributeServiceImpl implements InputAttributeService {
 
     public ResultPageResponseDTO<AttributeResponse<String>> RoleList(Integer pages, Integer limit, String sortBy, String direction, String keyword) {
         // pageable
-        Page<CastSecureIdAndNameProjection> firstResult = roleRepository.findSecureIdAndName(null, null);
-        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword, firstResult);
+        SavedKeywordAndPageable set = GlobalConverter.createPageable(pages, limit, sortBy, direction, keyword);
+        Page<CastSecureIdAndNameProjection> firstResult = roleRepository.findSecureIdAndName(set.keyword(), set.pageable());
+        Pageable pageable = GlobalConverter.oldSetPageable(pages, limit, sortBy, direction, firstResult, null);
 
         // get data and stream
-        Page<CastSecureIdAndNameProjection> pageResult = roleRepository.findSecureIdAndName(set.keyword(), set.pageable());
+        Page<CastSecureIdAndNameProjection> pageResult = roleRepository.findSecureIdAndName(set.keyword(), pageable);
         List<AttributeResponse> dtos = pageResult.stream()
                 .map(this::convertToListAttribute)
                 .collect(Collectors.toList());
