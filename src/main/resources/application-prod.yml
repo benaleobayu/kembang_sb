@@ -1,6 +1,8 @@
 app:
     base:
         url: ${PROD_BASE_URL}
+    frontend:
+        url: ${PROD_FRONTEND_URL}
     currency: IDR
     dev: true
     jwtExpirationInMs: ${PROD_JWT_EXPIRED}
