@@ -1,6 +1,6 @@
 app:
     base:
-        url: ${PROD_DB_HOST}
+        url: ${PROD_BASE_URL}
     currency: IDR
     dev: true
     jwtExpirationInMs: ${PROD_JWT_EXPIRED}
